@@ -2,15 +2,22 @@
 
 describe Facts::El::Kernelversion do
   describe '#call_the_resolver' do
-    it 'returns a fact' do
-      value = '4.19.2'
+    subject(:fact) { Facts::El::Kernelversion.new }
 
-      expected_fact = double(Facter::ResolvedFact, name: 'kernelversion', value: value)
+    let(:value) { '4.19.2' }
+
+    before do
       allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelrelease).and_return(value)
-      allow(Facter::ResolvedFact).to receive(:new).with('kernelversion', value).and_return(expected_fact)
+    end
 
-      fact = Facts::El::Kernelversion.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    it 'calls Facter::Resolvers::Uname' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::Uname).to have_received(:resolve).with(:kernelrelease)
+    end
+
+    it 'returns kernel fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'kernelversion', value: value)
     end
   end
 end

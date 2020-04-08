@@ -2,13 +2,22 @@
 
 describe Facts::Sles::Kernel do
   describe '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'kernel', value: 'Linux')
-      allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelname).and_return('Linux')
-      allow(Facter::ResolvedFact).to receive(:new).with('kernel', 'Linux').and_return(expected_fact)
+    subject(:fact) { Facts::Sles::Kernel.new }
 
-      fact = Facts::Sles::Kernel.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    let(:value) { 'Linux' }
+
+    before do
+      allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelname).and_return(value)
+    end
+
+    it 'calls Facter::Resolvers::Uname' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::Uname).to have_received(:resolve).with(:kernelname)
+    end
+
+    it 'returns kernel fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'kernel', value: value)
     end
   end
 end

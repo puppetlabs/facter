@@ -16,7 +16,7 @@ describe Facts::Windows::Kernelversion do
       expect(Facter::Resolvers::Kernel).to have_received(:resolve).with(:kernelversion)
     end
 
-    it 'returns a resolved fact' do
+    it 'returns kernelversion fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'kernelversion', value: kernel_version)
     end

@@ -11,8 +11,8 @@ describe Facts::Aix::Networking::Domain do
     end
 
     it 'calls Facter::Resolvers::Hostname' do
-      expect(Facter::Resolvers::Hostname).to receive(:resolve).with(:domain)
       fact.call_the_resolver
+      expect(Facter::Resolvers::Hostname).to have_received(:resolve).with(:domain)
     end
 
     it 'returns domain fact' do

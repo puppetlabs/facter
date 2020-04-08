@@ -11,8 +11,8 @@ describe Facts::Macosx::Networking::Hostname do
     end
 
     it 'calls Facter::Resolvers::Hostname' do
-      expect(Facter::Resolvers::Hostname).to receive(:resolve).with(:hostname)
       fact.call_the_resolver
+      expect(Facter::Resolvers::Hostname).to have_received(:resolve).with(:hostname)
     end
 
     it 'returns hostname fact' do

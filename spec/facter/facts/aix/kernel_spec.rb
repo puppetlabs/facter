@@ -2,13 +2,22 @@
 
 describe Facts::Aix::Kernel do
   describe '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'kernel', value: 'AIX')
-      allow(Facter::Resolvers::OsLevel).to receive(:resolve).with(:kernel).and_return('AIX')
-      allow(Facter::ResolvedFact).to receive(:new).with('kernel', 'AIX').and_return(expected_fact)
+    subject(:fact) { Facts::Aix::Kernel.new }
 
-      fact = Facts::Aix::Kernel.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    let(:value) { 'AIX' }
+
+    before do
+      allow(Facter::Resolvers::OsLevel).to receive(:resolve).with(:kernel).and_return(value)
+    end
+
+    it 'calls Facter::Resolvers::OsLevel' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::OsLevel).to have_received(:resolve).with(:kernel)
+    end
+
+    it 'returns kernel fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'kernel', value: value)
     end
   end
 end

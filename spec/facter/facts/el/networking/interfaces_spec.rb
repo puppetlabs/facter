@@ -22,12 +22,12 @@ describe Facts::El::Networking::Interfaces do
       allow(Facter::Resolvers::NetworkingLinux).to receive(:resolve).with(:interfaces).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Hostname' do
-      expect(Facter::Resolvers::NetworkingLinux).to receive(:resolve).with(:interfaces).and_return(value)
+    it 'calls Facter::Resolvers::NetworkingLinux' do
       fact.call_the_resolver
+      expect(Facter::Resolvers::NetworkingLinux).to have_received(:resolve).with(:interfaces)
     end
 
-    it 'returns hostname fact' do
+    it 'returns networking.interfaces fact' do
       expect(fact.call_the_resolver)
         .to be_an_instance_of(Facter::ResolvedFact)
         .and have_attributes(name: 'networking.interfaces', value: value)

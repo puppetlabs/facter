@@ -1,28 +1,37 @@
 # frozen_string_literal: true
 
 describe Facts::Debian::Kernelversion do
-  shared_examples 'kernelversion fact expectation' do
-    it 'returns the correct kernelversion' do
-      expected_fact = double(Facter::ResolvedFact, name: 'kernelversion', value: value)
-      allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelrelease).and_return(input)
-      allow(Facter::ResolvedFact).to receive(:new).with('kernelversion', value).and_return(expected_fact)
+  subject(:fact) { Facts::Debian::Kernelversion.new }
 
-      fact = Facts::Debian::Kernelversion.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+  let(:resolver_value) { '4.11' }
+
+  before do
+    allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelrelease).and_return(resolver_value)
+  end
+
+  it 'calls Facter::Resolvers::Uname' do
+    fact.call_the_resolver
+    expect(Facter::Resolvers::Uname).to have_received(:resolve).with(:kernelrelease)
+  end
+
+  shared_examples 'kernelversion fact expectation' do
+    it 'returns the correct kernelversion fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'kernelversion', value: fact_value)
     end
   end
 
   describe '#call_the_resolver' do
     context 'when full version includes ' do
-      let(:input) { '4.11.5-19-generic' }
-      let(:value) { '4.11.5' }
+      let(:resolver_value) { '4.11.5-19-generic' }
+      let(:fact_value) { '4.11.5' }
 
       include_examples 'kernelversion fact expectation'
     end
 
     context 'when full version does not have a . delimeter' do
-      let(:input) { '4test' }
-      let(:value) { '4' }
+      let(:resolver_value) { '4test' }
+      let(:fact_value) { '4' }
 
       include_examples 'kernelversion fact expectation'
     end

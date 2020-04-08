@@ -11,8 +11,8 @@ describe Facts::Aix::Networking::Ip do
     end
 
     it 'calls Facter::Resolvers::Networking' do
-      expect(Facter::Resolvers::Aix::Networking).to receive(:resolve).with(:ip)
       fact.call_the_resolver
+      expect(Facter::Resolvers::Aix::Networking).to have_received(:resolve).with(:ip)
     end
 
     it 'returns ipv4 address fact' do

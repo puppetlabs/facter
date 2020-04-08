@@ -1,14 +1,23 @@
 # frozen_string_literal: true
 
 describe Facts::El::Kernelmajversion do
-  shared_examples 'kernelmajversion fact expectation' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'kernelmajversion', value: value)
-      allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelrelease).and_return(value)
-      allow(Facter::ResolvedFact).to receive(:new).with('kernelmajversion', value).and_return(expected_fact)
+  subject(:fact) { Facts::El::Kernelmajversion.new }
 
-      fact = Facts::El::Kernelmajversion.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+  let(:value) { '4.15' }
+
+  before do
+    allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelrelease).and_return(value)
+  end
+
+  it 'calls Facter::Resolvers::Uname' do
+    fact.call_the_resolver
+    expect(Facter::Resolvers::Uname).to have_received(:resolve).with(:kernelrelease)
+  end
+
+  shared_examples 'kernelmajversion fact expectation' do
+    it 'returns the correct kernelmajversion fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'kernelmajversion', value: value)
     end
   end
 

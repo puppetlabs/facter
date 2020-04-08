@@ -11,8 +11,8 @@ describe Facts::Aix::Networking::Primary do
     end
 
     it 'calls Facter::Resolvers::Networking' do
-      expect(Facter::Resolvers::Aix::Networking).to receive(:resolve).with(:primary)
       fact.call_the_resolver
+      expect(Facter::Resolvers::Aix::Networking).to have_received(:resolve).with(:primary)
     end
 
     it 'returns primary interface name' do

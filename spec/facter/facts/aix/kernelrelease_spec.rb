@@ -2,13 +2,22 @@
 
 describe Facts::Aix::Kernelrelease do
   describe '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'kernelrelease', value: '6100-09-00-0000')
-      allow(Facter::Resolvers::OsLevel).to receive(:resolve).with(:build).and_return('6100-09-00-0000')
-      allow(Facter::ResolvedFact).to receive(:new).with('kernelrelease', '6100-09-00-0000').and_return(expected_fact)
+    subject(:fact) { Facts::Aix::Kernelrelease.new }
 
-      fact = Facts::Aix::Kernelrelease.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    let(:value) { '6100-09-00-0000' }
+
+    before do
+      allow(Facter::Resolvers::OsLevel).to receive(:resolve).with(:build).and_return(value)
+    end
+
+    it 'calls Facter::Resolvers::OsLevel' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::OsLevel).to have_received(:resolve).with(:build)
+    end
+
+    it 'returns kernelrelease fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'kernelrelease', value: value)
     end
   end
 end

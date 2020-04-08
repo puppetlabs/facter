@@ -11,8 +11,8 @@ describe Facts::Windows::Networking::Domain do
     end
 
     it 'calls Facter::Resolvers::Networking' do
-      expect(Facter::Resolvers::Networking).to receive(:resolve).with(:domain)
       fact.call_the_resolver
+      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:domain)
     end
 
     it 'returns domain fact' do

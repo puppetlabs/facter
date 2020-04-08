@@ -11,8 +11,8 @@ describe Facts::Windows::Networking::Netmask6 do
     end
 
     it 'calls Facter::Resolvers::Networking' do
-      expect(Facter::Resolvers::Networking).to receive(:resolve).with(:netmask6)
       fact.call_the_resolver
+      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:netmask6)
     end
 
     it 'returns netmask for ipv6 ip address fact' do

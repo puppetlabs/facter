@@ -11,8 +11,8 @@ describe Facts::Windows::Networking::Mac do
     end
 
     it 'calls Facter::Resolvers::Networking' do
-      expect(Facter::Resolvers::Networking).to receive(:resolve).with(:mac)
       fact.call_the_resolver
+      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:mac)
     end
 
     it 'returns mac address fact' do

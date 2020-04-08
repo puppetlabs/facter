@@ -11,8 +11,8 @@ describe Facts::Windows::Networking::Ip6 do
     end
 
     it 'calls Facter::Resolvers::Networking' do
-      expect(Facter::Resolvers::Networking).to receive(:resolve).with(:ip6)
       fact.call_the_resolver
+      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:ip6)
     end
 
     it 'returns ipv6 address fact' do

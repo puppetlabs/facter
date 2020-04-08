@@ -11,8 +11,8 @@ describe Facts::Aix::Networking::Fqdn do
     end
 
     it 'calls Facter::Resolvers::Hostname' do
-      expect(Facter::Resolvers::Hostname).to receive(:resolve).with(:fqdn)
       fact.call_the_resolver
+      expect(Facter::Resolvers::Hostname).to have_received(:resolve).with(:fqdn)
     end
 
     it 'returns fqdn fact' do

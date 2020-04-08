@@ -10,12 +10,12 @@ describe Facts::Sles::Networking::Ip do
       allow(Facter::Resolvers::NetworkingLinux).to receive(:resolve).with(:ip).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Hostname' do
-      expect(Facter::Resolvers::NetworkingLinux).to receive(:resolve).with(:ip).and_return(value)
+    it 'calls Facter::Resolvers::NetworkingLinux' do
       fact.call_the_resolver
+      expect(Facter::Resolvers::NetworkingLinux).to have_received(:resolve).with(:ip)
     end
 
-    it 'returns hostname fact' do
+    it 'returns ipaddress fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array)
         .and contain_exactly(an_object_having_attributes(name: 'networking.ip', value: value),
                              an_object_having_attributes(name: 'ipaddress', value: value, type: :legacy))

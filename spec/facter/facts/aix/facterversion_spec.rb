@@ -2,13 +2,22 @@
 
 describe Facts::Aix::Facterversion do
   describe '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'facterversion', value: 'value')
-      allow(Facter::Resolvers::Facterversion).to receive(:resolve).with(:facterversion).and_return('value')
-      allow(Facter::ResolvedFact).to receive(:new).with('facterversion', 'value').and_return(expected_fact)
+    subject(:fact) { Facts::Aix::Facterversion.new }
 
-      fact = Facts::Aix::Facterversion.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    let(:value) { '4.0.3' }
+
+    before do
+      allow(Facter::Resolvers::Facterversion).to receive(:resolve).with(:facterversion).and_return(value)
+    end
+
+    it 'calls Facter::Resolvers::Facterversion' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::Facterversion).to have_received(:resolve).with(:facterversion)
+    end
+
+    it 'returns facterversion fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'facterversion', value: value)
     end
   end
 end

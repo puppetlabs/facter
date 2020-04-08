@@ -1,26 +1,39 @@
 # frozen_string_literal: true
 
 describe Facts::Solaris::Kernelmajversion do
-  after do
-    Facter::Resolvers::Uname.invalidate_cache
+  subject(:fact) { Facts::Solaris::Kernelmajversion.new }
+
+  let(:resolver_value) { '4.15' }
+
+  before do
+    allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelversion).and_return(resolver_value)
+  end
+
+  it 'calls Facter::Resolvers::Uname' do
+    fact.call_the_resolver
+    expect(Facter::Resolvers::Uname).to have_received(:resolve).with(:kernelversion)
+  end
+
+  shared_examples 'kernelmajversion fact expectation' do
+    it 'returns the correct kernelmajversion fact' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'kernelmajversion', value: fact_value)
+    end
   end
 
   describe '#call_the_resolver' do
-    it 'returns kernel major version by composing versions with the . delimiter' do
-      expected_fact = double(Facter::ResolvedFact, name: 'kernelmajversion', value: '11.4')
-      allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelversion).and_return('11.4.0.15.0')
-      allow(Facter::ResolvedFact).to receive(:new).with('kernelmajversion', '11.4').and_return(expected_fact)
+    context 'when full version is separated by . delimeter' do
+      let(:resolver_value) { '11.4.0.15.0' }
+      let(:fact_value) { '11.4' }
 
-      fact = Facts::Solaris::Kernelmajversion.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+      include_examples 'kernelmajversion fact expectation'
     end
 
-    it 'returns kernel major version with no min version' do
-      expected_fact = double(Facter::ResolvedFact, name: 'kernelmajversion', value: '11test')
-      allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelversion).and_return('11test')
-      allow(Facter::ResolvedFact).to receive(:new).with('kernelmajversion', '11test').and_return(expected_fact)
-      fact = Facts::Solaris::Kernelmajversion.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    context 'when full version does not have a . delimeter' do
+      let(:resolver_value) { '4test' }
+      let(:fact_value) { '4test' }
+
+      include_examples 'kernelmajversion fact expectation'
     end
   end
 end
