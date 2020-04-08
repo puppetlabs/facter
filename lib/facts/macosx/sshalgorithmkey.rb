@@ -4,6 +4,7 @@ module Facts
   module Macosx
     class Sshalgorithmkey
       FACT_NAME = 'ssh.*key'
+      TYPE = :legacy
 
       def call_the_resolver
         facts = []

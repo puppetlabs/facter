@@ -4,6 +4,7 @@ module Facts
   module Windows
     class Scope6Interfaces
       FACT_NAME = 'scope6_.*'
+      TYPE = :legacy
 
       def call_the_resolver
         arr = []

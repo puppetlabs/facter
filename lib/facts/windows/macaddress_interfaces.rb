@@ -4,6 +4,7 @@ module Facts
   module Windows
     class MacaddressInterfaces
       FACT_NAME = 'macaddress_.*'
+      TYPE = :legacy
 
       def call_the_resolver
         arr = []

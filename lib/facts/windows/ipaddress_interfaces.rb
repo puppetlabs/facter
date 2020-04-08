@@ -4,6 +4,7 @@ module Facts
   module Windows
     class IpaddressInterfaces
       FACT_NAME = 'ipaddress_.*'
+      TYPE = :legacy
 
       def call_the_resolver
         arr = []

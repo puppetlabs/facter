@@ -37,7 +37,7 @@ module Facter
         # if fact is already loaded, skip it
         next if @facts.any? { |fact| fact.name == fact_name }
 
-        type = fact_name.end_with?('.*') ? :legacy : :core
+        type = class_name.const_defined?('TYPE') ? class_name::TYPE : :core
         load_fact(fact_name, class_name, type)
         next unless class_name.const_defined?('ALIASES')
 

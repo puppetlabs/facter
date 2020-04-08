@@ -4,6 +4,7 @@ module Facts
   module Windows
     class MtuInterfaces
       FACT_NAME = 'mtu_.*'
+      TYPE = :legacy
 
       def call_the_resolver
         arr = []

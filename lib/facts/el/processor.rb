@@ -4,6 +4,7 @@ module Facts
   module El
     class Processor
       FACT_NAME = 'processor.*'
+      TYPE = :legacy
 
       def call_the_resolver
         arr = []

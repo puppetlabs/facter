@@ -4,6 +4,7 @@ module Facts
   module Windows
     class Netmask6Interfaces
       FACT_NAME = 'netmask6_.*'
+      TYPE = :legacy
 
       def call_the_resolver
         arr = []

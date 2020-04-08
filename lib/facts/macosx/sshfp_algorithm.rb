@@ -4,6 +4,7 @@ module Facts
   module Macosx
     class SshfpAlgorithm
       FACT_NAME = 'sshfp_.*'
+      TYPE = :legacy
 
       def call_the_resolver
         facts = []

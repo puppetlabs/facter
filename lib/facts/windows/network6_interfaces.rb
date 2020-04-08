@@ -4,6 +4,7 @@ module Facts
   module Windows
     class Network6Interfaces
       FACT_NAME = 'network6_.*'
+      TYPE = :legacy
 
       def call_the_resolver
         arr = []
