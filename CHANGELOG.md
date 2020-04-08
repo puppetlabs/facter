@@ -1,5 +1,22 @@
 
 
+## [4.0.15](https://github.com/puppetlabs/facter-ng/tree/4.0.15) (2020-04-08)
+
+[Full Changelog](https://github.com/puppetlabs/facter-ng/compare/4.0.14...4.0.15)
+
+### Added
+
+- \(FACT-2541\) Add TYPE for legacy facts [\#439](https://github.com/puppetlabs/facter-ng/pull/439) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2535\) Allow interpolation of Facter.fact\('fact\_name'\) [\#435](https://github.com/puppetlabs/facter-ng/pull/435) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- \(FACT-2477\) Collect facts from alternative sources [\#422](https://github.com/puppetlabs/facter-ng/pull/422) ([oanatmaria](https://github.com/oanatmaria))
+
+### Fixed
+
+- \(FACT-2513\) Updated how option aliases are displayed [\#434](https://github.com/puppetlabs/facter-ng/pull/434) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- \(FACT-2499\) Facts with aliases are resolved only once [\#429](https://github.com/puppetlabs/facter-ng/pull/429) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+
+
 ## [4.0.14](https://github.com/puppetlabs/facter-ng/tree/4.0.14) (2020-04-01)
 
 [Full Changelog](https://github.com/puppetlabs/facter-ng/compare/4.0.13...4.0.14)
