@@ -10,7 +10,7 @@ module Facter
                  desc: 'Enable color output.'
 
     class_option :config,
-                 aliases: :c,
+                 aliases: '-c',
                  type: :string,
                  desc: 'The location of the config file.'
 
@@ -20,7 +20,7 @@ module Facter
                  desc: 'A directory to use for custom facts.'
 
     class_option :debug,
-                 aliases: :d,
+                 aliases: '-d',
                  type: :boolean,
                  desc: 'Enable debug output.'
 
@@ -31,7 +31,7 @@ module Facter
 
     class_option :help,
                  hide: true,
-                 aliases: :h,
+                 aliases: '-h',
                  type: :boolean,
                  desc: 'Print this help message.'
 
@@ -40,7 +40,7 @@ module Facter
                  desc: 'Output in Hocon format.'
 
     class_option :json,
-                 aliases: :j,
+                 aliases: '-j',
                  type: :boolean,
                  desc: 'Output in JSON format.'
 
@@ -53,7 +53,7 @@ module Facter
                  desc: 'List the names of all cacheable fact groups.'
 
     class_option :log_level,
-                 aliases: :l,
+                 aliases: '-l',
                  type: :string,
                  desc: 'Set logging level. Supported levels are: none, trace, debug, info, warn, error, and fatal.'
 
@@ -90,7 +90,7 @@ module Facter
                  desc: 'Show legacy facts when querying all facts.'
 
     class_option :yaml,
-                 aliases: :y,
+                 aliases: '-y',
                  type: :boolean,
                  desc: 'Output in YAML format.'
 
@@ -100,7 +100,7 @@ module Facter
 
     class_option :puppet,
                  type: :boolean,
-                 aliases: :p,
+                 aliases: '-p',
                  desc: 'Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.'
 
     desc 'query', 'Default method', hide: true
