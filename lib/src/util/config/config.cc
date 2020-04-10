@@ -37,6 +37,13 @@ namespace facter { namespace util { namespace config {
         }
     }
 
+    void load_fact_groups_settings(shared_config hocon_config, po::variables_map& vm) {
+        if (hocon_config && hocon_config->has_path("fact-groups")) {
+            auto fact_groups_settings = hocon_config->get_object("fact-groups")->to_config();
+            po::store(hocon::program_options::parse_hocon<char>(fact_groups_settings, fact_groups_config_options(), true), vm);
+        }
+    }
+
     po::options_description global_config_options() {
         po::options_description global_options("");
         global_options.add_options()
@@ -61,9 +68,15 @@ namespace facter { namespace util { namespace config {
     po::options_description fact_config_options() {
         po::options_description fact_settings("");
         fact_settings.add_options()
-            ("blocklist", po::value<vector<string>>(), "A set of facts to block.")
-            ("cached-custom-facts", po::value<vector<string>>(), "A list of custom facts to be cached.");
+            ("blocklist", po::value<vector<string>>(), "A set of facts to block.");
         return fact_settings;
+    }
+
+    po::options_description fact_groups_config_options() {
+        po::options_description fact_groups_settings("");
+        fact_groups_settings.add_options()
+            ("cached-custom-facts", po::value<vector<string>>(), "A list of custom facts to be cached.");
+        return fact_groups_settings;
     }
 
     unordered_map<string, int64_t> load_ttls(shared_config hocon_config) {
