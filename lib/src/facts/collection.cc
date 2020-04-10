@@ -235,7 +235,9 @@ namespace facter { namespace facts {
                     kvp.second->resolve(*this);
                 }
                 catch (external::external_fact_exception& ex) {
-                    LOG_ERROR("error while processing \"%1%\" for external facts: %2%", kvp.first, ex.what());
+                  LOG_ERROR(
+                      "error while processing \"{1}\" for external facts: {2}",
+                      kvp.first, ex.what());
                 }
             }
         }
