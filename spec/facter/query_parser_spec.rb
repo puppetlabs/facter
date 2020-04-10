@@ -47,6 +47,22 @@ describe Facter::QueryParser do
         contain_exactly(an_instance_of(Facter::SearchedFact).and(having_attributes(fact_class: networking_class)))
     end
 
+    it 'creates a searched fact correctly without name collision' do
+      query_list = ['ssh.rsa.key']
+
+      ssh_class = 'Facter::El::Ssh'
+      ssh_key_class = 'Facter::El::Sshalgorithmkey'
+
+      loaded_fact_ssh_key = instance_spy(Facter::LoadedFact, name: 'ssh.*key', klass: ssh_key_class, type: :legacy)
+      loaded_fact_ssh = instance_spy(Facter::LoadedFact, name: 'ssh', klass: ssh_class, type: :core)
+      loaded_facts = [loaded_fact_ssh_key, loaded_fact_ssh]
+
+      matched_facts = Facter::QueryParser.parse(query_list, loaded_facts)
+
+      expect(matched_facts).to be_an_instance_of(Array).and \
+        contain_exactly(an_instance_of(Facter::SearchedFact).and(having_attributes(fact_class: ssh_class)))
+    end
+
     it 'creates one custom searched fact' do
       query_list = ['custom_fact']
       os_name_class = 'Facter::Ubuntu::OsName'
