@@ -15,7 +15,7 @@ namespace facter { namespace facts { namespace aix   {
     {
         data result;
 
-        auto exec = execute("/usr/bin/oslevel", {"-s"}, 0, { execution_options::trim_output, execution_options::redirect_stderr_to_stdout, execution_options::merge_environment });
+        auto exec = execute("/usr/bin/oslevel", {"-s"});
 
         result.name = "AIX";
         result.release = exec.output;
