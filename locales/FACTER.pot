@@ -578,7 +578,6 @@ msgstr ""
 msgid "searching {1} for external facts."
 msgstr ""
 
-#. warning
 #. debug
 #: lib/src/facts/collection.cc
 msgid "skipping file \"{1}\": {2}"
@@ -601,7 +600,7 @@ msgstr ""
 
 #. error
 #: lib/src/facts/collection.cc
-msgid "error while processing \"%1%\" for external facts: %2%"
+msgid "error while processing \"{1}\" for external facts: {2}"
 msgstr ""
 
 #. debug
