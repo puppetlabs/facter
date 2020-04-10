@@ -8,7 +8,7 @@ def create_facter_gem
     download_and_build_facter_ng
 
     facter_repo_dir = Pathname.new("#{temp_dir}/facter-ng")
-    facter_gem_path = Dir.entries(facter_repo_dir).select { |file| file =~ /facter-ng[0-9]+.[0-9]+.[0-9].gem/ }
+    facter_gem_path = Dir.entries(facter_repo_dir).select { |file| file =~ /facter-ng-[0-9]+.[0-9]+.[0-9].gem/ }
     File.join(facter_repo_dir, facter_gem_path)
   end
 end
