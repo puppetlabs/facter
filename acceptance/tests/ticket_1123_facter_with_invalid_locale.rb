@@ -1,5 +1,6 @@
 test_name 'C89524: facter should not crash with invalid locale setting' do
-  tag 'risk:high'
+  tag 'risk:high', 'facter_3'
+
 
   confine :except, :platform => 'windows'
   confine :except, :platform => /^cisco_/ # See CISCO-43
