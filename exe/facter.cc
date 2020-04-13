@@ -204,6 +204,7 @@ int main(int argc, char **argv)
                 load_global_settings(hocon_conf, vm);
                 load_cli_settings(hocon_conf, vm);
                 load_fact_settings(hocon_conf, vm);
+                load_fact_groups_settings(hocon_conf, vm);
                 ttls = load_ttls(hocon_conf);
             }
 
