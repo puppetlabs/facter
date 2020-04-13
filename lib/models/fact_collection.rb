@@ -8,7 +8,7 @@ module Facter
 
     def build_fact_collection!(facts)
       facts.each do |fact|
-        next if fact.type == :core && fact.value.nil?
+        next if %i[core legacy].include?(fact.type) && fact.value.nil?
 
         bury_fact(fact)
       end
