@@ -1,0 +1,19 @@
+CuDv:
+        name = "hd5"
+        status = 0
+        chgstatus = 1
+        ddins = ""
+        location = ""
+        parent = "rootvg"
+        connwhere = ""
+        PdDvLn = "logical_volume/lvsubclass/lvtype"
+
+CuDv:
+        name = "hd6"
+        status = 0
+        chgstatus = 1
+        ddins = ""
+        location = ""
+        parent = "rootvg"
+        connwhere = ""
+        PdDvLn = "logical_volume/lvsubclass/lvtype"

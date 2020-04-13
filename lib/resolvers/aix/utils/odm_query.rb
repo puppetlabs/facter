@@ -27,9 +27,9 @@ module Facter
     def execute
       result = nil
       REPOS.each do |repo|
-        break if result
+        break if result && !result.empty?
 
-        result, _s = Open3.capture2("#{query} #{repo}")
+        result, _stderr, _s = Open3.capture3("#{query} #{repo}")
       end
       result
     end

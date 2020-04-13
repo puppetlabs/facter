@@ -1,0 +1,13 @@
+LOGICAL VOLUME:     hd5                    VOLUME GROUP:   rootvg
+LV IDENTIFIER:      00fa684e00004c00000001715c6c0708.1 PERMISSION:     read/write
+VG STATE:           active/complete        LV STATE:       closed/syncd
+TYPE:               boot                   WRITE VERIFY:   off
+MAX LPs:            512                    PP SIZE:        32 megabyte(s)
+COPIES:             1                      SCHED POLICY:   parallel
+LPs:                1                      PPs:            1
+STALE PPs:          0                      BB POLICY:      non-relocatable
+INTER-POLICY:       minimum                RELOCATABLE:    no
+INTRA-POLICY:       edge                   UPPER BOUND:    32
+MOUNT POINT:        N/A                    LABEL:          primary_bootlv
+MIRROR WRITE CONSISTENCY: on/ACTIVE
+EACH LP COPY ON A SEPARATE PV ?: yes
