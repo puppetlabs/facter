@@ -3,16 +3,34 @@
 describe Facter::Resolvers::Linux::Filesystems do
   let(:systems) { 'ext2,ext3,ext4,xfs' }
 
-  before do
-    allow(File).to receive(:readable?).with('/proc/filesystems').and_return(true)
-    allow(File).to receive(:read)
-      .with('/proc/filesystems')
-      .and_return(load_fixture('filesystems').read)
+  after do
+    Facter::Resolvers::Linux::Filesystems.invalidate_cache
   end
 
-  it 'returns systems' do
-    result = Facter::Resolvers::Linux::Filesystems.resolve(:systems)
+  context 'when filesystems is readable' do
+    before do
+      allow(Facter::Util::FileHelper).to receive(:safe_readlines)
+        .with('/proc/filesystems', nil)
+        .and_return(load_fixture('filesystems').readlines)
+    end
 
-    expect(result).to eq(systems)
+    it 'returns systems' do
+      result = Facter::Resolvers::Linux::Filesystems.resolve(:systems)
+
+      expect(result).to eq(systems)
+    end
+  end
+
+  context 'when filesystems is not readable' do
+    before do
+      allow(Facter::Util::FileHelper).to receive(:safe_readlines)
+        .with('/proc/filesystems', nil).and_return(nil)
+    end
+
+    it 'returns nil' do
+      result = Facter::Resolvers::Linux::Filesystems.resolve(:systems)
+
+      expect(result).to be(nil)
+    end
   end
 end

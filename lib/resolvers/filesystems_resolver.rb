@@ -16,11 +16,11 @@ module Facter
           end
 
           def read_filesystems(fact_name)
-            return unless File.readable?('/proc/filesystems')
+            output = Util::FileHelper.safe_readlines('/proc/filesystems', nil)
+            return unless output
 
-            output = File.read('/proc/filesystems')
             filesystems = []
-            output.each_line do |line|
+            output.each do |line|
               tokens = line.split(' ')
               filesystems << tokens if tokens.size == 1
             end

@@ -19,9 +19,9 @@ module Facter
           end
 
           def read_cpuinfo(fact_name)
-            return unless File.readable?('/proc/cpuinfo')
+            cpuinfo_output = Util::FileHelper.safe_readlines('/proc/cpuinfo')
+            return if cpuinfo_output.empty?
 
-            cpuinfo_output = File.read('/proc/cpuinfo')
             read_processors(cpuinfo_output) # + model names
 
             @fact_list[:physical_count] = @fact_list[:physical_processors].uniq.length
@@ -32,7 +32,7 @@ module Facter
             @fact_list[:processors] = 0
             @fact_list[:models] = []
             @fact_list[:physical_processors] = []
-            cpuinfo_output.each_line do |line|
+            cpuinfo_output.each do |line|
               tokens = line.split(':')
               count_processors(tokens)
               construct_models_list(tokens)

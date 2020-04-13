@@ -23,9 +23,8 @@ module Facter
               @fact_list[:disks].each do |disk, value|
                 file_path = File.join(DIR, disk, file)
 
-                next unless File.readable?(file_path)
-
-                result = File.read(file_path).strip
+                result = Util::FileHelper.safe_read(file_path).strip
+                next if result.empty?
 
                 # Linux always considers sectors to be 512 bytes long independently of the devices real block size.
                 value[key] = file =~ /size/ ? construct_size(value, result) : result

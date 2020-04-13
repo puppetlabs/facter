@@ -25,15 +25,12 @@ module Facter
         end
 
         def read_os_release_file(fact_name)
-          unless File.readable?('/etc/os-release')
-            @fact_list[:name] = nil
-            return
-          end
+          output = Util::FileHelper.safe_readlines('/etc/os-release')
+          return @fact_list[:name] = nil if output.empty?
 
-          output = File.read('/etc/os-release')
           pairs = []
 
-          output.each_line do |line|
+          output.each do |line|
             pairs << line.strip.delete('"').split('=', 2)
           end
 

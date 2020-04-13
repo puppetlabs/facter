@@ -16,9 +16,7 @@ module Facter
           end
 
           def root_device
-            return unless File.readable?('/proc/cmdline')
-
-            cmdline = File.read('/proc/cmdline')
+            cmdline = Util::FileHelper.safe_read('/proc/cmdline')
             match = cmdline.match(/root=([^\s]+)/)
             match&.captures&.first
           end

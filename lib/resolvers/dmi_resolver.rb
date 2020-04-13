@@ -28,15 +28,15 @@ module Facter
             @fact_list.fetch(fact_name) { read_facts(fact_name) }
           end
 
-          # File.read("/sys/class/dmi/id/#{file}")
           def read_facts(fact_name)
             files = %w[bios_date bios_vendor bios_version board_vendor board_name board_serial
                        chassis_asset_tag chassis_type sys_vendor product_name product_serial
                        product_uuid]
             return unless File.directory?('/sys/class/dmi')
 
-            if files.include?(fact_name.to_s) && File.readable?("/sys/class/dmi/id/#{fact_name}")
-              @fact_list[fact_name] = File.read("/sys/class/dmi/id/#{fact_name}").strip
+            file_content = Util::FileHelper.safe_read("/sys/class/dmi/id/#{fact_name}", nil)
+            if files.include?(fact_name.to_s) && file_content
+              @fact_list[fact_name] = file_content.strip
               chassis_to_name(@fact_list[fact_name]) if fact_name == :chassis_type
 
             end

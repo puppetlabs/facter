@@ -4,8 +4,7 @@ describe Facter::Resolvers::Hostname do
   describe '#resolve' do
     before do
       allow(Open3).to receive(:capture2).with('hostname').and_return(host)
-      allow(File).to receive(:readable?).with('/etc/resolv.conf').and_return(true)
-      allow(File).to receive(:read)
+      allow(Facter::Util::FileHelper).to receive(:safe_read)
         .with('/etc/resolv.conf')
         .and_return("nameserver 10.10.0.10\nnameserver 10.10.1.10\nsearch baz\ndomain baz\n")
     end
@@ -57,6 +56,18 @@ describe Facter::Resolvers::Hostname do
 
       it 'detects that hostname is nil' do
         expect(Facter::Resolvers::Hostname.resolve(:hostname)).to be(nil)
+      end
+    end
+
+    context 'when /etc/resolve.conf is inaccessible' do
+      let(:host) { 'foo' }
+
+      before do
+        allow(Facter::Util::FileHelper).to receive(:safe_read).with('/etc/resolv.conf').and_return('')
+      end
+
+      it 'detects that domain is nil' do
+        expect(Facter::Resolvers::Hostname.resolve(:domain)).to be(nil)
       end
     end
   end

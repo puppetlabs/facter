@@ -25,17 +25,17 @@ require "#{ROOT_DIR}/lib/framework/core/options"
 require "#{ROOT_DIR}/lib/framework/logging/multilogger"
 require "#{ROOT_DIR}/lib/framework/logging/logger"
 
+require "#{ROOT_DIR}/lib/util/file_helper"
+
 require "#{ROOT_DIR}/lib/resolvers/base_resolver"
 require "#{ROOT_DIR}/lib/framework/detector/os_detector"
 
 require "#{ROOT_DIR}/lib/framework/config/config_reader"
 require "#{ROOT_DIR}/lib/framework/config/block_list"
-require "#{ROOT_DIR}/lib/resolvers/utils/fingerprint.rb"
-require "#{ROOT_DIR}/lib/resolvers/utils/ssh.rb"
-require "#{ROOT_DIR}/lib/resolvers/utils/filesystem_helper.rb"
 
 load_dir(['config'])
 
+load_lib_dirs('resolvers', 'utils')
 load_lib_dirs('resolvers')
 load_lib_dirs('facts_utils')
 load_lib_dirs('framework', 'core')

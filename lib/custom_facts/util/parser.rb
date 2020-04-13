@@ -50,7 +50,7 @@ module LegacyFacter
         end
 
         def content
-          @content ||= File.read(filename)
+          @content ||= Facter::Util::FileHelper.safe_read(filename, nil)
         end
 
         # results on the base class is really meant to be just an exception handler

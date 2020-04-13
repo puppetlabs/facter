@@ -34,8 +34,7 @@ describe Facter::Resolvers::Linux::Mountpoints do
   end
 
   before do
-    allow(File).to receive(:readable?).with('/proc/cmdline').and_return(true)
-    allow(File).to receive(:read)
+    allow(Facter::Util::FileHelper).to receive(:safe_read)
       .with('/proc/cmdline')
       .and_return(load_fixture('cmdline_root_device').read)
     allow(Sys::Filesystem).to receive(:mounts).and_return([mount])
@@ -69,6 +68,19 @@ describe Facter::Resolvers::Linux::Mountpoints do
     it 'looks up the actual device if /dev/root' do
       result = Facter::Resolvers::Linux::Mountpoints.resolve(:mountpoints)
       expect(result.first[:device]).to eq('/dev/mmcblk0p2')
+    end
+
+    context 'when /proc/cmdline is not accessible' do
+      before do
+        allow(Facter::Util::FileHelper).to receive(:safe_read)
+          .with('/proc/cmdline')
+          .and_return('')
+      end
+
+      it 'returns device as nil' do
+        result = Facter::Resolvers::Linux::Mountpoints.resolve(:mountpoints)
+        expect(result.first[:device]).to be(nil)
+      end
     end
   end
 end

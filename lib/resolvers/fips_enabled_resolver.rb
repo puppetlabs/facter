@@ -16,10 +16,7 @@ module Facter
           end
 
           def read_fips_file(fact_name)
-            return @fact_list[fact_name] = false unless File.directory?('/proc/sys/crypto') ||
-                                                        File.readable?('/proc/sys/crypto/fips_enabled')
-
-            file_output = File.read('/proc/sys/crypto/fips_enabled')
+            file_output = Util::FileHelper.safe_read('/proc/sys/crypto/fips_enabled')
             @fact_list[:fips_enabled] = file_output.strip == '1'
             @fact_list[fact_name]
           end

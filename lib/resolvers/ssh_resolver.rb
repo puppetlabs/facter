@@ -24,9 +24,10 @@ module Facter
             next unless File.directory?(file_path)
 
             @file_names.each do |file_name|
-              next unless FileTest.file?(File.join(file_path, file_name))
+              file_content = Util::FileHelper.safe_read(File.join(file_path, file_name), nil)
+              next unless file_content
 
-              key_type, key = File.read(File.join(file_path, file_name)).split(' ')
+              key_type, key = file_content.split(' ')
               key_name = determine_ssh_key_name(key_type)
               ssh_list << create_ssh(key_name, key_type, key)
             end

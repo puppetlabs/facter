@@ -8,8 +8,12 @@ describe Facter::Resolvers::Linux::DmiBios do
 
     before do
       allow(File).to receive(:directory?).with(test_dir).and_return(true)
-      allow(File).to receive(:readable?).with("/sys/class/dmi/id/#{file}").and_return(true)
-      allow(File).to receive(:read).with("/sys/class/dmi/id/#{file}").and_return(file_content)
+      allow(Facter::Util::FileHelper).to receive(:safe_read)
+        .with("/sys/class/dmi/id/#{file}", nil).and_return(file_content)
+    end
+
+    after do
+      Facter::Resolvers::Linux::DmiBios.invalidate_cache
     end
 
     context 'when bios_date file exists' do
@@ -117,6 +121,24 @@ describe Facter::Resolvers::Linux::DmiBios do
 
       it 'returns product_uuid' do
         expect(resolver.resolve(:product_uuid)).to eq(file_content)
+      end
+    end
+
+    context 'when product_serial file does not exists' do
+      let(:file_content) { nil }
+      let(:file) { 'product_serial' }
+
+      it 'returns nil' do
+        expect(resolver.resolve(:product_serial)).to be(nil)
+      end
+    end
+
+    context 'when product_uuid file does not exist' do
+      let(:file_content) { nil }
+      let(:file) { 'product_uuid' }
+
+      it 'returns nil' do
+        expect(resolver.resolve(:product_uuid)).to be(nil)
       end
     end
   end
