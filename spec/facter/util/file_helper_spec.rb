@@ -80,11 +80,11 @@ describe Facter::Util::FileHelper do
         expect(File).not_to have_received(:read)
       end
 
-      it 'logs a debug message' do
-        file_helper.safe_read(path)
-
-        expect(logger).to have_received(:debug).with(error_message)
-      end
+      # it 'logs a debug message' do
+      #   file_helper.safe_read(path)
+      #
+      #   expect(logger).to have_received(:debug).with(error_message)
+      # end
     end
   end
 
@@ -142,11 +142,11 @@ describe Facter::Util::FileHelper do
         expect(File).not_to have_received(:readlines)
       end
 
-      it 'logs a debug message' do
-        file_helper.safe_read(path)
-
-        expect(logger).to have_received(:debug).with(error_message)
-      end
+      # it 'logs a debug message' do
+      #   file_helper.safe_read(path)
+      #
+      #   expect(logger).to have_received(:debug).with(error_message)
+      # end
     end
   end
 end
