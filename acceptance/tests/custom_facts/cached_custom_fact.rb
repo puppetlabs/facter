@@ -27,7 +27,9 @@ test_name 'ttls configured custom facts files creates cache file and reads cache
       ttls : [
           { "cached-custom-facts" : 3 days }
       ]
-      cached-custom-facts : [ "#{custom_fact_name}" ]
+    }
+    fact-groups : {
+      cached-custom-facts : ["#{custom_fact_name}"],
     }
   FACTER_CONF
 
