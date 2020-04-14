@@ -53,4 +53,8 @@ RSpec.configure do |config|
     # exist to raise, protecting against incorrectly spelt names.
     mocks.verify_doubled_constant_names = true
   end
+
+  config.after do
+    Facter::OptionStore.reset
+  end
 end

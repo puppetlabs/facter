@@ -11,8 +11,20 @@ describe Facter do
   let(:fact_manager_spy) { instance_spy(Facter::FactManager) }
   let(:fact_collection_spy) { instance_spy(Facter::FactCollection) }
   let(:key_error) { KeyError.new('key error') }
+  let(:config_reader_double) { double(Facter::ConfigReader) }
+  let(:block_list_double) { double(Facter::BlockList) }
 
   before do
+    allow(Facter::ConfigReader).to receive(:init).and_return(config_reader_double)
+    allow(config_reader_double).to receive(:cli).and_return(nil)
+    allow(config_reader_double).to receive(:global).and_return(nil)
+    allow(config_reader_double).to receive(:ttls).and_return([])
+    allow(config_reader_double).to receive(:block_list).and_return([])
+
+    allow(Facter::BlockList).to receive(:instance).and_return(block_list_double)
+    allow(block_list_double).to receive(:blocked_facts).and_return([])
+    allow(block_list_double).to receive(:block_list).and_return([])
+
     Facter.instance_variable_set(:@logger, logger)
     Facter.clear
     allow(Facter::SessionCache).to receive(:invalidate_all_caches)
@@ -85,13 +97,12 @@ describe Facter do
       end
 
       it 'returns no fact and status 1' do
-        allow(logger).to receive(:error).with('fact "os.name" does not exist.', true)
-
-        user_query = 'os.name'
+        user_query = ['os.name', 'missing_fact']
         expected_json_output = '{}'
 
         allow(fact_manager_spy).to receive(:resolve_facts).and_return([])
-        allow(Facter::Options.instance).to receive(:[]).with(:strict).and_return(true)
+        allow(Facter::Options).to receive(:[]).and_call_original
+        allow(Facter::Options).to receive(:[]).with(:strict).and_return(true)
         allow(OsDetector).to receive(:detect).and_return(:solaris)
 
         json_fact_formatter = double(Facter::JsonFactFormatter)
@@ -99,7 +110,7 @@ describe Facter do
 
         allow(Facter::FormatterFactory).to receive(:build).and_return(json_fact_formatter)
 
-        formatted_facts = Facter.to_user_output({}, user_query)
+        formatted_facts = Facter.to_user_output({}, *user_query)
         expect(formatted_facts).to eq([expected_json_output, 1])
       end
 
@@ -107,7 +118,8 @@ describe Facter do
         user_query = 'os.name'
         expected_json_output = '{"os" : {"name": "ubuntu"}'
 
-        allow(Facter::Options.instance).to receive(:[]).with(:strict).and_return(true)
+        allow(Facter::Options).to receive(:[]).with(:anything)
+        allow(Facter::Options).to receive(:[]).with(:strict).and_return(true)
         allow(fact_manager_spy).to receive(:resolve_facts).and_return([os_fact])
 
         json_fact_formatter = double(Facter::JsonFactFormatter)
@@ -335,7 +347,7 @@ describe Facter do
     let(:message) { 'test' }
 
     before do
-      allow(Facter::Options.instance).to receive(:[]).with(:debug).and_return(is_debug)
+      allow(Facter::Options).to receive(:[]).with(:debug).and_return(is_debug)
     end
 
     context 'when log level is debug' do
@@ -359,21 +371,15 @@ describe Facter do
   end
 
   describe '#debugging' do
-    let(:priority_options) { {} }
-
-    before do
-      allow(Facter::Options.instance).to receive(:priority_options).and_return(priority_options)
-    end
-
     it 'sets log level to debug' do
-      expect(priority_options).to receive(:[]=).with(:debug, true)
+      expect(Facter::Options).to receive(:[]=).with(:debug, true)
       Facter.debugging(true)
     end
   end
 
   describe '#debugging?' do
     it 'returns that log_level is not debug' do
-      expect(Facter::Options.instance).to receive(:[]).with(:debug).and_return(false)
+      expect(Facter::Options).to receive(:[]).with(:debug).and_return(false)
       Facter.debugging?
     end
   end

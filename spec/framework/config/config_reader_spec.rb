@@ -1,126 +1,162 @@
 # frozen_string_literal: true
 
 describe Facter::ConfigReader do
+  subject(:config_reader) { Facter::ConfigReader }
+
+  let(:linux_default_path) { File.join('/', 'etc', 'puppetlabs', 'facter', 'facter.conf') }
+  let(:windows_default_path) { File.join('C:', 'ProgramData', 'PuppetLabs', 'facter', 'etc', 'facter.conf') }
+
   before do
-    mock_os(:linux)
+    allow(OsDetector.instance).to receive(:identifier).and_return(os)
   end
 
-  let(:linux_config_path) { '/etc/puppetlabs/facter/facter.conf' }
-
-  describe '#refresh_config' do
-    it 'uses facter.conf' do
-      allow(File).to receive(:readable?).with(linux_config_path).and_return(true)
-      expect(Hocon).to receive(:load).with(linux_config_path)
-
-      Facter::ConfigReader.new
+  describe '#init' do
+    before do
+      allow(File).to receive(:readable?).and_return(false)
     end
 
-    it 'uses provided existing file' do
-      allow(File).to receive(:readable?).with('/my_conf.conf').and_return(true)
-      expect(Hocon).to receive(:load).with('/my_conf.conf')
-      Facter::ConfigReader.new('/my_conf.conf')
+    context 'without config_path sent' do
+      context 'with os linux' do
+        let(:os) { :linux }
+
+        it 'calls refresh_config with linux path' do
+          config_reader.init
+          expect(File).to have_received(:readable?).with(linux_default_path)
+        end
+      end
+
+      context 'with os windows' do
+        let(:os) { :windows }
+
+        it 'calls refresh_config with windows path' do
+          config_reader.init
+          expect(File).to have_received(:readable?).with(windows_default_path)
+        end
+      end
     end
 
-    it 'uses provided inexistent file' do
-      allow(File).to receive(:readable?).with('/my_conf.conf').and_return(false)
-      expect(Hocon).not_to receive(:load)
-      Facter::ConfigReader.new('/my_conf.conf')
+    context 'with config_path sent' do
+      let(:os) { :linux }
+
+      it 'calls refresh_config with custom path' do
+        config_reader.init('/path/to/config/file')
+        expect(File).to have_received(:readable?).with('/path/to/config/file')
+      end
     end
   end
 
   describe '#block_list' do
+    let(:os) { :linux }
+
     before do
-      allow(File).to receive(:readable?).with(linux_config_path).and_return(true)
+      allow(File).to receive(:readable?).and_return(true)
+      allow(Hocon).to receive(:load).and_return(config)
     end
 
-    it 'loads block list' do
-      allow(Hocon).to receive(:load).with(linux_config_path).and_return('facts' => { 'blocklist' => %w[group1 fact1] })
+    context 'with empty config file' do
+      let(:config) { {} }
 
-      config_reader = Facter::ConfigReader.new
-      expect(config_reader.block_list).to eq(%w[group1 fact1])
+      it 'returns nil' do
+        config_reader.init
+
+        expect(config_reader.block_list).to eq(nil)
+      end
     end
 
-    it 'finds no facts' do
-      allow(Hocon).to receive(:load).with(linux_config_path).and_return({})
-      config_reader = Facter::ConfigReader.new
+    context 'with blocklist in config file' do
+      let(:config) { { 'facts' => { 'blocklist' => %w[group1 fact1] } } }
 
-      expect(config_reader.ttls).to be_nil
-    end
-
-    it 'finds no block list' do
-      allow(Hocon).to receive(:load).with(linux_config_path).and_return({})
-      config_reader = Facter::ConfigReader.new
-      expect(config_reader.block_list).to be_nil
+      it 'returns blocklisted facts' do
+        config_reader.init
+        expect(config_reader.block_list).to eq(%w[group1 fact1])
+      end
     end
   end
 
   describe '#ttls' do
+    let(:os) { :linux }
+
     before do
-      allow(File).to receive(:readable?).with(linux_config_path).and_return(true)
+      allow(File).to receive(:readable?).and_return(true)
+      allow(Hocon).to receive(:load).and_return(config)
     end
 
-    it 'loads ttls' do
-      allow(Hocon)
-        .to receive(:load)
-        .with(linux_config_path)
-        .and_return('facts' => { 'ttls' => [{ 'fact_name' => '10 days' }] })
+    context 'with empty config file' do
+      let(:config) { {} }
 
-      config_reader = Facter::ConfigReader.new
-      expect(config_reader.ttls).to eq([{ 'fact_name' => '10 days' }])
+      it 'returns nil' do
+        config_reader.init
+
+        expect(config_reader.ttls).to eq(nil)
+      end
     end
 
-    it 'finds no facts' do
-      allow(Hocon).to receive(:load).with(linux_config_path).and_return({})
-      config_reader = Facter::ConfigReader.new
+    context 'with ttls in config file' do
+      let(:config) { { 'facts' => { 'ttls' => [{ 'fact_name' => '10 days' }] } } }
 
-      expect(config_reader.ttls).to be_nil
-    end
+      it 'returns blocklisted facts' do
+        config_reader.init
 
-    it 'finds no ttls' do
-      allow(Hocon).to receive(:load).with(linux_config_path).and_return('facts' => {})
-      config_reader = Facter::ConfigReader.new
-
-      expect(config_reader.ttls).to be_nil
+        expect(config_reader.ttls).to eq([{ 'fact_name' => '10 days' }])
+      end
     end
   end
 
   describe '#global' do
+    let(:os) { :linux }
+
     before do
-      allow(File).to receive(:readable?).with(linux_config_path).and_return(true)
+      allow(File).to receive(:readable?).and_return(true)
+      allow(Hocon).to receive(:load).and_return(config)
     end
 
-    it 'loads global config' do
-      allow(Hocon).to receive(:load).with(linux_config_path).and_return('global' => 'global_config')
-      config_reader = Facter::ConfigReader.new
+    context 'with empty config file' do
+      let(:config) { {} }
 
-      expect(config_reader.global).to eq('global_config')
+      it 'returns nil' do
+        config_reader.init
+
+        expect(config_reader.global).to eq(nil)
+      end
     end
 
-    it 'finds no global config' do
-      allow(Hocon).to receive(:load).with(linux_config_path).and_return({})
-      config_reader = Facter::ConfigReader.new
+    context 'with global section in config file' do
+      let(:config) { { 'global' => 'global_config' } }
 
-      expect(config_reader.global).to be_nil
+      it 'returns blocklisted facts' do
+        config_reader.init
+
+        expect(config_reader.global).to eq('global_config')
+      end
     end
   end
 
   describe '#cli' do
+    let(:os) { :linux }
+
     before do
-      allow(File).to receive(:readable?).with(linux_config_path).and_return(true)
+      allow(File).to receive(:readable?).and_return(true)
+      allow(Hocon).to receive(:load).and_return(config)
     end
 
-    it 'loads cli config' do
-      allow(Hocon).to receive(:load).with(linux_config_path).and_return('cli' => 'cli_config')
-      config_reader = Facter::ConfigReader.new
+    context 'with empty config file' do
+      let(:config) { {} }
 
-      expect(config_reader.cli).to eq('cli_config')
+      it 'returns nil' do
+        config_reader.init
+
+        expect(config_reader.cli).to eq(nil)
+      end
     end
 
-    it 'finds no global config' do
-      allow(Hocon).to receive(:load).with(linux_config_path).and_return({})
-      config_reader = Facter::ConfigReader.new
+    context 'with cli section in config file' do
+      let(:config) { { 'cli' => 'cli_config' } }
 
-      expect(config_reader.cli).to be_nil
+      it 'returns blocklisted facts' do
+        config_reader.init
+
+        expect(config_reader.cli).to eq('cli_config')
+      end
     end
   end
 end

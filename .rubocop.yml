@@ -93,6 +93,7 @@ Metrics/ClassLength:
     - 'lib/custom_facts/util/fact.rb'
     - 'lib/resolvers/windows/networking_resolver.rb'
     - 'lib/custom_facts/util/collection.rb'
+    - 'lib/framework/core/options/option_store.rb'
 
 Style/DoubleNegation:
   Exclude:

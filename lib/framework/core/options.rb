@@ -2,70 +2,63 @@
 
 module Facter
   class Options
-    include Facter::DefaultOptions
-    include Facter::ConfigFileOptions
-    include Facter::PriorityOptions
-    include Facter::HelperOptions
-    include Facter::ValidateOptions
+    class << self
+      def cli?
+        OptionStore.cli
+      end
 
-    include Singleton
+      def get
+        OptionStore.all
+      end
 
-    attr_accessor :priority_options
+      def [](key)
+        OptionStore.send(key.to_sym)
+      end
 
-    def initialize
-      @options = {}
-      @priority_options = {}
-    end
+      def []=(key, value)
+        OptionStore.send("#{key}=".to_sym, value)
+      end
 
-    def refresh(user_query = [])
-      @user_query = user_query
-      initialize_options
+      def custom_dir?
+        OptionStore.custom_dir && OptionStore.custom_facts
+      end
 
-      @options
-    end
+      def custom_dir
+        OptionStore.custom_dir.flatten
+      end
 
-    def get
-      @options
-    end
+      def external_dir?
+        OptionStore.external_dir && OptionStore.external_facts
+      end
 
-    def [](option)
-      @options.fetch(option, nil)
-    end
+      def external_dir
+        OptionStore.external_dir
+      end
 
-    def custom_dir?
-      @options[:custom_dir] && @options[:custom_facts]
-    end
+      def init
+        OptionStore.cli = false
+        ConfigFileOptions.init
+        store(ConfigFileOptions.get)
+      end
 
-    def custom_dir
-      @options[:custom_dir]
-    end
+      def init_from_cli(cli_options = {}, user_query = nil)
+        Facter::OptionStore.cli = true
+        Facter::OptionStore.show_legacy = false
+        Facter::OptionStore.user_query = user_query
 
-    def external_dir?
-      @options[:external_dir] && @options[:external_facts]
-    end
+        ConfigFileOptions.init(cli_options[:config])
+        store(ConfigFileOptions.get)
+        store(cli_options)
 
-    def external_dir
-      @options[:external_dir]
-    end
+        Facter::OptionsValidator.validate_configs(get)
+      end
 
-    def self.method_missing(name, *args, &block)
-      Facter::Options.instance.send(name.to_s, *args, &block)
-    rescue NoMethodError
-      super
-    end
-
-    def self.respond_to_missing?(name, include_private) end
-
-    private
-
-    def initialize_options
-      @options = { config: @priority_options[:config] }
-      augment_with_defaults!
-      augment_with_to_hash_defaults! if @priority_options[:to_hash]
-      augment_with_config_file_options!(@options[:config])
-      augment_with_priority_options!(@priority_options)
-      validate_configs
-      augment_with_helper_options!(@user_query)
+      def store(options)
+        options.each do |key, value|
+          value = '' if key == 'log_level' && value == 'log_level'
+          OptionStore.set(key, value)
+        end
+      end
     end
   end
 end

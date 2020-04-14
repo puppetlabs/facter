@@ -19,9 +19,9 @@ module Facter
     private
 
     def filter_legacy_facts!(resolved_facts)
-      return if Options[:show_legacy]
+      return unless !Options[:show_legacy] && Options[:user_query].empty?
 
-      resolved_facts.reject!(&:legacy?) unless Options[:user_query]
+      resolved_facts.reject!(&:legacy?)
     end
   end
 end

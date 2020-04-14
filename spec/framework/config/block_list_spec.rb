@@ -1,43 +1,62 @@
 # frozen_string_literal: true
 
 describe Facter::BlockList do
+  subject(:block_list) { Facter::BlockList }
+
+  let(:config_reader) { double(Facter::ConfigReader) }
+
   before do
-    Singleton.__init__(Facter::BlockList)
+    allow(Facter::ConfigReader).to receive(:init).and_return(config_reader)
+    allow(config_reader).to receive(:block_list).and_return([])
+  end
+
+  describe '#initialize' do
+    it 'sets @block_groups_file_path to parameter value' do
+      blk_list = block_list.new('path/to/block/groups')
+
+      expect(blk_list.instance_variable_get(:@block_groups_file_path)).to eq('path/to/block/groups')
+    end
+
+    it 'sets @block_groups_file_path to default path' do
+      blk_list = block_list.new
+
+      expect(blk_list.instance_variable_get(:@block_groups_file_path)).to eq(File.join(ROOT_DIR, 'block_groups.conf'))
+    end
   end
 
   describe '#blocked_facts' do
-    context 'when it finds block group file' do
+    context 'with block_list' do
       before do
         allow(File).to receive(:readable?).and_return(true)
         allow(Hocon).to receive(:load)
           .with(File.join(ROOT_DIR, 'block_groups.conf'))
           .and_return('blocked_group' => %w[fact1 fact2])
-
-        config_reader = double(Facter::ConfigReader)
-        allow(Facter::ConfigReader).to receive(:new).and_return(config_reader)
         allow(config_reader).to receive(:block_list).and_return(%w[blocked_group blocked_fact])
       end
 
-      it 'converts block to facts' do
-        blocked_facts = Facter::BlockList.instance.blocked_facts
+      it 'returns a list of blocked facts' do
+        blk_list = block_list.new
 
-        expect(blocked_facts).to eq(%w[fact1 fact2 blocked_fact])
+        expect(blk_list.blocked_facts).to eq(%w[fact1 fact2 blocked_fact])
       end
     end
 
-    context 'when it does not find block group file' do
+    context 'without block_list' do
       before do
+        allow(File).to receive(:readable?).and_return(false)
+        allow(config_reader).to receive(:block_list).and_return([])
+      end
+
+      it 'finds no block group file' do
         allow(File).to receive(:readable?).and_return(false)
 
         config_reader = double(Facter::ConfigReader)
         allow(Facter::ConfigReader).to receive(:new).and_return(config_reader)
         allow(config_reader).to receive(:block_list).and_return(nil)
-      end
 
-      it 'returns empty array' do
-        blocked_facts = Facter::BlockList.instance.blocked_facts
+        blk_list = block_list.new
 
-        expect(blocked_facts).to eq([])
+        expect(blk_list.blocked_facts).to eq([])
       end
     end
   end

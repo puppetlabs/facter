@@ -33,11 +33,51 @@ module Facter
     end
 
     def self.write_error_and_exit(message)
-      Options.augment_with_priority_options!(is_cli: true)
       log = Facter::Log.new(self)
       log.error(message, true)
-      Cli.start(['--help'])
+      Facter::Cli.start(['--help'])
+
       exit 1
+    end
+
+    def self.validate_configs(options)
+      conflicting_configs(options).each do |op|
+        next unless op.values[0] && op.values[1]
+
+        message = "#{op.keys[0]} and #{op.keys[1]} options conflict: please specify only one"
+        write_error_and_exit(message)
+      end
+      validate_log_options(options)
+    end
+
+    def self.conflicting_configs(options)
+      no_ruby = !options[:ruby]
+      no_custom_facts = !options[:custom_facts]
+      puppet = options[:puppet]
+      custom_dir = options[:custom_dir].nil? ? false : options[:custom_dir].any?
+      external_dir = options[:external_dir].nil? ? false : options[:external_dir].any?
+
+      [
+        { 'no-ruby' => no_ruby, 'custom-dir' => custom_dir },
+        { 'no-external-facts' => !options[:external_facts], 'external-dir' => external_dir },
+        { 'no-custom-facts' => no_custom_facts, 'custom-dir' => custom_dir },
+        { 'no-ruby' => no_ruby, 'puppet' => puppet },
+        { 'no-custom-facts' => no_custom_facts, 'puppet' => puppet }
+      ]
+    end
+
+    def self.validate_log_options(options)
+      # TODO: find a better way to do this
+      return if options[:debug] == true && options[:log_level] == :debug
+      return if options[:verbose] == true && options[:log_level] == :info
+
+      return unless [options[:debug],
+                     options[:verbose],
+                     options[:log_level] != Facter::DEFAULT_LOG_LEVEL]
+                    .count(true) > 1
+
+      message = 'debug, verbose, and log-level options conflict: please specify only one.'
+      write_error_and_exit(message)
     end
   end
 end

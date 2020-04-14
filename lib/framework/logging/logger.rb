@@ -4,6 +4,7 @@ require 'logger'
 
 module Facter
   RED = 31
+  DEFAULT_LOG_LEVEL = :warn
 
   class Log
     @@legacy_logger = nil
@@ -38,6 +39,7 @@ module Facter
       return if @@legacy_logger
 
       @@legacy_logger = Logger.new(output)
+      @@legacy_logger.level = DEFAULT_LOG_LEVEL
       set_format_for_legacy_logger
       @@logger.add_logger(@@legacy_logger)
     end

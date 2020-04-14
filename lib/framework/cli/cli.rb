@@ -122,7 +122,7 @@ module Facter
     desc '--list-block-groups', 'List block groups'
     map ['--list-block-groups'] => :list_block_groups
     def list_block_groups(*_args)
-      puts Facter::BlockList.instance.block_groups.to_yaml.lines[1..-1].join
+      puts Facter::BlockList.new.block_groups.to_yaml.lines[1..-1].join
     end
 
     def self.exit_on_failure?

@@ -2,42 +2,45 @@
 
 module Facter
   class ConfigReader
-    attr_accessor :conf
+    class << self
+      attr_accessor :conf
 
-    def initialize(config_path = nil)
-      @config_file_path = config_path || default_path
-      refresh_config
-    end
+      def init(config_path = nil)
+        config_path ||= default_path
+        refresh_config(config_path)
+        self
+      end
 
-    def block_list
-      @conf['facts'] && @conf['facts']['blocklist']
-    end
+      def block_list
+        @conf['facts'] && @conf['facts']['blocklist']
+      end
 
-    def ttls
-      @conf['facts'] && @conf['facts']['ttls']
-    end
+      def ttls
+        @conf['facts'] && @conf['facts']['ttls']
+      end
 
-    def global
-      @conf['global']
-    end
+      def global
+        @conf['global']
+      end
 
-    def cli
-      @conf['cli']
-    end
+      def cli
+        @conf['cli']
+      end
 
-    def refresh_config
-      @conf = File.readable?(@config_file_path) ? Hocon.load(@config_file_path) : {}
-    end
+      def refresh_config(config_path)
+        @conf = File.readable?(config_path) ? Hocon.load(config_path) : {}
+      end
 
-    private
+      private
 
-    def default_path
-      os = OsDetector.instance.identifier
+      def default_path
+        os = OsDetector.instance.identifier
 
-      windows_path = File.join('C:', 'ProgramData', 'PuppetLabs', 'facter', 'etc', 'facter.conf')
-      linux_path = File.join('/', 'etc', 'puppetlabs', 'facter', 'facter.conf')
+        windows_path = File.join('C:', 'ProgramData', 'PuppetLabs', 'facter', 'etc', 'facter.conf')
+        linux_path = File.join('/', 'etc', 'puppetlabs', 'facter', 'facter.conf')
 
-      os == :windows ? windows_path : linux_path
+        os == :windows ? windows_path : linux_path
+      end
     end
   end
 end

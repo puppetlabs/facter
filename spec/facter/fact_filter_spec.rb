@@ -48,37 +48,6 @@ describe Facter::FactFilter do
         expect(resolved_fact.value).to eq('value_1')
       end
     end
-
-    context 'when filter legacy' do
-      let(:fact_value) { 'value_1' }
-      let(:legacy_resolved_fact) { Facter::ResolvedFact.new('operatingsystem', fact_value, :legacy) }
-      let(:core_resolved_fact) { Facter::ResolvedFact.new('os.name', fact_value, :core) }
-      let(:searched_facts) { [legacy_resolved_fact, core_resolved_fact] }
-
-      before do
-        legacy_resolved_fact.user_query = 'operatingsystem'
-        legacy_resolved_fact.filter_tokens = []
-
-        core_resolved_fact.user_query = 'os.name'
-        core_resolved_fact.filter_tokens = []
-      end
-
-      it 'returns one fact' do
-        Facter::FactFilter.new.filter_facts!(searched_facts)
-        expect(searched_facts.size).to eq(1)
-      end
-
-      it 'return only core fact' do
-        Facter::FactFilter.new.filter_facts!(searched_facts)
-        expect(searched_facts.first.type).to eq(:core)
-      end
-
-      it 'returns core and legacy facts' do
-        allow(Facter::Options).to receive(:[]).with(:show_legacy).and_return(true)
-        Facter::FactFilter.new.filter_facts!(searched_facts)
-        expect(searched_facts.size).to eq(2)
-      end
-    end
   end
 
   it 'filters value inside fact when value is array' do
