@@ -25,7 +25,9 @@ EOM
       create_remote_file(agent, config_file, config_content)
 
       teardown do
-        on(agent, "rm -rf '#{external_config_dir}' '#{external_cli_dir}' '#{config_dir}'")
+        agent.rm_rf(external_config_dir)
+        agent.rm_rf(external_cli_dir)
+        agent.rm_rf(config_dir)
       end
 
       step "Agent #{agent}: resolve a fact from the command line external-dir and not the config file" do

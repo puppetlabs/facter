@@ -11,20 +11,20 @@ Facter.add(:#{fact[:name]}) do
 end
 CUSTOM_FACT
 
-    fact_file_path = File.join(custom_fact_dir, fact_file_name) 
+    fact_file_path = File.join(custom_fact_dir, fact_file_name)
     create_remote_file(host, fact_file_path, fact_file_contents)
   end
 
   def clear_custom_facts_on(host, custom_fact_dir)
     step "Clean-up the previous test's custom facts" do
-      on(agent, "rm -f #{custom_fact_dir}/*")
+      agent.rm_rf(custom_fact_dir)
     end
   end
 
   agents.each do |agent|
     custom_fact_dir = agent.tmpdir('facter')
     teardown do
-      on(agent, "rm -rf '#{custom_fact_dir}'")
+      agent.rm_rf(custom_fact_dir)
     end
 
     fact_name = 'timezone'

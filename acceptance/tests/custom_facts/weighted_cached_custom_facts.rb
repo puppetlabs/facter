@@ -52,16 +52,16 @@ test_name 'ttls configured weighted custom facts files creates cache file and re
     config_file = File.join(config_dir, 'facter.conf')
 
     step "Agent #{agent}: create config file" do
-      on(agent, "mkdir -p '#{config_dir}'")
+      agent.mkdir_p(config_dir)
       create_remote_file(agent, config_file, config_data)
       fact_file = File.join(fact_dir, custom_fact_file)
       create_remote_file(agent, fact_file, fact_content)
     end
 
     teardown do
-      on(agent, "rm -rf '#{fact_dir}'")
-      on(agent, "rm -rf #{cache_folder}/*")
-      on(agent, "rm -rf #{config_dir}/facter.conf")
+      agent.rm_rf(fact_dir)
+      agent.rm_rf(cache_folder)
+      agent.rm_rf(config_dir)
     end
 
     step "should log that it creates cache file and it caches custom facts found in facter.conf with the highest weight" do

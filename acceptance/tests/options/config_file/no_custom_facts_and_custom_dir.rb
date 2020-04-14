@@ -30,7 +30,8 @@ EOM
       create_remote_file(agent, config_file, config_content)
 
       teardown do
-        on(agent, "rm -rf '#{custom_fact}' '#{config_dir}'")
+        agent.rm_rf(custom_fact)
+        agent.rm_rf(config_dir)
       end
 
       step "Agent #{agent}: config option no-custom-facts : true and custom-dir should result in an options conflict error" do

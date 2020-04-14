@@ -16,7 +16,7 @@ test_name "C100150: external fact overrides custom fact without a weight" do
     create_remote_file(agent, ext_fact_path, ext_fact)
 
     teardown do
-      on(agent, "rm -rf '#{facts_dir}'")
+      agent.rm_rf(facts_dir)
     end
 
     step "Agent #{agent}: resolve an external fact over a custom fact" do

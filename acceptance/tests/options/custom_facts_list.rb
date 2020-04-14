@@ -33,7 +33,8 @@ EOM
       create_remote_file(agent, custom_fact_2, content_2)
 
       teardown do
-        on(agent, "rm -rf '#{custom_dir_1}' '#{custom_dir_2}'")
+        agent.rm_rf(custom_dir_1)
+        agent.rm_rf(custom_dir_2)
       end
 
       step "Agent #{agent}: resolve a fact from each specified --custom-dir option" do

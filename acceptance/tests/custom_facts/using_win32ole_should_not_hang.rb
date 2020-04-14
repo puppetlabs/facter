@@ -20,7 +20,7 @@ test_name 'C92060: Custom facts should not hang Facter when using win32ole' do
     create_remote_file(agent, custom_fact, content)
 
     teardown do
-      on(agent, "rm -rf '#{custom_dir}'")
+      agent.rm_rf(custom_dir)
     end
 
     # Test is assumed to have hung if it takes longer than 5 seconds.
