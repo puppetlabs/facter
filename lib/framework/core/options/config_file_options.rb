@@ -16,7 +16,7 @@ module Facter
         augment_custom(Facter::ConfigReader.global)
         augment_external(Facter::ConfigReader.global)
         augment_show_legacy(Facter::ConfigReader.global)
-        augment_facts(Facter::ConfigReader.ttls, config_path)
+        augment_facts(Facter::ConfigReader.ttls)
       end
 
       def get
@@ -70,8 +70,8 @@ module Facter
         @options[:show_legacy] = global_conf['show-legacy'] unless global_conf['show-legacy'].nil?
       end
 
-      def augment_facts(ttls, config_path)
-        blocked_facts = Facter::BlockList.new(config_path).blocked_facts
+      def augment_facts(ttls)
+        blocked_facts = Facter::BlockList.new.blocked_facts
         @options[:blocked_facts] = blocked_facts unless blocked_facts.nil?
 
         @options[:ttls] = ttls unless ttls.nil?

@@ -45,7 +45,7 @@ module Facter
         Facter::OptionStore.cli = true
         Facter::OptionStore.show_legacy = false
         Facter::OptionStore.user_query = user_query
-
+        OptionStore.set(:config, cli_options[:config])
         ConfigFileOptions.init(cli_options[:config])
         store(ConfigFileOptions.get)
         store(cli_options)

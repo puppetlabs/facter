@@ -20,10 +20,10 @@ module Facter
 
     class << self
       attr_reader :debug, :verbose, :log_level, :show_legacy, :trace,
-                  :custom_dir, :external_dir, :external_facts, :ruby,
+                  :custom_dir, :external_dir, :ruby,
                   :custom_facts, :blocked_facts
 
-      attr_accessor :config, :user_query, :strict, :json, :haml,
+      attr_accessor :config, :user_query, :strict, :json, :haml, :external_facts,
                     :cache, :yaml, :puppet, :ttls, :block, :cli
 
       def all
