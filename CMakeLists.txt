@@ -164,7 +164,11 @@ enable_cppcheck()
 # Pull in helper macros for working with leatherman libraries
 include(leatherman)
 
+set(CMAKE_REQUIRED_FLAGS "-std=c++11")
 set(CMAKE_REQUIRED_LIBRARIES ${LEATHERMAN_LIBRARIES})
+set(CMAKE_REQUIRED_INCLUDES ${LEATHERMAN_INCLUDE_DIRS})
+
+# Guards to make sure we don't compile what we don't have in Leatherman
 CHECK_CXX_SOURCE_COMPILES("
 #include <leatherman/util/environment.hpp>
 int main() {
@@ -177,10 +181,22 @@ if (HAS_LTH_GET_INT)
     add_definitions(-DHAS_LTH_GET_INT)
 endif()
 
-    # Guard to make sure we don't compile what we don't have in Leatherman
+CHECK_CXX_SOURCE_COMPILES("
+#include \"leatherman/execution/execution.hpp\"
+
+using namespace leatherman::execution;
+using namespace std;
+int main() {
+    vector<string> paths;
+    expand_command(\"command\", paths, false);
+    return 0;
+}
+" HAS_LTH_EXPAND)
+
+if (HAS_LTH_EXPAND)
+  add_definitions(-DHAS_LTH_EXPAND)
+endif()
 if (WIN32)
-    set(CMAKE_REQUIRED_INCLUDES ${LEATHERMAN_INCLUDE_DIRS})
-    set(CMAKE_REQUIRED_FLAGS "-std=c++11")
     CHECK_CXX_SOURCE_COMPILES("
     #include \"leatherman/windows/registry.hpp\"
 

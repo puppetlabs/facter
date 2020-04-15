@@ -946,8 +946,13 @@ namespace facter { namespace ruby {
 
         // Expand the command only if expand is true,
         std::string expanded;
-        try{
+        try {
+#ifdef HAS_LTH_EXPAND
             expanded = expand_command(command, leatherman::util::environment::search_paths(), expand);
+#else
+            expanded = expand_command(command);
+            LOG_DEBUG("Facter was compiled with a Leatherman version that cannot expand shell builtins. Falling back to the default behavior.");
+#endif
         } catch (const std::invalid_argument &ex) {
             ruby.rb_raise(*ruby.rb_eArgError, _("Cause: {1}",  ex.what()).c_str());
         }
