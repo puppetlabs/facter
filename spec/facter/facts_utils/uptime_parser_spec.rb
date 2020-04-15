@@ -11,7 +11,7 @@ describe Facter::UptimeParser do
 
       it 'returns the correct result' do
         allow(Open3)
-          .to receive(:capture2)
+          .to receive(:capture3)
           .with(uptime_proc_file_cmd)
           .and_return(proc_uptime_value)
 
@@ -30,12 +30,12 @@ describe Facter::UptimeParser do
         allow(Time).to receive(:now) { time_now }
 
         allow(Open3)
-          .to receive(:capture2)
+          .to receive(:capture3)
           .with(uptime_proc_file_cmd)
           .and_return('')
 
         allow(Open3)
-          .to receive(:capture2)
+          .to receive(:capture3)
           .with(kern_boottime_cmd)
           .and_return(kern_boottime_value)
 
@@ -46,12 +46,12 @@ describe Facter::UptimeParser do
     context 'when the uptime executable is available only' do
       before do
         allow(Open3)
-          .to receive(:capture2)
+          .to receive(:capture3)
           .with(uptime_proc_file_cmd)
           .and_return('')
 
         allow(Open3)
-          .to receive(:capture2)
+          .to receive(:capture3)
           .with(kern_boottime_cmd)
           .and_return('')
       end
@@ -59,7 +59,7 @@ describe Facter::UptimeParser do
       shared_examples 'uptime executable regex expectation' do |cmd_output, result|
         it 'returns the correct result' do
           allow(Open3)
-            .to receive(:capture2)
+            .to receive(:capture3)
             .with(uptime_cmd)
             .and_return(cmd_output)
 

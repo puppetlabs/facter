@@ -16,19 +16,19 @@ module Facter
       private
 
       def uptime_proc_uptime
-        output, _status = Open3.capture2("/bin/cat #{uptime_file} 2>/dev/null")
+        output, _stderr, _status = Open3.capture3("/bin/cat #{uptime_file} 2>/dev/null")
 
         output.chomp.split(' ').first.to_i unless output.empty?
       end
 
       def uptime_sysctl
-        output, _status = Open3.capture2("sysctl -n #{uptime_sysctl_variable} 2>/dev/null")
+        output, _stderr, _status = Open3.capture3("sysctl -n #{uptime_sysctl_variable} 2>/dev/null")
 
         compute_uptime(Time.at(output.match(/\d+/)[0].to_i)) unless output.empty?
       end
 
       def uptime_executable
-        output, _status = Open3.capture2(uptime_executable_cmd + ' 2>/dev/null')
+        output, _stderr, _status = Open3.capture3(uptime_executable_cmd + ' 2>/dev/null')
         return unless output
 
         up = 0
