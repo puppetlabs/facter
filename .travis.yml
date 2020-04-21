@@ -23,6 +23,7 @@ jobs:
         - bundle exec rubocop
         - bundle exec rubycritic --no-browser -f console
         - bundle exec rake spec
+        - bundle exec rake commits
 
     - rvm: 2.5
       script:
