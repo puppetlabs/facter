@@ -38,7 +38,7 @@ test_name 'Setup for Facter NG' do
 
   if ENV["FACTER_NG"] == 'true'
     puts 'Cloning Facter NG repository and creating gem file.'
-    facter_gem_path = create_facter_gem('FACT-2562-3')
+    facter_gem_path = create_facter_gem('FACT-2486')
 
     agents.each do |agent|
       puts 'Renaming facter to facter-original and facter-ng to facter.'
