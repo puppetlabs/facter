@@ -1,5 +1,15 @@
 
 
+## [4.0.17](https://github.com/puppetlabs/facter-ng/tree/4.0.17) (2020-04-21)
+
+[Full Changelog](https://github.com/puppetlabs/facter-ng/compare/4.0.16...4.0.17)
+
+### Fixed
+
+- \(FACT-2562\) Correctly load custom and external fact directories [\#458](https://github.com/puppetlabs/facter-ng/pull/458) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+
+
 ## [4.0.16](https://github.com/puppetlabs/facter-ng/tree/4.0.16) (2020-04-15)
 
 [Full Changelog](https://github.com/puppetlabs/facter-ng/compare/4.0.15...4.0.16)
