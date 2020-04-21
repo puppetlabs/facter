@@ -285,8 +285,8 @@ describe Facter do
   end
 
   describe '#search_path' do
-    it 'sends call to LegacyFacter' do
-      expect(LegacyFacter).to receive(:search_path).once
+    it 'sends call to Facter::Options' do
+      expect(Facter::Options).to receive(:custom_dir).once
       Facter.search_path
     end
   end
@@ -301,8 +301,8 @@ describe Facter do
   end
 
   describe '#search_external_path' do
-    it 'sends call to LegacyFacter' do
-      expect(LegacyFacter).to receive(:search_external_path).once
+    it 'sends call to Facter::Options' do
+      expect(Facter::Options).to receive(:external_dir).once
       Facter.search_external_path
     end
   end

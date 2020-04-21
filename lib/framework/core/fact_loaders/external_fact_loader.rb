@@ -19,6 +19,7 @@ module Facter
     # The search paths must be set before creating the fact collection.
     # If we set them after, they will not be visible.
     def load_search_paths
+      LegacyFacter.reset_search_path!
       LegacyFacter.search(*Options.custom_dir) if Options.custom_dir?
       LegacyFacter.search_external(Options.external_dir) if Options.external_dir?
     end

@@ -131,6 +131,8 @@ module Facter
     # @api public
     def reset
       LegacyFacter.reset
+      Options[:custom_dir] = []
+      Options[:external_dir] = []
       LegacyFacter.search(*Options.custom_dir)
       LegacyFacter.search_external(Options.external_dir)
       nil
@@ -145,6 +147,7 @@ module Facter
     #
     # @api public
     def search(*dirs)
+      Options[:custom_dir] += dirs
       LegacyFacter.search(*dirs)
     end
 
@@ -156,6 +159,7 @@ module Facter
     #
     # @api public
     def search_external(dirs)
+      Options[:external_dir] += dirs
       LegacyFacter.search_external(dirs)
     end
 
@@ -165,7 +169,7 @@ module Facter
     #
     # @api public
     def search_external_path
-      LegacyFacter.search_external_path
+      Options.external_dir
     end
 
     # Returns the registered search directories for custom facts.
@@ -174,7 +178,7 @@ module Facter
     #
     # @api public
     def search_path
-      LegacyFacter.search_path
+      Options.custom_dir
     end
 
     # Gets a hash mapping fact names to their values
@@ -186,7 +190,6 @@ module Facter
     def to_hash
       log_blocked_facts
 
-      reset
       resolved_facts = Facter::FactManager.instance.resolve_facts
       Facter::SessionCache.invalidate_all_caches
       Facter::FactCollection.new.build_fact_collection!(resolved_facts)
