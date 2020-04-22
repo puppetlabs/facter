@@ -1,5 +1,5 @@
 test_name 'FACT-2054: Execute on Windows with expand => false should raise an error' do
-  tag 'risk:low'
+  tag 'risk:high'
 
   confine :to, :platform => /windows/
 
