@@ -1575,6 +1575,13 @@ msgstr ""
 msgid "unexpected self value {1}"
 msgstr ""
 
+#. debug
+#: lib/src/ruby/module.cc
+msgid ""
+"Facter was compiled with a Leatherman version that cannot expand shell "
+"builtins. Falling back to the default behavior."
+msgstr ""
+
 #: lib/src/ruby/module.cc
 msgid "Cause: {1}"
 msgstr ""
