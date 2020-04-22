@@ -2,8 +2,6 @@
 test_name "C100041: ttls configured cached facts are used while still valid" do
   tag 'risk:high'
 
-  confine :to, :platform => /Skipped/
-
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 

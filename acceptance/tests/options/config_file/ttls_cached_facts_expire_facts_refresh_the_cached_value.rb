@@ -2,8 +2,6 @@
 test_name "C100040: ttls configured facts that are expired are refreshed" do
   tag 'risk:high'
 
-  confine :to, :platform => /Skipped/
-
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 

@@ -3,8 +3,6 @@
 test_name "C100125: ttls config that is empty causes facter to remove existing cached facts" do
   tag 'risk:high'
 
-  confine :to, :platform => /Skipped/
-
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 
