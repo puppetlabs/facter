@@ -1,7 +1,7 @@
 test_name 'FACT-2054: Custom facts that execute a shell command should expand it' do
-  tag 'risk:low'
+  tag 'risk:high'
 
-confine :to, :platform => /el-7/
+  confine :to, :platform => /el-7/
 
   content = <<-EOM
     Facter.add(:foo) do

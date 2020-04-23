@@ -358,7 +358,7 @@ namespace facter { namespace ruby {
         LOG_DEBUG(_("loading external fact directories from config file"));
         boost::program_options::variables_map vm;
         auto hocon_conf = load_default_config_file();
-        load_fact_settings(hocon_conf, vm);
+        load_fact_groups_settings(hocon_conf, vm);
         vector<string> cached_custom_facts_list;
         if (vm.count(cached_custom_facts)) {
             auto facts_to_cache = vm[cached_custom_facts].as<vector<string>>();
@@ -946,8 +946,13 @@ namespace facter { namespace ruby {
 
         // Expand the command only if expand is true,
         std::string expanded;
-        try{
+        try {
+#ifdef HAS_LTH_EXPAND
             expanded = expand_command(command, leatherman::util::environment::search_paths(), expand);
+#else
+            expanded = expand_command(command);
+            LOG_DEBUG("Facter was compiled with a Leatherman version that cannot expand shell builtins. Falling back to the default behavior.");
+#endif
         } catch (const std::invalid_argument &ex) {
             ruby.rb_raise(*ruby.rb_eArgError, _("Cause: {1}",  ex.what()).c_str());
         }

@@ -1,3 +1,7 @@
+Facter 4
+============
+Facter 4 is the newest version of Facter that is written in Ruby and compatible with Facter 3. Currenly Facter 4 is maintained in a separate git repository https://github.com/puppetlabs/facter-ng, but it will be moved to this repository later on.
+
 Native Facter
 =============
 
@@ -17,7 +21,7 @@ Build Requirements
 * CMake >= 3.2.2
 * Boost C++ Libraries >= 1.54
 * yaml-cpp >= 0.5.1
-* [leatherman](https://github.com/puppetlabs/leatherman) >= 1.0.0
+* [leatherman](https://github.com/puppetlabs/leatherman) >= 1.4.3
 * [cpp-hocon](https://github.com/puppetlabs/cpp-hocon) >= 0.1.0
 
 Optional Build Libraries

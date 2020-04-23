@@ -1,5 +1,5 @@
 test_name 'FACT-2054: Custom facts that execute a shell command should not expand it' do
-  tag 'risk:low'
+  tag 'risk:high'
 
 confine :to, :platform => /el-7/
 
