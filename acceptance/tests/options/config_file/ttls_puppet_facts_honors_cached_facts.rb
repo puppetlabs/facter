@@ -2,6 +2,8 @@
 test_name "C100039: ttls configured cached facts run from puppet facts return cached facts" do
   tag 'risk:high'
 
+  confine :to, :platform => /Skipped/
+
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 

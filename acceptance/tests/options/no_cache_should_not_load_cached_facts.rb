@@ -3,6 +3,8 @@
 test_name "C100123: --no-cache command-line option does not load facts from the cache" do
   tag 'risk:high'
 
+  confine :to, :platform => /Skipped/
+
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 

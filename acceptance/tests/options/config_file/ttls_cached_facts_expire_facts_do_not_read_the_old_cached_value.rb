@@ -2,6 +2,8 @@
 test_name "C100037: ttls configured cached valued that are expired are not returned" do
   tag 'risk:high'
 
+  confine :to, :platform => /Skipped/
+
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 
