@@ -11,8 +11,11 @@ module Facter
     @show_legacy = true
     @block = true
     @custom_dir = []
+    @config_file_custom_dir = []
     @custom_facts = true
     @external_dir = []
+    @config_file_external_dir = []
+    @default_external_dir = []
     @external_facts = true
     @ruby = true
     @cache = true
@@ -20,12 +23,14 @@ module Facter
     @user_query = []
 
     class << self
-      attr_reader :debug, :verbose, :log_level, :show_legacy, :trace,
-                  :custom_dir, :external_dir, :ruby,
+      attr_reader :debug, :verbose, :log_level, :show_legacy, :trace, :ruby,
                   :custom_facts, :blocked_facts
 
       attr_accessor :config, :user_query, :strict, :json, :haml, :external_facts,
-                    :cache, :yaml, :puppet, :ttls, :block, :cli
+                    :cache, :yaml, :puppet, :ttls, :block, :cli, :config_file_custom_dir,
+                    :config_file_external_dir, :default_external_dir
+
+      attr_writer :external_dir
 
       def all
         options = {}
@@ -46,10 +51,10 @@ module Facter
         end
       end
 
-      def external_dir=(dirs)
-        return unless dirs.any?
+      def external_dir
+        return fallback_external_dir if @external_dir.empty? && @external_facts
 
-        @external_dir = dirs
+        @external_dir
       end
 
       def blocked_facts=(*facts)
@@ -58,9 +63,13 @@ module Facter
         @blocked_facts.flatten!
       end
 
-      def custom_dir=(*dirs)
-        return unless dirs.any?
+      def custom_dir
+        return @config_file_custom_dir unless @custom_dir.any?
 
+        @custom_dir
+      end
+
+      def custom_dir=(*dirs)
         @ruby = true
 
         @custom_dir = [*dirs]
@@ -146,12 +155,19 @@ module Facter
         @custom_dir = []
         @custom_facts = true
         @external_dir = []
+        @default_external_dir = []
         @external_facts = true
         @ruby = true
         @blocked_facts = []
         @user_query = []
         @cli = nil
         @cache = true
+      end
+
+      def fallback_external_dir
+        return @config_file_external_dir if @config_file_external_dir.any?
+
+        @default_external_dir
       end
     end
   end

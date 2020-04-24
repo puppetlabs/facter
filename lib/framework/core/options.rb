@@ -24,7 +24,7 @@ module Facter
       end
 
       def custom_dir
-        OptionStore.custom_dir.flatten
+        [OptionStore.custom_dir].flatten
       end
 
       def external_dir?

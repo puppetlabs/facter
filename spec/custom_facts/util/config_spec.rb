@@ -94,7 +94,7 @@ describe LegacyFacter::Util::Config do
     it 'onlies output new values when explicitly set' do
       LegacyFacter::Util::Config.setup_default_ext_facts_dirs
       new_value = ['/usr/share/newdir']
-      LegacyFacter::Util::Config.external_facts_dirs = new_value
+      Facter::Options[:external_dir] = new_value
       expect(LegacyFacter::Util::Config.external_facts_dirs).to eq new_value
     end
   end

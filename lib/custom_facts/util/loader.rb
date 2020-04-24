@@ -72,7 +72,7 @@ module LegacyFacter
 
         search_paths.delete_if { |path| !valid_search_path?(path) }
 
-        LegacyFacter.search_path.each do |path|
+        Facter::Options.custom_dir.each do |path|
           if valid_search_path?(path)
             search_paths << path
           else

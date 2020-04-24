@@ -92,7 +92,8 @@ describe LegacyFacter::Util::Loader do
     end
 
     it 'includes all search paths registered with Facter' do
-      allow(LegacyFacter).to receive(:search_path).and_return %w[/one /two]
+      allow(Facter::Options).to receive(:custom_dir).and_return %w[/one /two]
+
       allow(loader).to receive(:valid_search_path?).and_return true
 
       allow(File).to receive(:directory?).and_return false
@@ -104,7 +105,8 @@ describe LegacyFacter::Util::Loader do
     end
 
     it 'warns on invalid search paths registered with Facter' do
-      allow(LegacyFacter).to receive(:search_path).and_return %w[/one two/three]
+      allow(Facter::Options).to receive(:custom_dir).and_return %w[/one two/three]
+
       allow(loader).to receive(:valid_search_path?).and_return false
       allow(loader).to receive(:valid_search_path?).with('/one').and_return true
       allow(loader).to receive(:valid_search_path?).with('two/three').and_return false
@@ -119,8 +121,9 @@ describe LegacyFacter::Util::Loader do
       expect(paths).to match_array(['/one'])
     end
 
-    it 'strips paths that are valid paths but not are not present' do
-      allow(LegacyFacter).to receive(:search_path).and_return %w[/one /two]
+    it 'strips paths that are valid paths but are not present' do
+      allow(Facter::Options).to receive(:custom_dir).and_return %w[/one /two]
+
       allow(loader).to receive(:valid_search_path?).and_return false
       allow(loader).to receive(:valid_search_path?).with('/one').and_return true
       allow(loader).to receive(:valid_search_path?).with('/two').and_return true
