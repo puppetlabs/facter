@@ -22,11 +22,13 @@ module Facter
           def build_zpool_facts
             output, _status = Open3.capture2('zpool upgrade -v')
             features_list = output.scan(/^\s+(\d+)/).flatten
+            features_flags = output.scan(/^([a-z0-9_]+)[[:blank:]]*(\(read-only compatible\))?$/).map(&:first)
 
             return if features_list.empty?
 
             @fact_list[:zpool_featurenumbers] = features_list.join(',')
-            @fact_list[:zpool_version] = features_list.last
+            @fact_list[:zpool_featureflags] = features_flags.join(',')
+            @fact_list[:zpool_version] = features_flags.any? ? '5000' : features_list.last
           end
         end
       end

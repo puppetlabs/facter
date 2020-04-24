@@ -1,0 +1,81 @@
+This system supports ZFS pool feature flags.
+
+The following features are supported:
+
+FEAT DESCRIPTION
+-------------------------------------------------------------
+async_destroy                         (read-only compatible)
+     Destroy filesystems asynchronously.
+empty_bpobj                           (read-only compatible)
+     Snapshots use less space.
+lz4_compress                         
+     LZ4 compression algorithm support.
+multi_vdev_crash_dump                
+     Crash dumps to multiple vdev pools.
+spacemap_histogram                    (read-only compatible)
+     Spacemaps maintain space histograms.
+enabled_txg                           (read-only compatible)
+     Record txg at which a feature is enabled
+hole_birth                           
+     Retain hole birth txg for more precise zfs send
+extensible_dataset                   
+     Enhanced dataset functionality, used by other features.
+embedded_data                        
+     Blocks which compress very well use even less space.
+bookmarks                             (read-only compatible)
+     "zfs bookmark" command
+filesystem_limits                     (read-only compatible)
+     Filesystem and snapshot limits.
+large_blocks                         
+     Support for blocks larger than 128KB.
+large_dnode                          
+     Variable on-disk size of dnodes.
+sha512                               
+     SHA-512/256 hash algorithm.
+skein                                
+     Skein hash algorithm.
+device_removal                       
+     Top-level vdevs can be removed, reducing logical pool size.
+obsolete_counts                       (read-only compatible)
+     Reduce memory used by removed devices when their blocks are freed or remapped.
+zpool_checkpoint                      (read-only compatible)
+     Pool state can be checkpointed, allowing rewind later.
+spacemap_v2                           (read-only compatible)
+     Space maps representing large segments are more efficient.
+
+The following legacy versions are also supported:
+
+VER  DESCRIPTION
+---  --------------------------------------------------------
+ 1   Initial ZFS version
+ 2   Ditto blocks (replicated metadata)
+ 3   Hot spares and double parity RAID-Z
+ 4   zpool history
+ 5   Compression using the gzip algorithm
+ 6   bootfs pool property
+ 7   Separate intent log devices
+ 8   Delegated administration
+ 9   refquota and refreservation properties
+ 10  Cache devices
+ 11  Improved scrub performance
+ 12  Snapshot properties
+ 13  snapused property
+ 14  passthrough-x aclinherit
+ 15  user/group space accounting
+ 16  stmf property support
+ 17  Triple-parity RAID-Z
+ 18  Snapshot user holds
+ 19  Log device removal
+ 20  Compression using zle (zero-length encoding)
+ 21  Deduplication
+ 22  Received properties
+ 23  Slim ZIL
+ 24  System attributes
+ 25  Improved scrub stats
+ 26  Improved snapshot deletion performance
+ 27  Improved snapshot creation performance
+ 28  Multiple vdev replacements
+
+For more information on a particular version, including supported releases,
+see the ZFS Administration Guide.
+
