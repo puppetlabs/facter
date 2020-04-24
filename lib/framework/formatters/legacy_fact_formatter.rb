@@ -65,7 +65,8 @@ module Facter
       @log.debug('Remove quotes from parent nodes')
       pretty_json.gsub!(/\"(.*)\"\ =>/, '\1 =>')
 
-      pretty_json
+      @log.debug('Remove double backslashes from paths')
+      pretty_json.gsub(/\\\\/, '\\')
     end
 
     def remove_enclosing_accolades(pretty_fact_json)
