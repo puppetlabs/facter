@@ -3,15 +3,19 @@
 describe Facter::Util::FileHelper do
   subject(:file_helper) { Facter::Util::FileHelper }
 
-  let(:logger) { instance_spy(Facter::Log) }
   let(:path) { '/Users/admin/file.txt' }
   let(:content) { 'file content' }
-  let(:error_message) { 'File at: /Users/admin/file.txt is not accessible.' }
+  let(:error_message) { 'Facter::Util::FileHelper - File at: /Users/admin/file.txt is not accessible.' }
   let(:array_content) { ['line 1', 'line 2', 'line 3'] }
+  let(:multi_logger_double) { instance_spy(Facter::MultiLogger, level: :warn) }
 
   before do
-    file_helper.instance_variable_set(:@log, logger)
-    allow(logger).to receive(:debug).with(error_message)
+    Facter::Log.class_variable_set(:@@logger, multi_logger_double)
+    allow(Facter).to receive(:debugging?).and_return(true)
+  end
+
+  after do
+    Facter::Log.class_variable_set(:@@logger, Facter::MultiLogger.new([]))
   end
 
   shared_context 'when file is readable' do
@@ -53,7 +57,7 @@ describe Facter::Util::FileHelper do
       it "doesn't log anything" do
         file_helper.safe_read(path)
 
-        expect(logger).not_to have_received(:debug)
+        expect(multi_logger_double).not_to have_received(:debug)
       end
     end
 
@@ -80,11 +84,12 @@ describe Facter::Util::FileHelper do
         expect(File).not_to have_received(:read)
       end
 
-      # it 'logs a debug message' do
-      #   file_helper.safe_read(path)
-      #
-      #   expect(logger).to have_received(:debug).with(error_message)
-      # end
+      it 'logs a debug message' do
+        file_helper.safe_read(path)
+
+        expect(multi_logger_double).to have_received(:debug)
+          .with(error_message)
+      end
     end
   end
 
@@ -115,7 +120,7 @@ describe Facter::Util::FileHelper do
       it "doesn't log anything" do
         file_helper.safe_readlines(path)
 
-        expect(logger).not_to have_received(:debug)
+        expect(multi_logger_double).not_to have_received(:debug)
       end
     end
 
@@ -142,11 +147,11 @@ describe Facter::Util::FileHelper do
         expect(File).not_to have_received(:readlines)
       end
 
-      # it 'logs a debug message' do
-      #   file_helper.safe_read(path)
-      #
-      #   expect(logger).to have_received(:debug).with(error_message)
-      # end
+      it 'logs a debug message' do
+        file_helper.safe_read(path)
+
+        expect(multi_logger_double).to have_received(:debug).with(error_message)
+      end
     end
   end
 end

@@ -65,7 +65,7 @@ module Facter
     end
 
     def debug(msg)
-      return unless Facter.debugging?
+      return unless debugging_active?
 
       if msg.nil? || msg.empty?
         invoker = caller(1..1).first.slice(/.*:\d+/)
@@ -93,6 +93,14 @@ module Facter
 
     def colorize(msg, color)
       "\e[#{color}m#{msg}\e[0m"
+    end
+
+    private
+
+    def debugging_active?
+      return true unless Facter.respond_to?(:debugging?)
+
+      Facter.debugging?
     end
   end
 end
