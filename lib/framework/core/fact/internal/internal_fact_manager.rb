@@ -2,6 +2,8 @@
 
 module Facter
   class InternalFactManager
+    @@log = Facter::Log.new(self)
+
     def resolve_facts(searched_facts)
       searched_facts = filter_internal_facts(searched_facts)
 
@@ -18,14 +20,18 @@ module Facter
 
     def start_threads(searched_facts)
       threads = []
-
       # only resolve a fact once, even if multiple search facts depend on that fact
       searched_facts
         .uniq { |searched_fact| searched_fact.fact_class.name }
         .each do |searched_fact|
         threads << Thread.new do
-          fact = CoreFact.new(searched_fact)
-          fact.create
+          begin
+            fact = CoreFact.new(searched_fact)
+            fact.create
+          rescue StandardError => e
+            @@log.error(e.backtrace.join("\n"))
+            nil
+          end
         end
       end
 
@@ -37,7 +43,7 @@ module Facter
 
       threads.each do |thread|
         thread.join
-        resolved_facts << thread.value
+        resolved_facts << thread.value unless thread.value.nil?
       end
 
       resolved_facts.flatten!
