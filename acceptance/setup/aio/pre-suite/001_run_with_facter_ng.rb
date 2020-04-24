@@ -31,6 +31,8 @@ def install_facter_gem(agent, facter_gem_path)
 end
 
 test_name 'Setup for Facter NG' do
+  BRANCH_TO_TEST = 'master'
+
   windows_puppet_bin_path = '/cygdrive/c/Program\ Files/Puppet\ Labs/Puppet/bin'
   set_facter_ng_command = 'puppet config set facterng true'
 
@@ -39,7 +41,7 @@ test_name 'Setup for Facter NG' do
 
   if ENV["FACTER_NG"] == 'true'
     puts 'Cloning Facter NG repository and creating gem file.'
-    facter_gem_path = create_facter_gem('master')
+    facter_gem_path = create_facter_gem(BRANCH_TO_TEST)
 
     agents.each do |agent|
       puts 'Renaming facter to facter-original and facter-ng to facter.'
