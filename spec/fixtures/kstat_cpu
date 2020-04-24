@@ -1,0 +1,77 @@
+module: cpu_info                        instance: 0
+name:   cpu_info0                       class:    misc
+        brand                           Intel(r) Xeon(r) Gold 6138 CPU @ 2.00GHz
+        cache_id                        0
+        chip_id                         0
+        clock_MHz                       1995
+        clog_id                         0
+        core_id                         0
+        cpu_type                        i386
+        crtime                          37.957590729
+        cstates_count                   1014040:1014042
+        cstates_nsec                    7731043379931:134295045809
+        current_clock_Hz                1995246617
+        current_cstate                  1
+        current_pstate                  0
+        family                          6
+        fpu_type                        i387 compatible
+        implementation                  x86 (chipid 0x0 GenuineIntel 50654 family 6 model 85 step 4 clock 2000 MHz)
+        lgroup_id                       0
+        max_ncpu_per_chip               1
+        max_ncpu_per_core               1
+        max_pwrcap                      0
+        model                           85
+        ncore_per_chip                  1
+        ncpu_per_chip                   1
+        pg_id                           18446744073709551615
+        pkg_core_id                     0
+        pstates_count                   null
+        pstates_nsec                    null
+        snaptime                        7827.384789463
+        socket_type                     Unknown
+        state                           on-line
+        state_begin                     1586929325
+        stepping                        4
+        supported_frequencies_Hz        1995246617
+        supported_max_cstates           1
+        supported_max_pstates           0
+        vendor_id                       GenuineIntel
+
+module: cpu_info                        instance: 1
+name:   cpu_info1                       class:    misc
+        brand                           Intel(r) Xeon(r) Gold 6138 CPU @ 2.00GHz
+        cache_id                        2
+        chip_id                         2
+        clock_MHz                       1995
+        clog_id                         0
+        core_id                         2
+        cpu_type                        i386
+        crtime                          38.360143483
+        cstates_count                   652423:652424
+        cstates_nsec                    7734973017129:130932431358
+        current_clock_Hz                1995246617
+        current_cstate                  0
+        current_pstate                  0
+        family                          6
+        fpu_type                        i387 compatible
+        implementation                  x86 (chipid 0x2 GenuineIntel 50654 family 6 model 85 step 4 clock 2000 MHz)
+        lgroup_id                       0
+        max_ncpu_per_chip               1
+        max_ncpu_per_core               1
+        max_pwrcap                      0
+        model                           85
+        ncore_per_chip                  1
+        ncpu_per_chip                   1
+        pg_id                           18446744073709551615
+        pkg_core_id                     0
+        pstates_count                   null
+        pstates_nsec                    null
+        snaptime                        7827.385273786
+        socket_type                     Unknown
+        state                           on-line
+        state_begin                     1586929326
+        stepping                        4
+        supported_frequencies_Hz        1995246617
+        supported_max_cstates           1
+        supported_max_pstates           0
+        vendor_id                       GenuineIntel

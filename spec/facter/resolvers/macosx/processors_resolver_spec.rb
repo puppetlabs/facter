@@ -7,7 +7,7 @@ describe Facter::Resolvers::Macosx::Processors do
      'Intel(R) Xeon(R) CPU E5-2697 v4 @ 2.30GHz', 'Intel(R) Xeon(R) CPU E5-2697 v4 @ 2.30GHz']
   end
   let(:physical_processors) { 1 }
-  let(:speed_expected) { '2.30 GHz' }
+  let(:speed_expected) { 2_300_000_000 }
 
   output = ['hw.logicalcpu_max: 4',
             'hw.physicalcpu_max: 1',

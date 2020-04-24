@@ -9,7 +9,7 @@ module Facts
 
           def call_the_resolver
             fact_value = Facter::Resolvers::Linux::Memory.resolve(:swap_used_bytes)
-            fact_value = Facter::BytesToHumanReadable.convert(fact_value)
+            fact_value = Facter::FactsUtils::UnitConverter.bytes_to_human_readable(fact_value)
             Facter::ResolvedFact.new(FACT_NAME, fact_value)
           end
         end

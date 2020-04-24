@@ -50,16 +50,7 @@ module Facter
           end
 
           def build_speed(value)
-            @fact_list[:speed] = convert_hz(value.split(': ')[1].to_i)
-          end
-
-          def convert_hz(speed)
-            return nil if speed.zero?
-
-            prefix = { 3 => 'k', 6 => 'M', 9 => 'G', 12 => 'T' }
-            power = Math.log10(speed).floor
-            validated_speed = power.zero? ? speed.to_f : speed.fdiv(10**power)
-            format('%<displayed_speed>.2f', displayed_speed: validated_speed).to_s + ' ' + prefix[power] + 'Hz'
+            @fact_list[:speed] = value.split(': ')[1].to_i
           end
         end
       end

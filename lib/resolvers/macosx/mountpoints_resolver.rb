@@ -50,9 +50,9 @@ module Facter
               used_bytes: used_bytes,
               available_bytes: available_bytes,
               capacity: FilesystemHelper.compute_capacity(used_bytes, size_bytes),
-              size: Facter::BytesToHumanReadable.convert(size_bytes),
-              available: Facter::BytesToHumanReadable.convert(available_bytes),
-              used: Facter::BytesToHumanReadable.convert(used_bytes)
+              size: Facter::FactsUtils::UnitConverter.bytes_to_human_readable(size_bytes),
+              available: Facter::FactsUtils::UnitConverter.bytes_to_human_readable(available_bytes),
+              used: Facter::FactsUtils::UnitConverter.bytes_to_human_readable(used_bytes)
             }
           end
         end

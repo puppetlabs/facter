@@ -57,9 +57,9 @@ module Facter
               available_bytes: available_bytes,
               used_bytes: used_bytes,
               size_bytes: size_bytes,
-              available: BytesToHumanReadable.convert(available_bytes),
-              used: BytesToHumanReadable.convert(used_bytes),
-              size: BytesToHumanReadable.convert(size_bytes)
+              available: FactsUtils::UnitConverter.bytes_to_human_readable(available_bytes),
+              used: FactsUtils::UnitConverter.bytes_to_human_readable(used_bytes),
+              size: FactsUtils::UnitConverter.bytes_to_human_readable(size_bytes)
             )
           end
         end

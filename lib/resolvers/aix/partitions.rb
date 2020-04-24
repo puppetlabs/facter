@@ -52,7 +52,7 @@ module Facter
             part_info = {
               filesystem: info_hash['TYPE'],
               size_bytes: size_bytes,
-              size: Facter::BytesToHumanReadable.convert(size_bytes)
+              size: Facter::FactsUtils::UnitConverter.bytes_to_human_readable(size_bytes)
             }
             mount = info_hash['MOUNTPOINT']
             label = info_hash['LABEL']

@@ -5,12 +5,11 @@ describe Facts::Sles::Memory::System::Used do
     subject(:fact) { Facts::Sles::Memory::System::Used.new }
 
     let(:resolver_value) { 1024 }
-    let(:value) { '1.0 Kib' }
+    let(:value) { '1.00 KiB' }
 
     before do
       allow(Facter::Resolvers::Linux::Memory).to \
         receive(:resolve).with(:used_bytes).and_return(resolver_value)
-      allow(Facter::BytesToHumanReadable).to receive(:convert).with(resolver_value).and_return(value)
     end
 
     it 'calls Facter::Resolvers::Linux::Memory' do

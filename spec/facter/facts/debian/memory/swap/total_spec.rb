@@ -5,12 +5,11 @@ describe Facts::Debian::Memory::Swap::Total do
     subject(:fact) { Facts::Debian::Memory::Swap::Total.new }
 
     let(:resolver_value) { 1024 }
-    let(:value) { '1.0 Kib' }
+    let(:value) { '1.00 KiB' }
 
     before do
       allow(Facter::Resolvers::Linux::Memory).to \
         receive(:resolve).with(:swap_total).and_return(resolver_value)
-      allow(Facter::BytesToHumanReadable).to receive(:convert).with(resolver_value).and_return(value)
     end
 
     it 'calls Facter::Resolvers::Linux::Memory' do

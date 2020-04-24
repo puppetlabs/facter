@@ -8,7 +8,8 @@ module Facts
 
         def call_the_resolver
           fact_value = Facter::Resolvers::Macosx::Processors.resolve(:speed)
-          Facter::ResolvedFact.new(FACT_NAME, fact_value)
+          speed = Facter::FactsUtils::UnitConverter.hertz_to_human_readable(fact_value)
+          Facter::ResolvedFact.new(FACT_NAME, speed)
         end
       end
     end

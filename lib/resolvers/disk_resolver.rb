@@ -45,7 +45,7 @@ module Facter
           def construct_size(facts, value)
             value = value.to_i * 512
             facts[:size_bytes] = value
-            facts[:size] = Facter::BytesToHumanReadable.convert(value)
+            facts[:size] = Facter::FactsUtils::UnitConverter.bytes_to_human_readable(value)
           end
         end
       end

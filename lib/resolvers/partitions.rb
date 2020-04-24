@@ -64,7 +64,8 @@ module Facter
           size_bytes = Util::FileHelper.safe_read("#{block_path}/size", '0')
                                        .chomp.to_i * BLOCK_SIZE
           info_hash = { size_bytes: size_bytes,
-                        size: Facter::BytesToHumanReadable.convert(size_bytes), backing_file: backing_file }
+                        size: Facter::FactsUtils::UnitConverter.bytes_to_human_readable(size_bytes),
+                        backing_file: backing_file }
           info_hash.merge!(populate_from_blkid(partition_name))
           @fact_list[:partitions][partition_name] = info_hash.reject { |_key, value| value.nil? }
         end

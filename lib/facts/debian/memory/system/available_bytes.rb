@@ -12,7 +12,7 @@ module Facts
             fact_value = Facter::Resolvers::Linux::Memory.resolve(:memfree)
 
             [Facter::ResolvedFact.new(FACT_NAME, fact_value),
-             Facter::ResolvedFact.new(ALIASES, Facter::FactsUtils::BytesConverter.to_mb(fact_value), :legacy)]
+             Facter::ResolvedFact.new(ALIASES, Facter::FactsUtils::UnitConverter.bytes_to_mb(fact_value), :legacy)]
           end
         end
       end

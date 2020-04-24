@@ -46,9 +46,9 @@ module Facter
               total_bytes = used_bytes + available_bytes
               capacity = FilesystemHelper.compute_capacity(used_bytes, total_bytes)
 
-              size = Facter::BytesToHumanReadable.convert(size_bytes)
-              available = Facter::BytesToHumanReadable.convert(available_bytes)
-              used = Facter::BytesToHumanReadable.convert(used_bytes)
+              size = Facter::FactsUtils::UnitConverter.bytes_to_human_readable(size_bytes)
+              available = Facter::FactsUtils::UnitConverter.bytes_to_human_readable(available_bytes)
+              used = Facter::FactsUtils::UnitConverter.bytes_to_human_readable(used_bytes)
 
               mounts << Hash[FilesystemHelper::MOUNT_KEYS.zip(FilesystemHelper::MOUNT_KEYS
                 .map { |v| binding.local_variable_get(v) })]
