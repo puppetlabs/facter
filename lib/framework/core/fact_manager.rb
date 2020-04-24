@@ -20,10 +20,16 @@ module Facter
       loaded_facts = @fact_loader.load(Options.get)
       searched_facts = QueryParser.parse(user_query, loaded_facts)
 
+      cache_manager = Facter::CacheManager.new
+      searched_facts, cached_facts = cache_manager.resolve_facts(searched_facts)
       internal_facts = @internal_fact_mgr.resolve_facts(searched_facts)
       external_facts = @external_fact_mgr.resolve_facts(searched_facts)
 
       resolved_facts = override_core_facts(internal_facts, external_facts)
+
+      cache_manager.cache_facts(resolved_facts)
+      resolved_facts = resolved_facts.concat(cached_facts)
+
       FactFilter.new.filter_facts!(resolved_facts)
 
       resolved_facts

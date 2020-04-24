@@ -15,6 +15,7 @@ module Facter
     @external_dir = []
     @external_facts = true
     @ruby = true
+    @cache = true
     @blocked_facts = []
     @user_query = []
 
@@ -150,6 +151,7 @@ module Facter
         @blocked_facts = []
         @user_query = []
         @cli = nil
+        @cache = true
       end
     end
   end

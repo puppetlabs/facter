@@ -327,7 +327,7 @@ module Facter
     #
     # @api private
     def log_blocked_facts
-      block_list = Facter::BlockList.new(Facter::Options[:config]).block_list
+      block_list = Facter::FactGroups.new(Facter::Options[:config]).block_list
       return unless block_list.any? && Facter::Options[:block]
 
       @logger.debug("blocking collection of #{block_list.join("\s")} facts")

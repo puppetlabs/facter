@@ -71,7 +71,7 @@ module Facter
       end
 
       def augment_facts(ttls)
-        blocked_facts = Facter::BlockList.new.blocked_facts
+        blocked_facts = Facter::FactGroups.new.blocked_facts
         @options[:blocked_facts] = blocked_facts unless blocked_facts.nil?
 
         @options[:ttls] = ttls unless ttls.nil?
