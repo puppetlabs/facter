@@ -20,6 +20,7 @@ def download_and_build_facter_ng(branch_name)
     'cd facter-ng &&' \
     'git fetch &&' \
     "git reset --hard origin/#{branch_name} &&"\
+    'git log -1'\
     'gem build facter.gemspec')
 end
 
