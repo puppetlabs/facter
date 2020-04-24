@@ -52,6 +52,7 @@ test_name 'Setup for Facter NG' do
 
       puts 'Installing Facter NG on agent.'
       install_facter_gem(agent, facter_gem_path)
+      on(agent, puppet('facts'))
     end
   end
 end
