@@ -1,5 +1,5 @@
 test_name 'ttls configured weighted custom facts files creates cache file and reads cache file depending on weight' do
-  tag 'risk:medium'
+  tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
@@ -40,6 +40,8 @@ test_name 'ttls configured weighted custom facts files creates cache file and re
       ttls : [
           { "cached-custom-facts" : 3 days }
       ]
+    }
+    fact-groups : {
       cached-custom-facts : [ "#{duplicate_custom_fact_name}" ]
     }
   FACTER_CONF
