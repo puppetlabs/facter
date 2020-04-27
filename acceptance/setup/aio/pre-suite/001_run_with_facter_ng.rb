@@ -16,13 +16,15 @@ end
 def download_and_build_facter_ng(branch_name)
   puts "Cloning branch #{branch_name}"
 
-  Open3.capture2("git clone https://github.com/puppetlabs/facter-ng.git")
-  Open3.capture2('cd facter-ng')
-  Open3.capture2('git fetch')
-  Open3.capture2("git reset --hard origin/#{branch_name}")
+  Open3.capture2("git clone https://github.com/puppetlabs/facter-ng.git &&" \
+  'cd facter-ng &&' \
+  'git fetch &&' \
+  "git reset --hard origin/#{branch_name}")
 
   puts "Latest commit on branch #{branch_name}"
-  Open3.capture2('git log -1')
+  output, _stderr = Open3.capture2('git log -1')
+  puts output
+
   Open3.capture2('gem build facter.gemspec')
 
 end
