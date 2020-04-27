@@ -21,12 +21,13 @@ def download_and_build_facter_ng(branch_name)
   'git fetch &&' \
   "git reset --hard origin/#{branch_name}")
 
-  puts "Latest commit on branch #{branch_name}"
-  output, _stderr = Open3.capture2('git log -1')
-  puts output
+  Dir.chdir(temp_dir) do
+    puts "Latest commit on branch #{branch_name}"
+    output, _stderr = Open3.capture2('git log -1')
+    puts output
 
-  Open3.capture2('gem build facter.gemspec')
-
+    Open3.capture2('gem build facter.gemspec')
+  end
 end
 
 def install_facter_gem(agent, facter_gem_path)
