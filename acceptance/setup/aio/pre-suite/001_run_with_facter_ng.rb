@@ -21,7 +21,7 @@ def download_and_build_facter_ng(branch_name)
   'git fetch &&' \
   "git reset --hard origin/#{branch_name}")
 
-  Dir.chdir(temp_dir) do
+  Dir.chdir('facter-ng') do
     puts "Latest commit on branch #{branch_name}"
     output, _stderr = Open3.capture2('git log -1')
     puts output
