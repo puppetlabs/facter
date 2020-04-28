@@ -37,8 +37,9 @@ describe Facter::Resolvers::Linux::Mountpoints do
     allow(Facter::Util::FileHelper).to receive(:safe_read)
       .with('/proc/cmdline')
       .and_return(load_fixture('cmdline_root_device').read)
-    allow(Sys::Filesystem).to receive(:mounts).and_return([mount])
-    allow(Sys::Filesystem).to receive(:stat).with(mount.mount_point).and_return(stat)
+
+    allow(Facter::FilesystemHelper).to receive(:read_mountpoints).and_return([mount])
+    allow(Facter::FilesystemHelper).to receive(:read_mountpoint_stats).with(mount.mount_point).and_return(stat)
 
     # mock sys/filesystem methods
     allow(stat).to receive(:bytes_total).and_return(stat.blocks * stat.fragment_size)
@@ -55,7 +56,8 @@ describe Facter::Resolvers::Linux::Mountpoints do
   end
 
   it 'drops automounts and non-tmpfs mounts under /proc or /sys' do
-    allow(Sys::Filesystem).to receive(:mounts).and_return(ignored_mounts)
+    allow(Facter::FilesystemHelper).to receive(:read_mountpoints).and_return(ignored_mounts)
+
     result = Facter::Resolvers::Linux::Mountpoints.resolve(:mountpoints)
     expect(result).to be_empty
   end

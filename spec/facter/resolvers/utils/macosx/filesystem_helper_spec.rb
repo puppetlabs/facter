@@ -17,4 +17,35 @@ describe Facter::FilesystemHelper do
       expect(capacity).to eq('4.21%')
     end
   end
+
+  describe '#read_mountpoints' do
+    before do
+      mount = OpenStruct.new
+      mount.name = +'test_name'.encode('ASCII-8BIT')
+      mount.mount_type = +'test_type'.encode('ASCII-8BIT')
+      mount.mount_point = +'test_mount_point'.encode('ASCII-8BIT')
+      mount.options = +'test_options'.encode('ASCII-8BIT')
+
+      mounts = [mount]
+      allow(Sys::Filesystem).to receive(:mounts).and_return(mounts)
+    end
+
+    let(:mount_points) { Facter::FilesystemHelper.read_mountpoints }
+
+    it 'converts name from ASCII-8BIT to UTF-8' do
+      expect(mount_points.first.name.encoding.name). to eq('UTF-8')
+    end
+
+    it 'converts mount_type from ASCII-8BIT to UTF-8' do
+      expect(mount_points.first.mount_type.encoding.name). to eq('UTF-8')
+    end
+
+    it 'converts mount_point from ASCII-8BIT to UTF-8' do
+      expect(mount_points.first.mount_point.encoding.name). to eq('UTF-8')
+    end
+
+    it 'converts options from ASCII-8BIT to UTF-8' do
+      expect(mount_points.first.options.encoding.name). to eq('UTF-8')
+    end
+  end
 end
