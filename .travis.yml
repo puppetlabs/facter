@@ -21,7 +21,6 @@ jobs:
     - rvm: 2.6
       script:
         - bundle exec rubocop
-        - bundle exec rubycritic --no-browser -f console
         - bundle exec rake spec
         - bundle exec rake commits
 
