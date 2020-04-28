@@ -18,7 +18,9 @@ module Facter
         end
 
         def read_suse_release(fact_name)
-          output, _status = Open3.capture2('cat /etc/SuSE-release')
+          output = Util::FileHelper.safe_read('/etc/SuSE-release', nil)
+          return @fact_list[fact_name] = nil if output.nil?
+
           output_strings = output.split(' ')
 
           @fact_list[:name] = output_strings[0]

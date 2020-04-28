@@ -2,8 +2,8 @@
 
 describe Facter::Resolvers::RedHatRelease do
   before do
-    allow(Open3).to receive(:capture2)
-      .with('cat /etc/redhat-release')
+    allow(Facter::Util::FileHelper).to receive(:safe_read)
+      .with('/etc/redhat-release', nil)
       .and_return("Red Hat Enterprise Linux Server release 5.10 (Tikanga)\n")
   end
 

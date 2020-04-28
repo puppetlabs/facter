@@ -108,7 +108,7 @@ describe Logger do
     end
 
     it 'writes error message not colorized on Windows' do
-      allow(OsDetector.instance).to receive(:detect).and_return(:windows)
+      allow(OsDetector.instance).to receive(:identifier).and_return(:windows)
 
       log.error('error_message', true)
 

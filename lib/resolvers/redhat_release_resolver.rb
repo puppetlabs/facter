@@ -18,7 +18,8 @@ module Facter
         end
 
         def read_redhat_release(fact_name)
-          output, _status = Open3.capture2('cat /etc/redhat-release')
+          output = Util::FileHelper.safe_read('/etc/redhat-release', nil)
+          return @fact_list[fact_name] = nil if output.nil?
 
           build_fact_list(output)
 

@@ -2,8 +2,8 @@
 
 describe Facter::Resolvers::SuseRelease do
   before do
-    allow(Open3).to receive(:capture2)
-      .with('cat /etc/SuSE-release')
+    allow(Facter::Util::FileHelper).to receive(:safe_read)
+      .with('/etc/SuSE-release', nil)
       .and_return("openSUSE 11.1 (i586)
         VERSION = 11.1")
   end

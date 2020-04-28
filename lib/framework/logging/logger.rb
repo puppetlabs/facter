@@ -87,7 +87,7 @@ module Facter
 
     def error(msg, colorize = false)
       @@has_errors = true
-      msg = colorize(msg, RED) if colorize && !OsDetector.instance.detect.eql?(:windows)
+      msg = colorize(msg, RED) if colorize && !OsDetector.instance.identifier.eql?(:windows)
       @@logger.error(@class_name + ' - ' + msg)
     end
 

@@ -15,7 +15,7 @@ module Facter
       find_nested_classes(os_module_name, discovered_classes = [])
       discovered_classes
     rescue NameError
-      @log.error("There is no module named #{operating_system}")
+      @log.debug("There is no module named #{operating_system}")
       []
     end
 
