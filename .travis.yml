@@ -22,6 +22,10 @@ jobs:
       script:
         - bundle exec rubocop
         - bundle exec rake spec
+
+    - rvm: 2.6
+      env: COMMIT_CHECK=true
+      script:
         - bundle exec rake commits
 
     - rvm: 2.5
