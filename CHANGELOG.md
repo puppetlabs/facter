@@ -1,5 +1,23 @@
 
 
+## [4.0.19](https://github.com/puppetlabs/facter-ng/tree/4.0.19) (2020-04-29)
+
+[Full Changelog](https://github.com/puppetlabs/facter-ng/compare/4.0.18...4.0.19)
+
+### Added
+
+- \(FACT-2555\)Create OS hierarchy and mechanism for loading it [\#470](https://github.com/puppetlabs/facter-ng/pull/470) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2552\) Add Solaris processors facts [\#451](https://github.com/puppetlabs/facter-ng/pull/451) ([oanatmaria](https://github.com/oanatmaria))
+- \(Fact 2486\) Add facts cache [\#430](https://github.com/puppetlabs/facter-ng/pull/430) ([florindragos](https://github.com/florindragos))
+
+### Fixed
+
+- \(FACT-2585\) Mountpoints fact returns ASCI-8BIT instead of UTF-8 in some cases [\#472](https://github.com/puppetlabs/facter-ng/pull/472) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2570\) Use Facter options to store custom and external facts [\#467](https://github.com/puppetlabs/facter-ng/pull/467) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2565\) Debian development versions causes fatal error when resolving os.release [\#466](https://github.com/puppetlabs/facter-ng/pull/466) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+
+
+
 ## [4.0.18](https://github.com/puppetlabs/facter-ng/tree/4.0.18) (2020-04-24)
 
 [Full Changelog](https://github.com/puppetlabs/facter-ng/compare/4.0.17...4.0.18)
