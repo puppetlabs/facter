@@ -26,9 +26,9 @@ describe Facts::Debian::Os::Distro::Release do
 
       let(:os_name) { 'Ubuntu' }
 
-      context 'when version_id is retrieved successfully' do
+      context 'when version_id is retrieved successful' do
         let(:os_release_value) { '18.04' }
-        let(:fact_value) { { 'full' => '18.04', 'major' => '18', 'minor' => '4' } }
+        let(:fact_value) { { 'full' => '18.04', 'major' => '18.04' } }
 
         it_behaves_like 'calls Facter::Resolvers::OsRelease with :name'
 

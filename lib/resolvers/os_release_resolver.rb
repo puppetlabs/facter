@@ -36,6 +36,7 @@ module Facter
 
           fill_fact_list(pairs)
           process_name
+          pad_version_id
 
           @fact_list[fact_name]
         end
@@ -45,6 +46,10 @@ module Facter
           result.each { |k, v| @fact_list[k.downcase.to_sym] = v }
 
           @fact_list[:identifier] = @fact_list[:id]
+        end
+
+        def pad_version_id
+          @fact_list[:version_id] = "#{@fact_list[:version_id]}.0" unless @fact_list[:version_id] =~ /\./
         end
 
         def process_name
