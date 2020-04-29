@@ -4,7 +4,7 @@ module Facter
   class OsHierarchy
     def initialize
       @log = Log.new(self)
-      json_file = Util::FileHelper.safe_read('os_hierarchy.json')
+      json_file = Util::FileHelper.safe_read(File.join(ROOT_DIR, 'os_hierarchy.json'))
 
       begin
         @json_os_hierarchy = JSON.parse(json_file)
