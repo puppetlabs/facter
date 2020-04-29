@@ -6,7 +6,7 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 80
+# Offense count: 81
 # Configuration parameters: CustomTransform, IgnoreMethods.
 RSpec/FilePath:
   Exclude:
@@ -37,6 +37,7 @@ RSpec/FilePath:
     - 'spec/facter/resolvers/aix/architecture_resolver_spec.rb'
     - 'spec/facter/resolvers/aix/ffi_helper_spec.rb'
     - 'spec/facter/resolvers/aix/hardware_resolver_spec.rb'
+    - 'spec/facter/resolvers/bsd/ffi_helper_spec.rb'
     - 'spec/facter/resolvers/disk_resolver_spec.rb'
     - 'spec/facter/resolvers/dmi_resolver_spec.rb'
     - 'spec/facter/resolvers/filesystems_resolver_spec.rb'
@@ -191,7 +192,7 @@ RSpec/SubjectStub:
     - 'spec/custom_facts/util/fact_spec.rb'
     - 'spec/custom_facts/util/resolution_spec.rb'
 
-# Offense count: 169
+# Offense count: 180
 # Configuration parameters: IgnoreNameless, IgnoreSymbolicNames.
 RSpec/VerifiedDoubles:
   Exclude:
@@ -227,6 +228,7 @@ RSpec/VerifiedDoubles:
     - 'spec/facter/resolvers/aix/architecture_resolver_spec.rb'
     - 'spec/facter/resolvers/aix/ffi_helper_spec.rb'
     - 'spec/facter/resolvers/aix/hardware_resolver_spec.rb'
+    - 'spec/facter/resolvers/bsd/ffi_helper_spec.rb'
     - 'spec/facter/resolvers/macosx/mountpoints_resolver_spec.rb'
     - 'spec/facter/resolvers/mountpoints_resolver_spec.rb'
     - 'spec/facter/resolvers/solaris/current_zone_resolver_spec.rb'
