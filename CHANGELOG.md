@@ -1,5 +1,20 @@
 
 
+## [4.0.18](https://github.com/puppetlabs/facter-ng/tree/4.0.18) (2020-04-24)
+
+[Full Changelog](https://github.com/puppetlabs/facter-ng/compare/4.0.17...4.0.18)
+
+### Added
+
+- \(FACT-2564\) Add support for zpool\_featureflags and fix zpool\_version [\#443](https://github.com/puppetlabs/facter-ng/pull/443) ([smortex](https://github.com/smortex))
+
+### Fixed
+
+- \(FACT-2553\) remove double backslashes from windows path [\#456](https://github.com/puppetlabs/facter-ng/pull/456) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2559\) Fix Facter.debugging? call when Facter not fully loaded [\#455](https://github.com/puppetlabs/facter-ng/pull/455) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+
+
+
 ## [4.0.17](https://github.com/puppetlabs/facter-ng/tree/4.0.17) (2020-04-21)
 
 [Full Changelog](https://github.com/puppetlabs/facter-ng/compare/4.0.16...4.0.17)
