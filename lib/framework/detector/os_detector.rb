@@ -8,6 +8,7 @@ class OsDetector
   attr_reader :identifier, :version, :hierarchy
 
   def initialize(*_args)
+    @log = Facter::Log.new(self)
     @os_hierarchy = Facter::OsHierarchy.new
     @identifier = detect
   end
@@ -39,8 +40,15 @@ class OsDetector
 
   def detect_hierarchy(identifier)
     hierarchy = @os_hierarchy.construct_hierarchy(identifier)
-    hierarchy = @os_hierarchy.construct_hierarchy(detect_family) if hierarchy.empty?
-    hierarchy = @os_hierarchy.construct_hierarchy(:linux) if hierarchy.empty?
+    if hierarchy.empty?
+      @log.debug("Could not detect hierarchy using os identifier: #{identifier} , trying with family")
+      hierarchy = @os_hierarchy.construct_hierarchy(detect_family)
+    end
+
+    if hierarchy.empty?
+      @log.debug("Could not detect hierarchy using family #{detect_family}, falling back to Linux")
+      hierarchy = @os_hierarchy.construct_hierarchy(:linux)
+    end
 
     hierarchy
   end
