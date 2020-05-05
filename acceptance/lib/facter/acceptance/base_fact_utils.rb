@@ -492,7 +492,7 @@ module Facter
         expected_facts = {
             'os.architecture'          => os_arch,
             'os.distro.codename'       => /\w+/,
-            'os.distro.description'    => agent['platform'] == 'ubuntu-20.04-amd64' ? 'Ubuntu Focal Fossa (development branch)' : /Ubuntu #{os_version}/,
+            'os.distro.description'    => /Ubuntu #{os_version}/,
             'os.distro.id'             => 'Ubuntu',
             'os.distro.release.full'   => os_version,
             'os.distro.release.major'  => os_version,

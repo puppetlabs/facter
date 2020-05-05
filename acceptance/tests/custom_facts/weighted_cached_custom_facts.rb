@@ -1,5 +1,5 @@
 test_name 'ttls configured weighted custom facts files creates cache file and reads cache file depending on weight' do
-  tag 'risk:medium'
+  tag 'risk:high'
 
   confine :to, :platform => /Skipped/
 
@@ -42,12 +42,14 @@ test_name 'ttls configured weighted custom facts files creates cache file and re
       ttls : [
           { "cached-custom-facts" : 3 days }
       ]
+    }
+    fact-groups : {
       cached-custom-facts : [ "#{duplicate_custom_fact_name}" ]
     }
   FACTER_CONF
 
   agents.each do |agent|
-    cache_folder = get_cached_facts_dir(agent['platform'], agent['version'])
+    cache_folder = get_cached_facts_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
     fact_dir = agent.tmpdir('facter')
     env = { 'FACTERLIB' => fact_dir }
     config_dir = get_default_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
