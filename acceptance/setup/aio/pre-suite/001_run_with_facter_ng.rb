@@ -62,10 +62,10 @@ test_name 'Setup for Facter NG' do
     agents.each do |agent|
       puts 'Renaming facter to facter-original and facter-ng to facter.'
       if agent['platform'] =~ /windows/
-        on agent, %( cmd /c #{set_facter_ng_command} )
+        # on agent, %( cmd /c #{set_facter_ng_command} )
         on agent, %( cd #{windows_puppet_bin_path} && mv facter-ng.bat facter.bat )
       else
-        on agent, %( #{set_facter_ng_command} )
+        # on agent, %( #{set_facter_ng_command} )
       end
 
       puts 'Installing Facter NG on agent.'
