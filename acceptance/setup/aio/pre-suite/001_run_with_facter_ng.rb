@@ -42,8 +42,10 @@ def install_facter_gem(agent, facter_gem_path)
   on agent, "#{gem_command} uninstall facter-ng"
   on agent, "#{gem_command} install -f facter-*.gem"
 
-  version = on(agent, 'facter -v')
-  puts "FACTER VERSION IS #{version}"
+  puts "FACTER VERSION IS"
+  on(agent, 'facter -v')
+  puts "Puppet facts"
+  on(agent, 'puppet facts --trace')
 end
 
 test_name 'Setup for Facter NG' do
