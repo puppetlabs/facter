@@ -68,11 +68,11 @@ test_name 'Setup for Facter NG' do
         on agent, %( cd #{windows_puppet_bin_path} && mv facter-ng.bat facter.bat )
       else
         on agent, %( #{set_facter_ng_command} )
+        on agent, %( cd #{ubuntu_puppet_bin_path} && mv facter-ng facter)
       end
 
       puts 'Installing Facter NG on agent.'
       install_facter_gem(agent, facter_gem_path)
-      on agent, %( cd #{ubuntu_puppet_bin_path} && mv facter facter-3 && mv facter-ng facter)
     end
   end
 end
