@@ -12,10 +12,10 @@ module Facter
       @facts.select { |fact| fact.type == :legacy }
     end
 
-    def initialize
+    def initialize(os_descendents = nil)
       @facts = []
 
-      os_descendents = OsDetector.instance.hierarchy
+      os_descendents ||= OsDetector.instance.hierarchy
       load_all_oses_in_descending_order(os_descendents)
     end
 
