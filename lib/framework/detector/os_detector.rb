@@ -24,6 +24,8 @@ class OsDetector
                    :macosx
                  when /linux/
                    detect_distro
+                 when /freebsd/
+                   :freebsd
                  when /bsd/
                    :bsd
                  when /solaris/
