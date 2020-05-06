@@ -4,7 +4,6 @@ module Facter
   module Resolvers
     module Aix
       class Partitions < BaseResolver
-        @log = Facter::Log.new(self)
         @semaphore = Mutex.new
         @fact_list ||= {}
         class << self
@@ -40,11 +39,9 @@ module Facter
           end
 
           def populate_from_lslv(name)
-            stdout, stderr, _status = Open3.capture3("lslv -L #{name}")
-            if stdout.empty?
-              @log.debug(stderr)
-              return
-            end
+            stdout = Facter::Core::Execution.execute("lslv -L #{name}", logger: log)
+
+            return if stdout.empty?
 
             info_hash = extract_info(stdout)
             size_bytes = compute_size(info_hash)

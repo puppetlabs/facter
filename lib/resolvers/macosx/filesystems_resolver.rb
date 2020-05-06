@@ -7,7 +7,6 @@ module Facter
         # :macosx_filesystems
         @semaphore = Mutex.new
         @fact_list ||= {}
-        @log = Facter::Log.new(self)
 
         class << self
           private
@@ -17,7 +16,7 @@ module Facter
           end
 
           def read_filesystems(fact_name)
-            output, _status = Open3.capture2('mount')
+            output = Facter::Core::Execution.execute('mount', logger: log)
             filesystems = []
             output.each_line do |line|
               filesystem = line.match(/\(([a-z]+)\,*/).to_s

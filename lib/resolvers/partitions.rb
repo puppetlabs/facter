@@ -87,12 +87,13 @@ module Facter
         def blkid_command?
           return @blkid_exists unless @blkid_exists.nil?
 
-          stdout, _stderr, _status = Open3.capture3('which blkid')
-          @blkid_exists = stdout && !stdout.empty?
+          output = Facter::Core::Execution.execute('which blkid', logger: log)
+
+          @blkid_exists = !output.empty?
         end
 
         def execute_and_extract_blkid_info
-          stdout, _stderr, _status = Open3.capture3('blkid')
+          stdout = Facter::Core::Execution.execute('blkid', logger: log)
           output_hash = Hash[*stdout.split(/^([^:]+):/)[1..-1]]
           output_hash.each { |key, value| output_hash[key] = Hash[*value.delete('"').chomp.split(/ ([^= ]+)=/)[1..-1]] }
         end

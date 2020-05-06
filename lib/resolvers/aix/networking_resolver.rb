@@ -15,7 +15,7 @@ module Facter
           end
 
           def read_netstat(fact_name)
-            output, _status = Open3.capture2('netstat -rn')
+            output = Facter::Core::Execution.execute('netstat -rn', logger: log)
             output = output.split("\n").select { |line| (line =~ /\s\s[0-9]+.[0-9]+.[0-9]+.[0-9]+|\s\s.*:[0-9a-f]+/) }
             get_primary_interface_info(output)
 

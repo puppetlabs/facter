@@ -17,7 +17,7 @@ module Facter
 
           def read_mount(fact_name)
             @fact_list[:mountpoints] = {}
-            output, _status = Open3.capture2('mount 2>/dev/null')
+            output = Facter::Core::Execution.execute('mount', logger: log)
             output.split("\n").map do |line|
               next if line =~ /\snode\s|---|procfs|ahafs/
 
@@ -32,7 +32,7 @@ module Facter
           end
 
           def retrieve_sizes_for_mounts
-            output, _status = Open3.capture2('df -P 2>/dev/null')
+            output = Facter::Core::Execution.execute('df -P', logger: log)
             output.split("\n").map do |line|
               next if line =~ /Filesystem|-\s+-\s+-/
 

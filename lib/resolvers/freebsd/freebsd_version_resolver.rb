@@ -15,14 +15,12 @@ module Facter
           end
 
           def freebsd_version_system_call(fact_name)
-            output, _stderr, status = Open3.capture3('/bin/freebsd-version -kru')
-            return nil unless status.success?
+            output = Facter::Core::Execution.execute('/bin/freebsd-version -kru', logger: log)
+            return if output.empty?
 
             build_fact_list(output)
 
             @fact_list[fact_name]
-          rescue Errno::ENOENT
-            nil
           end
 
           def build_fact_list(output)

@@ -1,15 +1,21 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::Macosx::Ipaddress do
+  subject(:ipaddress) { Facter::Resolvers::Macosx::Ipaddress }
+
+  let(:log_spy) { instance_spy(Facter::Log) }
+
   describe '#resolve' do
     before do
-      allow(Open3).to receive(:capture2).with('route -n get default').and_return(route)
-      allow(Open3).to receive(:capture2).with('ipconfig getifaddr en0').and_return(ip)
-      allow(Open3).to receive(:capture2).with('ifconfig -a 2>/dev/null').and_return(interfaces)
+      ipaddress.instance_variable_set(:@log, log_spy)
+      allow(Facter::Core::Execution).to receive(:execute).with('route -n get default', logger: log_spy)
+                                                         .and_return(route)
+      allow(Facter::Core::Execution).to receive(:execute).with('ipconfig getifaddr en0', logger: log_spy).and_return(ip)
+      allow(Facter::Core::Execution).to receive(:execute).with('ifconfig -a', logger: log_spy).and_return(interfaces)
     end
 
     after do
-      Facter::Resolvers::Macosx::Ipaddress.invalidate_cache
+      ipaddress.invalidate_cache
     end
 
     let(:interfaces) { load_fixture('ifconfig_mac').read }
@@ -21,15 +27,15 @@ describe Facter::Resolvers::Macosx::Ipaddress do
       let(:ip) { '10.0.0.1' }
 
       it 'detects ipadress' do
-        expect(Facter::Resolvers::Macosx::Ipaddress.resolve(:ip)).to eql(ip)
+        expect(ipaddress.resolve(:ip)).to eql(ip)
       end
 
       it 'detects interfaces' do
-        expect(Facter::Resolvers::Macosx::Ipaddress.resolve(:interfaces)).to eql(interfaces_reuslt)
+        expect(ipaddress.resolve(:interfaces)).to eql(interfaces_reuslt)
       end
 
       it 'detects macaddress' do
-        expect(Facter::Resolvers::Macosx::Ipaddress.resolve(:macaddress)).to eql(macaddress)
+        expect(ipaddress.resolve(:macaddress)).to eql(macaddress)
       end
     end
 
@@ -38,7 +44,7 @@ describe Facter::Resolvers::Macosx::Ipaddress do
       let(:ip) {}
 
       it 'detects that ip is nil' do
-        expect(Facter::Resolvers::Macosx::Ipaddress.resolve(:ip)).to be(nil)
+        expect(ipaddress.resolve(:ip)).to be(nil)
       end
     end
   end

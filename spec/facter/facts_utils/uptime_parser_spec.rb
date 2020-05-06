@@ -2,17 +2,22 @@
 
 describe Facter::UptimeParser do
   describe '.uptime_seconds_unix' do
-    let(:uptime_proc_file_cmd) { '/bin/cat /proc/uptime 2>/dev/null' }
-    let(:kern_boottime_cmd) { 'sysctl -n kern.boottime 2>/dev/null' }
-    let(:uptime_cmd) { 'uptime 2>/dev/null' }
+    let(:uptime_proc_file_cmd) { '/bin/cat /proc/uptime' }
+    let(:kern_boottime_cmd) { 'sysctl -n kern.boottime' }
+    let(:uptime_cmd) { 'uptime' }
+    let(:log_spy) { instance_spy(Facter::Log) }
+
+    before do
+      Facter::UptimeParser.instance_variable_set(:@log, log_spy)
+    end
 
     context 'when a /proc/uptime file exists' do
       let(:proc_uptime_value) { '2672.69 20109.75' }
 
       it 'returns the correct result' do
-        allow(Open3)
-          .to receive(:capture3)
-          .with(uptime_proc_file_cmd)
+        allow(Facter::Core::Execution)
+          .to receive(:execute)
+          .with(uptime_proc_file_cmd, logger: log_spy)
           .and_return(proc_uptime_value)
 
         expect(Facter::UptimeParser.uptime_seconds_unix).to eq(2672)
@@ -29,14 +34,14 @@ describe Facter::UptimeParser do
         allow(Time).to receive(:at).with(60) { Time.parse('2019-10-10 10:59:00 +0100') }
         allow(Time).to receive(:now) { time_now }
 
-        allow(Open3)
-          .to receive(:capture3)
-          .with(uptime_proc_file_cmd)
+        allow(Facter::Core::Execution)
+          .to receive(:execute)
+          .with(uptime_proc_file_cmd, logger: log_spy)
           .and_return('')
 
-        allow(Open3)
-          .to receive(:capture3)
-          .with(kern_boottime_cmd)
+        allow(Facter::Core::Execution)
+          .to receive(:execute)
+          .with(kern_boottime_cmd, logger: log_spy)
           .and_return(kern_boottime_value)
 
         expect(Facter::UptimeParser.uptime_seconds_unix).to eq(60)
@@ -45,22 +50,22 @@ describe Facter::UptimeParser do
 
     context 'when the uptime executable is available only' do
       before do
-        allow(Open3)
-          .to receive(:capture3)
-          .with(uptime_proc_file_cmd)
+        allow(Facter::Core::Execution)
+          .to receive(:execute)
+          .with(uptime_proc_file_cmd, logger: log_spy)
           .and_return('')
 
-        allow(Open3)
-          .to receive(:capture3)
-          .with(kern_boottime_cmd)
+        allow(Facter::Core::Execution)
+          .to receive(:execute)
+          .with(kern_boottime_cmd, logger: log_spy)
           .and_return('')
       end
 
       shared_examples 'uptime executable regex expectation' do |cmd_output, result|
         it 'returns the correct result' do
-          allow(Open3)
-            .to receive(:capture3)
-            .with(uptime_cmd)
+          allow(Facter::Core::Execution)
+            .to receive(:execute)
+            .with(uptime_cmd, logger: log_spy)
             .and_return(cmd_output)
 
           expect(Facter::UptimeParser.uptime_seconds_unix).to eq(result)

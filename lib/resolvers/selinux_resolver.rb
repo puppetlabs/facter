@@ -21,7 +21,7 @@ module Facter
         end
 
         def read_mounts_file
-          output, _s = Open3.capture2('cat /proc/self/mounts')
+          output = Facter::Core::Execution.execute('cat /proc/self/mounts', logger: log)
           @fact_list[:enabled] = false
           mountpoint = ''
 

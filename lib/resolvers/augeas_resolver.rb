@@ -14,7 +14,7 @@ module Facter
         end
 
         def read_augeas_version(fact_name)
-          output, _status = Open3.capture2('augparse --version 2>&1')
+          output = Facter::Core::Execution.execute('augparse --version 2>&1', logger: log)
           @fact_list[:augeas_version] = Regexp.last_match(1) if output =~ /^augparse (\d+\.\d+\.\d+)/
           @fact_list[fact_name]
         end

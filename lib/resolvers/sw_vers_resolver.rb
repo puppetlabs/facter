@@ -18,7 +18,7 @@ module Facter
         end
 
         def software_version_system_call(fact_name)
-          output, _status = Open3.capture2('sw_vers')
+          output = Facter::Core::Execution.execute('sw_vers', logger: log)
           release_info = output.delete("\t").split("\n").map { |e| e.split(':') }
           result = Hash[*release_info.flatten]
           result.each { |k, v| @fact_list[k.downcase.to_sym] = v }

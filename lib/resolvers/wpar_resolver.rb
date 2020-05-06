@@ -14,9 +14,9 @@ module Facter
         end
 
         def read_wpar(fact_name)
-          lpar_cmd = '/usr/bin/lparstat -W 2>/dev/null'
-          output, status = Open3.capture2(lpar_cmd)
-          return nil unless status.success?
+          output = Facter::Core::Execution.execute('/usr/bin/lparstat -W', logger: log)
+
+          return if output.empty?
 
           output.each_line do |line|
             populate_wpar_data(line.split(':').map(&:strip))

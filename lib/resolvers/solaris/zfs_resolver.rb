@@ -4,7 +4,6 @@ module Facter
   module Resolvers
     module Solaris
       class ZFS < BaseResolver
-        @log = Facter::Log.new(self)
         @semaphore = Mutex.new
         @fact_list ||= {}
         class << self
@@ -20,7 +19,7 @@ module Facter
           end
 
           def build_zfs_facts
-            output, _status = Open3.capture2('zfs upgrade -v')
+            output = Facter::Core::Execution.execute('zfs upgrade -v', logger: log)
             features_list = output.scan(/^\s+(\d+)/).flatten
 
             return if features_list.empty?

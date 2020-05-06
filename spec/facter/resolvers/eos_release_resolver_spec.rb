@@ -1,21 +1,19 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::EosRelease do
+  subject(:eos_release) { Facter::Resolvers::EosRelease }
+
   before do
-    allow(Open3).to receive(:capture2)
-      .with('cat /etc/Eos-release')
+    allow(Facter::Util::FileHelper).to receive(:safe_read)
+      .with('/etc/Eos-release', nil)
       .and_return('name version')
   end
 
   it 'returns name' do
-    result = Facter::Resolvers::EosRelease.resolve(:name)
-
-    expect(result).to eq('name')
+    expect(eos_release.resolve(:name)).to eq('name')
   end
 
   it 'returns version' do
-    result = Facter::Resolvers::EosRelease.resolve(:version)
-
-    expect(result).to eq('version')
+    expect(eos_release.resolve(:version)).to eq('version')
   end
 end

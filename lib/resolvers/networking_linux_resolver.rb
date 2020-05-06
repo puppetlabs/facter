@@ -25,13 +25,13 @@ module Facter
         end
 
         def retrieve_macaddress
-          output, _status = Open3.capture2("ip link show #{@fact_list[:primary_interface]}")
+          output = Facter::Core::Execution.execute("ip link show #{@fact_list[:primary_interface]}", logger: log)
           macaddress = */ether ([^ ]*) /.match(output)
           @fact_list[:macaddress] = macaddress[1]
         end
 
         def retrieve_interface_info
-          output, _status = Open3.capture2('ip -o address')
+          output = Facter::Core::Execution.execute('ip -o address', logger: log)
           interfaces = {}
 
           output.each_line do |ip_line|
@@ -74,7 +74,7 @@ module Facter
         end
 
         def retrieve_default_interface_and_ip
-          output, _status = Open3.capture2('ip route get 1')
+          output = Facter::Core::Execution.execute('ip route get 1', logger: log)
 
           ip_route_tokens = output.each_line.first.strip.split(' ')
           default_interface = ip_route_tokens[4]

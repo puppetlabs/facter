@@ -4,7 +4,6 @@ module Facter
   module Resolvers
     module Macosx
       class Ipaddress < BaseResolver
-        @log = Facter::Log.new(self)
         @semaphore = Mutex.new
         @fact_list ||= {}
         class << self
@@ -19,7 +18,7 @@ module Facter
             primary_interface = read_primary_interface
             unless primary_interface.nil?
               @fact_list[:primary] = primary_interface
-              output, _status = Open3.capture2("ipconfig getifaddr #{primary_interface}")
+              output = Facter::Core::Execution.execute("ipconfig getifaddr #{primary_interface}", logger: log)
               ip = output.strip
             end
             find_all_interfaces
@@ -29,7 +28,7 @@ module Facter
 
           def read_primary_interface
             iface = nil
-            output, _status = Open3.capture2('route -n get default')
+            output = Facter::Core::Execution.execute('route -n get default', logger: log)
             output.split(/^\S/).each do |str|
               iface = Regexp.last_match(1) if str.strip =~ /interface: (\S+)/
             end
@@ -37,7 +36,7 @@ module Facter
           end
 
           def find_all_interfaces
-            output, _status = Open3.capture2('ifconfig -a 2>/dev/null')
+            output = Facter::Core::Execution.execute('ifconfig -a', logger: log)
 
             data_hash = Hash[*output.split(/^([A-Za-z0-9_]+): /)[1..-1]]
 

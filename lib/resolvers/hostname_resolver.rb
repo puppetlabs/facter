@@ -3,7 +3,6 @@
 module Facter
   module Resolvers
     class Hostname < BaseResolver
-      @log = Facter::Log.new(self)
       @semaphore = Mutex.new
       @fact_list ||= {}
       class << self
@@ -14,7 +13,7 @@ module Facter
         end
 
         def retrieve_hostname(fact_name)
-          output, _status = Open3.capture2('hostname')
+          output = Facter::Core::Execution.execute('hostname', logger: log)
 
           # get domain
           domain = read_domain(output)

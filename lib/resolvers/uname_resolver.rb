@@ -14,12 +14,12 @@ module Facter
         end
 
         def uname_system_call(fact_name)
-          output, _status = Open3.capture2('uname -m &&
+          output = Facter::Core::Execution.execute('uname -m &&
             uname -n &&
             uname -p &&
             uname -r &&
             uname -s &&
-            uname -v')
+            uname -v', logger: log)
 
           build_fact_list(output)
 

@@ -7,7 +7,6 @@ module Facter
         include Facter::FilesystemHelper
         @semaphore = Mutex.new
         @fact_list ||= {}
-        @log = Facter::Log.new(self)
         class << self
           private
 

@@ -10,10 +10,14 @@ describe Facter::Resolvers::Aix::Mountpoints do
                   filesystem: 'jfs2', options: ['rw', 'log=/dev/hd8'], size: '5.00 GiB', size_bytes: 5_368_709_120,
                   used: '2.16 GiB', used_bytes: 2_319_687_680 } }
   end
+  let(:log_spy) { instance_spy(Facter::Log) }
 
   before do
-    allow(Open3).to receive(:capture2).with('mount 2>/dev/null').and_return(load_fixture('mount').read)
-    allow(Open3).to receive(:capture2).with('df -P 2>/dev/null').and_return(load_fixture('df').read)
+    Facter::Resolvers::Aix::Mountpoints.instance_variable_set(:@log, log_spy)
+    allow(Facter::Core::Execution).to receive(:execute).with('mount', logger: log_spy)
+                                                       .and_return(load_fixture('mount').read)
+    allow(Facter::Core::Execution).to receive(:execute).with('df -P', logger: log_spy)
+                                                       .and_return(load_fixture('df').read)
   end
 
   it 'returns mountpoints' do

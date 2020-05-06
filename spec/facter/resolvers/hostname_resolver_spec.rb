@@ -1,16 +1,21 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::Hostname do
+  subject(:hostname_resolver) { Facter::Resolvers::Hostname }
+
+  let(:log_spy) { instance_spy(Facter::Log) }
+
   describe '#resolve' do
     before do
-      allow(Open3).to receive(:capture2).with('hostname').and_return(host)
+      hostname_resolver.instance_variable_set(:@log, log_spy)
+      allow(Facter::Core::Execution).to receive(:execute).with('hostname', logger: log_spy).and_return(host)
       allow(Facter::Util::FileHelper).to receive(:safe_read)
         .with('/etc/resolv.conf')
         .and_return("nameserver 10.10.0.10\nnameserver 10.10.1.10\nsearch baz\ndomain baz\n")
     end
 
     after do
-      Facter::Resolvers::Hostname.invalidate_cache
+      hostname_resolver.invalidate_cache
     end
 
     context 'when hostname returns fqdn' do
@@ -20,15 +25,15 @@ describe Facter::Resolvers::Hostname do
       let(:fqdn) { "#{hostname}.#{domain}" }
 
       it 'detects hostname' do
-        expect(Facter::Resolvers::Hostname.resolve(:hostname)).to eql(hostname)
+        expect(hostname_resolver.resolve(:hostname)).to eql(hostname)
       end
 
       it 'returns networking Domain' do
-        expect(Facter::Resolvers::Hostname.resolve(:domain)).to eq(domain)
+        expect(hostname_resolver.resolve(:domain)).to eq(domain)
       end
 
       it 'returns fqdn' do
-        expect(Facter::Resolvers::Hostname.resolve(:fqdn)).to eq(fqdn)
+        expect(hostname_resolver.resolve(:fqdn)).to eq(fqdn)
       end
     end
 
@@ -39,15 +44,15 @@ describe Facter::Resolvers::Hostname do
       let(:fqdn) { "#{hostname}.#{domain}" }
 
       it 'detects hostname' do
-        expect(Facter::Resolvers::Hostname.resolve(:hostname)).to eql(hostname)
+        expect(hostname_resolver.resolve(:hostname)).to eql(hostname)
       end
 
       it 'returns networking Domain' do
-        expect(Facter::Resolvers::Hostname.resolve(:domain)).to eq(domain)
+        expect(hostname_resolver.resolve(:domain)).to eq(domain)
       end
 
       it 'returns fqdn' do
-        expect(Facter::Resolvers::Hostname.resolve(:fqdn)).to eq(fqdn)
+        expect(hostname_resolver.resolve(:fqdn)).to eq(fqdn)
       end
     end
 
@@ -55,7 +60,7 @@ describe Facter::Resolvers::Hostname do
       let(:host) { nil }
 
       it 'detects that hostname is nil' do
-        expect(Facter::Resolvers::Hostname.resolve(:hostname)).to be(nil)
+        expect(hostname_resolver.resolve(:hostname)).to be(nil)
       end
     end
 
@@ -67,7 +72,7 @@ describe Facter::Resolvers::Hostname do
       end
 
       it 'detects that domain is nil' do
-        expect(Facter::Resolvers::Hostname.resolve(:domain)).to be(nil)
+        expect(hostname_resolver.resolve(:domain)).to be(nil)
       end
     end
   end

@@ -8,6 +8,7 @@
 module Facter
   class ODMQuery
     REPOS = %w[CuAt CuDv PdAt PdDv].freeze
+    @log = Facter::Log.new(self)
 
     def initialize
       @query = ''
@@ -29,7 +30,7 @@ module Facter
       REPOS.each do |repo|
         break if result && !result.empty?
 
-        result, _stderr, _s = Open3.capture3("#{query} #{repo}")
+        result = Facter::Core::Execution.execute("#{query} #{repo}", logger: @log)
       end
       result
     end

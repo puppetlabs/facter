@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::SuseRelease do
+  subject(:suse_release) { Facter::Resolvers::SuseRelease }
+
+  let(:log_spy) { instance_spy(Facter::Log) }
+
   before do
     allow(Facter::Util::FileHelper).to receive(:safe_read)
       .with('/etc/SuSE-release', nil)
@@ -9,20 +13,14 @@ describe Facter::Resolvers::SuseRelease do
   end
 
   it 'returns os NAME' do
-    result = Facter::Resolvers::SuseRelease.resolve(:name)
-
-    expect(result).to eq('openSUSE')
+    expect(suse_release.resolve(:name)).to eq('openSUSE')
   end
 
   it 'returns os VERSION_ID' do
-    result = Facter::Resolvers::SuseRelease.resolve(:version)
-
-    expect(result).to eq('11.1')
+    expect(suse_release.resolve(:version)).to eq('11.1')
   end
 
   it 'returns the identifier' do
-    result = Facter::Resolvers::SuseRelease.resolve(:identifier)
-
-    expect(result).to eq('opensuse')
+    expect(suse_release.resolve(:identifier)).to eq('opensuse')
   end
 end

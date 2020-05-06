@@ -14,7 +14,7 @@ module Facter
         end
 
         def read_oslevel(fact_name)
-          output, _status = Open3.capture2('/usr/bin/oslevel -s 2>/dev/null')
+          output = Facter::Core::Execution.execute('/usr/bin/oslevel -s', logger: log)
           @fact_list[:build] = output
           @fact_list[:kernel] = 'AIX'
 

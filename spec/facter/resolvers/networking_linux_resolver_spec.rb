@@ -1,19 +1,26 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::NetworkingLinux do
+  subject(:networking_linux) { Facter::Resolvers::NetworkingLinux }
+
+  let(:log_spy) { instance_spy(Facter::Log) }
+
   describe '#resolve' do
     before do
-      allow(Open3).to receive(:capture2)
-        .with('ip -o address')
+      networking_linux.instance_variable_set(:@log, log_spy)
+      allow(Facter::Core::Execution).to receive(:execute)
+        .with('ip -o address', logger: log_spy)
         .and_return(load_fixture('ip_o_address_linux').read)
-      allow(Open3).to receive(:capture2)
-        .with('ip route get 1')
+      allow(Facter::Core::Execution).to receive(:execute)
+        .with('ip route get 1', logger: log_spy)
         .and_return(load_fixture('ip_route_get_1_linux').read)
-      allow(Open3).to receive(:capture2)
-        .with('ip link show ens160')
+      allow(Facter::Core::Execution).to receive(:execute)
+        .with('ip link show ens160', logger: log_spy)
         .and_return(load_fixture('ip_address_linux').read)
+    end
 
-      Facter::Resolvers::NetworkingLinux.invalidate_cache
+    after do
+      networking_linux.invalidate_cache
     end
 
     let(:result) do
@@ -42,33 +49,35 @@ describe Facter::Resolvers::NetworkingLinux do
     let(:macaddress) { '00:50:56:9a:ec:fb' }
 
     it 'returns the default ip' do
-      expect(Facter::Resolvers::NetworkingLinux.resolve(:ip)).to eq('10.16.122.163')
+      expect(networking_linux.resolve(:ip)).to eq('10.16.122.163')
     end
 
     it 'returns all the interfaces' do
-      expect(Facter::Resolvers::NetworkingLinux.resolve(:interfaces)).to eq(result)
+      expect(networking_linux.resolve(:interfaces)).to eq(result)
     end
 
     it 'return macaddress' do
-      expect(Facter::Resolvers::NetworkingLinux.resolve(:macaddress)).to eq(macaddress)
+      expect(networking_linux.resolve(:macaddress)).to eq(macaddress)
     end
 
     context 'when caching' do
       it 'returns from cache' do
-        Facter::Resolvers::NetworkingLinux.resolve(:ip)
-        Facter::Resolvers::NetworkingLinux.resolve(:ip)
+        networking_linux.resolve(:ip)
+        networking_linux.resolve(:ip)
 
-        expect(Open3).to have_received(:capture2).with('ip route get 1').once
+        expect(Facter::Core::Execution).to have_received(:execute)
+          .with('ip route get 1', logger: log_spy).once
       end
     end
 
     context 'when invalidate caching' do
       it 'resolved again the fact' do
-        Facter::Resolvers::NetworkingLinux.resolve(:ip)
-        Facter::Resolvers::NetworkingLinux.invalidate_cache
-        Facter::Resolvers::NetworkingLinux.resolve(:ip)
+        networking_linux.resolve(:ip)
+        networking_linux.invalidate_cache
+        networking_linux.resolve(:ip)
 
-        expect(Open3).to have_received(:capture2).with('ip route get 1').twice
+        expect(Facter::Core::Execution).to have_received(:execute)
+          .with('ip route get 1', logger: log_spy).twice
       end
     end
   end

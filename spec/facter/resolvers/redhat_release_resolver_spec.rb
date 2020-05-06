@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::RedHatRelease do
+  subject(:redhat_release) { Facter::Resolvers::RedHatRelease }
+
+  let(:log_spy) { instance_spy(Facter::Log) }
+
   before do
     allow(Facter::Util::FileHelper).to receive(:safe_read)
       .with('/etc/redhat-release', nil)
@@ -8,20 +12,14 @@ describe Facter::Resolvers::RedHatRelease do
   end
 
   it 'returns os NAME' do
-    result = Facter::Resolvers::RedHatRelease.resolve(:name)
-
-    expect(result).to eq('RedHat')
+    expect(redhat_release.resolve(:name)).to eq('RedHat')
   end
 
   it 'returns os VERSION_ID' do
-    result = Facter::Resolvers::RedHatRelease.resolve(:version)
-
-    expect(result).to eq('5.10')
+    expect(redhat_release.resolve(:version)).to eq('5.10')
   end
 
   it 'returns os VERSION_CODENAME' do
-    result = Facter::Resolvers::RedHatRelease.resolve(:codename)
-
-    expect(result).to eq('Tikanga')
+    expect(redhat_release.resolve(:codename)).to eq('Tikanga')
   end
 end

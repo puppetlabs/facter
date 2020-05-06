@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::Wpar do
+  let(:log_spy) { instance_spy(Facter::Log) }
+
   before do
-    allow(Open3).to receive(:capture2)
-      .with('/usr/bin/lparstat -W 2>/dev/null')
+    Facter::Resolvers::Wpar.instance_variable_set(:@log, log_spy)
+    allow(Facter::Core::Execution).to receive(:execute)
+      .with('/usr/bin/lparstat -W', logger: log_spy)
       .and_return(open3_result)
   end
 
@@ -12,8 +15,7 @@ describe Facter::Resolvers::Wpar do
   end
 
   describe '#oslevel 6.1+' do
-    let(:lparstat_w) { load_fixture('lparstat_w').read }
-    let(:open3_result) { [lparstat_w, OpenStruct.new(success?: true)] }
+    let(:open3_result) { load_fixture('lparstat_w').read }
 
     it 'returns wpar_key' do
       expect(Facter::Resolvers::Wpar.resolve(:wpar_key)).to eq(13)
@@ -25,7 +27,7 @@ describe Facter::Resolvers::Wpar do
   end
 
   describe '#oslevel 6.0' do
-    let(:open3_result) { ['', OpenStruct.new(success?: false)] }
+    let(:open3_result) { '' }
 
     it 'does not return wpar_key' do
       expect(Facter::Resolvers::Wpar.resolve(:wpar_key)).to be_nil

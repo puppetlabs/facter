@@ -6,7 +6,6 @@ module Facter
       class SwapMemory < BaseResolver
         @semaphore = Mutex.new
         @fact_list ||= {}
-        @log = Facter::Log.new(self)
         class << self
           private
 
@@ -15,7 +14,7 @@ module Facter
           end
 
           def read_swap_memory(fact_name) # rubocop:disable Metrics/AbcSize
-            output = Open3.capture2('sysctl -n vm.swapusage').first
+            output = Facter::Core::Execution.execute('sysctl -n vm.swapusage', logger: log)
             data = output.match(/^total = ([\d.]+)M  used = ([\d.]+)M  free = ([\d.]+)M  (\(encrypted\))$/)
 
             if data[1].to_f.positive?

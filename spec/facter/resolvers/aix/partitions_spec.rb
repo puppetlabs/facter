@@ -37,18 +37,14 @@ describe Facter::Resolvers::Aix::Partitions do
     end
 
     before do
-      allow(Open3).to receive(:capture3).with('lslv -L hd5').and_return(load_fixture('lslv_output').read)
-      allow(Open3).to receive(:capture3).with('lslv -L hd6').and_return(['', 'Error: something happened!', 1])
+      allow(Facter::Core::Execution).to receive(:execute).with('lslv -L hd5', logger: logger_spy)
+                                                         .and_return(load_fixture('lslv_output').read)
+      allow(Facter::Core::Execution).to receive(:execute).with('lslv -L hd6', logger: logger_spy)
+                                                         .and_return('')
     end
 
     it 'returns partitions informations' do
       expect(resolver.resolve(:partitions)).to eql(partitions)
-    end
-
-    it 'logs stderr output in case lslv commands fails' do
-      resolver.resolve(:partitions)
-
-      expect(logger_spy).to have_received(:debug).with('Error: something happened!')
     end
   end
 end

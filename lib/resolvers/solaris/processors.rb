@@ -4,7 +4,6 @@ module Facter
   module Resolvers
     module Solaris
       class Processors < BaseResolver
-        @log = Facter::Log.new(self)
         @semaphore = Mutex.new
         @fact_list ||= {}
         class << self
@@ -17,11 +16,8 @@ module Facter
           def collect_kstat_info(fact_name)
             return unless File.executable?('/usr/bin/kstat')
 
-            kstat_output, stderr, status = Open3.capture3('/usr/bin/kstat -m cpu_info')
-            unless status.to_i.zero?
-              @log.debug("Command /usr/bin/kstat failed with error message: #{stderr}")
-              return
-            end
+            kstat_output = Facter::Core::Execution.execute('/usr/bin/kstat -m cpu_info', logger: log)
+            return if kstat_output.empty?
 
             parse_output(kstat_output.chomp)
             @fact_list[fact_name]

@@ -3,7 +3,6 @@
 module Facter
   module Resolvers
     class SolarisZoneName < BaseResolver
-      @log = Facter::Log.new(self)
       @semaphore = Mutex.new
       @fact_list ||= {}
       class << self
@@ -14,15 +13,10 @@ module Facter
         end
 
         def build_current_zone_name_fact(fact_name)
-          return unless File.executable?('/bin/zonename')
+          zone_name_output = Facter::Core::Execution.execute('/bin/zonename', logger: log)
 
-          zone_name_output, status = Open3.capture2('/bin/zonename')
-          unless status.to_s.include?('exit 0')
-            @log.debug("Command #{command} returned status: #{status}")
-            return
-          end
           if zone_name_output.empty?
-            @log.debug("Command #{command} returned an empty result")
+            log.debug("Command #{command} returned an empty result")
             return
           end
           @fact_list[:current_zone_name] = zone_name_output.chomp

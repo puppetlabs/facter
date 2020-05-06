@@ -1,34 +1,46 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::SolarisZone do
+  subject(:solaris_zone) { Facter::Resolvers::SolarisZone }
+
+  let(:log_spy) { instance_spy(Facter::Log) }
+
   before do
-    status = double(Process::Status, to_s: st)
-    allow(File).to receive(:executable?)
-      .with('/usr/sbin/zoneadm')
-      .and_return(true)
-    allow(Open3).to receive(:capture2)
-      .with('/usr/sbin/zoneadm list -cp')
-      .and_return([output, status])
+    solaris_zone.instance_variable_set(:@log, log_spy)
+    allow(Facter::Core::Execution).to receive(:execute)
+      .with('/usr/sbin/zoneadm list -cp', logger: log_spy)
+      .ordered
+      .and_return(output)
   end
 
   after do
-    Facter::Resolvers::SolarisZone.invalidate_cache
+    solaris_zone.invalidate_cache
   end
 
   context 'when it can resolve zone facts' do
     let(:output) { '0:global:running:/::solaris:shared:-:none:' }
-    let(:st) { 'exit 0' }
+    let(:zone) do
+      [{ brand: 'solaris',
+         id: '0',
+         iptype: 'shared',
+         name: 'global',
+         uuid: '',
+         status: 'running',
+         path: '/' }]
+    end
 
     it 'returns zone fact' do
-      hash_fact = [{ brand: 'solaris',
-                     id: '0',
-                     iptype: 'shared',
-                     name: 'global',
-                     uuid: '',
-                     status: 'running',
-                     path: '/' }]
-      result = Facter::Resolvers::SolarisZone.resolve(:zone)
-      expect(result).to eq(hash_fact)
+      expect(solaris_zone.resolve(:zone)).to eq(zone)
+    end
+  end
+
+  context 'when it can not resolve zone facts' do
+    let(:output) { '' }
+
+    it 'prints debug message' do
+      solaris_zone.resolve(:zone)
+      expect(log_spy).to have_received(:debug)
+        .with('Command /usr/sbin/zoneadm list -cp returned an empty result')
     end
   end
 end

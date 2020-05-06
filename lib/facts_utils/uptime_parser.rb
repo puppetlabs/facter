@@ -8,6 +8,8 @@ module Facter
     SECS_IN_AN_HOUR = 3_600
     SECS_IN_A_MINUTE = 60
 
+    @log = Facter::Log.new(self)
+
     class << self
       def uptime_seconds_unix
         uptime_proc_uptime || uptime_sysctl || uptime_executable
@@ -16,19 +18,20 @@ module Facter
       private
 
       def uptime_proc_uptime
-        output, _stderr, _status = Open3.capture3("/bin/cat #{uptime_file} 2>/dev/null")
+        output = Facter::Core::Execution.execute("/bin/cat #{uptime_file}", logger: @log)
 
         output.chomp.split(' ').first.to_i unless output.empty?
       end
 
       def uptime_sysctl
-        output, _stderr, _status = Open3.capture3("sysctl -n #{uptime_sysctl_variable} 2>/dev/null")
+        output = Facter::Core::Execution.execute("sysctl -n #{uptime_sysctl_variable}", logger: @log)
 
         compute_uptime(Time.at(output.match(/\d+/)[0].to_i)) unless output.empty?
       end
 
       def uptime_executable
-        output, _stderr, _status = Open3.capture3(uptime_executable_cmd + ' 2>/dev/null')
+        output = Facter::Core::Execution.execute(uptime_executable_cmd, logger: @log)
+
         return unless output
 
         up = 0

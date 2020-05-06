@@ -4,7 +4,6 @@ module Facter
   module Resolvers
     module Solaris
       class Ipaddress < BaseResolver
-        @log = Facter::Log.new(self)
         @semaphore = Mutex.new
         @fact_list ||= {}
         class << self
@@ -18,7 +17,7 @@ module Facter
             ip = nil
             primary_interface = read_primary_interface
             unless primary_interface.nil?
-              output, _status = Open3.capture2("ifconfig #{primary_interface}")
+              output = Facter::Core::Execution.execute("ifconfig #{primary_interface}", logger: log)
               output.each_line do |str|
                 if str.strip =~ /inet\s(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}) .+/
                   @fact_list[:ip] = ip = Regexp.last_match(1)
@@ -30,7 +29,7 @@ module Facter
           end
 
           def read_primary_interface
-            output, _status = Open3.capture2('route -n get default | grep interface')
+            output = Facter::Core::Execution.execute('route -n get default | grep interface', logger: log)
             output.strip =~ /interface:\s(\S+)/ ? Regexp.last_match(1) : nil
           end
         end

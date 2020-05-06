@@ -4,7 +4,6 @@ module Facter
   module Resolvers
     module Solaris
       class ZPool < BaseResolver
-        @log = Facter::Log.new(self)
         @semaphore = Mutex.new
         @fact_list ||= {}
         class << self
@@ -20,7 +19,7 @@ module Facter
           end
 
           def build_zpool_facts
-            output, _status = Open3.capture2('zpool upgrade -v')
+            output = Facter::Core::Execution.execute('zpool upgrade -v', logger: log)
             features_list = output.scan(/^\s+(\d+)/).flatten
             features_flags = output.scan(/^([a-z0-9_]+)[[:blank:]]*(\(read-only compatible\))?$/).map(&:first)
 

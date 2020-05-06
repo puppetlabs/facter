@@ -1,31 +1,25 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::Freebsd::FreebsdVersion do
+  subject(:freebsd_version) { Facter::Resolvers::Freebsd::FreebsdVersion }
+
   before do
-    status = instance_double('Process::Status')
-    allow(status).to receive(:success?).and_return(true)
-    allow(Open3).to receive(:capture3)
-      .with('/bin/freebsd-version -kru')
-      .and_return(['13.0-CURRENT
+    allow(Facter::Core::Execution).to receive(:execute)
+      .with('/bin/freebsd-version -kru', logger: freebsd_version.log)
+      .and_return('13.0-CURRENT
         12.1-RELEASE-p3
-        12.0-STABLE', nil, status])
+        12.0-STABLE')
   end
 
   it 'returns installed kernel' do
-    result = Facter::Resolvers::Freebsd::FreebsdVersion.resolve(:installed_kernel)
-
-    expect(result).to eq('13.0-CURRENT')
+    expect(freebsd_version.resolve(:installed_kernel)).to eq('13.0-CURRENT')
   end
 
   it 'returns running kernel' do
-    result = Facter::Resolvers::Freebsd::FreebsdVersion.resolve(:running_kernel)
-
-    expect(result).to eq('12.1-RELEASE-p3')
+    expect(freebsd_version.resolve(:running_kernel)).to eq('12.1-RELEASE-p3')
   end
 
   it 'returns installed userland' do
-    result = Facter::Resolvers::Freebsd::FreebsdVersion.resolve(:installed_userland)
-
-    expect(result).to eq('12.0-STABLE')
+    expect(freebsd_version.resolve(:installed_userland)).to eq('12.0-STABLE')
   end
 end

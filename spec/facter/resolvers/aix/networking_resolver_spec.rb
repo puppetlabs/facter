@@ -1,9 +1,12 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::Aix::Networking do
+  let(:log_spy) { instance_spy(Facter::Log) }
+
   before do
-    allow(Open3).to receive(:capture2)
-      .with('netstat -rn')
+    Facter::Resolvers::Aix::Networking.instance_variable_set(:@log, log_spy)
+    allow(Facter::Core::Execution).to receive(:execute)
+      .with('netstat -rn', logger: log_spy)
       .and_return(load_fixture('netstat_rn').read)
   end
 

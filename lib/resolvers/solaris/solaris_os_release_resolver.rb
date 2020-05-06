@@ -3,7 +3,6 @@
 module Facter
   module Resolvers
     class SolarisRelease < BaseResolver
-      @log = Facter::Log.new(self)
       @semaphore = Mutex.new
       @fact_list ||= {}
       @os_version_regex_patterns = ['Solaris \d+ \d+/\d+ s(\d+)[sx]?_u(\d+)wos_',
@@ -16,8 +15,8 @@ module Facter
         end
 
         def build_release_facts(fact_name)
-          result = read_os_release_file
-          return unless result
+          result = Util::FileHelper.safe_read('/etc/release', nil)
+          return @fact_list[fact_name] = nil if result.nil?
 
           @os_version_regex_patterns.each do |os_version_regex|
             major, minor = search_for_os_version(/#{os_version_regex}/, result)
@@ -36,15 +35,6 @@ module Facter
           major, minor = result.captures if result
           minor = regex_pattern == /Solaris (\d+)/ ? '0' : minor
           return [major, minor] if major && minor
-        end
-
-        def read_os_release_file
-          output, status = Open3.capture2('cat /etc/release')
-          if !status.to_s.include?('exit 0') || output.empty?
-            @log.error('Could not build release fact because of missing or empty file /etc/release')
-            return
-          end
-          output
         end
       end
     end

@@ -1,27 +1,26 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::SwVers do
+  subject(:sw_vers) { Facter::Resolvers::SwVers }
+
+  let(:log_spy) { instance_spy(Facter::Log) }
+
   before do
-    allow(Open3).to receive(:capture2)
-      .with('sw_vers')
+    sw_vers.instance_variable_set(:@log, log_spy)
+    allow(Facter::Core::Execution).to receive(:execute)
+      .with('sw_vers', logger: log_spy)
       .and_return("ProductName:\tMac OS X\nProductVersion:\t10.14.1\nBuildVersion:\t18B75\n")
   end
 
   it 'returns os ProductName' do
-    result = Facter::Resolvers::SwVers.resolve(:productname)
-
-    expect(result).to eq('Mac OS X')
+    expect(sw_vers.resolve(:productname)).to eq('Mac OS X')
   end
 
   it 'returns os ProductVersion' do
-    result = Facter::Resolvers::SwVers.resolve(:productversion)
-
-    expect(result).to eq('10.14.1')
+    expect(sw_vers.resolve(:productversion)).to eq('10.14.1')
   end
 
   it 'returns os BuildVersion' do
-    result = Facter::Resolvers::SwVers.resolve(:buildversion)
-
-    expect(result).to eq('18B75')
+    expect(sw_vers.resolve(:buildversion)).to eq('18B75')
   end
 end

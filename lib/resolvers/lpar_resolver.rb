@@ -14,8 +14,7 @@ module Facter
         end
 
         def read_lpar(fact_name)
-          lpar_cmd = '/usr/bin/lparstat -i'
-          output, _status = Open3.capture2(lpar_cmd)
+          output = Facter::Core::Execution.execute('/usr/bin/lparstat -i', logger: log)
           output.each_line do |line|
             populate_lpar_data(line.split(':').map(&:strip))
           end

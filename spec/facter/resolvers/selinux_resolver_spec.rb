@@ -1,55 +1,53 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::SELinux do
+  subject(:selinux_resolver) { Facter::Resolvers::SELinux }
+
+  let(:log_spy) { instance_spy(Facter::Log) }
+
   after do
-    Facter::Resolvers::SELinux.invalidate_cache
+    selinux_resolver.invalidate_cache
+  end
+
+  before do
+    selinux_resolver.instance_variable_set(:@log, log_spy)
+    allow(Facter::Core::Execution).to receive(:execute)
+      .with('cat /proc/self/mounts', logger: log_spy)
+      .and_return(load_fixture(file).read)
   end
 
   context 'when selinux is disabled' do
-    before do
-      allow(Open3).to receive(:capture2)
-        .with('cat /proc/self/mounts')
-        .and_return(load_fixture('proc_self_mounts').read)
-    end
+    let(:file) { 'proc_self_mounts' }
 
     it 'returns false when selinux is not enabled' do
-      result = Facter::Resolvers::SELinux.resolve(:enabled)
-
-      expect(result).to be(false)
+      expect(selinux_resolver.resolve(:enabled)).to be(false)
     end
 
     it 'returns nil for config_mode' do
-      result = Facter::Resolvers::SELinux.resolve(:config_mode)
-
-      expect(result).to be(nil)
+      expect(selinux_resolver.resolve(:config_mode)).to be(nil)
     end
   end
 
   context 'when selinux is enabled but selinux/config file does not exists' do
+    let(:file) { 'proc_self_mounts_selinux' }
+
     before do
-      allow(Open3).to receive(:capture2)
-        .with('cat /proc/self/mounts')
-        .and_return(load_fixture('proc_self_mounts_selinux').read)
       allow(Facter::Util::FileHelper).to receive(:safe_readlines).with('/etc/selinux/config').and_return([])
     end
 
     it 'returns true when selinux is enabled' do
-      result = Facter::Resolvers::SELinux.resolve(:enabled)
-
-      expect(result).to be(true)
+      expect(selinux_resolver.resolve(:enabled)).to be(true)
     end
 
     it 'returns nil for config_mode' do
-      result = Facter::Resolvers::SELinux.resolve(:config_mode)
-
-      expect(result).to be(nil)
+      expect(selinux_resolver.resolve(:config_mode)).to be(nil)
     end
   end
 
   context 'when selinux is enabled and selinux/config file exists' do
+    let(:file) { 'proc_self_mounts_selinux' }
+
     before do
-      allow(Open3).to receive(:capture2)
-        .with('cat /proc/self/mounts').and_return(load_fixture('proc_self_mounts_selinux').read)
       allow(Facter::Util::FileHelper).to receive(:safe_readlines)
         .with('/etc/selinux/config').and_return(load_fixture('selinux_config').readlines)
       allow(Facter::Util::FileHelper).to receive(:safe_read)
@@ -59,46 +57,34 @@ describe Facter::Resolvers::SELinux do
     end
 
     it 'returns enabled true' do
-      result = Facter::Resolvers::SELinux.resolve(:enabled)
-
-      expect(result).to be(true)
+      expect(selinux_resolver.resolve(:enabled)).to be(true)
     end
 
     it 'returns config_mode enabled' do
-      result = Facter::Resolvers::SELinux.resolve(:config_mode)
-
-      expect(result).to eql('enabled')
+      expect(selinux_resolver.resolve(:config_mode)).to eql('enabled')
     end
 
     it 'returns config_policy targeted' do
-      result = Facter::Resolvers::SELinux.resolve(:config_policy)
-
-      expect(result).to eql('targeted')
+      expect(selinux_resolver.resolve(:config_policy)).to eql('targeted')
     end
 
     it 'returns policy_version 31' do
-      result = Facter::Resolvers::SELinux.resolve(:policy_version)
-
-      expect(result).to eql('31')
+      expect(selinux_resolver.resolve(:policy_version)).to eql('31')
     end
 
     it 'returns enforced true' do
-      result = Facter::Resolvers::SELinux.resolve(:enforced)
-
-      expect(result).to be(true)
+      expect(selinux_resolver.resolve(:enforced)).to be(true)
     end
 
     it 'returns current_mode enforcing' do
-      result = Facter::Resolvers::SELinux.resolve(:current_mode)
-
-      expect(result).to eql('enforcing')
+      expect(selinux_resolver.resolve(:current_mode)).to eql('enforcing')
     end
   end
 
   context 'when selinux is enabled but enforce and policyvers files are not readable' do
+    let(:file) { 'proc_self_mounts_selinux' }
+
     before do
-      allow(Open3).to receive(:capture2)
-        .with('cat /proc/self/mounts').and_return(load_fixture('proc_self_mounts_selinux').read)
       allow(Facter::Util::FileHelper).to receive(:safe_readlines)
         .with('/etc/selinux/config').and_return(load_fixture('selinux_config').read.split("\n"))
       allow(Facter::Util::FileHelper).to receive(:safe_read)
@@ -108,21 +94,15 @@ describe Facter::Resolvers::SELinux do
     end
 
     it 'returns no policy_version' do
-      result = Facter::Resolvers::SELinux.resolve(:policy_version)
-
-      expect(result).to be(nil)
+      expect(selinux_resolver.resolve(:policy_version)).to be(nil)
     end
 
     it 'returns enforced false' do
-      result = Facter::Resolvers::SELinux.resolve(:enforced)
-
-      expect(result).to be(false)
+      expect(selinux_resolver.resolve(:enforced)).to be(false)
     end
 
     it 'returns current_mode enforcing on permissive' do
-      result = Facter::Resolvers::SELinux.resolve(:current_mode)
-
-      expect(result).to eql('permissive')
+      expect(selinux_resolver.resolve(:current_mode)).to eql('permissive')
     end
   end
 end

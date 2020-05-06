@@ -17,7 +17,7 @@ module Facter
           def read_sysdef_file(fact_name)
             return unless File.executable?('/usr/sbin/sysdef')
 
-            file_content, _status = Open3.capture2('/usr/sbin/sysdef')
+            file_content = Facter::Core::Execution.execute('/usr/sbin/sysdef', logger: log)
             files = file_content.split("\n").map do |line|
               line.split('/').last if line =~ /^fs\.*/
             end

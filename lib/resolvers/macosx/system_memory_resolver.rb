@@ -6,7 +6,6 @@ module Facter
       class SystemMemory < BaseResolver
         @semaphore = Mutex.new
         @fact_list ||= {}
-        @log = Facter::Log.new(self)
         class << self
           private
 
@@ -25,7 +24,7 @@ module Facter
           end
 
           def read_available_memory_in_bytes
-            output, _status = Open3.capture2('vm_stat')
+            output = Facter::Core::Execution.execute('vm_stat', logger: log)
             page_size = output.match(/page size of (\d+) bytes/)[1].to_i
             pages_free = output.match(/Pages free:\s+(\d+)/)[1].to_i
 
@@ -33,7 +32,7 @@ module Facter
           end
 
           def read_total_memory_in_bytes
-            @fact_list[:total_bytes] = Open3.capture2('sysctl -n hw.memsize').first.to_i
+            @fact_list[:total_bytes] = Facter::Core::Execution.execute('sysctl -n hw.memsize', logger: log).to_i
           end
 
           def compute_capacity(used, total)

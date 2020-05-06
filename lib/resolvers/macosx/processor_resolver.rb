@@ -4,7 +4,6 @@ module Facter
   module Resolvers
     module Macosx
       class Processors < BaseResolver
-        @log = Facter::Log.new(self)
         @semaphore = Mutex.new
         @fact_list = {}
         ITEMS = { logical_count: 'hw.logicalcpu_max',
@@ -24,7 +23,7 @@ module Facter
           end
 
           def read_processor_data(fact_name)
-            output, _status = Open3.capture2("sysctl #{ITEMS.values.join(' ')}")
+            output = Facter::Core::Execution.execute("sysctl #{ITEMS.values.join(' ')}", logger: log)
             build_fact_list(output.split("\n"))
             @fact_list[fact_name]
           end
