@@ -1,0 +1,47 @@
+---
+name: GitHub hosted facter CI
+
+on: [pull_request]
+
+jobs:
+  ci:
+    name: Run acceptance tests
+    runs-on: ubuntu-latest
+    env:
+      FACTER_3_ROOT: facter_3
+      FACTER_4_ROOT: facter_4
+      BEAKER_ROOT: beaker
+      SHA: latest
+
+    steps:
+      - name: Checkout current PR
+        uses: actions/checkout@v2
+        with:
+          path: facter_4
+
+      - name: Clone facter 3 repo
+        uses: actions/checkout@v2
+        with:
+          repository: puppetlabs/facter
+          ref: skip_failures_on_ng
+          path: facter_3
+
+      - name: Clone Mihai's beaker fork
+        uses: actions/checkout@v2
+        with:
+          repository: mihaibuzgau/beaker
+          ref: master
+          path: beaker
+
+      - name: Install Ruby 2.6.x
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.6'
+
+      - name: Fix permissions
+        run: |
+          sudo chmod a-w /opt /home/runner /usr/share
+          sudo chmod -R a-w /usr/share/rust /home/runner/.config
+
+      - name: Run acceptance tests
+        run: sudo -E bash -c facter_4/.github/actions/presuite.sh
