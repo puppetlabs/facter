@@ -65,7 +65,11 @@ test_name 'Setup for Facter NG' do
         on(agent, "cd #{windows_puppet_bin_path} && mv facter-ng.bat facter.bat")
       else
         on(agent, "#{set_facter_ng_command} ")
-        on(agent, "cd #{ubuntu_puppet_bin_path} && mv facter-ng facter")
+        on(agent, "cd /opt/puppetlabs/bin")
+        on(agent, 'ls -la ')
+        on(agent, "cd #{ubuntu_puppet_bin_path}")
+        on(agent, 'ls -la ')
+        on(agent, "mv facter-ng facter")
       end
 
       puts 'Installing Facter NG on agent.'
