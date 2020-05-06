@@ -2,8 +2,8 @@
 
 describe Facter::InternalFactManager do
   let(:internal_fact_manager) { Facter::InternalFactManager.new }
-  let(:os_name_class_spy) { class_spy(Facts::Debian::Os::Name) }
-  let(:os_name_instance_spy) { instance_spy(Facts::Debian::Os::Name) }
+  let(:os_name_class_spy) { class_spy(Facts::Linux::Os::Name) }
+  let(:os_name_instance_spy) { instance_spy(Facts::Linux::Os::Name) }
 
   describe '#resolve_facts' do
     it 'resolved one core fact' do

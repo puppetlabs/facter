@@ -9,11 +9,10 @@
         ]
       },
       {
-        "El": [
+        "Rhel": [
           "Fedora",
           "Amzn",
-          "Centos",
-          "Rhel"
+          "Centos"
         ]
       },
       {

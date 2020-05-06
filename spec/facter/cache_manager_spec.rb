@@ -5,7 +5,7 @@ describe Facter::CacheManager do
 
   let(:cache_dir) { '/etc/facter/cache' }
   let(:searched_core_fact) do
-    instance_spy(Facter::SearchedFact, name: 'os', fact_class: instance_spy(Facts::Debian::Os::Name),
+    instance_spy(Facter::SearchedFact, name: 'os', fact_class: instance_spy(Facts::Linux::Os::Name),
                                        filter_tokens: [], user_query: '', type: :core)
   end
   let(:searched_custom_fact) do
