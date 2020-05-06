@@ -41,14 +41,11 @@ def install_facter_gem(agent, facter_gem_path)
 
   on(agent, "#{gem_c} uninstall facter-ng")
   on(agent, "#{gem_c} install -f facter-ng-*.gem")
-
-  puts 'FACTER VERSION'
-  on(agent, "facter -v")
 end
 
 test_name 'Setup for Facter NG' do
   windows_puppet_bin_path = '/cygdrive/c/Program\ Files/Puppet\ Labs/Puppet/bin'
-  ubuntu_puppet_bin_path = '/opt/puppetlabs/puppet/bin'
+  linux_puppet_bin_path = '/opt/puppetlabs/puppet/bin'
   set_facter_ng_command = 'puppet config set facterng true'
 
   puts 'Setting run with facter ng if environment variable FACTER_NG is true.'
@@ -59,21 +56,20 @@ test_name 'Setup for Facter NG' do
     facter_gem_path = create_facter_gem(BRANCH_TO_TEST)
 
     agents.each do |agent|
+      puts 'Installing Facter NG on agent.'
+      install_facter_gem(agent, facter_gem_path)
+
       puts 'Renaming facter to facter-original and facter-ng to facter.'
       if agent['platform'] =~ /windows/
         on(agent, "cmd /c #{set_facter_ng_command}")
         on(agent, "cd #{windows_puppet_bin_path} && mv facter-ng.bat facter.bat")
       else
         on(agent, "#{set_facter_ng_command} ")
-        on(agent, "cd /opt/puppetlabs/bin")
-        on(agent, 'ls -la ')
-        on(agent, "cd #{ubuntu_puppet_bin_path}")
-        on(agent, 'ls -la ')
-        on(agent, "mv facter-ng facter")
+        on(agent, "cd #{linux_puppet_bin_path} && mv facter-ng facter")
       end
 
-      puts 'Installing Facter NG on agent.'
-      install_facter_gem(agent, facter_gem_path)
+      puts 'FACTER VERSION'
+      on(agent, "facter -v")
     end
   end
 end
