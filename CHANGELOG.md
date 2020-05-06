@@ -1,5 +1,22 @@
 
 
+## [4.0.20](https://github.com/puppetlabs/facter-ng/tree/4.0.20) (2020-05-06)
+
+[Full Changelog](https://github.com/puppetlabs/facter-ng/compare/4.0.19...4.0.20)
+
+### Added
+
+- Add \*BSD kernelversion and kernelmajversion facts [\#462](https://github.com/puppetlabs/facter-ng/pull/462) ([smortex](https://github.com/smortex))
+- Fix os.family fact on \*BSD [\#461](https://github.com/puppetlabs/facter-ng/pull/461) ([smortex](https://github.com/smortex))
+- Add support for \*BSD load averages [\#460](https://github.com/puppetlabs/facter-ng/pull/460) ([smortex](https://github.com/smortex))
+
+### Fixed
+
+- \(FACT-2590\) No facts are displayed on Redhat 5 and Centos6 [\#484](https://github.com/puppetlabs/facter-ng/pull/484) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2530\) Fix for tests/facts/os\_processors\_and\_kernel.rb [\#449](https://github.com/puppetlabs/facter-ng/pull/449) ([oanatmaria](https://github.com/oanatmaria))
+
+
+
 ## [4.0.19](https://github.com/puppetlabs/facter-ng/tree/4.0.19) (2020-04-29)
 
 [Full Changelog](https://github.com/puppetlabs/facter-ng/compare/4.0.18...4.0.19)

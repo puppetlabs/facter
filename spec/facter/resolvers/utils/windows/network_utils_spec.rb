@@ -34,9 +34,6 @@ describe NetworkUtils do
       let(:address) { double(FFI::MemoryPointer) }
       let(:error) { 0 }
 
-      before do
-      end
-
       it 'returns an address' do
         expect(NetworkUtils.address_to_string(addr)).to eql('10.123.0.2')
       end

@@ -9,7 +9,7 @@ Dir.glob(File.join('tasks/**/*.rake')).each { |file| load file }
 task default: :spec
 
 def retrieve_from_keyboard
-  return unless ARGV =~ /changelog/
+  return unless ARGV.include?('changelog')
 
   puts "Please provide the next release tag:\n"
   next_version = $stdin.gets.chomp
