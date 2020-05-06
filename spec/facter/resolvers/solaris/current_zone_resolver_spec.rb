@@ -8,7 +8,6 @@ describe Facter::Resolvers::SolarisZone do
       .and_return(true)
     allow(Open3).to receive(:capture2)
       .with('/bin/zonename')
-      .ordered
       .and_return([zone_name_output, status])
   end
 

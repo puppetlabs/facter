@@ -102,7 +102,7 @@ describe Facter::Util::Resolution do
     end
 
     it 'fact_type does not raise error' do
-      expect { resolution.options(fact_type: 'simple') }.not_to raise_error(ArgumentError)
+      expect { resolution.options(fact_type: 'simple') }.not_to raise_error
     end
 
     it 'fails on unhandled options' do

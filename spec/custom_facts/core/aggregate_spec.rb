@@ -38,7 +38,7 @@ describe Facter::Core::Aggregate do
     end
 
     it 'fact_type does not raise error' do
-      expect { aggregate_res.options(fact_type: 'custom') }.not_to raise_error(ArgumentError)
+      expect { aggregate_res.options(fact_type: 'custom') }.not_to raise_error
     end
   end
 

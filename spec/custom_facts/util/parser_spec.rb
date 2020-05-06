@@ -54,7 +54,7 @@ describe LegacyFacter::Util::Parser do
   shared_examples_for 'handling a not readable file' do
     before do
       allow(Facter::Util::FileHelper).to receive(:safe_read).with(data_file, nil).and_return(nil)
-      allow(LegacyFacter).to receive(:warn).at_least(:one)
+      allow(Facter).to receive(:log_exception).at_least(:once)
     end
 
     it 'handles not readable file' do
@@ -72,11 +72,10 @@ describe LegacyFacter::Util::Parser do
       expect(LegacyFacter::Util::Parser.parser_for(data_file).results).to eq data
     end
 
-    it 'handles exceptions and warn' do
-      # YAML data with an error
+    it 'handles exceptions' do
       allow(Facter::Util::FileHelper).to receive(:safe_read)
         .with(data_file, nil).and_return(data_in_yaml + '}')
-      allow(LegacyFacter).to receive(:warn).at_least(:one)
+      allow(Facter).to receive(:log_exception).at_least(:once)
 
       expect { LegacyFacter::Util::Parser.parser_for(data_file).results }.not_to raise_error
     end

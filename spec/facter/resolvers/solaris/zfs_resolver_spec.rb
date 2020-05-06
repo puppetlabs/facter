@@ -5,7 +5,6 @@ describe Facter::Resolvers::Solaris::ZFS do
     status = double(Process::Status, to_s: st)
     allow(Open3).to receive(:capture2)
       .with('zfs upgrade -v')
-      .ordered
       .and_return([output, status])
   end
 
