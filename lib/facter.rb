@@ -238,7 +238,7 @@ module Facter
     #
     # @api private
     def to_user_output(cli_options, *args)
-      init_cli_options(cli_options)
+      init_cli_options(cli_options, args)
       logger.info("executed with command line: #{ARGV.drop(1).join(' ')}")
       log_blocked_facts
 
@@ -272,7 +272,7 @@ module Facter
       @logger ||= Log.new(self)
     end
 
-    def init_cli_options(options)
+    def init_cli_options(options, args)
       options = options.map { |(k, v)| [k.to_sym, v] }.to_h
       Facter::Options.init_from_cli(options, args)
     end
