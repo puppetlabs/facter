@@ -2,7 +2,7 @@
 require 'open3'
 require 'tmpdir'
 
-BRANCH_TO_TEST = 'FACT-2556'
+BRANCH_TO_TEST = 'master'
 
 def create_facter_gem(branch_name)
   temp_dir = Dir.mktmpdir
@@ -37,10 +37,13 @@ def install_facter_gem(agent, facter_gem_path)
   home_dir = on(agent, 'pwd').stdout.chop
   gem_c = gem_command(agent)
 
-  scp_to agent, facter_gem_path, home_dir
+  scp_to(agent, facter_gem_path, home_dir)
 
-  on agent, "#{gem_c} uninstall facter-ng"
-  on agent, "#{gem_c} install -f facter-ng-*.gem"
+  on(agent, "#{gem_c} uninstall facter-ng")
+  on(agent, "#{gem_c} install -f facter-ng-*.gem")
+
+  puts 'FACTER VERSION'
+  on(agent, "facter -v")
 end
 
 test_name 'Setup for Facter NG' do
@@ -58,11 +61,11 @@ test_name 'Setup for Facter NG' do
     agents.each do |agent|
       puts 'Renaming facter to facter-original and facter-ng to facter.'
       if agent['platform'] =~ /windows/
-        on agent, %( cmd /c #{set_facter_ng_command} )
-        on agent, %( cd #{windows_puppet_bin_path} && mv facter-ng.bat facter.bat )
+        on(agent, "cmd /c #{set_facter_ng_command}")
+        on(agent, "cd #{windows_puppet_bin_path} && mv facter-ng.bat facter.bat")
       else
-        on agent, %( #{set_facter_ng_command} )
-        on agent, %( cd #{ubuntu_puppet_bin_path} && mv facter-ng facter)
+        on(agent, "#{set_facter_ng_command} ")
+        on(agent, "cd #{ubuntu_puppet_bin_path} && mv facter-ng facter")
       end
 
       puts 'Installing Facter NG on agent.'
