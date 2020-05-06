@@ -38,20 +38,6 @@ describe Facter::ExternalFactLoader do
         expect(external_fact_loader.custom_facts).to eq([])
       end
     end
-
-    context 'when it blocks custom facts' do
-      before do
-        allow(collection).to receive(:custom_facts).and_return([])
-      end
-
-      it 'does not load custom facts (does not call LegacyFacter.search)' do
-        allow(Facter::Options).to receive(:custom_dir?).and_return(false)
-        expect(LegacyFacter).not_to receive(:search)
-
-        external_fact_loader = Facter::ExternalFactLoader.new
-        external_fact_loader.custom_facts
-      end
-    end
   end
 
   describe '#external_facts' do
@@ -81,20 +67,6 @@ describe Facter::ExternalFactLoader do
       it 'return no external facts' do
         external_fact_loader = Facter::ExternalFactLoader.new
         expect(external_fact_loader.external_facts).to eq([])
-      end
-    end
-
-    context 'when it blocks external facts' do
-      before do
-        allow(collection).to receive(:external_facts).and_return([])
-      end
-
-      it 'does not load custom facts (does not call LegacyFacter.search_external)' do
-        allow(Facter::Options).to receive(:external_dir?).and_return(false)
-        expect(LegacyFacter).not_to receive(:search_external)
-
-        external_fact_loader = Facter::ExternalFactLoader.new
-        external_fact_loader.external_facts
       end
     end
   end

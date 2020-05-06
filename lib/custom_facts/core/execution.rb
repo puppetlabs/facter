@@ -51,7 +51,14 @@ module Facter
       # @param path [String] the path to check
       # @param platform [:posix,:windows,nil] the platform logic to use
       def absolute_path?(path, platform = nil)
-        @@impl.absolute_path?(path, platform)
+        case platform
+        when :posix
+          Facter::Core::Execution::Posix.new.absolute_path?(path)
+        when :windows
+          Facter::Core::Execution::Windows.new.absolute_path?(path)
+        else
+          @@impl.absolute_path?(path)
+        end
       end
 
       # Given a command line, this returns the command line with the

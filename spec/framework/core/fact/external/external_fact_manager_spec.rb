@@ -8,8 +8,6 @@ describe Facter::ExternalFactManager do
     let(:custom_fact_manager) { Facter::ExternalFactManager.new }
 
     before do
-      allow(LegacyFacter).to receive(:search)
-      allow(LegacyFacter).to receive(:search_external)
       allow(LegacyFacter).to receive(:value).with(custom_fact_name).and_return(custom_fact_value)
     end
 

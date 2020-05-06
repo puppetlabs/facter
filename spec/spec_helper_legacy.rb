@@ -32,8 +32,8 @@ RSpec.configure do |config|
 
   config.before do
     # Ensure that we don't accidentally cache facts and environment
-    # between test cases.
-    allow(LegacyFacter::Util::Loader).to receive(:load_all)
+    # between test cases
+
     LegacyFacter.clear
     LegacyFacter.clear_messages
 

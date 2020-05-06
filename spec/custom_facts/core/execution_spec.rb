@@ -5,7 +5,12 @@ require_relative '../../spec_helper_legacy'
 describe Facter::Core::Execution do
   subject(:execution) { Facter::Core::Execution }
 
+  let(:windows_impl) { instance_spy(Facter::Core::Execution::Windows) }
   let(:impl) { Facter::Core::Execution.impl }
+
+  before do
+    allow(Facter::Core::Execution::Windows).to receive(:new).and_return(windows_impl)
+  end
 
   it 'delegates #search_paths to the implementation' do
     expect(impl).to receive(:search_paths)
@@ -18,12 +23,12 @@ describe Facter::Core::Execution do
   end
 
   it 'delegates #absolute_path? to the implementation' do
-    expect(impl).to receive(:absolute_path?).with('waffles', nil)
+    expect(impl).to receive(:absolute_path?).with('waffles')
     execution.absolute_path?('waffles')
   end
 
   it 'delegates #absolute_path? with an optional platform to the implementation' do
-    expect(impl).to receive(:absolute_path?).with('waffles', :windows)
+    expect(windows_impl).to receive(:absolute_path?).with('waffles')
     execution.absolute_path?('waffles', :windows)
   end
 

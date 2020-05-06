@@ -52,6 +52,14 @@ RSpec.configure do |config|
     # cause any verifying double instantiation for a class that does not
     # exist to raise, protecting against incorrectly spelt names.
     mocks.verify_doubled_constant_names = true
+
+    # This option forces the same argument and method existence checks that are
+    # performed for object_double are also performed on partial doubles.
+    # You should set this unless you have a good reason not to.
+    # It defaults to off only for backwards compatibility.
+
+    # TODO: (FACT-2420) - enable this when windows specs are refactored
+    # mocks.verify_partial_doubles = true
   end
 
   config.after do
