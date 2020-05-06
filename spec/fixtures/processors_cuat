@@ -1,0 +1,35 @@
+uAt:
+        name = "proc0"
+        attribute = "type"
+        value = "PowerPC_POWER8"
+        type = "R"
+        generic = "D"
+        rep = "sl"
+        nls_index = 49
+
+CuAt:
+        name = "proc0"
+        attribute = "frequency"
+        value = "3425000000"
+        type = "R"
+        generic = "D"
+        rep = "s"
+        nls_index = 69
+
+CuAt:
+        name = "proc0"
+        attribute = "smt_threads"
+        value = "8"
+        type = "R"
+        generic = "D"
+        rep = ""
+        nls_index = 82
+
+CuAt:
+        name = "proc0"
+        attribute = "smt_enabled"
+        value = "true"
+        type = "R"
+        generic = "D"
+        rep = ""
+        nls_index = 83

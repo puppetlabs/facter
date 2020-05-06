@@ -1,0 +1,6 @@
+PdDv:
+        type = "proc_rspc"
+        class = "processor"
+        Stop = ""
+        inventory_only = 0
+        uniquetype = "processor/sys/proc_rspc"
