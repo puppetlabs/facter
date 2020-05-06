@@ -2,7 +2,7 @@
 require 'open3'
 require 'tmpdir'
 
-BRANCH_TO_TEST = 'master'
+BRANCH_TO_TEST = 'FACT-2556'
 
 def create_facter_gem(branch_name)
   temp_dir = Dir.mktmpdir
@@ -41,10 +41,6 @@ def install_facter_gem(agent, facter_gem_path)
 
   on agent, "#{gem_c} uninstall facter-ng"
   on agent, "#{gem_c} install -f facter-ng-*.gem"
-
-  puts "FACTER VERSION IS"
-  on(agent, 'facter -v')
-  on(agent, 'puppet facts --trace | grep facterversion')
 end
 
 test_name 'Setup for Facter NG' do
