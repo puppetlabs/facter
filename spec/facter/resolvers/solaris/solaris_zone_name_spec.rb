@@ -13,7 +13,6 @@ describe Facter::Resolvers::SolarisZoneName do
       .and_return(true)
     allow(Facter::Core::Execution).to receive(:execute)
       .with('/bin/zonename', logger: log_spy)
-      .ordered
       .and_return(zone_name_output)
   end
 

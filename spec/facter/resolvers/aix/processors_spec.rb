@@ -10,9 +10,9 @@ describe Facter::Resolvers::Aix::Processors do
 
   before do
     resolver.instance_variable_set(:@log, logger_spy)
-    allow(Facter::ODMQuery).to receive(:new).ordered.and_return(odm_query_spy, odm_query_spy2, odm_query_spy3)
-    allow(odm_query_spy).to receive(:equals).with('class', 'processor').ordered
-    allow(odm_query_spy).to receive(:execute).ordered.and_return(result)
+    allow(Facter::ODMQuery).to receive(:new).and_return(odm_query_spy, odm_query_spy2, odm_query_spy3)
+    allow(odm_query_spy).to receive(:equals).with('class', 'processor')
+    allow(odm_query_spy).to receive(:execute).and_return(result)
   end
 
   after do
@@ -31,8 +31,8 @@ describe Facter::Resolvers::Aix::Processors do
     let(:result) { load_fixture('processors_pddv').read }
 
     before do
-      allow(odm_query_spy2).to receive(:equals).with('PdDvLn', 'processor/sys/proc_rspc').ordered
-      allow(odm_query_spy2).to receive(:execute).ordered.and_return(nil)
+      allow(odm_query_spy2).to receive(:equals).with('PdDvLn', 'processor/sys/proc_rspc')
+      allow(odm_query_spy2).to receive(:execute).and_return(nil)
     end
 
     it 'returns nil' do
@@ -44,11 +44,11 @@ describe Facter::Resolvers::Aix::Processors do
     let(:result) { load_fixture('processors_pddv').read }
 
     before do
-      allow(odm_query_spy2).to receive(:equals).with('PdDvLn', 'processor/sys/proc_rspc').ordered
-      allow(odm_query_spy2).to receive(:execute).ordered.and_return(load_fixture('processors_cudv').read)
+      allow(odm_query_spy2).to receive(:equals).with('PdDvLn', 'processor/sys/proc_rspc')
+      allow(odm_query_spy2).to receive(:execute).and_return(load_fixture('processors_cudv').read)
 
-      allow(odm_query_spy3).to receive(:equals).with('name', 'proc0').ordered
-      allow(odm_query_spy3).to receive(:execute).ordered.and_return(nil)
+      allow(odm_query_spy3).to receive(:equals).with('name', 'proc0')
+      allow(odm_query_spy3).to receive(:execute).and_return(nil)
     end
 
     it 'returns nil' do
@@ -64,11 +64,11 @@ describe Facter::Resolvers::Aix::Processors do
     end
 
     before do
-      allow(odm_query_spy2).to receive(:equals).with('PdDvLn', 'processor/sys/proc_rspc').ordered
+      allow(odm_query_spy2).to receive(:equals).with('PdDvLn', 'processor/sys/proc_rspc')
       allow(odm_query_spy2).to receive(:execute).and_return(load_fixture('processors_cudv').read)
 
-      allow(odm_query_spy3).to receive(:equals).with('name', 'proc0').ordered
-      allow(odm_query_spy3).to receive(:execute).ordered.and_return(load_fixture('processors_cuat').read)
+      allow(odm_query_spy3).to receive(:equals).with('name', 'proc0')
+      allow(odm_query_spy3).to receive(:execute).and_return(load_fixture('processors_cuat').read)
     end
 
     it 'returns speed fact' do

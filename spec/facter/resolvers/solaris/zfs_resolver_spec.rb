@@ -9,7 +9,6 @@ describe Facter::Resolvers::Solaris::ZFS do
     zfs_resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
       .with('zfs upgrade -v', logger: log_spy)
-      .ordered
       .and_return(output)
   end
 

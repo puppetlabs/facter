@@ -9,7 +9,6 @@ describe Facter::Resolvers::Solaris::ZPool do
     zpool_resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
       .with('zpool upgrade -v', logger: log_spy)
-      .ordered
       .and_return(output)
   end
 

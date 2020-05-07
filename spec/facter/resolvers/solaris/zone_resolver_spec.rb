@@ -9,7 +9,6 @@ describe Facter::Resolvers::SolarisZone do
     solaris_zone.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
       .with('/usr/sbin/zoneadm list -cp', logger: log_spy)
-      .ordered
       .and_return(output)
   end
 
