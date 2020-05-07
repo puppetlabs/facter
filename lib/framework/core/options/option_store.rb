@@ -21,6 +21,8 @@ module Facter
     @cache = true
     @blocked_facts = []
     @user_query = []
+    @block_list = {}
+    @fact_groups = {}
 
     class << self
       attr_reader :debug, :verbose, :log_level, :show_legacy, :trace, :ruby,
@@ -28,7 +30,8 @@ module Facter
 
       attr_accessor :config, :user_query, :strict, :json, :haml, :external_facts,
                     :cache, :yaml, :puppet, :ttls, :block, :cli, :config_file_custom_dir,
-                    :config_file_external_dir, :default_external_dir
+                    :config_file_external_dir, :default_external_dir, :fact_groups,
+                    :block_list
 
       attr_writer :external_dir
 
@@ -152,16 +155,22 @@ module Facter
         @log_level = :warn
         @show_legacy = true
         @block = true
+        @ruby = true
+        @user_query = []
+        @cli = nil
+        @cache = true
+        reset_config
+      end
+
+      def reset_config
         @custom_dir = []
         @custom_facts = true
         @external_dir = []
         @default_external_dir = []
         @external_facts = true
-        @ruby = true
         @blocked_facts = []
-        @user_query = []
-        @cli = nil
-        @cache = true
+        @fact_groups = {}
+        @block_list = {}
       end
 
       def fallback_external_dir

@@ -12,7 +12,6 @@ describe Facter do
   let(:fact_collection_spy) { instance_spy(Facter::FactCollection) }
   let(:key_error) { KeyError.new('key error') }
   let(:config_reader_double) { double(Facter::ConfigReader) }
-  let(:block_list_double) { instance_spy(Facter::FactGroups) }
 
   before do
     allow(Facter::ConfigReader).to receive(:init).and_return(config_reader_double)
@@ -20,10 +19,11 @@ describe Facter do
     allow(config_reader_double).to receive(:global).and_return(nil)
     allow(config_reader_double).to receive(:ttls).and_return([])
     allow(config_reader_double).to receive(:block_list).and_return([])
+    allow(config_reader_double).to receive(:fact_groups).and_return({})
 
-    allow(Facter::FactGroups).to receive(:new).and_return(block_list_double)
-    allow(block_list_double).to receive(:blocked_facts).and_return([])
-    allow(block_list_double).to receive(:block_list).and_return([])
+    allow(Facter::Options).to receive(:[]).and_call_original
+    allow(Facter::Options).to receive(:[]).with(:blocked_facts).and_return([])
+    allow(Facter::Options).to receive(:[]).with(:block_list).and_return([])
 
     allow(Facter::Log).to receive(:new).and_return(logger)
     Facter.clear
@@ -99,7 +99,6 @@ describe Facter do
       it 'returns no fact and status 1', resolved_fact: false do
         user_query = ['os.name', 'missing_fact']
         expected_json_output = '{}'
-        allow(Facter::Options).to receive(:[]).and_call_original
         allow(Facter::Options).to receive(:[]).with(:strict).and_return(true)
 
         formatted_facts = Facter.to_user_output({}, *user_query)
@@ -111,6 +110,7 @@ describe Facter do
         user_query = 'os.name'
         expected_json_output = '{"os" : {"name": "ubuntu"}'
         allow(Facter::Options).to receive(:[]).with(anything)
+        allow(Facter::Options).to receive(:[]).with(:block_list).and_return([])
         allow(Facter::Options).to receive(:[]).with(:strict).and_return(true)
 
         formated_facts = Facter.to_user_output({}, user_query)

@@ -159,4 +159,33 @@ describe Facter::ConfigReader do
       end
     end
   end
+
+  describe '#fact-groups' do
+    let(:os) { :linux }
+
+    before do
+      allow(File).to receive(:readable?).and_return(true)
+      allow(Hocon).to receive(:load).and_return(config)
+    end
+
+    context 'with empty config file' do
+      let(:config) { {} }
+
+      it 'returns nil' do
+        config_reader.init
+
+        expect(config_reader.fact_groups).to eq(nil)
+      end
+    end
+
+    context 'with fact-groups in config file' do
+      let(:config) { { 'fact-groups' => { 'cached-custom-facts' => ['my_custom_fact'] } } }
+
+      it 'returns fact-groups' do
+        config_reader.init
+
+        expect(config_reader.fact_groups).to eq('cached-custom-facts' => ['my_custom_fact'])
+      end
+    end
+  end
 end

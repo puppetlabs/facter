@@ -27,6 +27,10 @@ module Facter
         @conf['cli']
       end
 
+      def fact_groups
+        @conf['fact-groups']
+      end
+
       def refresh_config(config_path)
         @conf = File.readable?(config_path) ? Hocon.load(config_path) : {}
       end

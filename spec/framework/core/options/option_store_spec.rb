@@ -15,6 +15,7 @@ describe Facter::OptionStore do
     it 'returns default values' do
       expect(option_store.all).to eq(
         block: true,
+        block_list: {},
         blocked_facts: [],
         cli: nil,
         custom_dir: [],
@@ -25,6 +26,7 @@ describe Facter::OptionStore do
         config_file_external_dir: [],
         default_external_dir: [],
         external_facts: true,
+        fact_groups: {},
         log_level: :warn,
         ruby: true,
         show_legacy: true,

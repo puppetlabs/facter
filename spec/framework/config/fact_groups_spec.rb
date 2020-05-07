@@ -10,6 +10,7 @@ describe Facter::FactGroups do
     allow(Facter::ConfigReader).to receive(:init).and_return(config_reader)
     allow(config_reader).to receive(:block_list).and_return([])
     allow(config_reader).to receive(:ttls).and_return([])
+    allow(config_reader).to receive(:fact_groups).and_return({})
   end
 
   describe '#initialize' do
@@ -23,6 +24,22 @@ describe Facter::FactGroups do
       blk_list = fact_groups.new
 
       expect(blk_list.instance_variable_get(:@groups_file_path)).to eq(File.join(ROOT_DIR, 'fact_groups.conf'))
+    end
+
+    it 'merges groups from facter.conf' do
+      allow(config_reader).to receive(:fact_groups).and_return('foo' => 'bar')
+      fct_grp = fact_groups.new
+
+      expect(fct_grp.instance_variable_get(:@groups)).to include('foo' => 'bar')
+    end
+
+    it 'merges groups from facter.conf with default group override' do
+      allow(Hocon).to receive(:load).with(File.join(ROOT_DIR, 'fact_groups.conf'))
+                                    .and_return('kernel' => %w[kernel kernelversion])
+      allow(config_reader).to receive(:fact_groups).and_return('kernel' => 'foo')
+      fct_grp = fact_groups.new
+
+      expect(fct_grp.instance_variable_get(:@groups)).to eq('kernel' => 'foo')
     end
   end
 

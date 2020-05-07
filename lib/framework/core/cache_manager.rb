@@ -6,14 +6,11 @@ module Facter
       @groups = {}
       @log = Log.new(self)
       @fact_groups = Facter::FactGroups.new
-    end
-
-    def cache_dir
-      LegacyFacter::Util::Config.facts_cache_dir
+      @cache_dir = LegacyFacter::Util::Config.facts_cache_dir
     end
 
     def resolve_facts(searched_facts)
-      return searched_facts, [] if !File.directory?(cache_dir) || !Options[:cache]
+      return searched_facts, [] if !File.directory?(@cache_dir) || !Options[:cache]
 
       facts = []
       searched_facts.each do |fact|
@@ -48,7 +45,7 @@ module Facter
 
       return unless group_cached?(group_name)
 
-      return if check_ttls(group_name).zero?
+      return unless check_ttls?(group_name)
 
       data = read_group_json(group_name)
       return unless data
@@ -73,16 +70,16 @@ module Facter
     end
 
     def write_cache
-      unless File.directory?(cache_dir)
+      unless File.directory?(@cache_dir)
         require 'fileutils'
-        FileUtils.mkdir_p(cache_dir)
+        FileUtils.mkdir_p(@cache_dir)
       end
 
       @groups.each do |group_name, data|
-        next if check_ttls(group_name).zero?
+        next unless check_ttls?(group_name)
 
         @log.debug("caching values for #{group_name} facts")
-        cache_file_name = File.join(cache_dir, group_name)
+        cache_file_name = File.join(@cache_dir, group_name)
         File.write(cache_file_name, JSON.pretty_generate(data))
       end
     end
@@ -90,7 +87,7 @@ module Facter
     def read_group_json(group_name)
       return @groups[group_name] if @groups.key?(group_name)
 
-      cache_file_name = File.join(cache_dir, group_name)
+      cache_file_name = File.join(@cache_dir, group_name)
       data = nil
       file = Util::FileHelper.safe_read(cache_file_name)
       begin
@@ -107,24 +104,25 @@ module Facter
       cached
     end
 
-    def check_ttls(group_name)
+    def check_ttls?(group_name)
       ttls = @fact_groups.get_group_ttls(group_name)
-      return 0 unless ttls
+      return false unless ttls
 
-      cache_file_name = File.join(cache_dir, group_name)
-      return ttls unless File.readable?(cache_file_name)
+      cache_file_name = File.join(@cache_dir, group_name)
+      if File.readable?(cache_file_name)
+        file_time = File.mtime(cache_file_name)
+        expire_date = file_time + ttls
+        return true if expire_date > Time.now
 
-      file_time = File.mtime(cache_file_name)
-      expire_date = file_time + ttls
-      if expire_date < Time.now
         File.delete(cache_file_name)
-        return ttls
       end
-      expire_date.to_i
+
+      @log.debug("#{group_name} facts cache file expired/missing")
+      true
     end
 
     def delete_cache(group_name)
-      cache_file_name = File.join(cache_dir, group_name)
+      cache_file_name = File.join(@cache_dir, group_name)
       File.delete(cache_file_name) if File.readable?(cache_file_name)
     end
   end

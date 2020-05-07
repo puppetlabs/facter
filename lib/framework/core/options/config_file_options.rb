@@ -9,14 +9,7 @@ module Facter
 
         augment_config_path(config_path)
 
-        if Options.cli?
-          augment_cli(Facter::ConfigReader.cli)
-          augment_ruby(Facter::ConfigReader.global)
-        end
-        augment_custom(Facter::ConfigReader.global)
-        augment_external(Facter::ConfigReader.global)
-        augment_show_legacy(Facter::ConfigReader.global)
-        augment_facts(Facter::ConfigReader.ttls)
+        augment_all
       end
 
       def get
@@ -24,6 +17,17 @@ module Facter
       end
 
       private
+
+      def augment_all
+        if Options.cli?
+          augment_cli(Facter::ConfigReader.cli)
+          augment_ruby(Facter::ConfigReader.global)
+        end
+        augment_custom(Facter::ConfigReader.global)
+        augment_external(Facter::ConfigReader.global)
+        augment_show_legacy(Facter::ConfigReader.global)
+        augment_facts(Facter::ConfigReader.ttls, Facter::ConfigReader.fact_groups)
+      end
 
       def augment_config_path(config_path)
         @options[:config] = config_path
@@ -72,11 +76,16 @@ module Facter
         @options[:show_legacy] = global_conf['show-legacy'] unless global_conf['show-legacy'].nil?
       end
 
-      def augment_facts(ttls)
-        blocked_facts = Facter::FactGroups.new.blocked_facts
-        @options[:blocked_facts] = blocked_facts unless blocked_facts.nil?
+      def augment_facts(ttls, groups)
+        fact_groups = Facter::FactGroups.new
 
+        @options[:blocked_facts] = fact_groups.blocked_facts unless fact_groups.blocked_facts.nil?
+        @options[:block_list] = fact_groups.block_list
         @options[:ttls] = ttls unless ttls.nil?
+
+        f_groups = fact_groups.groups || {}
+        f_groups = groups.merge(f_groups) unless groups.nil?
+        @options[:fact_groups] = f_groups
       end
     end
   end

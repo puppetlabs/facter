@@ -241,7 +241,6 @@ module Facter
       init_cli_options(cli_options, args)
       logger.info("executed with command line: #{ARGV.drop(1).join(' ')}")
       log_blocked_facts
-
       resolved_facts = Facter::FactManager.instance.resolve_facts(args)
       SessionCache.invalidate_all_caches
       fact_formatter = Facter::FormatterFactory.build(Facter::Options.get)
@@ -331,7 +330,7 @@ module Facter
     #
     # @api private
     def log_blocked_facts
-      block_list = Facter::FactGroups.new(Facter::Options[:config]).block_list
+      block_list = Options[:block_list]
       return unless block_list.any? && Facter::Options[:block]
 
       logger.debug("blocking collection of #{block_list.join("\s")} facts")
