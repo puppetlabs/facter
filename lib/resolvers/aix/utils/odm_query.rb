@@ -8,11 +8,11 @@
 module Facter
   class ODMQuery
     REPOS = %w[CuAt CuDv PdAt PdDv].freeze
-    @log = Facter::Log.new(self)
 
     def initialize
       @query = ''
       @conditions = []
+      @log = Facter::Log.new(self)
     end
 
     def equals(field, value)
