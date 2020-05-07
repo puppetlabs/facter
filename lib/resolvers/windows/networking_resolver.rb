@@ -27,6 +27,7 @@ module Facter
 
           iterate_list(adapter_addresses)
           set_interfaces_other_facts if @fact_list[:interfaces]
+          @fact_list[:primary_interface] = @fact_list[:primary_interface].to_s
           @fact_list[fact_name]
         end
 
@@ -112,8 +113,8 @@ module Facter
           result = find_bindings(sock_addr, unicast, addr)
           return unless result
 
-          bindings[:ipv6] << result if result[:network].ipv6?
-          bindings[:ipv4] << result if result[:network].ipv4?
+          bindings[:ipv6] << result if sock_addr[:sa_family] == NetworkingFFI::AF_INET6
+          bindings[:ipv4] << result if sock_addr[:sa_family] == NetworkingFFI::AF_INET
         end
 
         def find_bindings(sock_addr, unicast, addr)
@@ -126,7 +127,7 @@ module Facter
           if !@fact_list[:primary_interface] &&
              ([NetworkingFFI::AF_INET, NetworkingFFI::AF_INET6].include?(sock_addr[:sa_family]) &&
                  !NetworkUtils.ignored_ip_address(addr))
-            @fact_list[:primary] = name
+            @fact_list[:primary_interface] = name
           end
         end
 
@@ -138,7 +139,7 @@ module Facter
             end
             if value[:bindings6]
               binding = find_valid_binding(value[:bindings6])
-              populate_interface(binding, value)
+              populate_interface(binding, value, true)
             end
             set_networking_other_facts(value, interface_name)
           end
@@ -151,10 +152,10 @@ module Facter
           bindings.empty? ? nil : bindings.first
         end
 
-        def populate_interface(bind, interface)
+        def populate_interface(bind, interface, ipv6 = false)
           return if !bind || bind.empty?
 
-          if bind[:network].ipv6?
+          if ipv6
             interface[:ip6] = bind[:address]
             interface[:netmask6] = bind[:netmask]
             interface[:network6] = bind[:network]
@@ -167,7 +168,7 @@ module Facter
         end
 
         def set_networking_other_facts(value, interface_name)
-          return unless @fact_list[:primary] == interface_name
+          return unless @fact_list[:primary_interface] == interface_name
 
           %i[mtu dhcp mac ip ip6 scope6 netmask netmask6 network network6].each do |key|
             @fact_list[key] = value[key]

@@ -21,7 +21,7 @@ describe Facter::YamlFactFormatter do
 
   context 'when no user query' do
     let(:resolved_fact_list) { [resolved_fact1, resolved_fact2, resolved_fact3] }
-    let(:expected_output) { "os:\n  architecture: x86_64\n  family: Darwin\n  name: Darwin\n" }
+    let(:expected_output) { "os:\n  architecture: x86_64\n  family: \"Darwin\"\n  name: \"Darwin\"\n" }
 
     it 'formats to yaml' do
       expect(yaml_formatter.format(resolved_fact_list)).to eq(expected_output)
@@ -30,7 +30,7 @@ describe Facter::YamlFactFormatter do
 
   context 'when there is a single user query' do
     let(:resolved_fact_list) { [resolved_fact1] }
-    let(:expected_output) { "os.name: Darwin\n" }
+    let(:expected_output) { "os.name: \"Darwin\"\n" }
     let(:user_query1) { 'os.name' }
 
     it 'formats to yaml' do
@@ -40,7 +40,7 @@ describe Facter::YamlFactFormatter do
 
   context 'when there are multiple user queries' do
     let(:resolved_fact_list) { [resolved_fact1, resolved_fact2] }
-    let(:expected_output) { "os.family: Darwin\nos.name: Darwin\n" }
+    let(:expected_output) { "os.family: \"Darwin\"\nos.name: \"Darwin\"\n" }
     let(:user_query1) { 'os.name' }
     let(:user_query2) { 'os.family' }
 
@@ -55,10 +55,10 @@ describe Facter::YamlFactFormatter do
                                          user_query: '', filter_tokens: [], type: :core)
     end
     let(:value) { 'C:\\Program Files\\Puppet Labs\\Puppet\\bin;C:\\cygwin64\\bin' }
-    let(:expected_output) { "path: C:\\\\Program Files\\\\Puppet Labs\\\\Puppet\\\\bin;C:\\\\cygwin64\\\\bin\n" }
+    let(:expected_output) { "path: \"C:\\\\Program Files\\\\Puppet Labs\\\\Puppet\\\\bin;C:\\\\cygwin64\\\\bin\"\n" }
     let(:resolved_fact_list) { [win_path] }
 
-    it 'formats path with double escaped backslashes' do
+    it 'formats quoted path with double escaped backslashes' do
       expect(yaml_formatter.format(resolved_fact_list)).to eq(expected_output)
     end
   end

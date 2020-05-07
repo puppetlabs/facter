@@ -11,6 +11,9 @@ module Facter
         # Virtual
         # Is_Virtual
 
+        MODEL_HASH = { 'VirtualBox' => 'virtualbox', 'VMware' => 'vmware', 'KVM' => 'kvm',
+                       'Bochs' => 'bochs', 'Google' => 'gce', 'OpenStack' => 'openstack' }.freeze
+
         private
 
         def post_resolve(fact_name)
@@ -31,9 +34,7 @@ module Facter
         end
 
         def determine_hypervisor_by_model(comp)
-          model_hash = { 'VirtualBox' => 'virtualbox', 'VMware' => 'vmware', 'KVM' => 'kvm',
-                         'Bochs' => 'bochs', 'Google' => 'gce', 'OpenStack' => 'openstack' }
-          model_hash[model_hash.keys.find { |key| comp.Model =~ /^#{key}/ }]
+          MODEL_HASH[MODEL_HASH.keys.find { |key| comp.Model =~ /^#{key}/ }]
         end
 
         def determine_hypervisor_by_manufacturer(comp)
@@ -57,7 +58,7 @@ module Facter
           hypervisor = determine_hypervisor_by_model(comp) || determine_hypervisor_by_manufacturer(comp)
 
           @fact_list[:virtual] = hypervisor
-          @fact_list[:is_virtual] = (!hypervisor.include?('physical')).to_s
+          @fact_list[:is_virtual] = hypervisor.include?('physical') ? false : true
         end
       end
     end

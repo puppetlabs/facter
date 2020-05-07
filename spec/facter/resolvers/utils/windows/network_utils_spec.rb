@@ -3,9 +3,9 @@
 describe NetworkUtils do
   describe '#address_to_strig' do
     let(:logger) { instance_spy(Facter::Log) }
-    let(:addr) { double('SocketAddress') }
-    let(:size) { double(FFI::MemoryPointer) }
-    let(:buffer) { double(FFI::MemoryPointer) }
+    let(:addr) { instance_spy('SocketAddress') }
+    let(:size) { instance_spy(FFI::MemoryPointer) }
+    let(:buffer) { instance_spy(FFI::MemoryPointer) }
     let(:length) { 32 }
 
     before do
@@ -31,7 +31,7 @@ describe NetworkUtils do
     end
 
     context 'when error code is zero' do
-      let(:address) { double(FFI::MemoryPointer) }
+      let(:address) { instance_spy(FFI::MemoryPointer) }
       let(:error) { 0 }
 
       it 'returns an address' do
@@ -40,7 +40,7 @@ describe NetworkUtils do
     end
 
     context 'when error code is not zero' do
-      let(:address) { double(FFI::MemoryPointer) }
+      let(:address) { instance_spy(FFI::MemoryPointer) }
       let(:error) { 1 }
 
       it 'returns nil and logs debug message' do
@@ -90,8 +90,8 @@ describe NetworkUtils do
 
   describe '#build_binding' do
     context 'when input is ipv4 address' do
-      let(:netmask) { IPAddr.new('255.255.240.0/255.255.240.0') }
-      let(:network) { IPAddr.new('10.16.112.0/255.255.240.0') }
+      let(:netmask) { IPAddr.new('255.255.240.0/255.255.240.0').to_s }
+      let(:network) { IPAddr.new('10.16.112.0/255.255.240.0').to_s }
       let(:addr) { '10.16.121.248' }
 
       it 'returns ipv4 binding' do
@@ -100,8 +100,12 @@ describe NetworkUtils do
     end
 
     context 'when input is ipv6 address' do
-      let(:network) { IPAddr.new('fe80:0000:0000:0000:0000:0000:0000:0000/ffff:ffff:ffff:ffff:0000:0000:0000:0000') }
-      let(:netmask) { IPAddr.new('ffff:ffff:ffff:ffff:0000:0000:0000:0000/ffff:ffff:ffff:ffff:0000:0000:0000:0000') }
+      let(:network) do
+        IPAddr.new('fe80:0000:0000:0000:0000:0000:0000:0000/ffff:ffff:ffff:ffff:0000:0000:0000:0000').to_s
+      end
+      let(:netmask) do
+        IPAddr.new('ffff:ffff:ffff:ffff:0000:0000:0000:0000/ffff:ffff:ffff:ffff:0000:0000:0000:0000').to_s
+      end
       let(:addr) { 'fe80::dc20:a2b9:5253:9b46' }
 
       it 'returns ipv6 binding' do

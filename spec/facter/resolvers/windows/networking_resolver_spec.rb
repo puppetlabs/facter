@@ -5,8 +5,8 @@ describe Facter::Resolvers::Networking do
 
   describe '#resolve' do
     let(:logger) { instance_spy(Facter::Log) }
-    let(:size_ptr) { double(FFI::MemoryPointer) }
-    let(:adapter_address) { double(FFI::MemoryPointer) }
+    let(:size_ptr) { instance_spy(FFI::MemoryPointer) }
+    let(:adapter_address) { instance_spy(FFI::MemoryPointer) }
 
     before do
       allow(FFI::MemoryPointer).to receive(:new)
@@ -65,7 +65,7 @@ describe Facter::Resolvers::Networking do
     context 'when it succeeded to retrieve networking information but all interface are down' do
       let(:error_code) { NetworkingFFI::ERROR_SUCCES }
       let(:adapter) {  OpenStruct.new(OperStatus: NetworkingFFI::IF_OPER_STATUS_DOWN, Next: next_adapter) }
-      let(:next_adapter) { double(FFI::Pointer) }
+      let(:next_adapter) { instance_spy(FFI::Pointer) }
 
       before do
         allow(IpAdapterAddressesLh).to receive(:read_list).with(adapter_address).and_yield(adapter)
@@ -85,9 +85,9 @@ describe Facter::Resolvers::Networking do
                        DnsSuffix: dns_ptr, FriendlyName: friendly_name_ptr, Flags: 0, Mtu: 1500,
                        FirstUnicastAddress: ptr)
       end
-      let(:dns_ptr) { double(FFI::Pointer, read_wide_string_without_length: '10.122.0.2') }
-      let(:friendly_name_ptr) { double(FFI::Pointer, read_wide_string_without_length: 'Ethernet0') }
-      let(:ptr) { double(FFI::Pointer) }
+      let(:dns_ptr) { instance_spy(FFI::Pointer) }
+      let(:friendly_name_ptr) { instance_spy(FFI::Pointer) }
+      let(:ptr) { instance_spy(FFI::Pointer) }
       let(:unicast) { OpenStruct.new(Address: ptr, Next: ptr, to_ptr: FFI::Pointer::NULL) }
 
       before do
@@ -96,6 +96,8 @@ describe Facter::Resolvers::Networking do
         allow(NetworkUtils).to receive(:address_to_string).with(ptr).and_return(nil)
         allow(IpAdapterUnicastAddressLH).to receive(:new).with(ptr).and_return(unicast)
         allow(NetworkUtils).to receive(:find_mac_address).with(adapter).and_return('00:50:56:9A:F8:6B')
+        allow(friendly_name_ptr).to receive(:read_wide_string_without_length).and_return('Ethernet0')
+        allow(dns_ptr).to receive(:read_wide_string_without_length).and_return('10.122.0.2')
       end
 
       it 'returns interfaces' do
@@ -127,17 +129,17 @@ describe Facter::Resolvers::Networking do
                        DnsSuffix: dns_ptr, FriendlyName: friendly_name_ptr, Flags: 0, Mtu: 1500,
                        FirstUnicastAddress: ptr, Next: ptr, to_ptr: FFI::Pointer::NULL)
       end
-      let(:ptr) { double(FFI::Pointer) }
-      let(:dns_ptr) { double(FFI::Pointer, read_wide_string_without_length: '10.122.0.2') }
-      let(:friendly_name_ptr) { double(FFI::Pointer, read_wide_string_without_length: 'Ethernet0') }
+      let(:ptr) { instance_spy(FFI::Pointer) }
+      let(:dns_ptr) { instance_spy(FFI::Pointer) }
+      let(:friendly_name_ptr) { instance_spy(FFI::Pointer) }
       let(:unicast) { OpenStruct.new(Address: address, Next: ptr, to_ptr: FFI::Pointer::NULL, OnLinkPrefixLength: 24) }
       let(:address) { OpenStruct.new(lpSockaddr: ptr) }
       let(:sock_address) { OpenStruct.new(sa_family: NetworkingFFI::AF_INET) }
       let(:binding) do
         {
           address: '10.16.127.3',
-          netmask: IPAddr.new('255.255.255.0/255.255.255.0'),
-          network: IPAddr.new('10.16.127.0/255.255.255.0')
+          netmask: '255.255.255.0',
+          network: '10.16.127.0'
         }
       end
 
@@ -150,6 +152,8 @@ describe Facter::Resolvers::Networking do
         allow(IpAdapterUnicastAddressLH).to receive(:new).with(ptr).and_return(unicast)
         allow(NetworkUtils).to receive(:find_mac_address).with(adapter).and_return('00:50:56:9A:F8:6B')
         allow(IpAdapterAddressesLh).to receive(:new).with(ptr).and_return(adapter)
+        allow(dns_ptr).to receive(:read_wide_string_without_length).and_return('10.122.0.2')
+        allow(friendly_name_ptr).to receive(:read_wide_string_without_length).and_return('Ethernet0')
       end
 
       it 'returns interface' do
@@ -160,8 +164,8 @@ describe Facter::Resolvers::Networking do
             ip: '10.16.127.3',
             mac: '00:50:56:9A:F8:6B',
             mtu: 1500,
-            netmask: IPAddr.new('255.255.255.0/255.255.255.0'),
-            network: IPAddr.new('10.16.127.0/255.255.255.0')
+            netmask: '255.255.255.0',
+            network: '10.16.127.0'
           }
         }
         expect(resolver.resolve(:interfaces)).to eql(result)
@@ -175,17 +179,17 @@ describe Facter::Resolvers::Networking do
                        DnsSuffix: dns_ptr, FriendlyName: friendly_name_ptr, Flags: 0, Mtu: 1500,
                        FirstUnicastAddress: ptr, Next: ptr, to_ptr: FFI::Pointer::NULL)
       end
-      let(:ptr) { double(FFI::Pointer) }
-      let(:dns_ptr) { double(FFI::Pointer, read_wide_string_without_length: '10.122.0.2') }
-      let(:friendly_name_ptr) { double(FFI::Pointer, read_wide_string_without_length: 'Ethernet0') }
+      let(:ptr) { instance_spy(FFI::Pointer) }
+      let(:dns_ptr) { instance_spy(FFI::Pointer) }
+      let(:friendly_name_ptr) { instance_spy(FFI::Pointer) }
       let(:unicast) { OpenStruct.new(Address: address, Next: ptr, to_ptr: FFI::Pointer::NULL, OnLinkPrefixLength: 24) }
       let(:address) { OpenStruct.new(lpSockaddr: ptr) }
-      let(:sock_address) { OpenStruct.new(sa_family: NetworkingFFI::AF_INET) }
+      let(:sock_address) { OpenStruct.new(sa_family: NetworkingFFI::AF_INET6) }
       let(:binding) do
         {
           address: 'fe80::7ca0:ab22:703a:b329',
-          netmask: IPAddr.new('ffff:ff00:0000:0000:0000:0000:0000:0000/ffff:ff00:0000:0000:0000:0000:0000:0000'),
-          network: IPAddr.new('fe80:0000:0000:0000:0000:0000:0000:0000/ffff:ff00:0000:0000:0000:0000:0000:0000')
+          netmask: 'ffff:ff00::',
+          network: 'fe80::'
         }
       end
 
@@ -198,6 +202,8 @@ describe Facter::Resolvers::Networking do
         allow(IpAdapterUnicastAddressLH).to receive(:new).with(ptr).and_return(unicast)
         allow(NetworkUtils).to receive(:find_mac_address).with(adapter).and_return('00:50:56:9A:F8:6B')
         allow(IpAdapterAddressesLh).to receive(:new).with(ptr).and_return(adapter)
+        allow(dns_ptr).to receive(:read_wide_string_without_length).and_return('10.122.0.2')
+        allow(friendly_name_ptr).to receive(:read_wide_string_without_length).and_return('Ethernet0')
       end
 
       it 'returns interface' do
@@ -208,8 +214,8 @@ describe Facter::Resolvers::Networking do
             ip6: 'fe80::7ca0:ab22:703a:b329',
             mac: '00:50:56:9A:F8:6B',
             mtu: 1500,
-            netmask6: IPAddr.new('ffff:ff00:0000:0000:0000:0000:0000:0000/ffff:ff00:0000:0000:0000:0000:0000:0000'),
-            network6: IPAddr.new('fe80:0000:0000:0000:0000:0000:0000:0000/ffff:ff00:0000:0000:0000:0000:0000:0000'),
+            netmask6: 'ffff:ff00::',
+            network6: 'fe80::',
             scope6: 'link'
           }
         }

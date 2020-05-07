@@ -42,7 +42,7 @@ class NetworkUtils
              else
                IPAddr.new('255.255.255.255').mask(mask_length)
              end
-      { address: addr, netmask: mask, network: ip.mask(mask_length) }
+      { address: addr, netmask: mask.to_s, network: ip.mask(mask_length).to_s }
     end
 
     def get_scope(sockaddr)

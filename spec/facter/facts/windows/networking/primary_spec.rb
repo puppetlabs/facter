@@ -2,13 +2,22 @@
 
 describe Facts::Windows::Networking::Primary do
   describe '#call_the_resolver' do
-    it 'returns a fact' do
-      expected_fact = double(Facter::ResolvedFact, name: 'networking.primary', value: 'value')
-      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:primary).and_return('value')
-      allow(Facter::ResolvedFact).to receive(:new).with('networking.primary', 'value').and_return(expected_fact)
+    subject(:fact) { Facts::Windows::Networking::Primary.new }
 
-      fact = Facts::Windows::Networking::Primary.new
-      expect(fact.call_the_resolver).to eq(expected_fact)
+    let(:value) { 'Ethernet0' }
+
+    before do
+      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:primary_interface).and_return(value)
+    end
+
+    it 'calls Facter::Windows::Resolvers::Fips' do
+      fact.call_the_resolver
+      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:primary_interface)
+    end
+
+    it 'returns true if fips enabled' do
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'networking.primary', value: value)
     end
   end
 end

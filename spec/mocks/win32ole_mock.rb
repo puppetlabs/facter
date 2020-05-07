@@ -8,4 +8,10 @@ class WIN32OLE
   def Security_; end
 
   def ImpersonationLevel=; end
+
+  def Model; end
+
+  def Manufacturer; end
+
+  def OEMStringArray; end
 end

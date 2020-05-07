@@ -11,8 +11,8 @@ describe Facts::Windows::FipsEnabled do
     end
 
     it 'calls Facter::Windows::Resolvers::Fips' do
-      expect(Facter::Resolvers::Windows::Fips).to receive(:resolve).with(:fips_enabled)
       fact.call_the_resolver
+      expect(Facter::Resolvers::Windows::Fips).to have_received(:resolve).with(:fips_enabled)
     end
 
     it 'returns true if fips enabled' do
