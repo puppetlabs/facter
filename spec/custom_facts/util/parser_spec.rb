@@ -267,4 +267,42 @@ describe LegacyFacter::Util::Parser do
       expect(LegacyFacter::Util::Parser.parser_for('this.is.not.valid').results).to be nil
     end
   end
+
+  describe LegacyFacter::Util::Parser::YamlParser do
+    let(:yaml_parser) { LegacyFacter::Util::Parser::YamlParser.new(nil, yaml_content) }
+
+    describe '#parse_results' do
+      context 'when yaml contains Time formatted fields' do
+        context 'when time zone is present' do
+          let(:yaml_content) { load_fixture('external_fact_yaml').read }
+
+          it 'treats it as a string' do
+            expected_result = { 'testsfact' => { 'time' => '2020-04-28 01:44:08.148119000 +01:01' } }
+
+            expect(yaml_parser.parse_results).to eq(expected_result)
+          end
+        end
+
+        context 'when time zone is missing' do
+          let(:yaml_content) { load_fixture('external_fact_yaml_no_zone').read }
+
+          it 'is interpreted as a string' do
+            expected_result = { 'testsfact' => { 'time' => '2020-04-28 01:44:08.148119000' } }
+
+            expect(yaml_parser.parse_results).to eq(expected_result)
+          end
+        end
+      end
+
+      context 'when yaml contains Date formatted fields' do
+        let(:yaml_content) { load_fixture('external_fact_yaml_date').read }
+
+        it 'loads date' do
+          expected_result = { 'testsfact' => { 'date' => Date.parse('2020-04-28') } }
+
+          expect(yaml_parser.parse_results).to eq(expected_result)
+        end
+      end
+    end
+  end
 end
