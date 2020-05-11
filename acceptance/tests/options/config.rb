@@ -14,7 +14,7 @@ test_name "C100014: --config command-line option designates the location of the 
       FILE
 
       teardown do
-        on(agent, "rm -rf '#{config_dir}'", :acceptable_exit_codes => [0, 1])
+        agent.rm_rf(config_dir)
       end
 
       step "setting --config should cause the config file to be loaded from the specified location" do

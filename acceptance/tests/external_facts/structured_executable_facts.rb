@@ -81,17 +81,17 @@ EOM
     end
 
     step "Agent #{agent}: setup default external facts directory (facts.d)" do
-      on(agent, "mkdir -p '#{factsd}'")
+      agent.mkdir_p(factsd)
     end
 
     teardown do
-      on(agent, "rm -rf '#{factsd}'")
+      agent.rm_rf(factsd)
     end
 
     step "Agent #{agent}: create an executable yaml fact in default facts.d" do
       yaml_fact = File.join(factsd, "yaml_fact#{ext}")
       create_remote_file(agent, yaml_fact, yaml_content)
-      on(agent, "chmod +x '#{yaml_fact}'")
+      agent.chmod('+x', yaml_fact)
 
       step "YAML output should produce a structured fact" do
         on(agent, facter("yaml_fact")) do
@@ -103,7 +103,7 @@ EOM
     step "Agent #{agent}: create an executable json fact in default facts.d" do
       json_fact = File.join(factsd, "json_fact#{ext}")
       create_remote_file(agent, json_fact, json_content)
-      on(agent, "chmod +x '#{json_fact}'")
+      agent.chmod('+x', json_fact)
 
       step "JSON output should produce a structured fact" do
         on(agent, facter("json_fact")) do
@@ -115,7 +115,7 @@ EOM
     step "Agent #{agent}: create an executable key-value fact in default facts.d" do
       kv_fact = File.join(factsd, "kv_fact#{ext}")
       create_remote_file(agent, kv_fact, kv_content)
-      on(agent, "chmod +x '#{kv_fact}'")
+      agent.chmod('+x', kv_fact)
 
       step "output that is neither yaml nor json should not produce a structured fact" do
         on(agent, facter("kv_fact")) do
@@ -127,7 +127,7 @@ EOM
     step "Agent #{agent}: create a malformed executable fact in default facts.d" do
       bad_fact = File.join(factsd, "bad_fact#{ext}")
       create_remote_file(agent, bad_fact, bad_fact_content)
-      on(agent, "chmod +x '#{bad_fact}'")
+      agent.chmod('+x', bad_fact)
 
       step "should error when output is not in a supported format" do
         on(agent, facter("bad_fact --debug")) do

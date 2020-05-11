@@ -27,7 +27,9 @@ test_name 'Should handle same filename in two external directories only if ttl i
     config_file = File.join(config_dir, 'facter.conf')
 
     teardown do
-      on(agent, "rm -rf '#{external_dir1}' '#{external_dir2}' '#{config_file}'")
+      agent.rm_rf(external_dir1)
+      agent.rm_rf(external_dir2)
+      agent.rm_rf(config_file)
     end
 
     step 'works if ttl is not enabled' do
@@ -45,7 +47,7 @@ facts : {
     ]
 }
 EOM
-      on(agent, "mkdir -p '#{config_dir}'")
+      agent.mkdir_p(config_dir)
       create_remote_file(agent, config_file, config)
       on(agent, facter("--external-dir '#{external_dir1}' --external-dir '#{external_dir2}' --debug #{fact1} #{fact2}"), :acceptable_exit_codes => 1) do |facter_output|
         assert_match(/ERROR.*Caching is enabled for group "#{external_filename}" while there are at least two external facts files with the same filename/, stderr, 'Expected error message')

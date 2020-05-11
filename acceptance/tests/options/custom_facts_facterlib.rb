@@ -20,7 +20,7 @@ EOM
       create_remote_file(agent, custom_fact, content)
 
       teardown do
-        on(agent, "rm -rf '#{custom_dir}'")
+        agent.rm_rf(custom_dir)
       end
 
       step "Agent #{agent}: facter should resolve a fact from the directory specified by the environment variable FACTERLIB" do

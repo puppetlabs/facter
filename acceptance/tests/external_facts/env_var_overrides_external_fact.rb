@@ -13,15 +13,15 @@ test_name 'C100537: FACTER_ env var should override external fact' do
                                "#{fact_name}#{get_external_fact_script_extension(agent['platform'])}")
 
     teardown do
-      on(agent, "rm -rf '#{external_dir}'")
+      agent.rm_rf(external_dir)
     end
 
     step "Agent #{agent}: setup external fact" do
-      on(agent, "mkdir -p '#{external_dir}'")
+      agent.mkdir_p(external_dir)
       create_remote_file(agent,
                          fact_file,
                          external_fact_content(agent['platform'], fact_name, fact_value))
-      on(agent, "chmod +x '#{fact_file}'")
+      agent.chmod('+x', fact_file)
     end
 
     step "Agent: #{agent}: ensure external fact resolves correctly" do
