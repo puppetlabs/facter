@@ -2,12 +2,14 @@
 
 describe Facter::Resolvers::Windows::Fips do
   describe '#resolve' do
-    let(:reg) { { 'Enabled' => is_fips } }
+    let(:reg) { instance_double('Win32::Registry::HKEY_LOCAL_MACHINE') }
 
     before do
+      allow(reg).to receive(:close)
+      allow(reg).to receive(:[]).with('Enabled').and_return(is_fips)
+      allow(reg).to receive(:any?).and_yield('Enabled', '1')
       allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open)
         .with('System\\CurrentControlSet\\Control\\Lsa\\FipsAlgorithmPolicy').and_return(reg)
-      allow(reg).to receive(:close)
     end
 
     after do

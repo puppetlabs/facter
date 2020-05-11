@@ -26,10 +26,31 @@ module FFI
     def enum(*); end
 
     def GetAdaptersAddresses(*); end
+
+    def getkerninfo(*); end
+
+    def getloadavg(*); end
+
+    def WSAAddressToStringW(*); end
+
+    def GetNativeSystemInfo(*); end
+
+    def GetUserNameExW(*); end
+
+    def IsUserAnAdmin(*); end
+
+    def RtlGetVersion(*); end
+
+    def GetPerformanceInfo(*); end
+
+    def IsWow64Process(*); end
+
+    def GetCurrentProcess(*); end
   end
 
   class Pointer
     NULL = nil
+
     def write_uint32(); end
 
     def read_uint32(); end
@@ -37,6 +58,10 @@ module FFI
 
   class MemoryPointer
     def initialize(*); end
+
+    def to_ptr; end
+
+    def [](*); end
   end
 
   class Struct

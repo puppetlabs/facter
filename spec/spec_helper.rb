@@ -58,8 +58,7 @@ RSpec.configure do |config|
     # You should set this unless you have a good reason not to.
     # It defaults to off only for backwards compatibility.
 
-    # TODO: (FACT-2420) - enable this when windows specs are refactored
-    # mocks.verify_partial_doubles = true
+    mocks.verify_partial_doubles = true
   end
 
   config.after do

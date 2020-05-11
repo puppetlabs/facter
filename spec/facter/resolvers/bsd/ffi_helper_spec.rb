@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
 describe Facter::Bsd::FfiHelper do
-  let(:averages) { double('FFI::MemoryPointer') }
+  let(:averages) { double('FFI::MemoryPointer', size: 24) }
 
   before do
     allow(FFI::MemoryPointer).to receive(:new).with(:double, 3).and_return(averages)
-    allow(averages).to receive(:size).and_return(24)
   end
 
   after do

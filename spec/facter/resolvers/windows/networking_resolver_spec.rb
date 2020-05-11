@@ -64,12 +64,14 @@ describe Facter::Resolvers::Networking do
 
     context 'when it succeeded to retrieve networking information but all interface are down' do
       let(:error_code) { NetworkingFFI::ERROR_SUCCES }
-      let(:adapter) {  OpenStruct.new(OperStatus: NetworkingFFI::IF_OPER_STATUS_DOWN, Next: next_adapter) }
+      let(:adapter) {  instance_double('FFI::MemoryPointer') }
       let(:next_adapter) { instance_spy(FFI::Pointer) }
 
       before do
         allow(IpAdapterAddressesLh).to receive(:read_list).with(adapter_address).and_yield(adapter)
         allow(IpAdapterAddressesLh).to receive(:new).with(next_adapter).and_return(adapter)
+        allow(adapter).to receive(:[]).with(:OperStatus).and_return(NetworkingFFI::IF_OPER_STATUS_DOWN)
+        allow(adapter).to receive(:[]).with(:Next).and_return(next_adapter)
         allow(adapter).to receive(:to_ptr).and_return(FFI::Pointer::NULL)
       end
 
