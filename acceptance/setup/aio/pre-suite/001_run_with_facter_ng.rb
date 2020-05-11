@@ -2,7 +2,7 @@
 require 'open3'
 require 'tmpdir'
 
-BRANCH_TO_TEST = 'FACT-2531'
+BRANCH_TO_TEST = 'FACT-2247'
 
 def create_facter_gem(branch_name)
   temp_dir = Dir.mktmpdir
