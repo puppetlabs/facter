@@ -1,6 +1,6 @@
 /dev/mapper/VolGroup00-LogVol01: TYPE="swap"
 /dev/mapper/VolGroup00-LogVol00: UUID="1bd8643b-483a-4fdc-adcd-c586384919a8" TYPE="ext3"
-/dev/sda1: LABEL="/boot" UUID="88077904-4fd4-476f-9af2-0f7a806ca25e" TYPE="ext3" SEC_TYPE="ext2"
+/dev/sda1: LABEL="/boot" UUID="88077904-4fd4-476f-9af2-0f7a806ca25e" TYPE="ext3" SEC_TYPE="ext2" PARTUUID="00061fe0-01 "
 /dev/hdc: LABEL="VMware Tools" TYPE="iso9660"
 /dev/VolGroup00/LogVol00: UUID="1bd8643b-483a-4fdc-adcd-c586384919a8" TYPE="ext3"
 /dev/VolGroup00/LogVol01: TYPE="swap"

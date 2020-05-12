@@ -51,7 +51,8 @@ describe Facter::Resolvers::Partitions do
       context 'when device size files are readable' do
         let(:partitions) do
           { '/dev/sda1' => { filesystem: 'ext3', label: '/boot', size: '117.00 KiB',
-                             size_bytes: 119_808, uuid: '88077904-4fd4-476f-9af2-0f7a806ca25e' },
+                             size_bytes: 119_808, uuid: '88077904-4fd4-476f-9af2-0f7a806ca25e',
+                             partuuid: '00061fe0-01' },
             '/dev/sda2' => { size: '98.25 MiB', size_bytes: 103_021_056 } }
         end
 
@@ -63,7 +64,7 @@ describe Facter::Resolvers::Partitions do
       context 'when device size files are not readable' do
         let(:partitions_with_no_sizes) do
           { '/dev/sda1' => { filesystem: 'ext3', label: '/boot', size: '0 bytes',
-                             size_bytes: 0, uuid: '88077904-4fd4-476f-9af2-0f7a806ca25e' },
+                             size_bytes: 0, uuid: '88077904-4fd4-476f-9af2-0f7a806ca25e', partuuid: '00061fe0-01' },
             '/dev/sda2' => { size: '0 bytes', size_bytes: 0 } }
         end
 
