@@ -23,13 +23,13 @@ EOM
     end
 
     teardown do
-      on(agent, "rm -f '#{ext_fact}'")
+      agent.rm_rf(ext_fact)
     end
 
     step "Agent #{agent}: create facts.d directory and fact" do
-      on(agent, "mkdir -p '#{factsd}'")
+      agent.mkdir_p(factsd)
       create_remote_file(agent, ext_fact, content)
-      on(agent, "chmod +x '#{ext_fact}'")
+      agent.chmod('+x', ext_fact)
     end
 
     step "Agent #{agent}: external fact stderr messages should appear on stderr from facter" do

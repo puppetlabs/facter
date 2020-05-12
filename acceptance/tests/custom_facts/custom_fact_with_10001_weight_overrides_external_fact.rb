@@ -16,7 +16,7 @@ test_name "C100153: custom fact with weight of >= 10001 overrides an external fa
     create_remote_file(agent, cust_fact_path, custom_fact_content(fact_name, 'CUSTOM', "has_weight 10001"))
 
     teardown do
-      on(agent, "rm -rf '#{facts_dir}'")
+      agent.rm_rf(facts_dir)
     end
 
     # Custom fact with weight >= 10001 should override an external fact
