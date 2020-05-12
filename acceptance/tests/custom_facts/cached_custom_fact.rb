@@ -1,8 +1,6 @@
 test_name 'ttls configured custom facts files creates cache file and reads cache file' do
   tag 'risk:high'
 
-  confine :to, :platform => /Skipped/
-
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 

@@ -3,8 +3,6 @@
 test_name "ttls configured cached external execution resolver with json output creates and read json cache files" do
   tag 'risk:medium'
 
-  confine :to, :platform => /Skipped/
-
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 

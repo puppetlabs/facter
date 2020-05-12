@@ -3,8 +3,6 @@
 test_name "C99970: the `--list-cache-groups` command line flag prints available cache groups to stdout" do
   tag 'risk:medium'
 
-  confine :to, :platform => /Skipped/
-
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 
