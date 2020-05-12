@@ -44,9 +44,14 @@ def install_facter_gem(agent, facter_gem_path)
 end
 
 test_name 'Setup for Facter NG' do
+
   windows_puppet_bin_path = '/cygdrive/c/Program\ Files/Puppet\ Labs/Puppet/bin'
   linux_puppet_bin_path = '/opt/puppetlabs/puppet/bin'
   set_facter_ng_command = 'puppet config set facterng true'
+
+  puts 'ENV VARIABLES ARE:'
+  output, _ = Open3.capture2("printenv")
+  print output
 
   puts 'Setting run with facter ng if environment variable FACTER_NG is true.'
   puts "FACTER_NG is #{ENV["FACTER_NG"]}."
