@@ -39,10 +39,10 @@ module Facter
               next if path =~ %r{^/(proc|sys)} && filesystem != 'tmpfs' || filesystem == 'autofs'
 
               stats = FilesystemHelper.read_mountpoint_stats(path)
-              size_bytes = stats.bytes_total
-              available_bytes = stats.bytes_available
+              size_bytes = stats.bytes_total.abs
+              available_bytes = stats.bytes_available.abs
 
-              used_bytes = stats.bytes_used
+              used_bytes = stats.bytes_used.abs
               total_bytes = used_bytes + available_bytes
               capacity = FilesystemHelper.compute_capacity(used_bytes, total_bytes)
 

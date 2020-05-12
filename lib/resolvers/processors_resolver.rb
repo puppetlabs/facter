@@ -25,6 +25,7 @@ module Facter
             read_processors(cpuinfo_output) # + model names
 
             @fact_list[:physical_count] = @fact_list[:physical_processors].uniq.length
+            @fact_list[:physical_count] = physical_devices_count if @fact_list[:physical_count].zero?
             @fact_list[fact_name]
           end
 
@@ -50,6 +51,10 @@ module Facter
 
           def count_physical_processors(tokens)
             @fact_list[:physical_processors] << tokens.last.strip.to_i if tokens.first.strip == 'physical id'
+          end
+
+          def physical_devices_count
+            Dir.entries('/sys/devices/system/cpu').count { |dir| dir =~ /cpu[0-9]+$/ }
           end
         end
       end

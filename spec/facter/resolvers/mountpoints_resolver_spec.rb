@@ -11,7 +11,7 @@ describe Facter::Resolvers::Linux::Mountpoints do
   let(:stat) do
     double(Sys::Filesystem::Stat,
            path: '/', base_type: nil, fragment_size: 4096, block_size: 4096, blocks: 113_879_332,
-           blocks_available: 16_596_603, blocks_free: 22_398_776)
+           blocks_available: -16_596_603, blocks_free: 22_398_776)
   end
 
   let(:fact) do
