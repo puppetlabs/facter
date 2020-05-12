@@ -20,7 +20,7 @@ module Facter
         if used == total
           '100%'
         elsif used.positive?
-          "#{format('%.2f', 100.0 * used.to_f / total.to_f)}%"
+          "#{format('%<value>.2f', value: (used / total.to_f * 100))}%"
         else
           '0%'
         end

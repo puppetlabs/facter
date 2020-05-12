@@ -147,10 +147,7 @@ describe Facter do
     it 'can be interpolated' do
       mock_fact_manager(:resolve_facts, [os_fact])
       mock_collection(:value, 'Ubuntu')
-
-      # rubocop:disable Style/UnneededInterpolation
-      expect("#{Facter.fact('os.name')}").to eq('Ubuntu')
-      # rubocop:enable Style/UnneededInterpolation
+      expect("#{Facter.fact('os.name')}-test").to eq('Ubuntu-test')
     end
 
     it 'returns no value' do

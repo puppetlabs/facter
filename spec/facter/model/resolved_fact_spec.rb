@@ -24,15 +24,13 @@ describe Facter::ResolvedFact do
       expect(resolved_fact.core?).to be(true)
     end
 
-    # rubocop:disable Style/UnneededInterpolation
     it 'can be interpolated' do
-      expect("#{resolved_fact}").to eq('fact_value')
+      expect("#{resolved_fact}-test").to eq('fact_value-test')
     end
 
     it 'interpolation of nil value will be empty string' do
       resolved = Facter::ResolvedFact.new('fact_name', nil)
-      expect("#{resolved}").to eq('')
+      expect("#{resolved}-test").to eq('-test')
     end
-    # rubocop:enable Style/UnneededInterpolation
   end
 end

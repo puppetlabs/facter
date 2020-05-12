@@ -1,18 +1,25 @@
 ---
 inherit_from: .rubocop_todo.yml
 
+AllCops:
+  TargetRubyVersion: 2.3
+
 require:
   - rubocop-performance
   - rubocop-rspec
 
-Documentation:
-  Enabled: false
-
-Style/TrivialAccessors:
-  AllowDSLWriters: true
-
-Metrics/LineLength:
+Layout/LineLength:
   Max: 120
+
+Lint/RescueException:
+  Exclude:
+    - 'lib/custom_facts/util/parser.rb'
+
+Lint/RaiseException:
+  Enabled: true
+
+Lint/StructNewOverride:
+  Enabled: true
 
 Metrics/MethodLength:
   Max: 20
@@ -33,10 +40,6 @@ Metrics/BlockLength:
   Exclude:
     - !ruby/regexp /(?:(?!.+_spec.rb).)*$/
 
-Style/ClassVars:
-  Exclude:
-    - !ruby/regexp /(?:(?!.+_resolver.rb).)*$/
-
 Naming/ClassAndModuleCamelCase:
   Exclude:
     - 'spec/mocks/**/*'
@@ -54,21 +57,6 @@ Metrics/AbcSize:
     - 'lib/custom_facts/core/execution/base.rb'
     - 'lib/custom_facts/core/resolvable.rb'
 
-Style/FrozenStringLiteralComment:
-  Exclude:
-    - 'spec/custom_facts/util/normalization_spec.rb'
-    - 'spec/custom_facts/shared_contexts/platform.rb'
-    - 'spec/custom_facts/core/execution/windows_spec.rb'
-    - 'spec/custom_facts/core/execution/posix_spec.rb'
-    - 'lib/custom_facts/util/resolution.rb'
-    - 'lib/custom_facts/core/execution/windows.rb'
-    - 'lib/custom_facts/core/execution/posix.rb'
-
-Style/CaseEquality:
-  Exclude:
-    - 'spec/custom_facts/util/confine_spec.rb'
-    - 'lib/custom_facts/util/confine.rb'
-
 Metrics/PerceivedComplexity:
   Exclude:
     - 'lib/custom_facts/util/values.rb'
@@ -84,10 +72,6 @@ Metrics/CyclomaticComplexity:
     - 'lib/custom_facts/core/execution/posix.rb'
     - 'lib/framework/detector/os_detector.rb'
 
-Lint/RescueException:
-  Exclude:
-    - 'lib/custom_facts/util/parser.rb'
-
 Metrics/ClassLength:
   Exclude:
     - 'lib/custom_facts/util/fact.rb'
@@ -96,24 +80,9 @@ Metrics/ClassLength:
     - 'lib/framework/core/options/option_store.rb'
     - 'lib/framework/cli/cli.rb'
 
-Style/DoubleNegation:
-  Exclude:
-    - 'lib/custom_facts/util/confine.rb'
-    - 'lib/custom_facts/util/confine.rb'
-    - 'lib/custom_facts/core/execution/windows.rb'
-    - 'lib/custom_facts/core/execution/posix.rb'
-
 Naming/AccessorMethodName:
   Exclude:
     - 'lib/custom_facts/core/suitable.rb'
-
-Style/StderrPuts:
-  Exclude:
-    - 'lib/custom_facts/core/logging.rb'
-
-Style/ModuleFunction:
-  Exclude:
-    - 'lib/custom_facts/core/logging.rb'
 
 Naming/MethodName:
   Exclude:
@@ -122,14 +91,6 @@ Naming/MethodName:
 Naming/PredicateName:
   Exclude:
     - 'lib/custom_facts/core/suitable.rb'
-
-Style/MethodMissingSuper:
-  Exclude:
-    - 'lib/facter.rb'
-
-Style/MissingRespondToMissing:
-  Exclude:
-    - 'lib/facter.rb'
 
 Naming/FileName:
   Exclude:
@@ -144,3 +105,60 @@ RSpec/DescribedClass:
 
 RSpec/NestedGroups:
   Max: 5
+
+Style/Documentation:
+  Enabled: false
+
+Style/ClassVars:
+  Exclude:
+    - !ruby/regexp /(?:(?!.+_resolver.rb).)*$/
+
+Style/FrozenStringLiteralComment:
+  Exclude:
+    - 'spec/custom_facts/util/normalization_spec.rb'
+    - 'spec/custom_facts/shared_contexts/platform.rb'
+    - 'spec/custom_facts/core/execution/windows_spec.rb'
+    - 'spec/custom_facts/core/execution/posix_spec.rb'
+    - 'lib/custom_facts/util/resolution.rb'
+    - 'lib/custom_facts/core/execution/windows.rb'
+    - 'lib/custom_facts/core/execution/posix.rb'
+
+Style/TrivialAccessors:
+  AllowDSLWriters: true
+
+Style/CaseEquality:
+  Exclude:
+    - 'spec/custom_facts/util/confine_spec.rb'
+    - 'lib/custom_facts/util/confine.rb'
+
+Style/DoubleNegation:
+  Exclude:
+    - 'lib/custom_facts/util/confine.rb'
+    - 'lib/custom_facts/util/confine.rb'
+    - 'lib/custom_facts/core/execution/windows.rb'
+    - 'lib/custom_facts/core/execution/posix.rb'
+
+Style/MethodMissingSuper:
+  Exclude:
+    - 'lib/facter.rb'
+
+Style/MissingRespondToMissing:
+  Exclude:
+    - 'lib/facter.rb'
+
+Style/StderrPuts:
+  Exclude:
+    - 'lib/custom_facts/core/logging.rb'
+
+Style/ModuleFunction:
+  Exclude:
+    - 'lib/custom_facts/core/logging.rb'
+
+Style/HashEachMethods:
+  Enabled: false  # not implemted in ruby 2.3
+
+Style/HashTransformKeys:
+  Enabled: false  # not implemted in ruby 2.3
+
+Style/HashTransformValues:
+  Enabled: false  # not implemted in ruby 2.3

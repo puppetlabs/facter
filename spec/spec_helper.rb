@@ -16,7 +16,7 @@ require 'fileutils'
 
 require_relative '../lib/resolvers/base_resolver'
 
-Dir[ROOT_DIR.join('spec/mocks/*.rb')].each { |file| require file }
+Dir[ROOT_DIR.join('spec/mocks/*.rb')].sort.each { |file| require file }
 
 require "#{ROOT_DIR}/lib/facter"
 require "#{ROOT_DIR}/lib/framework/cli/cli"
