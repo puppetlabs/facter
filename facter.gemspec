@@ -42,7 +42,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop', '~> 0.74.0'
   spec.add_development_dependency 'rubocop-performance', '~> 1.5'
   spec.add_development_dependency 'rubocop-rspec', '~> 1.38'
-  spec.add_development_dependency 'rubycritic', '~> 4.1.0'
   spec.add_development_dependency 'sys-filesystem', '~> 1.3'
   spec.add_development_dependency 'yard', '~> 0.9'
 

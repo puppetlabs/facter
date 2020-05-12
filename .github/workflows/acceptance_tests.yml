@@ -1,11 +1,11 @@
 ---
-name: GitHub hosted facter CI
+name: Acceptance tests
 
 on: [pull_request]
 
 jobs:
-  ci:
-    name: Run acceptance tests
+  acceptance_tests:
+    name: Platform
     strategy:
       matrix:
         os: [ubuntu-18.04, ubuntu-16.04, macos-10.15]

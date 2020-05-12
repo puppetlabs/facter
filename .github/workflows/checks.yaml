@@ -1,0 +1,33 @@
+---
+name: Checks
+
+on: [pull_request]
+
+jobs:
+  rubocop_checks:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout current PR
+        uses: actions/checkout@v2
+
+      - name: Rubocop checks
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - run: gem install bundler
+      - run: bundle install --jobs 3 --retry 3
+      - run: bundle exec rubocop --parallel
+
+  commit_checks:
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout current PR
+        uses: actions/checkout@v2
+
+      - name: Commit message checks
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - run: gem install bundler
+      - run: bundle install --jobs 3 --retry 3
+      - run: bundle exec rake commits

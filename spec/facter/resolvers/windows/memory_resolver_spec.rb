@@ -30,15 +30,15 @@ describe Facter::Resolvers::Memory do
     let(:available) { 824_031 }
 
     it 'detects total bytes' do
-      expect(Facter::Resolvers::Memory.resolve(:total_bytes)).to be(4_293_890_048)
+      expect(Facter::Resolvers::Memory.resolve(:total_bytes)).to eq(4_293_890_048)
     end
 
     it 'detects available bytes' do
-      expect(Facter::Resolvers::Memory.resolve(:available_bytes)).to be(3_375_230_976)
+      expect(Facter::Resolvers::Memory.resolve(:available_bytes)).to eq(3_375_230_976)
     end
 
     it 'determines used bytes' do
-      expect(Facter::Resolvers::Memory.resolve(:used_bytes)).to be(918_659_072)
+      expect(Facter::Resolvers::Memory.resolve(:used_bytes)).to eq(918_659_072)
     end
 
     it 'determines capacity' do
