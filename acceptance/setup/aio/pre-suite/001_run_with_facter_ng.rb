@@ -2,12 +2,10 @@
 require 'open3'
 require 'tmpdir'
 
-BRANCH_TO_TEST = 'FACT-2531'
-
-def create_facter_gem(branch_name)
+def create_facter_gem
   temp_dir = Dir.mktmpdir
   Dir.chdir(temp_dir) do
-    download_and_build_facter_ng(branch_name)
+    download_and_build_facter_ng
 
     facter_repo_dir = Pathname.new("#{temp_dir}/facter-ng")
     facter_gem_path = Dir.entries(facter_repo_dir).select { |file| file =~ /facter-ng-[0-9]+.[0-9]+.[0-9]+(.pre)?.gem/ }
@@ -15,7 +13,8 @@ def create_facter_gem(branch_name)
   end
 end
 
-def download_and_build_facter_ng(branch_name)
+def download_and_build_facter_ng
+  branch_name = ENV['FACTER_4_BRANCH']
   puts "Cloning branch #{branch_name}"
   Open3.capture2('echo $PATH')
 
@@ -44,21 +43,17 @@ def install_facter_gem(agent, facter_gem_path)
 end
 
 test_name 'Setup for Facter NG' do
-
   windows_puppet_bin_path = '/cygdrive/c/Program\ Files/Puppet\ Labs/Puppet/bin'
   linux_puppet_bin_path = '/opt/puppetlabs/puppet/bin'
   set_facter_ng_command = 'puppet config set facterng true'
 
-  puts 'ENV VARIABLES ARE:'
-  output, _ = Open3.capture2("printenv")
-  print output
-
   puts 'Setting run with facter ng if environment variable FACTER_NG is true.'
   puts "FACTER_NG is #{ENV["FACTER_NG"]}."
+  puts "FACTER_NG branch is #{ENV['FACTER_4_BRANCH']}"
 
   if ENV["FACTER_NG"] == 'true'
     puts 'Cloning facter ng repository and creating gem file.'
-    facter_gem_path = create_facter_gem(BRANCH_TO_TEST)
+    facter_gem_path = create_facter_gem
 
     agents.each do |agent|
       puts 'Installing Facter NG on agent.'
