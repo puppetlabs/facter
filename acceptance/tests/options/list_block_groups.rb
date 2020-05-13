@@ -9,7 +9,6 @@ test_name "C99969: the `--list-block-groups` command line flag prints available 
       on(agent, facter("--list-block-groups")) do |facter_output|
         assert_match(/EC2/, facter_output.stdout, "Expected the EC2 group to be listed")
         assert_match(/ec2_metadata/, facter_output.stdout, "Expected the EC2 group's facts to be listed")
-        assert_no_match(/kernel/, facter_output.stdout, "kernel facts should not be listed as blockable")
       end
     end
   end
