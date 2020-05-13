@@ -1,5 +1,30 @@
 
 
+## [4.0.21](https://github.com/puppetlabs/facter-ng/tree/4.0.21) (2020-05-13)
+
+[Full Changelog](https://github.com/puppetlabs/facter-ng/compare/4.0.20...4.0.21)
+
+### Added
+
+- \(FACT-2599\) Run GitHub Actions on Ubuntu 16 and Osx 10 [\#497](https://github.com/puppetlabs/facter-ng/pull/497) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- \(FACT-2247\) Add networking fact for linux [\#496](https://github.com/puppetlabs/facter-ng/pull/496) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2515\) Define custom fact groups in facter.conf [\#491](https://github.com/puppetlabs/facter-ng/pull/491) ([florindragos](https://github.com/florindragos))
+- \(FACT-2557\) Add rake task for generating list of facts for specified OS [\#488](https://github.com/puppetlabs/facter-ng/pull/488) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- Add os.release facts on FreeBSD [\#485](https://github.com/puppetlabs/facter-ng/pull/485) ([smortex](https://github.com/smortex))
+- \(FACT-2235\) Add Aix processors fact [\#483](https://github.com/puppetlabs/facter-ng/pull/483) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2569\) Run acceptance tests on Ubuntu GitHub actions [\#477](https://github.com/puppetlabs/facter-ng/pull/477) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- \(FACT-2553\) Quote special string in YAML format [\#471](https://github.com/puppetlabs/facter-ng/pull/471) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2517\) Open3 wrapper for executing system calls [\#469](https://github.com/puppetlabs/facter-ng/pull/469) ([oanatmaria](https://github.com/oanatmaria))
+
+### Fixed
+
+- \(FACT-2533\) Fix for tests/facts/partitions.rb [\#507](https://github.com/puppetlabs/facter-ng/pull/507) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2531\) Fix for tests/facts/validate\_file\_system\_size\_bytes.rb [\#500](https://github.com/puppetlabs/facter-ng/pull/500) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2582\) Date and Time in external YAML fact is not loaded [\#499](https://github.com/puppetlabs/facter-ng/pull/499) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2556\) Refactor existing facts to use the new OS hierarchy [\#486](https://github.com/puppetlabs/facter-ng/pull/486) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+
+
 ## [4.0.20](https://github.com/puppetlabs/facter-ng/tree/4.0.20) (2020-05-06)
 
 [Full Changelog](https://github.com/puppetlabs/facter-ng/compare/4.0.19...4.0.20)
