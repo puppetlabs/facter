@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Facts
-  module Windows
+  module Linux
     class DhcpServers
       FACT_NAME = 'dhcp_servers'
 
@@ -14,10 +14,11 @@ module Facts
       private
 
       def construct_addresses_hash
-        interfaces = Facter::Resolvers::Networking.resolve(:interfaces)
+        primary = Facter::Resolvers::NetworkingLinux.resolve(:primary_interface)
+        interfaces = Facter::Resolvers::NetworkingLinux.resolve(:interfaces)
         return unless interfaces
 
-        servers = { system: Facter::Resolvers::Networking.resolve(:dhcp) }
+        servers = { system: interfaces[primary][:dhcp] }
         interfaces&.each { |interface_name, info| servers[interface_name] = info[:dhcp] if info[:dhcp] }
         servers
       end

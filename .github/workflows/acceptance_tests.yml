@@ -49,11 +49,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo chmod a-w /home/runner /usr/share &&
-          sudo chmod -R a-w /usr/share/rust /home/runner/.config
-
-      - name: Fix ubuntu-16.04 permissions
-        if: matrix.os == 'ubuntu-16.04'
-        run: sudo chmod -R a-w /home/linuxbrew
+          sudo chmod -R a-w /usr/share/rust /home/runner/.config /home/linuxbrew
 
       - name: Run acceptance tests
         run: sudo -E "PATH=$PATH" ruby facter_4/.github/actions/presuite.rb

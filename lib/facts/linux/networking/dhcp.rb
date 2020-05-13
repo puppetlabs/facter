@@ -3,17 +3,16 @@
 module Facts
   module Linux
     module Networking
-      class Mac
-        FACT_NAME = 'networking.mac'
-        ALIASES = 'macaddress'
+      class Dhcp
+        FACT_NAME = 'networking.dhcp'
 
         def call_the_resolver
           interfaces = Facter::Resolvers::NetworkingLinux.resolve(:interfaces)
           primary = Facter::Resolvers::NetworkingLinux.resolve(:primary_interface)
 
-          fact_value = interfaces[primary][:mac] if interfaces && interfaces[primary]
+          fact_value = interfaces[primary][:dhcp] if interfaces && interfaces[primary]
 
-          [Facter::ResolvedFact.new(FACT_NAME, fact_value), Facter::ResolvedFact.new(ALIASES, fact_value, :legacy)]
+          Facter::ResolvedFact.new(FACT_NAME, fact_value)
         end
       end
     end

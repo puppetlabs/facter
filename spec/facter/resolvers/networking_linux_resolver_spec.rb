@@ -17,6 +17,25 @@ describe Facter::Resolvers::NetworkingLinux do
       allow(Facter::Core::Execution).to receive(:execute)
         .with('ip link show ens160', logger: log_spy)
         .and_return(load_fixture('ip_address_linux').read)
+
+      allow(Facter::Util::FileHelper).to receive(:safe_read)
+        .with('/run/systemd/netif/leases/1', nil).and_return(nil)
+      allow(Facter::Util::FileHelper).to receive(:safe_read)
+        .with('/run/systemd/netif/leases/2', nil).and_return(load_fixture('dhcp_lease').read)
+
+      allow(Dir).to receive(:exist?).with('/var/lib/dhclient/').and_return(true)
+      allow(Dir).to receive(:entries).with('/var/lib/dhclient/').and_return(['dhclient.lo.leases', 'dhclient.leases'])
+      allow(Facter::Util::FileHelper).to receive(:safe_read)
+        .with('/var/lib/dhclient/dhclient.lo.leases', nil).and_return(load_fixture('dhclient_lease').read)
+
+      allow(Facter::Util::FileHelper).to receive(:safe_read)
+        .with('/sys/class/net/lo/address', nil).and_return('00:00:00:00:00:00')
+      allow(Facter::Util::FileHelper).to receive(:safe_read)
+        .with('/sys/class/net/lo/mtu', nil).and_return('65536')
+      allow(Facter::Util::FileHelper).to receive(:safe_read)
+        .with('/sys/class/net/ens160/address', nil).and_return('00:50:56:9a:61:46')
+      allow(Facter::Util::FileHelper).to receive(:safe_read)
+        .with('/sys/class/net/ens160/mtu', nil).and_return('1500')
     end
 
     after do
@@ -33,7 +52,16 @@ describe Facter::Resolvers::NetworkingLinux do
           'bindings6' =>
                 [
                   { address: '::1', netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff', network: '::1' }
-                ]
+                ],
+          :dhcp => '10.32.22.9',
+          :ip => '127.0.0.1',
+          :ip6 => '::1',
+          :mtu => 65_536,
+          :netmask => '255.0.0.0',
+          :netmask6 => 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+          :network => '127.0.0.0',
+          :network6 => '::1',
+          :scope6 => 'host'
         },
         'ens160' => {
           'bindings' => [
@@ -42,28 +70,30 @@ describe Facter::Resolvers::NetworkingLinux do
           ],
           'bindings6' => [
             { address: 'fe80::250:56ff:fe9a:8481', netmask: 'ffff:ffff:ffff:ffff::', network: 'fe80::' }
-          ]
+          ],
+          :dhcp => '10.32.22.10',
+          :ip => '10.16.119.155',
+          :ip6 => 'fe80::250:56ff:fe9a:8481',
+          :mac => '00:50:56:9a:61:46',
+          :mtu => 1500,
+          :netmask => '255.255.240.0',
+          :netmask6 => 'ffff:ffff:ffff:ffff::',
+          :network => '10.16.112.0',
+          :network6 => 'fe80::',
+          :scope6 => 'link'
         }
       }
     end
     let(:macaddress) { '00:50:56:9a:ec:fb' }
 
-    it 'returns the default ip' do
-      expect(networking_linux.resolve(:ip)).to eq('10.16.122.163')
-    end
-
     it 'returns all the interfaces' do
       expect(networking_linux.resolve(:interfaces)).to eq(result)
     end
 
-    it 'return macaddress' do
-      expect(networking_linux.resolve(:macaddress)).to eq(macaddress)
-    end
-
     context 'when caching' do
       it 'returns from cache' do
-        networking_linux.resolve(:ip)
-        networking_linux.resolve(:ip)
+        networking_linux.resolve(:interfaces)
+        networking_linux.resolve(:interfaces)
 
         expect(Facter::Core::Execution).to have_received(:execute)
           .with('ip route get 1', logger: log_spy).once
@@ -72,9 +102,9 @@ describe Facter::Resolvers::NetworkingLinux do
 
     context 'when invalidate caching' do
       it 'resolved again the fact' do
-        networking_linux.resolve(:ip)
+        networking_linux.resolve(:interfaces)
         networking_linux.invalidate_cache
-        networking_linux.resolve(:ip)
+        networking_linux.resolve(:interfaces)
 
         expect(Facter::Core::Execution).to have_received(:execute)
           .with('ip route get 1', logger: log_spy).twice

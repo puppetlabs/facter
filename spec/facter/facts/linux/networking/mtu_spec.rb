@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-describe Facts::Linux::Networking::Ip do
+describe Facts::Linux::Networking::Mtu do
   describe '#call_the_resolver' do
-    subject(:fact) { Facts::Linux::Networking::Ip.new }
+    subject(:fact) { Facts::Linux::Networking::Mtu.new }
 
-    let(:value) { '10.16.122.163' }
-    let(:interfaces) { { 'eth0' => { ip: value }, 'en1' => { ip6: 'fe80::99bf:da20:ad3:9bfe' } } }
+    let(:value) { 1500 }
+    let(:interfaces) { { 'eth0' => { ip: '10.16.122.163', mtu: value } } }
     let(:primary) { 'eth0' }
 
     before do
@@ -23,10 +23,10 @@ describe Facts::Linux::Networking::Ip do
       expect(Facter::Resolvers::NetworkingLinux).to have_received(:resolve).with(:primary_interface)
     end
 
-    it 'returns ipaddress fact' do
-      expect(fact.call_the_resolver).to be_an_instance_of(Array)
-        .and contain_exactly(an_object_having_attributes(name: 'networking.ip', value: value),
-                             an_object_having_attributes(name: 'ipaddress', value: value, type: :legacy))
+    it 'return mtu fact' do
+      expect(fact.call_the_resolver)
+        .to be_an_instance_of(Facter::ResolvedFact)
+        .and have_attributes(name: 'networking.mtu', value: value)
     end
   end
 end

@@ -5,6 +5,7 @@ module Facter
     class NetworkingLinux < BaseResolver
       @semaphore = Mutex.new
       @fact_list = {}
+      DIRS = ['/var/lib/dhclient/', '/var/lib/dhcp/', '/var/lib/dhcp3/', '/var/lib/NetworkManager/', '/var/db/'].freeze
 
       class << self
         private
@@ -18,16 +19,19 @@ module Facter
         def retrieve_network_info(fact_name)
           @fact_list ||= {}
 
-          retrieve_default_interface_and_ip
           retrieve_interface_info
-          retrieve_macaddress
+          retrieve_interfaces_mac_and_mtu
+          retrieve_default_interface
           @fact_list[fact_name]
         end
 
-        def retrieve_macaddress
-          output = Facter::Core::Execution.execute("ip link show #{@fact_list[:primary_interface]}", logger: log)
-          macaddress = */ether ([^ ]*) /.match(output)
-          @fact_list[:macaddress] = macaddress[1]
+        def retrieve_interfaces_mac_and_mtu
+          @fact_list[:interfaces].map do |name, info|
+            macaddress = Util::FileHelper.safe_read("/sys/class/net/#{name}/address", nil)
+            info[:mac] = macaddress.strip if macaddress && !macaddress.include?('00:00:00:00:00:00')
+            mtu = Util::FileHelper.safe_read("/sys/class/net/#{name}/mtu", nil)
+            info[:mtu] = mtu.strip.to_i if mtu
+          end
         end
 
         def retrieve_interface_info
@@ -39,48 +43,103 @@ module Facter
 
             fill_ip_v4_info!(ip_tokens, interfaces)
             fill_io_v6_info!(ip_tokens, interfaces)
+            find_dhcp!(ip_tokens, interfaces)
           end
 
           @fact_list[:interfaces] = interfaces
         end
 
+        def find_dhcp!(tokens, network_info)
+          interface_name = tokens[1]
+          return if !network_info[interface_name] || network_info[interface_name][:dhcp]
+
+          index = tokens[0].delete(':')
+          dhcp = Util::FileHelper.safe_read("/run/systemd/netif/leases/#{index}", nil)
+          network_info[interface_name][:dhcp] = dhcp.match(/SERVER_ADDRESS=(.*)/)[1] if dhcp
+          network_info[interface_name][:dhcp] ||= retrieve_from_other_directories(interface_name)
+        end
+
+        def retrieve_from_other_directories(interface_name)
+          DIRS.each do |dir|
+            next unless Dir.exist?(dir)
+
+            lease_files = Dir.entries(dir).select { |file| file =~ /dhclient.*\.lease/ }
+            next if lease_files.empty?
+
+            lease_files.select do |file|
+              content = Util::FileHelper.safe_read("#{dir}#{file}", nil)
+              next unless content =~ /interface.*#{interface_name}/
+
+              return content.match(/dhcp-server-identifier ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/)[1]
+            end
+          end
+          return unless Dir.exist?('/var/lib/NetworkManager/')
+
+          search_internal_leases(interface_name)
+        end
+
+        def search_internal_leases(interface_name)
+          files = Dir.entries('/var/lib/NetworkManager/').reject { |dir| dir =~ /^\.+$/ }
+          lease_file = files.find { |file| file =~ /internal.*#{interface_name}\.lease/ }
+          return unless lease_file
+
+          dhcp = Util::FileHelper.safe_read("/var/lib/NetworkManager/#{lease_file}", nil)
+          dhcp ? dhcp.match(/SERVER_ADDRESS=(.*)/)[1] : nil
+        end
+
         def fill_ip_v4_info!(ip_tokens, network_info)
           return unless ip_tokens[2].casecmp('inet').zero?
 
-          interface_name = ip_tokens[1]
-          ip4_info = ip_tokens[3].split('/')
-          ip4_address = ip4_info[0]
-          ip4_mask_length = ip4_info[1]
+          interface_name, ip4_address, ip4_mask_length = retrieve_name_and_ip_info(ip_tokens)
 
           binding = build_binding(ip4_address, ip4_mask_length)
           build_network_info_structure!(network_info, interface_name, 'bindings')
 
+          populate_other_ipv4_facts(network_info, interface_name, binding)
+        end
+
+        def populate_other_ipv4_facts(network_info, interface_name, binding)
           network_info[interface_name]['bindings'] << binding
+          network_info[interface_name][:ip] ||= binding[:address]
+          network_info[interface_name][:network] ||= binding[:network]
+          network_info[interface_name][:netmask] ||= binding[:netmask]
+        end
+
+        def retrieve_name_and_ip_info(tokens)
+          interface_name = tokens[1]
+          ip_info = tokens[3].split('/')
+          ip_address = ip_info[0]
+          ip_mask_length = ip_info[1]
+
+          [interface_name, ip_address, ip_mask_length]
         end
 
         def fill_io_v6_info!(ip_tokens, network_info)
           return unless ip_tokens[2].casecmp('inet6').zero?
 
-          interface_name = ip_tokens[1]
-          ip6_info = ip_tokens[3].split('/')
-          ip6_address = ip6_info[0]
-          ip6_mask_length = ip6_info[1]
+          interface_name, ip6_address, ip6_mask_length = retrieve_name_and_ip_info(ip_tokens)
 
           binding = build_binding(ip6_address, ip6_mask_length)
 
           build_network_info_structure!(network_info, interface_name, 'bindings6')
 
-          network_info[interface_name]['bindings6'] << binding
+          network_info[interface_name][:scope6] ||= ip_tokens[5]
+          populate_other_ipv6_facts(network_info, interface_name, binding)
         end
 
-        def retrieve_default_interface_and_ip
+        def populate_other_ipv6_facts(network_info, interface_name, binding)
+          network_info[interface_name]['bindings6'] << binding
+          network_info[interface_name][:ip6] ||= binding[:address]
+          network_info[interface_name][:network6] ||= binding[:network]
+          network_info[interface_name][:netmask6] ||= binding[:netmask]
+        end
+
+        def retrieve_default_interface
           output = Facter::Core::Execution.execute('ip route get 1', logger: log)
 
           ip_route_tokens = output.each_line.first.strip.split(' ')
           default_interface = ip_route_tokens[4]
-          default_ip = ip_route_tokens[6]
 
-          @fact_list[:ip] = default_ip
           @fact_list[:primary_interface] = default_interface
         end
 

@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
-describe Facts::Windows::MacaddressInterfaces do
-  subject(:fact) { Facts::Windows::MacaddressInterfaces.new }
+describe Facts::Linux::MacaddressInterfaces do
+  subject(:fact) { Facts::Linux::MacaddressInterfaces.new }
 
   before do
-    allow(Facter::Resolvers::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
+    allow(Facter::Resolvers::NetworkingLinux).to receive(:resolve).with(:interfaces).and_return(interfaces)
   end
 
   describe '#call_the_resolver' do
     let(:interfaces) { { 'eth0' => { mac: '10.16.117.100' }, 'en1' => { mac: '10.16.117.255' } } }
 
-    it 'calls Facter::Resolvers::Networking' do
+    it 'calls Facter::Resolvers::NetworkingLinux' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:interfaces)
+      expect(Facter::Resolvers::NetworkingLinux).to have_received(:resolve).with(:interfaces)
     end
 
     it 'returns legacy facts with names macaddress_<interface_name>' do
