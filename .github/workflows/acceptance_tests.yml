@@ -1,7 +1,13 @@
 ---
 name: Acceptance tests
 
-on: [pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   acceptance_tests:

@@ -1,11 +1,18 @@
 ---
 name: Checks
 
-on: [pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   rubocop_checks:
     runs-on: ubuntu-18.04
+    name: RuboCop
     steps:
       - name: Checkout current PR
         uses: actions/checkout@v2
@@ -14,12 +21,19 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.6
-      - run: gem install bundler
       - run: bundle install --jobs 3 --retry 3
       - run: bundle exec rubocop --parallel
 
+  rtc:
+    runs-on: ubuntu-latest
+    name: RuboCop TODO
+    steps:
+      - uses: actions/checkout@v1
+      - uses: gimmyxd/rtc-action@0.0.5
+
   commit_checks:
     runs-on: ubuntu-18.04
+    name: commit message
     steps:
       - name: Checkout current PR
         uses: actions/checkout@v2
@@ -28,6 +42,30 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: 2.6
-      - run: gem install bundler
       - run: bundle install --jobs 3 --retry 3
       - run: bundle exec rake commits
+
+  coverage_checks:
+    runs-on: ubuntu-18.04
+    name: coverage
+    steps:
+      - name: Checkout current PR
+        uses: actions/checkout@v2
+
+      - name: Setup Code Climate test-reporter
+        run: |
+          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+          chmod +x ./cc-test-reporter
+          ./cc-test-reporter before-build
+
+      - name: Commit message checks
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.6
+      - run: bundle install --jobs 3 --retry 3
+      - run: bundle exec rake spec
+
+      - name: Publish code coverage
+        run: |
+          export GIT_BRANCH="${GITHUB_REF/refs\/heads\//}"
+          ./cc-test-reporter after-build -r ${{secrets.CC_TEST_REPORTER_ID}}
