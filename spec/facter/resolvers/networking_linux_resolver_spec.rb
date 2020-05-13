@@ -23,7 +23,7 @@ describe Facter::Resolvers::NetworkingLinux do
       allow(Facter::Util::FileHelper).to receive(:safe_read)
         .with('/run/systemd/netif/leases/2', nil).and_return(load_fixture('dhcp_lease').read)
 
-      allow(Dir).to receive(:exist?).with('/var/lib/dhclient/').and_return(true)
+      allow(File).to receive(:readable?).with('/var/lib/dhclient/').and_return(true)
       allow(Dir).to receive(:entries).with('/var/lib/dhclient/').and_return(['dhclient.lo.leases', 'dhclient.leases'])
       allow(Facter::Util::FileHelper).to receive(:safe_read)
         .with('/var/lib/dhclient/dhclient.lo.leases', nil).and_return(load_fixture('dhclient_lease').read)

@@ -61,7 +61,7 @@ module Facter
 
         def retrieve_from_other_directories(interface_name)
           DIRS.each do |dir|
-            next unless Dir.exist?(dir)
+            next unless File.readable?(dir)
 
             lease_files = Dir.entries(dir).select { |file| file =~ /dhclient.*\.lease/ }
             next if lease_files.empty?
@@ -73,7 +73,7 @@ module Facter
               return content.match(/dhcp-server-identifier ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/)[1]
             end
           end
-          return unless Dir.exist?('/var/lib/NetworkManager/')
+          return unless File.readable?('/var/lib/NetworkManager/')
 
           search_internal_leases(interface_name)
         end
