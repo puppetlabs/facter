@@ -16,8 +16,9 @@ describe Facts::Solaris::SystemUptime::Seconds do
     end
 
     it 'returns minutes since last boot' do
-      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-        have_attributes(name: 'system_uptime.seconds', value: value)
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'system_uptime.seconds', value: value),
+                        an_object_having_attributes(name: 'uptime_seconds', value: value, type: :legacy))
     end
   end
 end
