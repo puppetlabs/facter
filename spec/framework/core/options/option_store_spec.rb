@@ -34,7 +34,8 @@ describe Facter::OptionStore do
         user_query: [],
         verbose: false,
         config: nil,
-        cache: true
+        cache: true,
+        color: false
       )
     end
   end

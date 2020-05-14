@@ -4,6 +4,10 @@ require 'logger'
 
 module Facter
   RED = 31
+  GREEN = 32
+  YELLOW = 33
+  CYAN = 36
+
   DEFAULT_LOG_LEVEL = :warn
 
   class Log
@@ -69,30 +73,36 @@ module Facter
 
       if msg.nil? || msg.empty?
         invoker = caller(1..1).first.slice(/.*:\d+/)
-        self.warn "#{self.class}#debug invoked with invalid message #{msg.inspect}:#{msg.class} at #{invoker}"
+        empty_message_error(msg, invoker)
       elsif @@message_callback
         @@message_callback.call(:debug, msg)
       else
+        msg = colorize(msg, CYAN) if Options[:color]
         @@logger.debug(@class_name + ' - ' + msg)
       end
     end
 
     def info(msg)
+      msg = colorize(msg, GREEN) if Options[:color]
       @@logger.info(@class_name + ' - ' + msg)
     end
 
     def warn(msg)
+      msg = colorize(msg, YELLOW) if Options[:color]
+
       @@logger.warn(@class_name + ' - ' + msg)
     end
 
     def error(msg, colorize = false)
       @@has_errors = true
-      msg = colorize(msg, RED) if colorize && !OsDetector.instance.identifier.eql?(:windows)
+      msg = colorize(msg, RED) if colorize || Options[:color]
       @@logger.error(@class_name + ' - ' + msg)
     end
 
     def colorize(msg, color)
-      "\e[#{color}m#{msg}\e[0m"
+      return msg if OsDetector.instance.identifier.eql?(:windows)
+
+      "\e[0;#{color}m#{msg}\e[0m"
     end
 
     private
@@ -101,6 +111,10 @@ module Facter
       return true unless Facter.respond_to?(:debugging?)
 
       Facter.debugging?
+    end
+
+    def empty_message_error(msg, invoker)
+      self.warn "#{self.class}#debug invoked with invalid message #{msg.inspect}:#{msg.class} at #{invoker}"
     end
   end
 end

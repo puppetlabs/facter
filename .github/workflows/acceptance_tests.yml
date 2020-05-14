@@ -57,5 +57,11 @@ jobs:
           sudo chmod a-w /home/runner /usr/share &&
           sudo chmod -R a-w /usr/share/rust /home/runner/.config /home/linuxbrew
 
+      - name: Instal dhclient
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt install dhcpcd5
+          sudo dhclient
+
       - name: Run acceptance tests
         run: sudo -E "PATH=$PATH" ruby facter_4/.github/actions/presuite.rb

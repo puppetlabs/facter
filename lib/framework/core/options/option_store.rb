@@ -23,6 +23,7 @@ module Facter
     @user_query = []
     @block_list = {}
     @fact_groups = {}
+    @color = false
 
     class << self
       attr_reader :debug, :verbose, :log_level, :show_legacy, :trace, :ruby,
@@ -31,7 +32,7 @@ module Facter
       attr_accessor :config, :user_query, :strict, :json, :haml, :external_facts,
                     :cache, :yaml, :puppet, :ttls, :block, :cli, :config_file_custom_dir,
                     :config_file_external_dir, :default_external_dir, :fact_groups,
-                    :block_list
+                    :block_list, :color
 
       attr_writer :external_dir
 

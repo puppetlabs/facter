@@ -7,6 +7,7 @@ describe Logger do
 
   before do
     Facter::Log.class_variable_set(:@@logger, multi_logger_double)
+    Facter::Options[:color] = false
   end
 
   after do
@@ -80,6 +81,42 @@ describe Logger do
         expect(Facter).not_to have_received(:debugging?)
       end
     end
+
+    context 'when non Windows OS' do
+      before do
+        allow(OsDetector.instance).to receive(:identifier).and_return(:macosx)
+      end
+
+      context 'when --colorize option is enabled' do
+        before do
+          Facter::Options[:color] = true
+        end
+
+        it 'print CYAN (36) debug message' do
+          log.debug('debug_message')
+
+          expect(multi_logger_double).to have_received(:debug).with("Class - \e[0;36mdebug_message\e[0m")
+        end
+      end
+    end
+
+    context 'when Windows OS' do
+      before do
+        allow(OsDetector.instance).to receive(:identifier).and_return(:windows)
+      end
+
+      context 'when --colorize option is enabled' do
+        before do
+          Facter::Options[:color] = true
+        end
+
+        it 'print debug message' do
+          log.debug('debug_message')
+
+          expect(multi_logger_double).to have_received(:debug).with('Class - debug_message')
+        end
+      end
+    end
   end
 
   describe '#info' do
@@ -87,6 +124,42 @@ describe Logger do
       log.info('info_message')
 
       expect(multi_logger_double).to have_received(:info).with('Class - info_message')
+    end
+
+    context 'when non Windows OS' do
+      before do
+        allow(OsDetector.instance).to receive(:identifier).and_return(:macosx)
+      end
+
+      context 'when --colorize option is enabled' do
+        before do
+          Facter::Options[:color] = true
+        end
+
+        it 'print Green (32) info message' do
+          log.info('info_message')
+
+          expect(multi_logger_double).to have_received(:info).with("Class - \e[0;32minfo_message\e[0m")
+        end
+      end
+    end
+
+    context 'when Windows OS' do
+      before do
+        allow(OsDetector.instance).to receive(:identifier).and_return(:windows)
+      end
+
+      context 'when --colorize option is enabled' do
+        before do
+          Facter::Options[:color] = true
+        end
+
+        it 'print info message' do
+          log.info('info_message')
+
+          expect(multi_logger_double).to have_received(:info).with('Class - info_message')
+        end
+      end
     end
   end
 
@@ -96,6 +169,42 @@ describe Logger do
 
       expect(multi_logger_double).to have_received(:warn).with('Class - warn_message')
     end
+
+    context 'when non Windows OS' do
+      before do
+        allow(OsDetector.instance).to receive(:identifier).and_return(:macosx)
+      end
+
+      context 'when --colorize option is enabled' do
+        before do
+          Facter::Options[:color] = true
+        end
+
+        it 'print Yellow (33) info message' do
+          log.warn('warn_message')
+
+          expect(multi_logger_double).to have_received(:warn).with("Class - \e[0;33mwarn_message\e[0m")
+        end
+      end
+    end
+
+    context 'when Windows OS' do
+      before do
+        allow(OsDetector.instance).to receive(:identifier).and_return(:windows)
+      end
+
+      context 'when --colorize option is enabled' do
+        before do
+          Facter::Options[:color] = true
+        end
+
+        it 'print warn message' do
+          log.warn('warn_message')
+
+          expect(multi_logger_double).to have_received(:warn).with('Class - warn_message')
+        end
+      end
+    end
   end
 
   describe '#error' do
@@ -104,7 +213,7 @@ describe Logger do
 
       log.error('error_message', true)
 
-      expect(multi_logger_double).to have_received(:error).with("Class - \e[31merror_message\e[0m")
+      expect(multi_logger_double).to have_received(:error).with("Class - \e[0;31merror_message\e[0m")
     end
 
     it 'writes error message not colorized on Windows' do
