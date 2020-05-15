@@ -65,9 +65,8 @@ test_name 'ttls configured custom facts files creates cache file and reads cache
     end
 
     step "should create a cached-custom-facts cache file that containt fact information" do
-      on(agent, "test -f #{cache_folder}/cached-custom-facts && echo \"Cache file exists\"") do |file_check_output|
-        assert_equal('Cache file exists', file_check_output.stdout.chomp, "Cache file does not exists in #{cache_folder}")
-      end
+      result = agent.file_exist?("#{cache_folder}/cached-custom-facts")
+      assert_equal(true, result)
       on(agent, "cat #{cache_folder}/cached-custom-facts", acceptable_exit_codes: [0]) do |cat_output|
         assert_match(cached_file_content.chomp, cat_output.stdout, 'Expected cached custom fact file to contain fact information')
       end

@@ -69,17 +69,16 @@ test_name 'ttls configured weighted custom facts files creates cache file and re
     step "should log that it creates cache file and it caches custom facts found in facter.conf with the highest weight" do
       on(agent, facter("#{duplicate_custom_fact_name} --debug", environment: env)) do |facter_result|
         assert_equal(custom_fact_value + " 110", facter_result.stdout.chomp, "#{duplicate_custom_fact_name} value changed")
-        assert_match(/Custom facts cache file expired\/missing. Refreshing/, facter_result.stderr,
+        assert_match(/facts cache file expired\/missing/, facter_result.stderr,
                      'Expected debug message to state that custom facts cache file is missing or expired')
-        assert_match(/Saving cached custom facts to ".+"/, facter_result.stderr,
+        assert_match(/Saving cached custom facts to ".+"|caching values for cached-custom-facts facts/, facter_result.stderr,
                      'Expected debug message to state that custom facts will be cached')
       end
     end
 
     step "should create a cached-custom-facts cache file that containt fact information from the highest weight fact" do
-      on(agent, "test -f #{cache_folder}/cached-custom-facts && echo \"Cache file exists\"") do |file_check_output|
-        assert_equal('Cache file exists', file_check_output.stdout.chomp, "Cache file does not exists in #{cache_folder}")
-      end
+      result = agent.file_exist?("#{cache_folder}/cached-custom-facts")
+      assert_equal(true, result)
       on(agent, "cat #{cache_folder}/cached-custom-facts", acceptable_exit_codes: [0]) do |cat_output|
         assert_match(cached_file_content_highest_weight.chomp, cat_output.stdout, 'Expected cached custom fact file to contain fact information from the highest weight fact')
       end
@@ -87,7 +86,7 @@ test_name 'ttls configured weighted custom facts files creates cache file and re
 
     step 'should read from the cached file for a custom fact that has been cached' do
       on(agent, facter("#{duplicate_custom_fact_name} --debug", environment: env)) do |facter_result|
-        assert_match(/Loading cached custom facts from file ".+"/, facter_result.stderr,
+        assert_match(/Loading cached custom facts from file ".+"|loading cached values for cached-custom-facts facts/, facter_result.stderr,
                      'Expected debug message to state that cached custom facts are read from file')
       end
     end
