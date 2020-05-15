@@ -57,7 +57,11 @@ describe LegacyFacter::Util::Config do
       allow(LegacyFacter::Util::Config).to receive(:windows_data_dir).and_return(nil)
       LegacyFacter::Util::Config.setup_default_ext_facts_dirs
       expect(LegacyFacter::Util::Config.external_facts_dirs)
-        .to eq ['/opt/puppetlabs/facter/facts.d']
+        .to eq [
+          '/etc/puppetlabs/facter/facts.d',
+          '/etc/facter/facts.d/',
+          '/opt/puppetlabs/facter/facts.d'
+        ]
     end
 
     it 'returns the default value for windows 2008' do

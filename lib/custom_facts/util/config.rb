@@ -42,7 +42,11 @@ module LegacyFacter
           Facter::Options[:default_external_dir] = if windows_dir
                                                      [File.join(windows_dir, 'PuppetLabs', 'facter', 'facts.d')]
                                                    else
-                                                     ['/opt/puppetlabs/facter/facts.d']
+                                                     [
+                                                       '/etc/puppetlabs/facter/facts.d',
+                                                       '/etc/facter/facts.d/',
+                                                       '/opt/puppetlabs/facter/facts.d'
+                                                     ]
                                                    end
         elsif ENV['HOME']
           Facter::Options[:default_external_dir] =
