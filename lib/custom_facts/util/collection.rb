@@ -95,7 +95,7 @@ module LegacyFacter
         return @external_facts unless @external_facts.nil?
 
         load_external_facts
-        external_facts = @facts.reject { |_k, v| v.options[:fact_type] }
+        external_facts = @facts.select { |_k, v| v.options[:fact_type] == :external }
         @external_facts = Facter::Utils.deep_copy(external_facts.keys)
       end
 

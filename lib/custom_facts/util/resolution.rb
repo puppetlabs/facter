@@ -13,7 +13,7 @@ module Facter
   module Util
     class Resolution
       # @api private
-      attr_accessor :code
+      attr_accessor :code, :fact_type
       attr_writer :value
 
       extend Facter::Core::Execution
@@ -129,7 +129,28 @@ module Facter
         end
       end
 
+      # Comparation is done based on weight and fact type.
+      # The greatter the weight, the higher the priority.
+      # If weights are equal, we consider external facts greater than custom facts
+      def <=>(other)
+        return compare_equal_weights(other) if weight == other.weight
+        return 1 if weight > other.weight
+        return -1 if weight < other.weight
+      end
+
       private
+
+      # If the weights are equal, we consider external facts greater tan custom facts
+      def compare_equal_weights(other)
+        # Other is considered greater because self is custom fact and other is external
+        return -1 if fact_type == :custom && other.fact_type == :external
+
+        # Self is considered greater, because it is external fact and other is custom
+        return 1 if fact_type == :external && other.fact_type == :custom
+
+        # They are considered equal
+        0
+      end
 
       def resolve_value
         if @value

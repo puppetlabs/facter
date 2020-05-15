@@ -9,6 +9,7 @@ describe LegacyFacter::Util::DirectoryLoader do
   subject(:dir_loader) { LegacyFacter::Util::DirectoryLoader.new(tmpdir('directory_loader')) }
 
   let(:collection) { LegacyFacter::Util::Collection.new(double('internal loader'), dir_loader) }
+  let(:collection_double) { instance_spy(LegacyFacter::Util::Collection) }
 
   it 'makes the directory available' do
     expect(dir_loader.directory).to be_instance_of(String)
@@ -40,6 +41,15 @@ describe LegacyFacter::Util::DirectoryLoader do
       dir_loader.load(collection)
 
       expect(collection.value('f1')).to eq 'one'
+    end
+
+    it 'adds fact with external type to collection' do
+      data = { 'f1' => 'one' }
+      write_to_file('data.yaml', YAML.dump(data))
+
+      dir_loader.load(collection_double)
+
+      expect(collection_double).to have_received(:add).with('f1', value: 'one', fact_type: :external)
     end
 
     it "ignores files that begin with '.'" do

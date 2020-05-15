@@ -132,4 +132,64 @@ describe Facter::Util::Resolution do
       resolution.evaluate {}
     end
   end
+
+  describe '#<=>' do
+    let(:other_fact) { instance_spy(Facter::Util::Fact, name: :other_fact) }
+    let(:other_resolution) { Facter::Util::Resolution.new(:other_fact, other_fact) }
+
+    context 'when self has greater weight than other' do
+      before do
+        resolution.options(weight: 100)
+        other_resolution.options(weight: 99)
+      end
+
+      it 'return 1' do
+        expect(resolution <=> other_resolution).to eq(1)
+      end
+    end
+
+    context 'when self has lower weight than other' do
+      before do
+        resolution.options(weight: 99)
+        other_resolution.options(weight: 100)
+      end
+
+      it 'return -1' do
+        expect(resolution <=> other_resolution).to eq(-1)
+      end
+    end
+
+    context 'when self has equal weight to other' do
+      before do
+        resolution.options(weight: 100)
+        other_resolution.options(weight: 100)
+      end
+
+      it 'returns 0' do
+        expect(resolution <=> other_resolution).to eq(0)
+      end
+
+      context 'when self is custom and other is external' do
+        before do
+          resolution.options(fact_type: :external)
+          other_resolution.options(fact_type: :custom)
+        end
+
+        it 'returns 1' do
+          expect(resolution <=> other_resolution).to eq(1)
+        end
+      end
+
+      context 'when self is external and other is custom' do
+        before do
+          resolution.options(fact_type: :custom)
+          other_resolution.options(fact_type: :external)
+        end
+
+        it 'returns -1' do
+          expect(resolution <=> other_resolution).to eq(-1)
+        end
+      end
+    end
+  end
 end

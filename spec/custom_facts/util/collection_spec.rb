@@ -4,7 +4,7 @@
 require_relative '../../spec_helper_legacy'
 
 describe LegacyFacter::Util::Collection do
-  let(:external_loader) { LegacyFacter::Util::NothingLoader.new }
+  let(:external_loader) { instance_spy(LegacyFacter::Util::NothingLoader) }
   let(:internal_loader) do
     load = LegacyFacter::Util::Loader.new
     allow(load).to receive(:load).and_return nil
@@ -398,6 +398,49 @@ describe LegacyFacter::Util::Collection do
 
       it 'loads the new fact' do
         expect(collection.custom_facts.first). to eq(:new_fact)
+      end
+    end
+  end
+
+  describe '#external_facts' do
+    before do
+      collection.add('my_external_fact', fact_type: :external) {}
+    end
+
+    context 'when external facts are loaded for the first time' do
+      it 'calls load on external_loader' do
+        collection.external_facts
+
+        expect(external_loader).to have_received(:load)
+      end
+
+      it 'return 1 fact' do
+        expect(collection.external_facts.size).to eq(1)
+      end
+
+      it 'returns external fact' do
+        expect(collection.external_facts.first).to eq(:my_external_fact)
+      end
+    end
+
+    context 'when external facts were already loaded' do
+      before do
+        collection.instance_variable_set(:@external_facts, [:my_external_fact])
+        collection.instance_variable_set(:@external_facts_loaded, false)
+      end
+
+      it 'doe not call load on external_loader' do
+        collection.external_facts
+
+        expect(external_loader).not_to have_received(:load)
+      end
+
+      it 'return 1 fact' do
+        expect(collection.external_facts.size).to eq(1)
+      end
+
+      it 'returns external fact' do
+        expect(collection.external_facts.first).to eq(:my_external_fact)
       end
     end
   end
