@@ -84,7 +84,8 @@ describe LegacyFacter::Util::Config do
       allow(LegacyFacter::Util::Root).to receive(:root?).and_return(false)
       LegacyFacter::Util::Config.setup_default_ext_facts_dirs
       expect(LegacyFacter::Util::Config.external_facts_dirs)
-        .to eq [File.expand_path(File.join('~', '.puppetlabs', 'opt', 'facter', 'facts.d'))]
+        .to eq [File.expand_path(File.join('~', '.facter', 'facts.d')),
+                File.expand_path(File.join('~', '.puppetlabs', 'opt', 'facter', 'facts.d'))]
     end
 
     it 'includes additional values when user appends to the list' do

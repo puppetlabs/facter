@@ -50,7 +50,8 @@ module LegacyFacter
                                                    end
         elsif ENV['HOME']
           Facter::Options[:default_external_dir] =
-            [File.expand_path(File.join(ENV['HOME'], '.puppetlabs', 'opt', 'facter', 'facts.d'))]
+            [File.join(ENV['HOME'], '.facter', 'facts.d'),
+             File.join(ENV['HOME'], '.puppetlabs', 'opt', 'facter', 'facts.d')]
         else
           Facter::Options[:default_external_dir] = []
         end
