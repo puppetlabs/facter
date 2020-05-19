@@ -21,8 +21,26 @@ describe Facts::Linux::Virtual do
         have_attributes(name: 'virtual', value: vm)
     end
 
+    context 'when is gce' do
+      let(:vm) { nil }
+      let(:value) { 'gce' }
+
+      before do
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return('Google Engine')
+      end
+
+      it 'returns virtual fact' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+          have_attributes(name: 'virtual', value: value)
+      end
+    end
+
     context 'when resolver returns nil' do
       let(:vm) { nil }
+
+      before do
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
+      end
 
       it 'returns virtual fact as nil' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
