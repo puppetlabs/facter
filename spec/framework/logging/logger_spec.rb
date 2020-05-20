@@ -3,7 +3,7 @@
 describe Logger do
   subject(:log) { Facter::Log.new(Class) }
 
-  let(:multi_logger_double) { instance_spy(Facter::MultiLogger, level: :warn) }
+  let(:multi_logger_double) { instance_spy(Logger) }
 
   before do
     Facter::Log.class_variable_set(:@@logger, multi_logger_double)
@@ -11,7 +11,7 @@ describe Logger do
   end
 
   after do
-    Facter::Log.class_variable_set(:@@logger, Facter::MultiLogger.new([]))
+    Facter::Log.class_variable_set(:@@logger, Logger.new(STDOUT))
   end
 
   describe '#debug' do
@@ -236,12 +236,6 @@ describe Logger do
       Facter::Log.level = :error
 
       expect(multi_logger_double).to have_received(:level=).with(:error)
-    end
-  end
-
-  describe '#level' do
-    it 'get the log level' do
-      expect(Facter::Log.level).to eq(:warn)
     end
   end
 end

@@ -7,15 +7,15 @@ describe Facter::Util::FileHelper do
   let(:content) { 'file content' }
   let(:error_message) { 'Facter::Util::FileHelper - File at: /Users/admin/file.txt is not accessible.' }
   let(:array_content) { ['line 1', 'line 2', 'line 3'] }
-  let(:multi_logger_double) { instance_spy(Facter::MultiLogger, level: :warn) }
+  let(:logger_double) { instance_spy(Logger) }
 
   before do
-    Facter::Log.class_variable_set(:@@logger, multi_logger_double)
+    Facter::Log.class_variable_set(:@@logger, logger_double)
     allow(Facter).to receive(:debugging?).and_return(true)
   end
 
   after do
-    Facter::Log.class_variable_set(:@@logger, Facter::MultiLogger.new([]))
+    Facter::Log.class_variable_set(:@@logger, Logger.new(STDOUT))
   end
 
   shared_context 'when file is readable' do
@@ -57,7 +57,7 @@ describe Facter::Util::FileHelper do
       it "doesn't log anything" do
         file_helper.safe_read(path)
 
-        expect(multi_logger_double).not_to have_received(:debug)
+        expect(logger_double).not_to have_received(:debug)
       end
     end
 
@@ -87,7 +87,7 @@ describe Facter::Util::FileHelper do
       it 'logs a debug message' do
         file_helper.safe_read(path)
 
-        expect(multi_logger_double).to have_received(:debug)
+        expect(logger_double).to have_received(:debug)
           .with(error_message)
       end
     end
@@ -120,7 +120,7 @@ describe Facter::Util::FileHelper do
       it "doesn't log anything" do
         file_helper.safe_readlines(path)
 
-        expect(multi_logger_double).not_to have_received(:debug)
+        expect(logger_double).not_to have_received(:debug)
       end
     end
 
@@ -150,7 +150,7 @@ describe Facter::Util::FileHelper do
       it 'logs a debug message' do
         file_helper.safe_read(path)
 
-        expect(multi_logger_double).to have_received(:debug).with(error_message)
+        expect(logger_double).to have_received(:debug).with(error_message)
       end
     end
   end

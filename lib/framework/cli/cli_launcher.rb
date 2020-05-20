@@ -2,9 +2,8 @@
 # frozen_string_literal: true
 
 require 'thor'
-require "#{ROOT_DIR}/lib/framework/logging/multilogger.rb"
 require "#{ROOT_DIR}/lib/framework/logging/logger.rb"
-Facter::Log.add_legacy_logger(STDERR)
+Facter::Log.output(STDERR)
 require "#{ROOT_DIR}/lib/facter"
 require "#{ROOT_DIR}/lib/framework/cli/cli"
 

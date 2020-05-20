@@ -22,7 +22,7 @@ end
 
 load_lib_dirs('framework', 'core', 'options')
 require "#{ROOT_DIR}/lib/framework/core/options"
-require "#{ROOT_DIR}/lib/framework/logging/multilogger"
+require "#{ROOT_DIR}/lib/framework/logging/logger_helper"
 require "#{ROOT_DIR}/lib/framework/logging/logger"
 
 require "#{ROOT_DIR}/lib/util/file_helper"

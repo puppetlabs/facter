@@ -64,7 +64,7 @@ describe Facter::InternalFactManager do
                      type: :core)
       end
 
-      let(:multi_logger_double) { instance_spy(Facter::MultiLogger) }
+      let(:logger_double) { instance_spy(Logger) }
 
       before do
         allow(os_name_class_spy).to receive(:new).and_return(os_name_instance_spy)
@@ -73,12 +73,12 @@ describe Facter::InternalFactManager do
         exception.set_backtrace(%w[error backtrace])
         allow(os_name_instance_spy).to receive(:call_the_resolver).and_raise(exception)
 
-        allow(multi_logger_double).to receive(:error)
-        Facter::Log.class_variable_set(:@@logger, multi_logger_double)
+        allow(logger_double).to receive(:error)
+        Facter::Log.class_variable_set(:@@logger, logger_double)
       end
 
       after do
-        Facter::Log.class_variable_set(:@@logger, Facter::MultiLogger.new([]))
+        Facter::Log.class_variable_set(:@@logger, Logger.new(STDOUT))
       end
 
       it 'does not store the fact value' do
@@ -90,7 +90,7 @@ describe Facter::InternalFactManager do
       it 'logs backtrace as error' do
         internal_fact_manager.resolve_facts([searched_fact])
 
-        expect(multi_logger_double).to have_received(:error).with("Facter::InternalFactManager - error\nbacktrace")
+        expect(logger_double).to have_received(:error).with("Facter::InternalFactManager - error\nbacktrace")
       end
     end
   end

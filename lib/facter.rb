@@ -12,7 +12,7 @@ module Facter
   class ResolveCustomFactError < StandardError; end
 
   Options.init
-  Log.add_legacy_logger(STDOUT)
+  Log.output(STDOUT)
   @already_searched = {}
   @trace = false
 
