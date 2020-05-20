@@ -1,5 +1,27 @@
 
 
+## [4.0.22](https://github.com/puppetlabs/facter-ng/tree/4.0.22) (2020-05-20)
+
+[Full Changelog](https://github.com/puppetlabs/facter-ng/compare/4.0.21...4.0.22)
+
+### Added
+
+- \(FACT-2603\) Detect virtual on GCE vms [\#521](https://github.com/puppetlabs/facter-ng/pull/521) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2602\) Add docker/Lxc resolver for Linux [\#520](https://github.com/puppetlabs/facter-ng/pull/520) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2615\) Add Solaris mountpoints fact [\#515](https://github.com/puppetlabs/facter-ng/pull/515) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2532\) Add Aix nim\_type fact [\#513](https://github.com/puppetlabs/facter-ng/pull/513) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2183\) Add Solaris's uptime legacy facts [\#511](https://github.com/puppetlabs/facter-ng/pull/511) ([oanatmaria](https://github.com/oanatmaria))
+
+### Fixed
+
+- \(FACT-2617\) Fix for tests/external\_facts/external\_fact\_stderr\_messages\_output\_to\_stderr.rb [\#522](https://github.com/puppetlabs/facter-ng/pull/522) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2523\) Fix for tests/external\_facts/non\_root\_users\_default\_external\_fact\_directory.rb [\#518](https://github.com/puppetlabs/facter-ng/pull/518) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2522\) Fix for tests/external\_facts/fact\_directory\_precedence.rb [\#517](https://github.com/puppetlabs/facter-ng/pull/517) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2521\) Fix for tests/external\_facts/external\_fact\_overrides\_custom\_fact\_with\_10000\_weight\_or\_less.rb [\#514](https://github.com/puppetlabs/facter-ng/pull/514) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2525\) Fix for tests/options/color.rb [\#512](https://github.com/puppetlabs/facter-ng/pull/512) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+
+
 ## [4.0.21](https://github.com/puppetlabs/facter-ng/tree/4.0.21) (2020-05-13)
 
 [Full Changelog](https://github.com/puppetlabs/facter-ng/compare/4.0.20...4.0.21)
