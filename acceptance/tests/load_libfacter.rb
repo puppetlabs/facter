@@ -42,11 +42,12 @@ test_name 'C100161: Ruby can load libfacter without raising an error' do
       on(agent, "rm -rf '#{fact_dir}'")
     end
 
-    if agent['platform'] =~ /windows/
+    if agent['platform'] =~ /windows/ && agent.is_cygwin?
       # on Windows we have to figure out where facter.rb is so we can include the path
       # figure out the root of the Puppet installation
-      puppet_ruby_path = agent.which('ruby', agent['privatebindir'])
-      puppet_root = puppet_ruby_path_to_puppet_install_dir(puppet_ruby_path)
+      puppet_ruby_path = on(agent, "env PATH=\"#{agent['privatebindir']}:${PATH}\" which ruby").stdout.chomp
+      cygwin_puppet_root = puppet_ruby_path_to_puppet_install_dir(puppet_ruby_path)
+      puppet_root = on(agent, "cygpath -w '#{cygwin_puppet_root}'").stdout.chomp
       # on Windows mco uses -I to include the path to the facter.rb as its not in the
       # default $LOAD_PATH for Puppets Ruby
       include_facter_lib = "-I '#{puppet_root}/facter/lib'"

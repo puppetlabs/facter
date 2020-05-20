@@ -72,7 +72,7 @@ test_name "C64580: Non-root default user external facts directory is searched fo
     user_puppetlabs_facts_path = "#{user_puppetlabs_facts_dir}/test.yaml"
 
     step "Agent #{agent}: figure out facter program location"
-    facter_path = agent.which('facter')
+    facter_path = agent.which('facter').chomp
 
     teardown do
       on(agent, "rm -rf '#{user_base_facts_dir}' '#{user_base_puppetlabs_dir}'")

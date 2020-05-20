@@ -13,7 +13,7 @@ test_name "C59196: running facter as a non-root user should not produce permissi
 
   agents.each do |agent|
     non_root_user = "nonroot"
-    facter_path = agent.which('facter')
+    facter_path = agent.which('facter').chomp
 
     step "Agent #{agent}: create a #{non_root_user} user to run facter with" do
       on(agent, "puppet resource user #{non_root_user} ensure=present shell='#{user_shell(agent)}'")
