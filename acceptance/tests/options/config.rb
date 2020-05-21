@@ -18,7 +18,7 @@ test_name "C100014: --config command-line option designates the location of the 
       end
 
       step "setting --config should cause the config file to be loaded from the specified location" do
-        on(agent, facter("--config '#{config_file}'")) do |facter_output|
+        on(agent, facter("--config \"#{config_file}\"")) do |facter_output|
           assert_match(/DEBUG/, facter_output.stderr, "Expected debug output on stderr")
         end
       end

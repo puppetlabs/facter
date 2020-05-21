@@ -52,9 +52,8 @@ EOM
         on(agent, facter("#{cached_factname}"))
 
         # Read cached fact file content
-        on(agent, "cat #{cached_fact_file}", :acceptable_exit_codes => [0]) do |cat_output|
-          assert_no_match(/#{cached_fact_value}/, cat_output.stdout, "Expected cached fact file to be refreshed")
-        end
+        cat_output = agent.cat(cached_fact_file)
+        assert_no_match(/#{cached_fact_value}/, cat_output.strip, "Expected cached fact file to be refreshed")
       end
     end
   end

@@ -44,9 +44,8 @@ EOM
         on(agent, facter("#{cached_factname}")) do
           assert_match(/.+/, stdout, "Expected fact to be resolved")
         end
-        on(agent, "cat #{cached_fact_file}", :acceptable_exit_codes => [0]) do |cat_output|
-          assert_match(/#{cached_factname}/, cat_output.stdout, "Expected cachced fact to contain the fact name")
-        end
+        cat_output = agent.cat(cached_fact_file)
+        assert_match(/#{cached_factname}/, cat_output.strip, "Expected cachced fact to contain the fact name")
       end
     end
   end

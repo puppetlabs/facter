@@ -26,7 +26,7 @@ test_name "C100152: external fact overrides a custom fact with a confine" do
     # External fact should take precedence over a custom fact with a confine
     # (from FACT-1413)
     step "Agent #{agent}: resolve external fact over a custom fact with a confine" do
-      on(agent, facter("--external-dir=#{facts_dir} --custom-dir=#{facts_dir} test")) do |facter_output|
+      on(agent, facter("--external-dir \"#{facts_dir}\" --custom-dir \"#{facts_dir}\" test")) do |facter_output|
         assert_equal("EXTERNAL", facter_output.stdout.chomp)
       end
     end

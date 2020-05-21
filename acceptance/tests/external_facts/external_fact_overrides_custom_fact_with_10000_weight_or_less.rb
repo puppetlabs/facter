@@ -21,7 +21,7 @@ test_name "C100151: external fact overrides a custom fact of weight 10000 or les
 
     # Custom fact with weight <= 10000 should give precedence to the EXTERNAL fact
     step "Agent #{agent}: resolve an external fact over the custom fact with a weight of 10000" do
-      on(agent, facter("--external-dir=#{facts_dir} --custom-dir=#{facts_dir} #{fact_name}")) do |facter_output|
+      on(agent, facter("--external-dir \"#{facts_dir}\" --custom-dir \"#{facts_dir}\" #{fact_name}")) do |facter_output|
         assert_equal("EXTERNAL", facter_output.stdout.chomp)
       end
     end
