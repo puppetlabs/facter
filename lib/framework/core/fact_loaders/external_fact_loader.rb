@@ -7,7 +7,7 @@ module Facter
     end
 
     def external_facts
-      @external_facts ||= load_external_facts
+      @external_facts = load_external_facts
     end
 
     def all_facts

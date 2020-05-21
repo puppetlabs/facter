@@ -4,7 +4,6 @@ module Facter
   class OptionStore
     # default options
     @debug = false
-    @trace = false
     @verbose = false
     # TODO: constant is not yet available when running puppet facts
     @log_level = :warn
@@ -113,7 +112,6 @@ module Facter
         case level
         when :trace
           @log_level = :debug
-          @trace = true
         when :debug
           @log_level = :debug
           @debug = true
@@ -122,7 +120,6 @@ module Facter
         end
 
         Facter::Log.level = @log_level
-        Facter.trace(@trace)
       end
 
       def show_legacy=(bool)
@@ -135,13 +132,7 @@ module Facter
       end
 
       def trace=(bool)
-        if bool == true
-          self.log_level = :trace
-        else
-          @log_level = Facter::DEFAULT_LOG_LEVEL
-          @trace = false
-          Facter.trace(false)
-        end
+        Facter.trace(bool)
       end
 
       def set(key, value)
@@ -150,7 +141,6 @@ module Facter
 
       def reset
         @debug = false
-        @trace = false
         @verbose = false
         # TODO: constant is not yet available when running puppet facts
         @log_level = :warn

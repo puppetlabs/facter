@@ -30,7 +30,6 @@ describe Facter::OptionStore do
         log_level: :warn,
         ruby: true,
         show_legacy: true,
-        trace: false,
         user_query: [],
         verbose: false,
         config: nil,
@@ -245,6 +244,7 @@ describe Facter::OptionStore do
 
     before do
       stub_const('Facter::Log', facter_log)
+      allow(Facter).to receive(:trace)
     end
 
     context 'when :trace' do
@@ -257,7 +257,7 @@ describe Facter::OptionStore do
 
       it 'sets the Facter::Log level' do
         option_store.trace = true
-        expect(facter_log).to have_received(:level=).with(:debug)
+        expect(Facter).to have_received(:trace).with(true)
       end
     end
 
@@ -296,28 +296,6 @@ describe Facter::OptionStore do
       it 'sets show_legacy to false' do
         option_store.show_legacy = false
         expect(option_store.show_legacy).to be false
-      end
-    end
-  end
-
-  describe '#trace=' do
-    context 'when true' do
-      it 'sets log_level to :debug' do
-        expect do
-          option_store.trace = true
-        end.to change(option_store, :log_level)
-          .from(:warn).to(:debug)
-      end
-    end
-
-    context 'when false' do
-      it 'sets log_level to default (:warn)' do
-        option_store.instance_variable_set(:@log_level, :debug)
-
-        expect do
-          option_store.trace = false
-        end.to change(option_store, :log_level)
-          .from(:debug).to(:warn)
       end
     end
   end
