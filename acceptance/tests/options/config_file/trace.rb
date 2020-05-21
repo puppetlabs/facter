@@ -40,7 +40,7 @@ EOM
       end
 
       step "trace setting should provide a backtrace for a custom fact with errors" do
-        on(agent, facter("--custom-dir '#{custom_dir}' custom_fact"), :acceptable_exit_codes => [1]) do |facter_output|
+        on(agent, facter("--custom-dir \"#{custom_dir}\" custom_fact"), :acceptable_exit_codes => [1]) do |facter_output|
           assert_match(/backtrace:\s+#{custom_fact}/, facter_output.stderr, "Expected a backtrace for erroneous custom fact")
         end
       end

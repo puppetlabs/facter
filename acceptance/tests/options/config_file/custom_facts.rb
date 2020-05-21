@@ -34,7 +34,7 @@ EOM
       end
 
       step "Agent #{agent}: resolve a fact from the configured custom-dir path" do
-        on(agent, facter("--config '#{config_file}' config_fact")) do |facter_output|
+        on(agent, facter("--config \"#{config_file}\" config_fact")) do |facter_output|
           assert_equal("config_value", facter_output.stdout.chomp, "Incorrect custom fact value")
         end
       end

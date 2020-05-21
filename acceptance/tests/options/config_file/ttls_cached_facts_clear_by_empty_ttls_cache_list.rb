@@ -59,7 +59,7 @@ EOM
         no_cache_config_file = File.join(config_dir, "no-cache.conf")
         create_remote_file(agent, no_cache_config_file, config_no_cache)
 
-        on(agent, facter("--config '#{no_cache_config_file}'")) do |facter_output|
+        on(agent, facter("--config \"#{no_cache_config_file}\"")) do |facter_output|
           assert_no_match(/#{cached_fact_value}/, facter_output.stdout, "Expected to not see the cached fact value")
         end
 

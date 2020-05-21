@@ -57,21 +57,20 @@ EOM
 
       step "should create a JSON file for a fact that is to be cached" do
         agent.rm_rf(cached_facts_dir)
-        on(agent, facter("--external-dir '#{external_dir}' --debug #{cached_fact_name}")) do |facter_output|
+        on(agent, facter("--external-dir \"#{external_dir}\" --debug #{cached_fact_name}")) do |facter_output|
           assert_match(/caching values for .+ facts/, facter_output.stderr, "Expected debug message to state that values will be cached")
         end
-        on(agent, "cat #{cached_fact_file}", :acceptable_exit_codes => [0]) do |cat_output|
-          assert_match(/#{cached_fact_name}/, cat_output.stdout, "Expected cached fact file to contain fact information")
-        end
+        cat_output = agent.cat(cached_fact_file)
+        assert_match(/#{cached_fact_name}/, cat_output.strip, "Expected cached fact file to contain fact information")
       end
 
       step "should read from a cached JSON file for a fact that has been cached" do
         agent.rm_rf(cached_facts_dir)
-        on(agent, facter("--external-dir '#{external_dir}' --debug #{cached_fact_name}"))
+        on(agent, facter("--external-dir \"#{external_dir}\" --debug #{cached_fact_name}"))
 
         create_remote_file(agent, cached_fact_file, cached_fact_content)
 
-        on(agent, facter("--external-dir '#{external_dir}' --debug #{cached_fact_name}")) do |facter_output|
+        on(agent, facter("--external-dir \"#{external_dir}\" --debug #{cached_fact_name}")) do |facter_output|
           assert_match(/loading cached values for .+ facts/, stderr, "Expected debug message to state that values are read from cache")
           assert_match(/#{cached_fact_value}/, stdout, "Expected fact to match the cached fact file")
         end

@@ -33,7 +33,7 @@ test_name 'Should handle same filename in two external directories only if ttl i
     end
 
     step 'works if ttl is not enabled' do
-      on(agent, facter("--external-dir '#{external_dir1}' --external-dir '#{external_dir2}' --debug #{fact1} #{fact2}")) do |facter_output|
+      on(agent, facter("--external-dir \"#{external_dir1}\" --external-dir \"#{external_dir2}\" --debug #{fact1} #{fact2}")) do |facter_output|
         assert_match(/#{fact1} => #{fact1_value}/, stdout, 'Expected fact to match first fact')
         assert_match(/#{fact2} => #{fact2_value}/, stdout, 'Expected fact to match second fact')
       end
@@ -49,7 +49,7 @@ facts : {
 EOM
       agent.mkdir_p(config_dir)
       create_remote_file(agent, config_file, config)
-      on(agent, facter("--external-dir '#{external_dir1}' --external-dir '#{external_dir2}' --debug #{fact1} #{fact2}"), :acceptable_exit_codes => 1) do |facter_output|
+      on(agent, facter("--external-dir \"#{external_dir1}\" --external-dir \"#{external_dir2}\" --debug #{fact1} #{fact2}"), :acceptable_exit_codes => 1) do |facter_output|
         assert_match(/ERROR.*Caching is enabled for group "#{external_filename}" while there are at least two external facts files with the same filename/, stderr, 'Expected error message')
         assert_match(/#{fact1} => #{fact1_value}/, stdout, 'Expected fact to match first fact')
         assert_not_match(/#{fact2} => #{fact2_value}/, stdout, 'Expected fact not to match second fact')

@@ -7,6 +7,7 @@ test_name "C14779: custom facts are loaded from the environment variable FACTERL
 
   content = <<EOM
 Facter.add('custom_fact') do
+  # has_weight 1
   setcode do
     "facterlib"
   end
@@ -20,7 +21,7 @@ EOM
       create_remote_file(agent, custom_fact, content)
 
       teardown do
-        agent.rm_rf(custom_dir)
+        # agent.rm_rf(custom_dir)
       end
 
       step "Agent #{agent}: facter should resolve a fact from the directory specified by the environment variable FACTERLIB" do
