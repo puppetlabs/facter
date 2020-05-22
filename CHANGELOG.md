@@ -1,5 +1,16 @@
 
 
+## [4.0.23](https://github.com/puppetlabs/facter-ng/tree/4.0.23) (2020-05-22)
+
+[Full Changelog](https://github.com/puppetlabs/facter-ng/compare/4.0.22...4.0.23)
+
+### Fixed
+
+- \(FACT-2632\) Log error message if we encounter exceptions while loading custom facts files [\#528](https://github.com/puppetlabs/facter-ng/pull/528) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2631\) Trace is not working as expected [\#527](https://github.com/puppetlabs/facter-ng/pull/527) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+
+
 ## [4.0.22](https://github.com/puppetlabs/facter-ng/tree/4.0.22) (2020-05-20)
 
 [Full Changelog](https://github.com/puppetlabs/facter-ng/compare/4.0.21...4.0.22)
