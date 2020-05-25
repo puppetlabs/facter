@@ -49,6 +49,21 @@ describe Facts::Linux::Virtual do
       end
     end
 
+    context 'when is xen-hvm' do
+      let(:vm) { nil }
+      let(:value) { 'xenhvm' }
+
+      before do
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
+        allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return(value)
+      end
+
+      it 'returns virtual fact' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+          have_attributes(name: 'virtual', value: value)
+      end
+    end
+
     context 'when resolver returns nil' do
       let(:vm) { nil }
 

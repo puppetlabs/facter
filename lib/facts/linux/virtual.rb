@@ -6,7 +6,8 @@ module Facts
       FACT_NAME = 'virtual'
 
       def call_the_resolver
-        fact_value = check_docker_lxc || check_gce || check_vmware
+        fact_value = check_docker_lxc || check_gce || retrieve_from_virt_what || check_vmware
+
         Facter::ResolvedFact.new(FACT_NAME, fact_value)
       end
 
@@ -21,6 +22,10 @@ module Facts
 
       def check_vmware
         Facter::Resolvers::Vmware.resolve(:vm)
+      end
+
+      def retrieve_from_virt_what
+        Facter::Resolvers::VirtWhat.resolve(:vm)
       end
     end
   end
