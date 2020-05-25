@@ -35,6 +35,20 @@ describe Facts::Linux::Virtual do
       end
     end
 
+    context 'when is vmware' do
+      let(:vm) { nil }
+      let(:value) { 'vmware_fusion' }
+
+      before do
+        allow(Facter::Resolvers::Vmware).to receive(:resolve).with(:vm).and_return(value)
+      end
+
+      it 'returns virtual fact' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+          have_attributes(name: 'virtual', value: value)
+      end
+    end
+
     context 'when resolver returns nil' do
       let(:vm) { nil }
 
