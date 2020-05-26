@@ -1,5 +1,16 @@
 
 
+## [4.0.24](https://github.com/puppetlabs/facter-ng/tree/4.0.24) (2020-05-26)
+
+[Full Changelog](https://github.com/puppetlabs/facter-ng/compare/4.0.23...4.0.24)
+
+### Added
+
+- \(FACT-2605\) Add vmware resolver [\#525](https://github.com/puppetlabs/facter-ng/pull/525) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2604\) Add virt-what resolver [\#523](https://github.com/puppetlabs/facter-ng/pull/523) ([oanatmaria](https://github.com/oanatmaria))
+
+
+
 ## [4.0.23](https://github.com/puppetlabs/facter-ng/tree/4.0.23) (2020-05-22)
 
 [Full Changelog](https://github.com/puppetlabs/facter-ng/compare/4.0.22...4.0.23)
