@@ -3,6 +3,7 @@ test_name "C14783: facter -p loads facts from puppet" do
   tag 'risk:high'
 
   agents.each do |agent|
+    binding.pry
     external_dir = agent.puppet['pluginfactdest']
     external_file = File.join(external_dir, "external.txt")
     custom_dir = File.join(agent.puppet['plugindest'], "facter")

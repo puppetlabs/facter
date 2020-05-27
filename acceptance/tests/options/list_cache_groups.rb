@@ -2,6 +2,7 @@
 # will cause the names of cacheable resolvers to be printed to stdout.
 test_name "C99970: the `--list-cache-groups` command line flag prints available cache groups to stdout" do
   tag 'risk:medium'
+  confine :except, :platform => 'windows'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils

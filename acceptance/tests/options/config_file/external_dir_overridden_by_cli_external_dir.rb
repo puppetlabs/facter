@@ -22,6 +22,7 @@ global : {
     external-dir : "#{external_config_dir}",
 }
 EOM
+      config_content = escape_paths(agent, config_content)
       create_remote_file(agent, config_file, config_content)
 
       teardown do

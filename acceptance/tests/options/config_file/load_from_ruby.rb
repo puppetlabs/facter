@@ -29,10 +29,10 @@ test_name "C98141: config file is loaded when Facter is run from Puppet" do
     cust_path     = File.join(cust_fact_dir, "custom_fact.rb")
 
     teardown do
-      agent.rm_rf(facter_conf_default_dir)
-      agent.rm_rf(ext_fact_dir1)
-      agent.rm_rf(ext_fact_dir2)
-      agent.rm_rf(cust_fact_dir)
+      # agent.rm_rf(facter_conf_default_dir)
+      # agent.rm_rf(ext_fact_dir1)
+      # agent.rm_rf(ext_fact_dir2)
+      # agent.rm_rf(cust_fact_dir)
     end
 
     # create the directories
@@ -41,13 +41,15 @@ test_name "C98141: config file is loaded when Facter is run from Puppet" do
     end
 
     step "Agent #{agent}: create facter.conf, external fact, and custom fact files" do
-
-      create_remote_file(agent, facter_conf_default_path, <<-FILE)
+      config_content = <<-FILE
         global : {
           external-dir : ["#{ext_fact_dir1}", "#{ext_fact_dir2}"],
           custom-dir : ["#{cust_fact_dir}"]
       }
       FILE
+      
+      config_content = escape_paths(agent, config_content)
+      create_remote_file(agent, facter_conf_default_path, config_content)
 
       create_remote_file(agent, ext_path1, <<-FILE)
         externalfact1: 'This is external fact 1 in #{ext_fact_dir1} directory'
