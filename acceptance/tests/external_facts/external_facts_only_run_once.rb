@@ -11,6 +11,7 @@ test_name "C14892: external facts should only be run once" do
 
     if agent['platform'] =~ /windows/
       content = <<EOM
+@ECHO OFF
 echo "SCRIPT CALLED" >&2
 echo "test=value"
 EOM
