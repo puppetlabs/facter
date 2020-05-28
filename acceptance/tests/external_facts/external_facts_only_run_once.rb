@@ -13,7 +13,7 @@ test_name "C14892: external facts should only be run once" do
       content = <<EOM
 @ECHO OFF
 echo "SCRIPT CALLED" >&2
-echo "test=value"
+echo test=value
 EOM
     else
       content = <<EOM

@@ -14,7 +14,7 @@ test_name "C64315: external facts that print messages to stderr should be seen o
 @ECHO OFF
 
 echo "SCRIPT STDERR" >&2
-echo "test=value"
+echo test=value
 EOM
     else
       content = <<EOM
