@@ -11,6 +11,8 @@ test_name "C64315: external facts that print messages to stderr should be seen o
 
     if agent['platform'] =~ /windows/
       content = <<EOM
+@ECHO OFF
+
 echo "SCRIPT STDERR" >&2
 echo "test=value"
 EOM
