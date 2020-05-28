@@ -14,7 +14,7 @@ test_name "C14777: custom facts loaded from facter subdirectory found in $LOAD_P
   extend Facter::Acceptance::UserFactUtils
 
   content = <<EOM
-Facter.add('custom_fact') do
+Facter.add('custom_fact_load_path') do
   setcode do
     "load_path"
   end
@@ -23,6 +23,7 @@ EOM
 
   agents.each do |agent|
     step "Agent #{agent}: determine $LOAD_PATH and create custom fact" do
+      # binding.pry
       on(agent, "#{ruby_command(agent)} -e 'puts $LOAD_PATH[0]'")
       load_path_facter_dir = File.join(stdout.chomp, 'facter')
       agent.mkdir_p(load_path_facter_dir)
@@ -34,7 +35,7 @@ EOM
       end
 
       step("Agent #{agent}: resolve the custom fact that is in a facter directory on the $LOAD_PATH")
-      on(agent, facter("custom_fact")) do |facter_output|
+      on(agent, facter("custom_fact_load_path")) do |facter_output|
         assert_equal("load_path", facter_output.stdout.chomp, "Incorrect custom fact value for fact in $LOAD_PATH/facter")
       end
     end
