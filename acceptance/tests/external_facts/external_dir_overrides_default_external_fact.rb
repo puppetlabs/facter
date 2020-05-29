@@ -15,14 +15,16 @@ test_name "C100154: --external-dir fact overrides fact in default facts.d direct
     override_content = external_fact_content(agent['platform'], 'external_fact', 'OVERRIDE_value')
 
     teardown do
-      on(agent, "rm -f '#{fact_file}' '#{override_fact_file}'")
+      agent.rm_rf(fact_file)
+      agent.rm_rf(override_fact_file)
     end
 
     step "Agent #{agent}: setup default external facts directories and the test facts" do
-      on(agent, "mkdir -p '#{factsd}'")
+      agent.mkdir_p(factsd)
       create_remote_file(agent, fact_file, content)
       create_remote_file(agent, override_fact_file, override_content)
-      on(agent, "chmod +x '#{fact_file}' '#{override_fact_file}'")
+      agent.chmod('+x', fact_file)
+      agent.chmod('+x', override_fact_file)
     end
 
     step "Agent #{agent}: the fact value from the custom external dir should override that of facts.d" do

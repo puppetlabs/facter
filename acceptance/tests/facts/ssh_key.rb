@@ -26,19 +26,11 @@ test_name 'SSH publick key' do
       )
       if rc.exit_code == 0
         # It's present, so restore the original
-        on(
-          agent,
-          "mv -fv #{ssh_tmp_host_rsa_key_file} #{ssh_host_rsa_key_file}",
-          accept_all_exit_codes: true,
-        )
+        agent.mv(ssh_tmp_host_rsa_key_file, ssh_host_rsa_key_file)
       else
         # It's missing, which means there wasn't one to backup; just
         # delete the one we laid down
-        on(
-          agent,
-          "rm -fv #{ssh_host_rsa_key_file}",
-          accept_all_exit_codes: true,
-        )
+        agent.rm_rf(ssh_host_rsa_key_file)
       end
     end
 

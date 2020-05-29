@@ -21,7 +21,8 @@ EOM
       create_remote_file(agent, config_file, config_content)
 
       teardown do
-        on(agent, "rm -rf '#{external_dir}' '#{config_dir}'")
+        agent.rm_rf(external_dir)
+        agent.rm_rf(config_dir)
       end
 
       step "Agent #{agent}: config option no-external-facts : true and external-dir should result in an options conflict error" do

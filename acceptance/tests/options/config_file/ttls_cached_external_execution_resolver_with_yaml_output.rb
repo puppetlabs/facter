@@ -33,7 +33,7 @@ EOF
 EOM
       end
       create_remote_file(agent, external_fact, external_fact_content)
-      on(agent, "chmod +x '#{external_fact}'")
+      agent.chmod('+x', external_fact)
 
       config_dir = get_default_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
       config_file = File.join(config_dir, "facter.conf")
@@ -42,7 +42,7 @@ EOM
       cached_fact_file = File.join(cached_facts_dir, "#{external_cachegroup}#{ext}")
 
       # Setup facter conf
-      on(agent, "mkdir -p '#{config_dir}'")
+      agent.mkdir_p(config_dir)
       cached_fact_content = <<EOM
 {
   "#{cached_fact_name}": "#{cached_fact_value}"
@@ -59,11 +59,13 @@ EOM
       create_remote_file(agent, config_file, config)
 
       teardown do
-        on(agent, "rm -rf '#{config_dir}' '#{cached_facts_dir}' '#{external_dir}'")
+        agent.rm_rf(config_dir)
+        agent.rm_rf(cached_facts_dir)
+        agent.rm_rf(external_dir)
       end
 
       step "should create a JSON file for a fact that is to be cached" do
-        on(agent, "rm -rf '#{cached_facts_dir}'")
+        agent.rm_rf(cached_facts_dir)
         on(agent, facter("--external-dir '#{external_dir}' --debug #{cached_fact_name}")) do |facter_output|
           assert_match(/caching values for .+ facts/, facter_output.stderr, "Expected debug message to state that values will be cached")
         end
@@ -73,7 +75,7 @@ EOM
       end
 
       step "should read from a cached JSON file for a fact that has been cached" do
-        on(agent, "rm -rf '#{cached_facts_dir}'")
+        agent.rm_rf(cached_facts_dir)
         on(agent, facter("--external-dir '#{external_dir}' --debug #{cached_fact_name}"))
 
         create_remote_file(agent, cached_fact_file, cached_fact_content)

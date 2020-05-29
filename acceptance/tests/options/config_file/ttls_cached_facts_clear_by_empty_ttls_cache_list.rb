@@ -39,17 +39,17 @@ EOM
       cached_fact_file = File.join(cached_facts_dir, cached_fact_name)
 
       # Setup facter conf
-      on(agent, "mkdir -p '#{config_dir}'")
+      agent.mkdir_p(config_dir)
       create_remote_file(agent, config_file, config)
 
       teardown do
-        on(agent, "rm -rf '#{config_dir}'", :acceptable_exit_codes => [0, 1])
-        on(agent, "rm -rf '#{cached_facts_dir}'", :acceptable_exit_codes => [0, 1])
+        agent.rm_rf(config_dir)
+        agent.rm_rf(cached_facts_dir)
       end
 
       step "Agent #{agent}: create config file with no cached facts" do
         # Set up a known cached fact
-        on(agent, "rm -rf '#{cached_facts_dir}'", :acceptable_exit_codes => [0, 1])
+        agent.rm_rf(cached_facts_dir)
         on(agent, facter(""))
         create_remote_file(agent, cached_fact_file, cached_fact_content)
       end

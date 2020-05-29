@@ -20,7 +20,7 @@ test_name "C100152: external fact overrides a custom fact with a confine" do
                        custom_fact_content(fact_name, 'CUSTOM', "confine :kernel=>'#{agent_kernel}'"))
 
     teardown do
-      on(agent, "rm -rf '#{facts_dir}'")
+      agent.rm_rf(facts_dir)
     end
 
     # External fact should take precedence over a custom fact with a confine

@@ -21,7 +21,7 @@ EOM
       create_remote_file(agent, custom_fact, content)
 
       teardown do
-        on(agent, "rm -rf '#{custom_dir}'")
+        agent.rm_rf(custom_dir)
       end
 
       step "Agent #{agent}: --custom-dir option should resolve custom facts from the specific directory" do
