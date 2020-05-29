@@ -156,10 +156,11 @@ describe LegacyFacter::Util::Loader do
   describe 'when loading facts' do
     it 'loads values from the matching environment variable if one is present' do
       loader = loader_from(env: { 'facter_testing' => 'yayness' })
-
-      expect(LegacyFacter).to receive(:add).with('testing')
+      allow(LegacyFacter).to receive(:add)
 
       loader.load(:testing)
+
+      expect(LegacyFacter).to have_received(:add).with('testing', { fact_type: :external })
     end
 
     it 'loads any files in the search path with names matching the fact name' do

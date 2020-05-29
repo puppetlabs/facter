@@ -1,5 +1,15 @@
 
 
+## [4.0.25](https://github.com/puppetlabs/facter-ng/tree/4.0.25) (2020-05-29)
+
+[Full Changelog](https://github.com/puppetlabs/facter-ng/compare/4.0.24...4.0.25)
+
+### Fixed
+
+- \(FACT-2636\) Set external as fact\_type for environment variable facts. [\#537](https://github.com/puppetlabs/facter-ng/pull/537) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+
+
 ## [4.0.24](https://github.com/puppetlabs/facter-ng/tree/4.0.24) (2020-05-26)
 
 [Full Changelog](https://github.com/puppetlabs/facter-ng/compare/4.0.23...4.0.24)
