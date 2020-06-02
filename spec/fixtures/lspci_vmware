@@ -1,0 +1,6 @@
+00:10.0 SCSI storage controller: LSI Logic / Symbios Logic 53c1030 PCI-X Fusion-MPT Dual Ultra320 SCSI (rev 01)
+00:11.0 PCI bridge: VMware PCI bridge (rev 02)
+00:18.5 PCI bridge: VMware PCI Express Root Port (rev 01)
+00:18.6 PCI bridge: VMware PCI Express Root Port (rev 01)
+00:18.7 PCI bridge: VMware PCI Express Root Port (rev 01)
+03:00.0 Ethernet controller: VMware VMXNET3 Ethernet Controller (rev 01)

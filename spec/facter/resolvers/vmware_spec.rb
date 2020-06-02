@@ -3,7 +3,7 @@
 describe Facter::Resolvers::Vmware do
   subject(:vmware_resolver) { Facter::Resolvers::Vmware }
 
-  let(:log_spy) { Facter::Log }
+  let(:log_spy) { instance_spy(Facter::Log) }
 
   before do
     vmware_resolver.instance_variable_set(:@log, log_spy)

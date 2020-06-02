@@ -107,11 +107,42 @@ describe Facts::Linux::Virtual do
       end
     end
 
-    context 'when resolver returns nil' do
+    context 'when is bochs discovered with dmi product_name' do
       let(:vm) { nil }
+      let(:value) { 'bochs' }
 
       before do
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('Bochs Machine')
+      end
+
+      it 'returns virtual fact' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+          have_attributes(name: 'virtual', value: value)
+      end
+    end
+
+    context 'when is hyper-v discovered with lspci' do
+      let(:vm) { nil }
+      let(:value) { 'hyperv' }
+
+      before do
+        allow(Facter::Resolvers::Lspci).to receive(:resolve).with(:vm).and_return(value)
+      end
+
+      it 'returns virtual fact' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+          have_attributes(name: 'virtual', value: value)
+      end
+    end
+
+    context 'when resolvers return nil ' do
+      let(:vm) { 'physical' }
+
+      before do
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return(nil)
+        allow(Facter::Resolvers::Lspci).to receive(:resolve).with(:vm).and_return(nil)
       end
 
       it 'returns virtual fact as nil' do
