@@ -64,6 +64,35 @@ describe Facts::Linux::Virtual do
       end
     end
 
+    context 'when is openVz' do
+      let(:vm) { nil }
+      let(:value) { 'openvzve' }
+
+      before do
+        allow(Facter::Resolvers::OpenVz).to receive(:resolve).with(:vm).and_return(value)
+      end
+
+      it 'returns virtual fact' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+          have_attributes(name: 'virtual', value: value)
+      end
+    end
+
+    context 'when is vserver' do
+      let(:vm) { nil }
+      let(:value) { 'vserver_host' }
+
+      before do
+        allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vserver).and_return(value)
+      end
+
+      it 'returns virtual fact' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+          have_attributes(name: 'virtual', value: value)
+      end
+    end
+
     context 'when resolver returns nil' do
       let(:vm) { nil }
 
