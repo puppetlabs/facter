@@ -2,18 +2,19 @@
 
 module Facts
   module Linux
-    class Virtual
-      FACT_NAME = 'virtual'
+    class IsVirtual
+      FACT_NAME = 'is_virtual'
       HYPERVISORS_HASH = { 'VMware' => 'vmware', 'VirtualBox' => 'virtualbox', 'Parallels' => 'parallels',
                            'KVM' => 'kvm', 'Virtual Machine' => 'hyperv', 'RHEV Hypervisor' => 'rhev',
                            'oVirt Node' => 'ovirt', 'HVM domU' => 'xenhvm', 'Bochs' => 'bochs', 'OpenBSD' => 'vmm',
                            'BHYVE' => 'bhyve' }.freeze
+      PHYSICAL_HYPERVISORS = %w[physical xen0 vmware_server vmware_workstation openvzhn vserver_host].freeze
 
       def call_the_resolver # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         fact_value = check_docker_lxc || check_gce || retrieve_from_virt_what || check_vmware
         fact_value ||= check_open_vz || check_vserver || check_xen || check_other_facts || check_lspci || 'physical'
 
-        Facter::ResolvedFact.new(FACT_NAME, fact_value)
+        Facter::ResolvedFact.new(FACT_NAME, check_if_virtual(fact_value))
       end
 
       def check_gce
@@ -47,7 +48,7 @@ module Facts
 
       def check_other_facts
         product_name = Facter::Resolvers::Linux::DmiBios.resolve(:product_name)
-        bios_vendor =  Facter::Resolvers::Linux::DmiBios.resolve(:bios_vendor)
+        bios_vendor = Facter::Resolvers::Linux::DmiBios.resolve(:bios_vendor)
         return 'kvm' if bios_vendor&.include?('Amazon EC2')
         return unless product_name
 
@@ -56,6 +57,10 @@ module Facts
 
       def check_lspci
         Facter::Resolvers::Lspci.resolve(:vm)
+      end
+
+      def check_if_virtual(found_vm)
+        PHYSICAL_HYPERVISORS.count(found_vm).zero?
       end
     end
   end
