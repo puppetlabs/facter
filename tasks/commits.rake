@@ -8,12 +8,12 @@ task(:commits) do
   # populated with the range of commits the PR contains. If not available, this
   # falls back to `master..HEAD` as a next best bet as `master` is unlikely to
   # ever be absent.
-  commit_range = ENV['TRAVIS_COMMIT_RANGE'].nil? ? 'master..HEAD' : ENV['TRAVIS_COMMIT_RANGE'].sub(/\.\.\./, '..')
+  commit_range = 'HEAD^..HEAD'
   puts "Checking commits #{commit_range}"
   `git log --no-merges --pretty=%s #{commit_range}`.each_line do |commit_summary|
     # This regex tests for the currently supported commit summary tokens: maint, doc, gem, or fact-<number>.
     # The exception tries to explain it in more full.
-    if /^\((maint|doc|docs|gem|fact-\d+)\)|revert/i.match(commit_summary).nil?
+    if /^\((maint|doc|docs|gem|fact-\d+)\)|revert|merge/i.match(commit_summary).nil?
       raise "\n\n\n\tThis commit summary didn't match CONTRIBUTING.md guidelines:\n" \
         "\n\t\t#{commit_summary}\n" \
         "\tThe commit summary (i.e. the first line of the commit message) should start with one of:\n"  \
