@@ -37,6 +37,8 @@ jobs:
     steps:
       - name: Checkout current PR
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
 
       - name: Commit message checks
         uses: ruby/setup-ruby@v1
