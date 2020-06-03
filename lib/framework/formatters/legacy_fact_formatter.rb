@@ -60,7 +60,7 @@ module Facter
       pretty_json = JSON.pretty_generate(facts_hash)
 
       @log.debug('Change key value delimiter from : to =>')
-      pretty_json.gsub!(/^(.*?)(:)/, '\1 =>')
+      pretty_json.gsub!(/":/, '" =>')
 
       @log.debug('Remove quotes from parent nodes')
       pretty_json.gsub!(/\"(.*)\"\ =>/, '\1 =>')
@@ -84,8 +84,10 @@ module Facter
     end
 
     def remove_comma_and_quation(output)
+      # quotation marks that come after \ are not removed
       @log.debug('Remove unnecessary comma and quotation marks on root facts')
-      output.split("\n").map! { |line| line =~ /^[\s]+/ ? line : line.gsub(/,$|\"/, '') }.join("\n")
+      output.split("\n")
+            .map! { |line| line =~ /^[\s]+/ ? line : line.gsub(/,$|(?<!\\)\"/, '').gsub('\\"', '"') }.join("\n")
     end
   end
 end

@@ -88,5 +88,17 @@ describe Facter::QueryParser do
       expect(matched_facts).to be_an_instance_of(Array).and \
         contain_exactly(an_instance_of(Facter::SearchedFact).and(having_attributes(fact_class: path_class)))
     end
+
+    context 'when fact does not exist' do
+      let(:query_list) { ['non_existing_fact'] }
+      let(:loaded_facts) { [] }
+
+      it 'creates a nil fact' do
+        matched_facts = Facter::QueryParser.parse(query_list, loaded_facts)
+        expect(matched_facts).to be_an_instance_of(Array).and contain_exactly(
+          an_object_having_attributes(name: 'non_existing_fact', user_query: 'non_existing_fact', type: :nil)
+        )
+      end
+    end
   end
 end

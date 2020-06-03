@@ -50,6 +50,8 @@ module Facter
           return resolvable_fact_list if resolvable_fact_list.any?
         end
 
+        resolvable_fact_list << SearchedFact.new(query, nil, [], query, :nil) if resolvable_fact_list.empty?
+
         resolvable_fact_list
       end
 
@@ -73,9 +75,11 @@ module Facter
       def found_fact?(fact_name, query_fact)
         fact_with_wildcard = fact_name.include?('.*') && !query_fact.include?('.')
 
+        processed_equery_fact = query_fact.gsub('\\', '\\\\\\\\')
+
         return false if fact_with_wildcard && !query_fact.match("^#{fact_name}$")
 
-        return false unless fact_with_wildcard || fact_name.match("^#{query_fact}($|\\.)")
+        return false unless fact_with_wildcard || fact_name.match("^#{processed_equery_fact}($|\\.)")
 
         true
       end

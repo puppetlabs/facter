@@ -32,6 +32,24 @@ describe Facter::InternalFactManager do
       expect(resolved_facts).to eq([resolved_fact])
     end
 
+    context 'when resolved fact is of type nil' do
+      let(:searched_fact) do
+        instance_spy(Facter::SearchedFact, name: 'missing_fact', fact_class: nil,
+                                           filter_tokens: [], user_query: '', type: :nil)
+      end
+      let(:resolved_fact) { instance_spy(Facter::ResolvedFact) }
+
+      before do
+        allow(Facter::ResolvedFact).to receive(:new).and_return(resolved_fact)
+      end
+
+      it 'resolved one nil fact' do
+        resolved_facts = internal_fact_manager.resolve_facts([searched_fact])
+
+        expect(resolved_facts).to eq([resolved_fact])
+      end
+    end
+
     context 'when there are multiple search facts pointing to the same fact' do
       before do
         resolved_fact = mock_resolved_fact('os', 'Debian', nil, [])
