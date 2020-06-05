@@ -39,7 +39,7 @@ test_name 'C100161: Ruby can load libfacter without raising an error' do
     create_remote_file(agent, fact_program, fact_content)
 
     teardown do
-      on(agent, "rm -rf '#{fact_dir}'")
+      agent.rm_rf(fact_dir)
     end
 
     if agent['platform'] =~ /windows/ && agent.is_cygwin?

@@ -16,7 +16,7 @@ test_name "C99972: facts can be blocked via a blocklist in the config file" do
       FILE
 
       teardown do
-        on(agent, "rm -rf '#{custom_conf_dir}'", :acceptable_exit_codes => [0, 1])
+        agent.rm_rf(custom_conf_dir)
       end
 
       step "blocked facts should not be resolved" do

@@ -15,16 +15,17 @@ EOM
     step "Agent #{agent}: create config file" do
       if agent['platform'] =~ /windows/
         config_dir = 'C:\\ProgramData\\PuppetLabs\\facter\\etc'
+        config_file = "#{config_dir}\\facter.conf"
      else
-        config_dir = "/etc/puppetlabs/facter"
+        config_dir = '/etc/puppetlabs/facter'
+        config_file = "#{config_dir}/facter.conf"
       end
 
-      on(agent, "mkdir -p '#{config_dir}'")
-      config_file = File.join(config_dir, "facter.conf")
+      agent.mkdir_p(config_dir)
       create_remote_file(agent, config_file, config)
 
       teardown do
-        on(agent, "rm -rf '#{config_dir}'", :acceptable_exit_codes => [0,1])
+        agent.rm_rf(config_dir)
       end
 
       step "config file should be loaded automatically and turn DEBUG output on" do

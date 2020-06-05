@@ -23,18 +23,20 @@ EOM
   agents.each do |agent|
     step "Agent #{agent}: create custom fact directory and executable custom fact" do
       custom_dir = get_user_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
-      on(agent, "mkdir -p '#{custom_dir}'")
+      agent.mkdir_p(custom_dir)
       custom_fact = File.join(custom_dir, "custom_fact.rb")
       create_remote_file(agent, custom_fact, erroring_custom_fact)
-      on(agent, "chmod +x '#{custom_fact}'")
+      agent.chmod('+x', custom_fact)
+
 
       config_dir = get_default_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
       config_file = File.join(config_dir, "facter.conf")
-      on(agent, "mkdir -p '#{config_dir}'")
+      agent.mkdir_p(config_dir)
       create_remote_file(agent, config_file, config)
 
       teardown do
-        on(agent, "rm -rf '#{custom_dir}' '#{config_dir}'", :acceptable_exit_codes => [0, 1])
+        agent.rm_rf(custom_dir)
+        agent.rm_rf(config_dir)
       end
 
       step "trace setting should provide a backtrace for a custom fact with errors" do

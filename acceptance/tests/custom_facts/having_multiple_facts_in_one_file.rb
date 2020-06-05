@@ -22,7 +22,7 @@ test_name 'C14893: Facter should handle multiple facts in a single file' do
     env = {'FACTERLIB' => fact_dir}
 
     teardown do
-      on(agent, "rm -rf '#{fact_dir}'")
+      agent.rm_rf(fact_dir)
     end
 
     step "Agent: Verify test_fact1 from #{fact_file}" do

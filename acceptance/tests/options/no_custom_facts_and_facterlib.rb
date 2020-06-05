@@ -21,7 +21,7 @@ EOM
       create_remote_file(agent, custom_fact, content)
 
       teardown do
-        on(agent, "rm -rf '#{facterlib_dir}'")
+        agent.rm_rf(facterlib_dir)
       end
 
       step "Agent #{agent}: --no-custom-facts should ignore the FACTERLIB environment variable" do

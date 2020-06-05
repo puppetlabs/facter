@@ -20,12 +20,12 @@ EOM
     step "Agent #{agent}: create a structured custom fact" do
       custom_dir = get_user_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
       custom_fact = File.join(custom_dir, 'custom_fact.rb')
-      on(agent, "mkdir -p '#{custom_dir}'")
+      agent.mkdir_p(custom_dir)
       create_remote_file(agent, custom_fact, content)
-      on(agent, "chmod +x '#{custom_fact}'")
+      agent.chmod('+x', custom_fact)
 
       teardown do
-        on(agent, "rm -f '#{custom_fact}'")
+        agent.rm_rf(custom_fact)
       end
 
       step "Agent #{agent}: retrieve output using the --yaml option" do

@@ -29,7 +29,8 @@ EOM
       create_remote_file(agent, config_file, config_content)
 
       teardown do
-        on(agent, "rm -rf '#{custom_dir}' '#{config_dir}'")
+        agent.rm_rf(custom_dir)
+        agent.rm_rf(config_dir)
       end
 
       step "Agent #{agent}: resolve a fact from the configured custom-dir path" do

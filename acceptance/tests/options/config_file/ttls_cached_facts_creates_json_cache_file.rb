@@ -26,16 +26,16 @@ EOM
       cached_fact_file = File.join(cached_facts_dir, cached_factname)
 
       # Setup facter conf
-      on(agent, "mkdir -p '#{config_dir}'")
+      agent.mkdir_p(config_dir)
       create_remote_file(agent, config_file, config)
 
       teardown do
-        on(agent, "rm -rf '#{config_dir}'", :acceptable_exit_codes => [0, 1])
-        on(agent, "rm -rf '#{cached_facts_dir}'", :acceptable_exit_codes => [0, 1])
+        agent.rm_rf(config_dir)
+        agent.rm_rf(cached_facts_dir)
       end
 
       step "should create a JSON file for a fact that is to be cached" do
-        on(agent, "rm -rf '#{cached_facts_dir}'", :acceptable_exit_codes => [0, 1])
+        agent.rm_rf(cached_facts_dir)
         on(agent, facter("--debug")) do |facter_output|
           assert_match(/caching values for .+ facts/, facter_output.stderr, "Expected debug message to state that values will be cached")
         end
