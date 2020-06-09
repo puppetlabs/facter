@@ -280,6 +280,24 @@ describe LegacyFacter::Util::Loader do
       loader.load_all
       loader.load_all
     end
+
+    context 'when directory path has wrong slashes' do
+      before do
+        allow(Dir).to receive(:glob).with('/one/dir/*.rb').and_return %w[/one/dir/a.rb]
+      end
+
+      dir_paths = ['//one///dir', '//one///\\dir', '/one///\/\dir', '\one///\\dir']
+
+      dir_paths.each do |dir_path|
+        it 'corrects the directory path' do
+          allow(loader).to receive(:search_path).and_return [dir_path]
+
+          loader.load_all
+
+          expect(Dir).to have_received(:glob).with('/one/dir/*.rb')
+        end
+      end
+    end
   end
 
   it 'loads facts on the facter search path only once' do
