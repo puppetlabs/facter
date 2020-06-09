@@ -14,14 +14,12 @@ jobs:
     name: Platform
     strategy:
       matrix:
-        os: [ubuntu-18.04, ubuntu-16.04, macos-10.15]
+        os: [windows-2016, windows-2019, ubuntu-16.04, ubuntu-18.04, macos-10.15]
     runs-on: ${{ matrix.os }}
     env:
       FACTER_3_ROOT: facter_3
       FACTER_4_ROOT: facter_4
-      BEAKER_ROOT: beaker
       SHA: latest
-      BEAKER_VERSION: 4.21.0
 
     steps:
       - name: Checkout current PR
@@ -33,22 +31,16 @@ jobs:
         uses: actions/checkout@v2
         with:
           repository: puppetlabs/facter
-          ref: skip_failures_on_ng
+          ref: windows_github
           path: facter_3
-
-      - name: Clone custom beaker fork
-        uses: actions/checkout@v2
-        with:
-          repository: mihaibuzgau/beaker
-          ref: master
-          path: beaker
 
       - name: Install Ruby 2.6
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '2.6'
 
-      - name: Fix common permissions
+      - name: Fix common Linux and MacOs permissions
+        if: runner.os != 'Windows'
         run: sudo chmod a-w /opt
 
       - name: Fix Linux permissions
@@ -57,11 +49,17 @@ jobs:
           sudo chmod a-w /home/runner /usr/share &&
           sudo chmod -R a-w /usr/share/rust /home/runner/.config /home/linuxbrew
 
-      - name: Instal dhclient
+      - name: Instal dhclient for Linux
         if: runner.os == 'Linux'
         run: |
           sudo apt install dhcpcd5
           sudo dhclient
 
-      - name: Run acceptance tests
-        run: sudo -E "PATH=$PATH" ruby facter_4/.github/actions/presuite.rb
+      - name: Run acceptance tests on Linux like platform
+        if: runner.os != 'Windows'
+        run: sudo -E "PATH=$PATH" ruby $FACTER_4_ROOT/.github/actions/presuite.rb ${{ matrix.os }}
+
+      - name: Run acceptance tests on Windows like platform
+        if: runner.os == 'Windows'
+        run: ruby $Env:FACTER_4_ROOT/.github/actions/presuite.rb ${{ matrix.os }}
+

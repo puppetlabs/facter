@@ -5,55 +5,91 @@ def install_bundler
   run('gem install bundler')
 end
 
-def install_facter_3_dependecies
+def install_facter_3_dependencies
   message('INSTALL FACTER 3 ACCEPTANCE DEPENDENCIES')
   run('bundle install')
 end
 
-def install_custom_beaker
-  message('BUILD CUSTOM BEAKER GEM')
-  run('gem build beaker.gemspec')
-
-  message('INSTALL CUSTOM BEAKER GEM')
-  run('gem install beaker-*.gem')
+def use_custom_beaker
+  message('USE CUSTOM BEAKER')
+  beaker_path, _ = run('bundle info beaker --path', FACTER_3_ACCEPTANCE_PATH)
+  Dir.chdir(beaker_path.split("\n").last) do
+    run('git init')
+    run("git remote add origin https://github.com/Filipovici-Andrei/beaker.git")
+    run('git fetch')
+    run("git reset --hard origin/github_actions")
+  end
 end
 
 def initialize_beaker
-  beaker_options = "#{get_beaker_platform(ENV['ImageOS'].to_sym)}{hypervisor=none\\,hostname=localhost}"
+  beaker_platform_with_options = platform_with_options(beaker_platform)
 
   message('BEAKER INITIALIZE')
-  run("beaker init -h #{beaker_options} -o config/aio/options.rb")
+  run("beaker init -h #{beaker_platform_with_options} -o #{File.join('config', 'aio', 'options.rb')}")
 
   message('BEAKER PROVISION')
   run('beaker provision')
 end
 
-def get_beaker_platform(host_platform)
-  beaker_platforms = {
-      ubuntu18: 'ubuntu1804-64a',
-      ubuntu16: 'ubuntu1604-64a',
-      macos1015: 'osx1015-64a'
-  }
+def beaker_platform
+  {
+      'ubuntu-18.04' => 'ubuntu1804-64a',
+      'ubuntu-16.04' => 'ubuntu1604-64a',
+      'macos-10.15' => 'osx1015-64a',
+      'windows-2016' => 'windows2016-64a',
+      'windows-2019' => 'windows2019-64a'
+  }[HOST_PLATFORM]
+end
 
-  beaker_platforms[host_platform]
+def platform_with_options(platform)
+  return "\"#{platform}{hypervisor=none,hostname=localhost,is_cygwin=false}\"" if platform.include? 'windows'
+  "#{platform}{hypervisor=none\\,hostname=localhost}"
 end
 
 def install_puppet_agent
-  beaker_puppet_root, _ = run('bundle info beaker-puppet --path')
-  install_puppet_file_path = File.join(beaker_puppet_root.chomp, 'setup', 'aio', '010_Install_Puppet_Agent.rb')
-
   message('INSTALL PUPPET AGENT')
-  run("beaker exec pre-suite --pre-suite #{install_puppet_file_path}")
+
+  beaker_puppet_root, _ = run('bundle info beaker-puppet --path')
+  presuite_file_path = File.join(beaker_puppet_root.chomp, 'setup', 'aio', '010_Install_Puppet_Agent.rb')
+
+  run("beaker exec pre-suite --pre-suite #{presuite_file_path} --preserve-state", './', env_path_var)
+end
+
+def puppet_bin_dir
+  linux_puppet_bin_dir = '/opt/puppetlabs/puppet/bin'
+  windows_puppet_bin_dir = 'C:\\Program Files\\Puppet Labs\\Puppet\\bin'
+
+  (HOST_PLATFORM.include? 'windows') ? windows_puppet_bin_dir : linux_puppet_bin_dir
+end
+
+def puppet_command
+  return '/opt/puppetlabs/puppet/bin/puppet' unless HOST_PLATFORM.include? 'windows'
+  "\"C:\\Program Files\\Puppet Labs\\Puppet\\bin\\puppet\""
+end
+
+def gem_command
+  return '/opt/puppetlabs/puppet/bin/gem' unless HOST_PLATFORM.include? 'windows'
+  "\"C:\\Program Files\\Puppet Labs\\Puppet\\puppet\\bin\\gem\""
+end
+
+def env_path_var
+  (HOST_PLATFORM.include? 'windows') ? { 'PATH' => "#{puppet_bin_dir};#{ENV['PATH']}" } : {}
 end
 
 def replace_facter_3_with_facter_4
-  linux_puppet_bin_dir = '/opt/puppetlabs/puppet/bin'
-  gem_command = File.join(linux_puppet_bin_dir, 'gem')
-  puppet_command = File.join(linux_puppet_bin_dir, 'puppet')
-
   message('SET FACTER 4 FLAG TO TRUE')
   run("#{puppet_command} config set facterng true")
 
+  install_latest_facter_4(gem_command)
+
+  message('CHANGE FACTER 3 WITH FACTER 4')
+
+  extension = (HOST_PLATFORM.include? 'windows') ? '.bat' : ''
+  run("mv facter-ng#{extension} facter#{extension}", puppet_bin_dir)
+end
+
+
+def install_latest_facter_4(gem_command)
   message('BUILD FACTER 4 LATEST AGENT GEM')
   run("#{gem_command} build agent/facter-ng.gemspec", ENV['FACTER_4_ROOT'])
 
@@ -62,14 +98,12 @@ def replace_facter_3_with_facter_4
 
   message('INSTALL FACTER 4 GEM')
   run("#{gem_command} install -f facter-ng-*.gem", ENV['FACTER_4_ROOT'])
-
-  message('CHANGE FACTER 3 WITH FACTER 4')
-  run('mv facter-ng facter', linux_puppet_bin_dir)
 end
 
 def run_acceptance_tests
   message('RUN ACCEPTANCE TESTS')
-  run('beaker exec tests --test-tag-exclude=server,facter_3 --test-tag-or=risk:high,audit:high')
+
+  run('beaker exec tests --test-tag-exclude=server,facter_3 --test-tag-or=risk:high,audit:high', './', env_path_var)
 end
 
 def message(message)
@@ -80,21 +114,28 @@ def message(message)
   puts "\n\n#{result}\n\n"
 end
 
-def run(command, dir = './')
+def run(command, dir = './', env = {})
   puts command
-  output, status = Open3.capture2(command, chdir: dir)
-  puts output
+  output = ''
+  status = 0
+  Open3.popen2e(env, command, chdir: dir) do |_stdin, stdout_and_err, wait_thr|
+    stdout_and_err.each do |line|
+      puts line
+      output += line
+    end
+    status = wait_thr.value
+  end
   [output, status]
 end
 
-ENV['DEBIAN_DISABLE_RUBYGEMS_INTEGRATION'] = 'no_wornings'
+ENV['DEBIAN_DISABLE_RUBYGEMS_INTEGRATION'] = 'no_warnings'
 FACTER_3_ACCEPTANCE_PATH = File.join(ENV['FACTER_3_ROOT'], 'acceptance')
+HOST_PLATFORM = ARGV[0]
 
 install_bundler
 
-Dir.chdir(FACTER_3_ACCEPTANCE_PATH) { install_facter_3_dependecies }
-
-Dir.chdir(ENV['BEAKER_ROOT']) { install_custom_beaker }
+Dir.chdir(FACTER_3_ACCEPTANCE_PATH) { install_facter_3_dependencies }
+use_custom_beaker
 
 Dir.chdir(FACTER_3_ACCEPTANCE_PATH) do
   initialize_beaker
