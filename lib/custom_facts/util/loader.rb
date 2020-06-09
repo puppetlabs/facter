@@ -39,6 +39,8 @@ module LegacyFacter
 
         paths = search_path
         paths&.each do |dir|
+          # clean the search path of wrong slashes and backslashes
+          dir = dir.gsub(%r{[\/\\]+}, File::SEPARATOR)
           # dir is already an absolute path
           Dir.glob(File.join(dir, '*.rb')).each do |path|
             # exclude dirs that end with .rb
