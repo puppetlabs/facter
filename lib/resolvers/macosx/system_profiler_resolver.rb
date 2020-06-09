@@ -44,7 +44,7 @@ module Facter
           log.debug 'Executing command: system_profiler SPSoftwareDataType SPHardwareDataType'
           output = Facter::Core::Execution.execute(
             'system_profiler SPHardwareDataType SPSoftwareDataType', logger: log
-          )
+          ).force_encoding('UTF-8')
           @fact_list = output.scan(/.*:[ ].*$/).map { |e| e.strip.match(/(.*?): (.*)/).captures }.to_h
           normalize_factlist
 
