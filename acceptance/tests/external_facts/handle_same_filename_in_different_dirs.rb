@@ -16,9 +16,9 @@ test_name 'Should handle same filename in two external directories only if ttl i
     fact1_value = 'fact1_value'
     fact2_value = 'fact2_value'
     external_filename = 'text.yaml'
-    external_dir1 = agent.tmpdir('external_dir')
+    external_dir1 = agent.tmpdir('external_dir1')
     external_fact_file1 = File.join(external_dir1, external_filename)
-    external_dir2 = agent.tmpdir('external_dir')
+    external_dir2 = agent.tmpdir('external_dir2')
     external_fact_file2 = File.join(external_dir2, external_filename)
     create_remote_file(agent, external_fact_file1, "#{fact1}: #{fact1_value}")
     create_remote_file(agent, external_fact_file2, "#{fact2}: #{fact2_value}")
