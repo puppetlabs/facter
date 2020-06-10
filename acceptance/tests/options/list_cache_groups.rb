@@ -42,7 +42,7 @@ test_name "C99970: the `--list-cache-groups` command line flag prints available 
       external_fact_script_yaml = File.join(external_dir, "#{external_filename}.yaml")
       create_remote_file(agent, external_fact_script_yaml, '')
 
-      on(agent, facter("--external-dir #{external_dir} --list-cache-groups")) do |facter_output|
+      on(agent, facter("--external-dir \"#{external_dir}\" --list-cache-groups")) do |facter_output|
         assert_match(/#{external_filename}#{ext}/, facter_output.stdout, "external facts script files should be listed as cacheable")
         assert_match(/#{external_filename}.txt/, facter_output.stdout, "external facts txt files should be listed as cacheable")
         assert_match(/#{external_filename}.json/, facter_output.stdout, "external facts json files should be listed as cacheable")

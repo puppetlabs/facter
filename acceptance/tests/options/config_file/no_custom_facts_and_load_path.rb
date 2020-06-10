@@ -41,7 +41,7 @@ EOM
       end
 
       step("Agent #{agent}: using config no-custom-facts : true should not resolve facts in facter directories on the $LOAD_PATH") do
-        on(agent, facter("--config '#{config_file}' custom_fact")) do |facter_output|
+        on(agent, facter("--config \"#{config_file}\" custom_fact")) do |facter_output|
           assert_equal("", facter_output.stdout.chomp, "Custom fact in $LOAD_PATH/facter should not have resolved")
         end
       end

@@ -22,6 +22,7 @@ EOM
       end
 
       agent.mkdir_p(config_dir)
+
       create_remote_file(agent, config_file, config)
 
       teardown do

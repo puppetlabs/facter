@@ -79,9 +79,8 @@ test_name 'ttls configured weighted custom facts files creates cache file and re
     step "should create a cached-custom-facts cache file that containt fact information from the highest weight fact" do
       result = agent.file_exist?("#{cache_folder}/cached-custom-facts")
       assert_equal(true, result)
-      on(agent, "cat #{cache_folder}/cached-custom-facts", acceptable_exit_codes: [0]) do |cat_output|
-        assert_match(cached_file_content_highest_weight.chomp, cat_output.stdout, 'Expected cached custom fact file to contain fact information from the highest weight fact')
-      end
+      cat_output = agent.cat("#{cache_folder}/cached-custom-facts")
+      assert_match(cached_file_content_highest_weight.chomp, cat_output.strip, 'Expected cached custom fact file to contain fact information from the highest weight fact')
     end
 
     step 'should read from the cached file for a custom fact that has been cached' do

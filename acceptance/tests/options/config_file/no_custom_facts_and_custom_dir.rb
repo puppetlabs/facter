@@ -35,7 +35,7 @@ EOM
       end
 
       step "Agent #{agent}: config option no-custom-facts : true and custom-dir should result in an options conflict error" do
-        on(agent, facter("--config '#{config_file}'"), :acceptable_exit_codes => 1) do |facter_output|
+        on(agent, facter("--config \"#{config_file}\""), :acceptable_exit_codes => 1) do |facter_output|
           assert_match(/options conflict/, facter_output.stderr, "Output does not contain error string")
         end
       end

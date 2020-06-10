@@ -7,7 +7,7 @@ test_name "C99988: trace config field enables backtraces for custom facts" do
   extend Facter::Acceptance::UserFactUtils
 
   erroring_custom_fact = <<EOM
-Facter.add('custom_fact') do
+Facter.add('custom_fact_with_trace') do
   setcode do
     non_existent_value
   end
@@ -40,7 +40,7 @@ EOM
       end
 
       step "trace setting should provide a backtrace for a custom fact with errors" do
-        on(agent, facter("--custom-dir '#{custom_dir}' custom_fact"), :acceptable_exit_codes => [1]) do |facter_output|
+        on(agent, facter("--custom-dir \"#{custom_dir}\" custom_fact_with_trace"), :acceptable_exit_codes => [1]) do |facter_output|
           assert_match(/backtrace:\s+#{custom_fact}/, facter_output.stderr, "Expected a backtrace for erroneous custom fact")
         end
       end

@@ -38,7 +38,7 @@ EOM
       end
 
       step "Agent #{agent}: resolve a fact from each specified --custom-dir option" do
-        on(agent, facter("--custom-dir #{custom_dir_1} --custom-dir #{custom_dir_2} --json")) do |facter_output|
+        on(agent, facter("--custom-dir \"#{custom_dir_1}\" --custom-dir \"#{custom_dir_2}\" --json")) do |facter_output|
           results = JSON.parse(facter_output.stdout)
           assert_equal("testvalue_1", results['custom_fact_1'], "Incorrect custom fact value for custom_fact_1")
           assert_equal("testvalue_2", results['custom_fact_2'], "Incorrect custom fact value for custom_fact_2")

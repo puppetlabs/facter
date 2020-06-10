@@ -7,7 +7,7 @@ test_name "C99982: --trace command-line option enables backtraces for custom fac
   extend Facter::Acceptance::UserFactUtils
 
   content = <<EOM
-Facter.add('custom_fact') do
+Facter.add('custom_fact_trace') do
   setcode do
     non_existent_value
   end
@@ -27,7 +27,7 @@ EOM
       end
 
       step "--trace option should provide a backtrace for a custom fact with errors" do
-        on(agent, facter("--custom-dir '#{custom_dir}' --trace custom_fact"), :acceptable_exit_codes => [1]) do
+        on(agent, facter("--custom-dir \"#{custom_dir}\" --trace custom_fact_trace"), :acceptable_exit_codes => [1]) do
           assert_match(/backtrace:\s+#{custom_fact}/, stderr, "Expected a backtrace for erroneous custom fact")
         end
       end
