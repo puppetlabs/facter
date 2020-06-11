@@ -1,20 +1,20 @@
 # frozen_string_literal: true
 
-describe Facts::Solaris::Processors::Models do
+describe Facts::Freebsd::Processors::Models do
   describe '#call_the_resolver' do
-    subject(:fact) { Facts::Solaris::Processors::Models.new }
+    subject(:fact) { Facts::Freebsd::Processors::Models.new }
 
     let(:value) { 'Intel(R) Core(TM) i7-4980HQ CPU @ 2.80GHz' }
     let(:models) { [value, value] }
 
     before do
-      allow(Facter::Resolvers::Solaris::Processors).to \
+      allow(Facter::Resolvers::Freebsd::Processors).to \
         receive(:resolve).with(:models).and_return(models)
     end
 
-    it 'calls Facter::Resolvers::Solaris::Processors' do
+    it 'calls Facter::Resolvers::Freebsd::Processors' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Solaris::Processors).to have_received(:resolve).with(:models)
+      expect(Facter::Resolvers::Freebsd::Processors).to have_received(:resolve).with(:models)
     end
 
     it 'returns a resolved fact' do
