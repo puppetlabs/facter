@@ -80,6 +80,7 @@ Metrics/ClassLength:
     - 'lib/framework/core/options/option_store.rb'
     - 'lib/framework/cli/cli.rb'
     - 'lib/resolvers/networking_linux_resolver.rb'
+    - 'lib/framework/core/cache_manager.rb'
 
 Naming/AccessorMethodName:
   Exclude:

@@ -12,24 +12,13 @@ describe LegacyFacter::Util::DirectoryLoader do
   let(:collection_double) { instance_spy(LegacyFacter::Util::Collection) }
 
   it 'makes the directory available' do
-    expect(dir_loader.directory).to be_instance_of(String)
-  end
-
-  # it "can be created with a given directory" do
-  #   expect(Facter::Util::DirectoryLoader.loader_for("lib").directory).to eq "../lib"
-  # end
-
-  it 'raises an error when the directory does not exist' do
-    missing_dir = 'missing'
-    allow(File).to receive(:directory?).with(missing_dir).and_return(false)
-    expect { LegacyFacter::Util::DirectoryLoader.loader_for(missing_dir) }
-      .to raise_error LegacyFacter::Util::DirectoryLoader::NoSuchDirectoryError
+    expect(dir_loader.directories).to be_instance_of(Array)
   end
 
   it "does nothing bad when dir doesn't exist" do
     fakepath = '/foobar/path'
     my_loader = LegacyFacter::Util::DirectoryLoader.new(fakepath)
-    allow(FileTest).to receive(:exists?).with(my_loader.directory).and_return(false)
+    allow(FileTest).to receive(:exists?).with(my_loader.directories[0]).and_return(false)
     expect { my_loader.load(collection) }.not_to raise_error
   end
 
@@ -48,8 +37,9 @@ describe LegacyFacter::Util::DirectoryLoader do
       write_to_file('data.yaml', YAML.dump(data))
 
       dir_loader.load(collection_double)
+      file = File.join(dir_loader.directories[0], 'data.yaml')
 
-      expect(collection_double).to have_received(:add).with('f1', value: 'one', fact_type: :external)
+      expect(collection_double).to have_received(:add).with('f1', value: 'one', fact_type: :external, file: file)
     end
 
     it "ignores files that begin with '.'" do
@@ -107,7 +97,7 @@ describe LegacyFacter::Util::DirectoryLoader do
   end
 
   def write_to_file(file_name, to_write)
-    file = File.join(dir_loader.directory, file_name)
+    file = File.join(dir_loader.directories[0], file_name)
     File.open(file, 'w') { |f| f.print to_write }
   end
 end

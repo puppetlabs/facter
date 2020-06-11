@@ -30,55 +30,82 @@ module LegacyFacter
       EXTERNAL_FACT_WEIGHT = 10_000
 
       # Directory for fact loading
-      attr_reader :directory
+      attr_reader :directories
 
-      def initialize(dir, weight = nil)
-        @directory = dir
-        @weight = weight || EXTERNAL_FACT_WEIGHT
-      end
-
-      def self.loader_for(dir)
-        raise NoSuchDirectoryError unless File.directory?(dir)
-
-        LegacyFacter::Util::DirectoryLoader.new(dir)
-      end
-
-      def self.default_loader
-        loaders = LegacyFacter::Util::Config.external_facts_dirs.collect do |dir|
-          LegacyFacter::Util::DirectoryLoader.new(dir)
-        end
-        LegacyFacter::Util::CompositeLoader.new(loaders)
+      def initialize(dir = LegacyFacter::Util::Config.external_facts_dirs, weight = EXTERNAL_FACT_WEIGHT)
+        @directories = [dir].flatten
+        @weight = weight
       end
 
       # Load facts from files in fact directory using the relevant parser classes to
       # parse them.
       def load(collection)
         weight = @weight
-        entries.each do |file|
-          parser = LegacyFacter::Util::Parser.parser_for(file)
-          next if parser.nil?
 
-          data = parser.results
-          if data == false
-            LegacyFacter.warn "Could not interpret fact file #{file}"
-          elsif (data == {}) || data.nil?
-            LegacyFacter.warn "Fact file #{file} was parsed but returned an empty data set"
-          else
-            data.each { |p, v| collection.add(p, value: v, fact_type: :external) { has_weight(weight) } }
-          end
-        end
+        searched_facts, cached_facts = load_directory_entries(collection)
+
+        load_cached_facts(collection, cached_facts, weight)
+
+        load_searched_facts(collection, searched_facts, weight)
       end
 
       private
 
+      def load_directory_entries(_collection)
+        cm = Facter::CacheManager.new
+        facts = []
+        entries.each do |file|
+          basename = File.basename(file)
+          if facts.find { |f| f.name == basename } && cm.group_cached?(basename)
+            Facter.log_exception(Exception.new("Caching is enabled for group \"#{basename}\" while "\
+              'there are at least two external facts files with the same filename'))
+          else
+            searched_fact = Facter::SearchedFact.new(basename, nil, [], nil, :file)
+            searched_fact.file = file
+            facts << searched_fact
+          end
+        end
+
+        cm.resolve_facts(facts)
+      end
+
+      def load_cached_facts(collection, cached_facts, weight)
+        cached_facts.each do |cached_fact|
+          collection.add(cached_fact.name, value: cached_fact.value, fact_type: :external,
+                                           file: cached_fact.file) { has_weight(weight) }
+        end
+      end
+
+      def load_searched_facts(collection, searched_facts, weight)
+        searched_facts.each do |fact|
+          parser = LegacyFacter::Util::Parser.parser_for(fact.file)
+          next if parser.nil?
+
+          data = parser.results
+          if data == false
+            LegacyFacter.warn "Could not interpret fact file #{fact.file}"
+          elsif (data == {}) || data.nil?
+            LegacyFacter.warn "Fact file #{fact.file} was parsed but returned an empty data set"
+          else
+            data.each do |p, v|
+              collection.add(p, value: v, fact_type: :external,
+                                file: fact.file) { has_weight(weight) }
+            end
+          end
+        end
+      end
+
       def entries
-        Dir.entries(directory).find_all { |f| should_parse?(f) }.sort.map { |f| File.join(directory, f) }
+        dirs = @directories.select { |directory| File.directory?(directory) }.map do |directory|
+          Dir.entries(directory).map { |directory_entry| File.join(directory, directory_entry) }
+        end
+        dirs.flatten.select { |f| should_parse?(f) }
       rescue Errno::ENOENT
         []
       end
 
       def should_parse?(file)
-        file !~ /^\./
+        File.basename(file) !~ /^\./
       end
     end
   end
