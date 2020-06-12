@@ -4,10 +4,7 @@ module Facts
   module Linux
     class IsVirtual
       FACT_NAME = 'is_virtual'
-      HYPERVISORS_HASH = { 'VMware' => 'vmware', 'VirtualBox' => 'virtualbox', 'Parallels' => 'parallels',
-                           'KVM' => 'kvm', 'Virtual Machine' => 'hyperv', 'RHEV Hypervisor' => 'rhev',
-                           'oVirt Node' => 'ovirt', 'HVM domU' => 'xenhvm', 'Bochs' => 'bochs', 'OpenBSD' => 'vmm',
-                           'BHYVE' => 'bhyve' }.freeze
+
       PHYSICAL_HYPERVISORS = %w[physical xen0 vmware_server vmware_workstation openvzhn vserver_host].freeze
 
       def call_the_resolver # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
@@ -52,7 +49,7 @@ module Facts
         return 'kvm' if bios_vendor&.include?('Amazon EC2')
         return unless product_name
 
-        HYPERVISORS_HASH.each { |key, value| return value if product_name.include?(key) }
+        Facter::FactsUtils::HYPERVISORS_HASH.each { |key, value| return value if product_name.include?(key) }
       end
 
       def check_lspci
