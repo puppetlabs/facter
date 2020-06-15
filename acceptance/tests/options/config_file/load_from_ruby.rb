@@ -41,13 +41,15 @@ test_name "C98141: config file is loaded when Facter is run from Puppet" do
     end
 
     step "Agent #{agent}: create facter.conf, external fact, and custom fact files" do
-
-      create_remote_file(agent, facter_conf_default_path, <<-FILE)
+      config_content = <<-FILE
         global : {
           external-dir : ["#{ext_fact_dir1}", "#{ext_fact_dir2}"],
           custom-dir : ["#{cust_fact_dir}"]
       }
       FILE
+
+      config_content = escape_paths(agent, config_content)
+      create_remote_file(agent, facter_conf_default_path, config_content)
 
       create_remote_file(agent, ext_path1, <<-FILE)
         externalfact1: 'This is external fact 1 in #{ext_fact_dir1} directory'
@@ -68,9 +70,10 @@ test_name "C98141: config file is loaded when Facter is run from Puppet" do
 
     step "running `puppet facts` should load the config file automatically and search all external-dir and custom-dir paths" do
       on(agent, puppet('facts')) do |puppet_facts_output|
-        assert_match(/This is external fact 1 in #{ext_fact_dir1} directory/, puppet_facts_output.stdout, "Expected external fact")
-        assert_match(/This is external fact 2 in #{ext_fact_dir2} directory/, puppet_facts_output.stdout, "Expected external fact")
-        assert_match(/This is a custom fact in #{cust_fact_dir} directory/, puppet_facts_output.stdout, "Expected custom fact")
+
+        assert_match(/This is external fact 1 in #{escape_paths(agent, ext_fact_dir1)} directory/, puppet_facts_output.stdout.gsub('\\\\', '\\'), "Expected external fact")
+        assert_match(/This is external fact 2 in #{escape_paths(agent, ext_fact_dir2)} directory/, puppet_facts_output.stdout.gsub('\\\\', '\\'), "Expected external fact")
+        assert_match(/This is a custom fact in #{escape_paths(agent, cust_fact_dir)} directory/, puppet_facts_output.stdout.gsub('\\\\', '\\'), "Expected custom fact")
       end
     end
   end
