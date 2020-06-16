@@ -13,14 +13,17 @@ module Facter
       return searched_facts, [] if !File.directory?(@cache_dir) || !Options[:cache]
 
       facts = []
-      searched_facts.each do |fact|
+      searched_facts.delete_if do |fact|
         res = resolve_fact(fact)
-        facts << res if res
+        if res
+          facts << res
+          true
+        else
+          false
+        end
       end
-      facts.each do |fact|
-        searched_facts.delete_if { |f| f.name == fact.name }
-      end
-      [searched_facts, facts]
+
+      [searched_facts, facts.flatten]
     end
 
     def cache_facts(resolved_facts)
@@ -37,10 +40,21 @@ module Facter
       end
     end
 
+    def group_cached?(group_name)
+      cached = @fact_groups.get_group_ttls(group_name) ? true : false
+      delete_cache(group_name) unless cached
+      cached
+    end
+
     private
 
     def resolve_fact(searched_fact)
-      group_name = @fact_groups.get_fact_group(searched_fact.name)
+      group_name =  if searched_fact.file
+                      searched_fact.name
+                    else
+                      @fact_groups.get_fact_group(searched_fact.name)
+                    end
+
       return unless group_name
 
       return unless group_cached?(group_name)
@@ -51,16 +65,32 @@ module Facter
       return unless data
 
       @log.debug("loading cached values for #{group_name} facts")
-      create_fact(searched_fact, data[searched_fact.name])
+
+      create_facts(searched_fact, data)
     end
 
-    def create_fact(searched_fact, value)
-      Facter::ResolvedFact.new(searched_fact.name, value, searched_fact.type,
-                               searched_fact.user_query, searched_fact.filter_tokens)
+    def create_facts(searched_fact, data)
+      if searched_fact.type == :file
+        facts = []
+        data.each do |fact_name, fact_value|
+          fact = Facter::ResolvedFact.new(fact_name, fact_value, searched_fact.type,
+                                          searched_fact.user_query, searched_fact.filter_tokens)
+          fact.file = searched_fact.file
+          facts << fact
+        end
+        facts
+      else
+        [Facter::ResolvedFact.new(searched_fact.name, data[searched_fact.name], searched_fact.type,
+                                  searched_fact.user_query, searched_fact.filter_tokens)]
+      end
     end
 
     def cache_fact(fact)
-      group_name = @fact_groups.get_fact_group(fact.name)
+      group_name = if fact.file
+                     File.basename(fact.file)
+                   else
+                     @fact_groups.get_fact_group(fact.name)
+                   end
       return if !group_name || fact.value.nil?
 
       return unless group_cached?(group_name)
@@ -96,12 +126,6 @@ module Facter
         delete_cache(group_name)
       end
       @groups[group_name] = data
-    end
-
-    def group_cached?(group_name)
-      cached = @fact_groups.get_group_ttls(group_name) ? true : false
-      delete_cache(group_name) unless cached
-      cached
     end
 
     def check_ttls?(group_name)

@@ -8,8 +8,9 @@ describe Facter::QueryParser do
       os_name_class = 'Facter::Ubuntu::OsName'
       os_family_class = 'Facter::Ubuntu::OsFamily'
 
-      loaded_fact_os_name = double(Facter::LoadedFact, name: 'os.name', klass: os_name_class, type: :core)
-      loaded_fact_os_family = double(Facter::LoadedFact, name: 'os.family', klass: os_family_class, type: :core)
+      loaded_fact_os_name = double(Facter::LoadedFact, name: 'os.name', klass: os_name_class, type: :core, file: nil)
+      loaded_fact_os_family = double(Facter::LoadedFact, name: 'os.family', klass: os_family_class, type: :core,
+                                                         file: nil)
       loaded_facts = [loaded_fact_os_name, loaded_fact_os_family]
 
       matched_facts = Facter::QueryParser.parse(query_list, loaded_facts)
@@ -23,7 +24,7 @@ describe Facter::QueryParser do
 
       os_name_class = 'Facter::Ubuntu::OsName'
 
-      loaded_fact_os_name = double(Facter::LoadedFact, name: 'os.release', klass: os_name_class, type: :core)
+      loaded_fact_os_name = double(Facter::LoadedFact, name: 'os.release', klass: os_name_class, type: :core, file: nil)
       loaded_facts = [loaded_fact_os_name]
 
       matched_facts = Facter::QueryParser.parse(query_list, loaded_facts)
@@ -37,8 +38,10 @@ describe Facter::QueryParser do
       networking_class = 'Facter::Ubuntu::NetworkInterface'
       os_family_class = 'Facter::Ubuntu::OsFamily'
 
-      loaded_fact_networking = double(Facter::LoadedFact, name: 'ipaddress_.*', klass: networking_class, type: :legacy)
-      loaded_fact_os_family = double(Facter::LoadedFact, name: 'os.family', klass: os_family_class, type: :core)
+      loaded_fact_networking = double(Facter::LoadedFact, name: 'ipaddress_.*', klass: networking_class, type: :legacy,
+                                                          file: nil)
+      loaded_fact_os_family = double(Facter::LoadedFact, name: 'os.family', klass: os_family_class, type: :core,
+                                                         file: nil)
       loaded_facts = [loaded_fact_networking, loaded_fact_os_family]
 
       matched_facts = Facter::QueryParser.parse(query_list, loaded_facts)
@@ -67,8 +70,8 @@ describe Facter::QueryParser do
       query_list = ['custom_fact']
       os_name_class = 'Facter::Ubuntu::OsName'
 
-      loaded_fact_os_name = double(Facter::LoadedFact, name: 'os.name', klass: os_name_class, type: :core)
-      loaded_fact_custom_fact = double(Facter::LoadedFact, name: 'custom_fact', klass: nil, type: :custom)
+      loaded_fact_os_name = double(Facter::LoadedFact, name: 'os.name', klass: os_name_class, type: :core, file: nil)
+      loaded_fact_custom_fact = double(Facter::LoadedFact, name: 'custom_fact', klass: nil, type: :custom, file: nil)
       loaded_facts = [loaded_fact_os_name, loaded_fact_custom_fact]
 
       matched_facts = Facter::QueryParser.parse(query_list, loaded_facts)
@@ -80,7 +83,7 @@ describe Facter::QueryParser do
     it 'queries if param is symbol' do
       query_list = [:path]
       path_class = 'Facter::Ubuntu::Path'
-      loaded_fact_path = double(Facter::LoadedFact, name: 'path', klass: path_class, type: :core)
+      loaded_fact_path = double(Facter::LoadedFact, name: 'path', klass: path_class, type: :core, file: nil)
       loaded_facts = [loaded_fact_path]
 
       matched_facts = Facter::QueryParser.parse(query_list, loaded_facts)

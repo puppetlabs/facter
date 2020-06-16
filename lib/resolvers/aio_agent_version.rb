@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class Agent < BaseResolver
+    class AioAgentVersion < BaseResolver
       @semaphore = Mutex.new
       @fact_list ||= {}
 
@@ -14,8 +14,9 @@ module Facter
         end
 
         def read_agent_version
-          version_file = ::File.join(ROOT_DIR, 'lib/puppet/VERSION')
-          @fact_list[:aio_agent_version] = ::File.read(version_file)
+          aio_agent_version = Util::FileHelper.safe_read('/opt/puppetlabs/puppet/VERSION', nil).chomp
+          aio_agent_version = aio_agent_version&.match(/^\d+\.\d+\.\d+(\.\d+){0,2}/)&.to_s
+          @fact_list[:aio_agent_version] = aio_agent_version
         end
       end
     end

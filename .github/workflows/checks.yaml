@@ -29,7 +29,13 @@ jobs:
     name: RuboCop TODO
     steps:
       - uses: actions/checkout@v1
-      - uses: gimmyxd/rtc-action@0.0.5
+      - uses: gimmyxd/rtc-action@0.2.1
+        env:
+          RTC_TOKEN: ${{ secrets.RTC_TOKEN }}
+          UPDATE_PR: false
+
+          # forces the job to fail if there are any new offences
+          FORCE_ERROR_EXIT: true
 
   commit_checks:
     runs-on: ubuntu-18.04
@@ -46,28 +52,3 @@ jobs:
           ruby-version: 2.6
       - run: bundle install --jobs 3 --retry 3
       - run: bundle exec rake commits
-
-  coverage_checks:
-    runs-on: ubuntu-18.04
-    name: coverage
-    steps:
-      - name: Checkout current PR
-        uses: actions/checkout@v2
-
-      - name: Setup Code Climate test-reporter
-        run: |
-          curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-          chmod +x ./cc-test-reporter
-          ./cc-test-reporter before-build
-
-      - name: Commit message checks
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.6
-      - run: bundle install --jobs 3 --retry 3
-      - run: bundle exec rake spec
-
-      - name: Publish code coverage
-        run: |
-          export GIT_BRANCH="${GITHUB_REF/refs\/heads\//}"
-          ./cc-test-reporter after-build -r ${{secrets.CC_TEST_REPORTER_ID}}

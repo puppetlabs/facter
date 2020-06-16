@@ -95,8 +95,7 @@ module LegacyFacter
         return @external_facts unless @external_facts.nil?
 
         load_external_facts
-        external_facts = @facts.select { |_k, v| v.options[:fact_type] == :external }
-        @external_facts = Facter::Utils.deep_copy(external_facts.keys)
+        @external_facts = @facts.select { |_k, v| v.options[:fact_type] == :external }
       end
 
       def invalidate_custom_facts
@@ -148,11 +147,7 @@ module LegacyFacter
 
       def value(name)
         fact = fact(name)
-        fact_value = fact&.value
-        return Facter.core_value(name) if fact_value.nil?
-
-        core_value = Facter.core_value(name) if fact.used_resolution_weight <= 0
-        core_value.nil? ? fact_value : core_value
+        fact&.value
       end
 
       private

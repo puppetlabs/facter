@@ -26,7 +26,8 @@ module Facter
         matched_facts = []
         @log.debug "User query is: #{query_list}"
         @query_list = query_list
-        query_list = loaded_fact.map(&:name) unless query_list.any?
+
+        return no_user_query(loaded_fact) unless query_list.any?
 
         query_list.each do |query|
           @log.debug "Query is #{query}"
@@ -35,6 +36,14 @@ module Facter
         end
 
         matched_facts.flatten(1)
+      end
+
+      def no_user_query(loaded_facts)
+        searched_facts = []
+        loaded_facts.each do |loaded_fact|
+          searched_facts << SearchedFact.new(loaded_fact.name, loaded_fact.klass, [], '', loaded_fact.type)
+        end
+        searched_facts
       end
 
       def search_for_facts(query, loaded_fact_hash)
@@ -90,7 +99,10 @@ module Facter
         fact_name = loaded_fact.name.to_s
         klass_name = loaded_fact.klass
         type = loaded_fact.type
-        SearchedFact.new(fact_name, klass_name, filter_tokens, user_query, type)
+        sf = SearchedFact.new(fact_name, klass_name, filter_tokens, user_query, type)
+        sf.file = loaded_fact.file
+
+        sf
       end
 
       def construct_filter_tokens(query_tokens, query_token_range)

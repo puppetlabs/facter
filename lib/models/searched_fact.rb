@@ -3,6 +3,7 @@
 module Facter
   class SearchedFact
     attr_reader :name, :fact_class, :filter_tokens, :user_query, :type
+    attr_accessor :file
 
     def initialize(fact_name, fact_class, filter_tokens, user_query, type)
       @name = fact_name

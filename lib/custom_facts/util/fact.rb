@@ -123,8 +123,10 @@ module Facter
           announce_when_no_suitable_resolution(suitable_resolutions)
           announce_when_no_value_found(@value)
 
-          @value
+          @value = resolve_value
         end
+
+        @value
       end
 
       # @api private
@@ -137,6 +139,13 @@ module Facter
       end
 
       private
+
+      def resolve_value
+        return Facter.core_value(name) if @value.nil?
+
+        core_value = Facter.core_value(name) if @used_resolution_weight <= 0
+        core_value.nil? ? @value : core_value
+      end
 
       # Are we in the midst of a search?
       def searching?

@@ -80,13 +80,18 @@ describe Facter::Core::Execution::Base do
 
   describe '#execute' do
     it 'switches LANG and LC_ALL to C when executing the command' do
-      expect(executor).to receive(:with_env).with('LC_ALL' => 'C', 'LANG' => 'C')
-      executor.execute('foo')
+      allow(ENV).to receive(:[]=)
+      allow(Open3).to receive(:capture3).with('foo').and_return('')
+      expect(ENV).to receive(:[]=).with('LC_ALL', 'C')
+      executor.execute('foo', logger: Facter::Log.new('class'))
     end
 
     it 'expands the command before running it' do
-      allow(Open3).to receive(:capture3).with('/bin/foo').and_return('')
-      expect(executor).to receive(:expand_command).with('foo').and_return '/bin/foo'
+      allow(File).to receive(:executable?).and_return(false)
+      allow(FileTest).to receive(:file?).and_return(false)
+      allow(File).to receive(:executable?).with('/sbin/foo').and_return(true)
+      allow(FileTest).to receive(:file?).with('/sbin/foo').and_return(true)
+      expect(Open3).to receive(:capture3).with('/sbin/foo').and_return('')
       executor.execute('foo')
     end
 
@@ -148,13 +153,16 @@ describe Facter::Core::Execution::Base do
     end
 
     describe 'and the command is not present' do
+      before do
+        allow(File).to receive(:executable?).and_return(false)
+        allow(FileTest).to receive(:file?).and_return(false)
+      end
+
       it 'raises an error when the :on_fail behavior is :raise' do
-        allow(executor).to receive(:expand_command).with('foo').and_return(nil)
         expect { executor.execute('foo') }.to raise_error(Facter::Core::Execution::ExecutionFailure)
       end
 
       it 'returns the given value when :on_fail is set to a value' do
-        allow(executor).to receive(:expand_command).with('foo').and_return(nil)
         expect(executor.execute('foo', on_fail: nil)).to be_nil
       end
     end
@@ -162,7 +170,10 @@ describe Facter::Core::Execution::Base do
     describe 'when command execution fails' do
       before do
         allow(Open3).to receive(:capture3).with('/bin/foo').and_raise('kaboom!')
-        allow(executor).to receive(:expand_command).with('foo').and_return('/bin/foo')
+        allow(File).to receive(:executable?).and_return(false)
+        allow(FileTest).to receive(:file?).and_return(false)
+        allow(File).to receive(:executable?).with('/bin/foo').and_return(true)
+        allow(FileTest).to receive(:file?).with('/bin/foo').and_return(true)
       end
 
       it 'raises an error when the :on_fail behavior is :raise' do
@@ -174,18 +185,25 @@ describe Facter::Core::Execution::Base do
       end
     end
 
-    it 'returns the output of the command' do
-      allow(Open3).to receive(:capture3).with('/bin/foo').and_return('hi')
-      allow(executor).to receive(:expand_command).with('foo').and_return '/bin/foo'
+    context 'when expand command succeds' do
+      before do
+        allow(File).to receive(:executable?).and_return(false)
+        allow(FileTest).to receive(:file?).and_return(false)
+        allow(File).to receive(:executable?).with('/sbin/foo').and_return(true)
+        allow(FileTest).to receive(:file?).with('/sbin/foo').and_return(true)
+      end
 
-      expect(executor.execute('foo')).to eq 'hi'
-    end
+      it 'returns the output of the command' do
+        allow(Open3).to receive(:capture3).with('/sbin/foo').and_return('hi')
 
-    it 'strips off trailing newlines' do
-      allow(Open3).to receive(:capture3).with('/bin/foo').and_return "hi\n"
-      allow(executor).to receive(:expand_command).with('foo').and_return '/bin/foo'
+        expect(executor.execute('foo')).to eq 'hi'
+      end
 
-      expect(executor.execute('foo')).to eq 'hi'
+      it 'strips off trailing newlines' do
+        allow(Open3).to receive(:capture3).with('/sbin/foo').and_return "hi\n"
+
+        expect(executor.execute('foo')).to eq 'hi'
+      end
     end
   end
 end

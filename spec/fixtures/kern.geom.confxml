@@ -1,0 +1,337 @@
+<mesh>
+  <class id="0xffffffff81b732b0">
+    <name>FD</name>
+  </class>
+  <class id="0xffffffff81aff518">
+    <name>RAID</name>
+  </class>
+  <class id="0xffffffff81afc368">
+    <name>DEV</name>
+    <geom id="0xfffff800170b3e00">
+      <class ref="0xffffffff81afc368"/>
+      <name>ada0p2.eli</name>
+      <rank>4</rank>
+	<consumer id="0xfffff80018274780">
+	  <geom ref="0xfffff800170b3e00"/>
+	  <provider ref="0xfffff800170b3a00"/>
+	  <mode>r0w0e0</mode>
+	</consumer>
+    </geom>
+    <geom id="0xfffff80003953700">
+      <class ref="0xffffffff81afc368"/>
+      <name>ada0p3.eli</name>
+      <rank>4</rank>
+	<consumer id="0xfffff800038cd700">
+	  <geom ref="0xfffff80003953700"/>
+	  <provider ref="0xfffff80003948700"/>
+	  <mode>r0w0e0</mode>
+	</consumer>
+    </geom>
+    <geom id="0xfffff80007e01e00">
+      <class ref="0xffffffff81afc368"/>
+      <name>gpt/gptboot0</name>
+      <rank>4</rank>
+	<consumer id="0xfffff80003a1cb00">
+	  <geom ref="0xfffff80007e01e00"/>
+	  <provider ref="0xfffff80007e01b00"/>
+	  <mode>r0w0e0</mode>
+	</consumer>
+    </geom>
+    <geom id="0xfffff80003a11100">
+      <class ref="0xffffffff81afc368"/>
+      <name>ada0p3</name>
+      <rank>3</rank>
+	<consumer id="0xfffff8000398b700">
+	  <geom ref="0xfffff80003a11100"/>
+	  <provider ref="0xfffff80003a11000"/>
+	  <mode>r0w0e0</mode>
+	</consumer>
+    </geom>
+    <geom id="0xfffff80003a11300">
+      <class ref="0xffffffff81afc368"/>
+      <name>ada0p2</name>
+      <rank>3</rank>
+	<consumer id="0xfffff8000398b800">
+	  <geom ref="0xfffff80003a11300"/>
+	  <provider ref="0xfffff80003a11200"/>
+	  <mode>r0w0e0</mode>
+	</consumer>
+    </geom>
+    <geom id="0xfffff80003a11900">
+      <class ref="0xffffffff81afc368"/>
+      <name>ada0p1</name>
+      <rank>3</rank>
+	<consumer id="0xfffff8000398b880">
+	  <geom ref="0xfffff80003a11900"/>
+	  <provider ref="0xfffff80003a11400"/>
+	  <mode>r0w0e0</mode>
+	</consumer>
+    </geom>
+    <geom id="0xfffff800038d6e00">
+      <class ref="0xffffffff81afc368"/>
+      <name>ada0</name>
+      <rank>2</rank>
+	<consumer id="0xfffff8000398ba80">
+	  <geom ref="0xfffff800038d6e00"/>
+	  <provider ref="0xfffff80003a11b00"/>
+	  <mode>r0w0e0</mode>
+	</consumer>
+    </geom>
+  </class>
+  <class id="0xffffffff82a08f70">
+    <name>ELI</name>
+    <geom id="0xfffff800170e6c00">
+      <class ref="0xffffffff82a08f70"/>
+      <name>ada0p2.eli</name>
+      <rank>3</rank>
+      <config>
+	<KeysTotal>1</KeysTotal>
+	<KeysAllocated>1</KeysAllocated>
+	<Flags>ONETIME, W-DETACH, W-OPEN</Flags>
+	<Version>7</Version>
+	<Crypto>hardware</Crypto>
+	<KeyLength>128</KeyLength>
+	<EncryptionAlgorithm>AES-XTS</EncryptionAlgorithm>
+	<State>ACTIVE</State>
+      </config>
+	<consumer id="0xfffff80018274600">
+	  <geom ref="0xfffff800170e6c00"/>
+	  <provider ref="0xfffff80003a11200"/>
+	  <mode>r1w1e1</mode>
+	  <config>
+	  </config>
+	</consumer>
+	<provider id="0xfffff800170b3a00">
+	  <geom ref="0xfffff800170e6c00"/>
+	  <mode>r1w1e0</mode>
+	  <name>ada0p2.eli</name>
+	  <mediasize>2147483648</mediasize>
+	  <sectorsize>4096</sectorsize>
+	  <stripesize>0</stripesize>
+	  <stripeoffset>0</stripeoffset>
+	  <config>
+	  </config>
+	</provider>
+    </geom>
+    <geom id="0xfffff80003a11a00">
+      <class ref="0xffffffff82a08f70"/>
+      <name>ada0p3.eli</name>
+      <rank>3</rank>
+      <config>
+	<KeysTotal>119</KeysTotal>
+	<KeysAllocated>119</KeysAllocated>
+	<Flags>BOOT, GELIBOOT</Flags>
+	<UsedKey>0</UsedKey>
+	<Version>7</Version>
+	<Crypto>hardware</Crypto>
+	<KeyLength>256</KeyLength>
+	<EncryptionAlgorithm>AES-XTS</EncryptionAlgorithm>
+	<State>ACTIVE</State>
+      </config>
+	<consumer id="0xfffff8000398b600">
+	  <geom ref="0xfffff80003a11a00"/>
+	  <provider ref="0xfffff80003a11000"/>
+	  <mode>r1w1e1</mode>
+	  <config>
+	  </config>
+	</consumer>
+	<provider id="0xfffff80003948700">
+	  <geom ref="0xfffff80003a11a00"/>
+	  <mode>r1w1e1</mode>
+	  <name>ada0p3.eli</name>
+	  <mediasize>509961302016</mediasize>
+	  <sectorsize>4096</sectorsize>
+	  <stripesize>0</stripesize>
+	  <stripeoffset>0</stripeoffset>
+	  <config>
+	  </config>
+	</provider>
+    </geom>
+  </class>
+  <class id="0xffffffff81a7dc30">
+    <name>MD</name>
+  </class>
+  <class id="0xffffffff82802b28">
+    <name>ZFS::VDEV</name>
+    <geom id="0xfffff80003ba5a00">
+      <class ref="0xffffffff82802b28"/>
+      <name>zfs::vdev</name>
+      <rank>4</rank>
+	<consumer id="0xfffff8000500ee00">
+	  <geom ref="0xfffff80003ba5a00"/>
+	  <provider ref="0xfffff80003948700"/>
+	  <mode>r1w1e1</mode>
+	</consumer>
+    </geom>
+  </class>
+  <class id="0xffffffff82802650">
+    <name>ZFS::ZVOL</name>
+  </class>
+  <class id="0xffffffff81b613d8">
+    <name>SWAP</name>
+    <geom id="0xfffff80018b1d400">
+      <class ref="0xffffffff81b613d8"/>
+      <name>swap</name>
+      <rank>4</rank>
+	<consumer id="0xfffff80018275500">
+	  <geom ref="0xfffff80018b1d400"/>
+	  <provider ref="0xfffff800170b3a00"/>
+	  <mode>r1w1e0</mode>
+	</consumer>
+    </geom>
+  </class>
+  <class id="0xffffffff81afe340">
+    <name>PART</name>
+    <geom id="0xfffff80003a11800">
+      <class ref="0xffffffff81afe340"/>
+      <name>ada0</name>
+      <rank>2</rank>
+      <config>
+	<scheme>GPT</scheme>
+	<entries>128</entries>
+	<first>40</first>
+	<last>1000215175</last>
+	<fwsectors>63</fwsectors>
+	<fwheads>16</fwheads>
+	<state>OK</state>
+	<modified>false</modified>
+      </config>
+	<consumer id="0xfffff8000398ba00">
+	  <geom ref="0xfffff80003a11800"/>
+	  <provider ref="0xfffff80003a11b00"/>
+	  <mode>r2w2e4</mode>
+	  <config>
+	  </config>
+	</consumer>
+	<provider id="0xfffff80003a11000">
+	  <geom ref="0xfffff80003a11800"/>
+	  <mode>r1w1e1</mode>
+	  <name>ada0p3</name>
+	  <mediasize>509961306112</mediasize>
+	  <sectorsize>512</sectorsize>
+	  <stripesize>4096</stripesize>
+	  <stripeoffset>0</stripeoffset>
+	  <config>
+	    <start>4196352</start>
+	    <end>1000214527</end>
+	    <index>3</index>
+	    <type>freebsd-zfs</type>
+	    <offset>2148532224</offset>
+	    <length>509961306112</length>
+	    <label>zfs0</label>
+	    <rawtype>516e7cba-6ecf-11d6-8ff8-00022d09712b</rawtype>
+	    <rawuuid>504f1547-c135-11e8-bd11-7d7cd061b26f</rawuuid>
+	    <efimedia>HD(3,GPT,504f1547-c135-11e8-bd11-7d7cd061b26f,0x400800,0x3b5e0800)</efimedia>
+	  </config>
+	</provider>
+	<provider id="0xfffff80003a11200">
+	  <geom ref="0xfffff80003a11800"/>
+	  <mode>r1w1e1</mode>
+	  <name>ada0p2</name>
+	  <mediasize>2147483648</mediasize>
+	  <sectorsize>512</sectorsize>
+	  <stripesize>4096</stripesize>
+	  <stripeoffset>0</stripeoffset>
+	  <config>
+	    <start>2048</start>
+	    <end>4196351</end>
+	    <index>2</index>
+	    <type>freebsd-swap</type>
+	    <offset>1048576</offset>
+	    <length>2147483648</length>
+	    <label>swap0</label>
+	    <rawtype>516e7cb5-6ecf-11d6-8ff8-00022d09712b</rawtype>
+	    <rawuuid>5048d40d-c135-11e8-bd11-7d7cd061b26f</rawuuid>
+	    <efimedia>HD(2,GPT,5048d40d-c135-11e8-bd11-7d7cd061b26f,0x800,0x400000)</efimedia>
+	  </config>
+	</provider>
+	<provider id="0xfffff80003a11400">
+	  <geom ref="0xfffff80003a11800"/>
+	  <mode>r0w0e0</mode>
+	  <name>ada0p1</name>
+	  <mediasize>524288</mediasize>
+	  <sectorsize>512</sectorsize>
+	  <stripesize>4096</stripesize>
+	  <stripeoffset>0</stripeoffset>
+	  <config>
+	    <start>40</start>
+	    <end>1063</end>
+	    <index>1</index>
+	    <type>freebsd-boot</type>
+	    <offset>20480</offset>
+	    <length>524288</length>
+	    <label>gptboot0</label>
+	    <rawtype>83bd6b9d-7f41-11dc-be0b-001560b84f0f</rawtype>
+	    <rawuuid>503d3458-c135-11e8-bd11-7d7cd061b26f</rawuuid>
+	    <efimedia>HD(1,GPT,503d3458-c135-11e8-bd11-7d7cd061b26f,0x28,0x400)</efimedia>
+	  </config>
+	</provider>
+    </geom>
+  </class>
+  <class id="0xffffffff81afd290">
+    <name>LABEL</name>
+    <geom id="0xfffff80007e01c00">
+      <class ref="0xffffffff81afd290"/>
+      <name>ada0p1</name>
+      <rank>3</rank>
+      <config>
+      </config>
+	<consumer id="0xfffff8000398b780">
+	  <geom ref="0xfffff80007e01c00"/>
+	  <provider ref="0xfffff80003a11400"/>
+	  <mode>r0w0e0</mode>
+	  <config>
+	  </config>
+	</consumer>
+	<provider id="0xfffff80007e01b00">
+	  <geom ref="0xfffff80007e01c00"/>
+	  <mode>r0w0e0</mode>
+	  <name>gpt/gptboot0</name>
+	  <mediasize>524288</mediasize>
+	  <sectorsize>512</sectorsize>
+	  <stripesize>4096</stripesize>
+	  <stripeoffset>0</stripeoffset>
+	  <config>
+	    <index>0</index>
+	    <length>524288</length>
+	    <seclength>1024</seclength>
+	    <offset>0</offset>
+	    <secoffset>0</secoffset>
+	  </config>
+	</provider>
+    </geom>
+  </class>
+  <class id="0xffffffff81afd0c0">
+    <name>VFS</name>
+  </class>
+  <class id="0xffffffff81afc868">
+    <name>Flashmap</name>
+  </class>
+  <class id="0xffffffff81afc678">
+    <name>DISK</name>
+    <geom id="0xfffff80003a11c00">
+      <class ref="0xffffffff81afc678"/>
+      <name>ada0</name>
+      <rank>1</rank>
+      <config>
+      </config>
+	<provider id="0xfffff80003a11b00">
+	  <geom ref="0xfffff80003a11c00"/>
+	  <mode>r2w2e4</mode>
+	  <name>ada0</name>
+	  <mediasize>512110190592</mediasize>
+	  <sectorsize>512</sectorsize>
+	  <stripesize>4096</stripesize>
+	  <stripeoffset>0</stripeoffset>
+	  <config>
+	    <fwheads>16</fwheads>
+	    <fwsectors>63</fwsectors>
+	    <rotationrate>0</rotationrate>
+	    <ident>S250NXAG959927J</ident>
+	    <lunid>50025388400c2138</lunid>
+	    <descr>Samsung SSD 850 PRO 512GB</descr>
+	  </config>
+	</provider>
+    </geom>
+  </class>
+</mesh>

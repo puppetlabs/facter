@@ -29,6 +29,7 @@ Metrics/MethodLength:
     - 'lib/custom_facts/core/execution/windows.rb'
     - 'lib/custom_facts/core/execution/base.rb'
     - 'lib/framework/detector/os_detector.rb'
+    - 'lib/resolvers/bsd/ffi/ffi_helper.rb'
 
 Metrics/ModuleLength:
   Max: 100
@@ -56,6 +57,7 @@ Metrics/AbcSize:
     - 'lib/custom_facts/core/execution/windows.rb'
     - 'lib/custom_facts/core/execution/base.rb'
     - 'lib/custom_facts/core/resolvable.rb'
+    - 'lib/resolvers/bsd/ffi/ffi_helper.rb'
 
 Metrics/PerceivedComplexity:
   Exclude:
@@ -80,6 +82,7 @@ Metrics/ClassLength:
     - 'lib/framework/core/options/option_store.rb'
     - 'lib/framework/cli/cli.rb'
     - 'lib/resolvers/networking_linux_resolver.rb'
+    - 'lib/framework/core/cache_manager.rb'
 
 Naming/AccessorMethodName:
   Exclude:
