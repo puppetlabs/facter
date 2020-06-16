@@ -11,20 +11,20 @@ Facter.add(:#{fact[:name]}) do
 end
 CUSTOM_FACT
 
-    fact_file_path = File.join(custom_fact_dir, fact_file_name) 
+    fact_file_path = File.join(custom_fact_dir, fact_file_name)
     create_remote_file(host, fact_file_path, fact_file_contents)
   end
 
   def clear_custom_facts_on(host, custom_fact_dir)
     step "Clean-up the previous test's custom facts" do
-      on(agent, "rm -f #{custom_fact_dir}/*")
+      agent.rm_rf("#{custom_fact_dir}/*")
     end
   end
 
   agents.each do |agent|
     custom_fact_dir = agent.tmpdir('facter')
     teardown do
-      on(agent, "rm -rf '#{custom_fact_dir}'")
+      agent.rm_rf(custom_fact_dir)
     end
 
     fact_name = 'timezone'
@@ -41,7 +41,7 @@ CUSTOM_FACT
         value: "'#{custom_fact_value}'"
       )
 
-      on(agent, facter("--custom-dir=#{custom_fact_dir} timezone")) do |result|
+      on(agent, facter("--custom-dir \"#{custom_fact_dir}\" timezone")) do |result|
         assert_match(/#{custom_fact_value}/, result.stdout.chomp, "Facter does not use the custom fact's value when its weight is > 0")
       end
     end
@@ -58,7 +58,7 @@ CUSTOM_FACT
         )
       end
 
-      on(agent, facter("--custom-dir=#{custom_fact_dir} timezone")) do |result|
+      on(agent, facter("--custom-dir \"#{custom_fact_dir}\" timezone")) do |result|
         assert_match(/#{builtin_value}/, result.stdout.chomp, "Facter does not use the builtin fact's value when all conflicting custom facts fail to resolve")
       end
     end
@@ -77,7 +77,7 @@ CUSTOM_FACT
           )
         end
 
-        on(agent, facter("--custom-dir=#{custom_fact_dir} timezone")) do |result|
+        on(agent, facter("--custom-dir \"#{custom_fact_dir}\" timezone")) do |result|
           assert_match(/#{builtin_value}/, result.stdout.chomp, "Facter does not give precedence to the builtin fact when all custom facts have zero weight")
         end
       end
@@ -97,7 +97,7 @@ CUSTOM_FACT
           )
         end
 
-        on(agent, facter("--custom-dir=#{custom_fact_dir} timezone")) do |result|
+        on(agent, facter("--custom-dir \"#{custom_fact_dir}\" timezone")) do |result|
           assert_match(/#{builtin_value}/, result.stdout.chomp, "Facter does not give precedence to the builtin fact when only some custom facts have zero weight")
         end
       end

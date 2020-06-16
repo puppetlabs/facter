@@ -12,11 +12,11 @@ test_name "C99971: the `--no-block` command line flag prevents facts from being 
     facter_conf_default_path = File.join(facter_conf_default_dir, "facter.conf")
 
     teardown do
-      on(agent, "rm -rf '#{facter_conf_default_dir}'", :acceptable_exit_codes => [0, 1])
+      agent.rm_rf(facter_conf_default_dir)
     end
 
     # create the directories
-    on(agent, "mkdir -p '#{facter_conf_default_dir}'")
+    agent.mkdir_p(facter_conf_default_dir)
 
     step "Agent #{agent}: create config file" do
       create_remote_file(agent, facter_conf_default_path, <<-FILE)

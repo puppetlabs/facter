@@ -17,14 +17,16 @@ test_name "C99998: external fact commandline option --external-dir can be specif
       external_fact_2 = File.join(external_dir_2, "external_fact#{ext}")
       create_remote_file(agent, external_fact_1, external_fact_content(agent['platform'], 'external_fact_1', 'external_value_1'))
       create_remote_file(agent, external_fact_2, external_fact_content(agent['platform'], 'external_fact_2', 'external_value_2'))
-      on(agent, "chmod +x '#{external_fact_1}' '#{external_fact_2}'")
+      agent.chmod('+x', external_fact_1)
+      agent.chmod('+x', external_fact_2)
 
       teardown do
-        on(agent, "rm -rf '#{external_dir_1}' '#{external_dir_2}'")
+        agent.rm_rf(external_dir_1)
+        agent.rm_rf(external_dir_2)
       end
 
       step "Agent #{agent}: resolve a fact from each specified --external_dir option" do
-        on(agent, facter("--external-dir #{external_dir_1} --external-dir #{external_dir_2} --json")) do |facter_output|
+        on(agent, facter("--external-dir \"#{external_dir_1}\" --external-dir \"#{external_dir_2}\" --json")) do |facter_output|
           results = JSON.parse(facter_output.stdout)
           assert_equal("external_value_1", results['external_fact_1'], "Incorrect external fact value for external_fact_1")
           assert_equal("external_value_2", results['external_fact_2'], "Incorrect external fact value for external_fact_2")

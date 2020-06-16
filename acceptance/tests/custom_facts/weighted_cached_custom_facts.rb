@@ -54,16 +54,16 @@ test_name 'ttls configured weighted custom facts files creates cache file and re
     config_file = File.join(config_dir, 'facter.conf')
 
     step "Agent #{agent}: create config file" do
-      on(agent, "mkdir -p '#{config_dir}'")
+      agent.mkdir_p(config_dir)
       create_remote_file(agent, config_file, config_data)
       fact_file = File.join(fact_dir, custom_fact_file)
       create_remote_file(agent, fact_file, fact_content)
     end
 
     teardown do
-      on(agent, "rm -rf '#{fact_dir}'")
-      on(agent, "rm -rf #{cache_folder}/*")
-      on(agent, "rm -rf #{config_dir}/facter.conf")
+      agent.rm_rf(fact_dir)
+      agent.rm_rf("#{cache_folder}/*")
+      agent.rm_rf("#{config_dir}/facter.conf")
     end
 
     step "should log that it creates cache file and it caches custom facts found in facter.conf with the highest weight" do
@@ -79,9 +79,8 @@ test_name 'ttls configured weighted custom facts files creates cache file and re
     step "should create a cached-custom-facts cache file that containt fact information from the highest weight fact" do
       result = agent.file_exist?("#{cache_folder}/cached-custom-facts")
       assert_equal(true, result)
-      on(agent, "cat #{cache_folder}/cached-custom-facts", acceptable_exit_codes: [0]) do |cat_output|
-        assert_match(cached_file_content_highest_weight.chomp, cat_output.stdout, 'Expected cached custom fact file to contain fact information from the highest weight fact')
-      end
+      cat_output = agent.cat("#{cache_folder}/cached-custom-facts")
+      assert_match(cached_file_content_highest_weight.chomp, cat_output.strip, 'Expected cached custom fact file to contain fact information from the highest weight fact')
     end
 
     step 'should read from the cached file for a custom fact that has been cached' do

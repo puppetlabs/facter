@@ -72,16 +72,17 @@ test_name "C64580: Non-root default user external facts directory is searched fo
     user_puppetlabs_facts_path = "#{user_puppetlabs_facts_dir}/test.yaml"
 
     step "Agent #{agent}: figure out facter program location"
-    facter_path = on(agent, "which facter").stdout.chomp
+    facter_path = agent.which('facter').chomp
 
     teardown do
-      on(agent, "rm -rf '#{user_base_facts_dir}' '#{user_base_puppetlabs_dir}'")
+      agent.rm_rf(user_base_facts_dir)
+      agent.rm_rf(user_base_puppetlabs_dir)
       on(agent, puppet("resource user #{non_root_user} ensure=absent managehome=true"))
     end
 
     step "Agent #{agent}: create facts directory (#{user_facts_dir})" do
-      on(agent, "rm -rf '#{user_facts_dir}'")
-      on(agent, "mkdir -p '#{user_facts_dir}'")
+      agent.rm_rf(user_facts_dir)
+      agent.mkdir_p(user_facts_dir)
     end
 
     step "Agent #{agent}: create and resolve a custom fact in #{user_facts_dir}" do
@@ -89,8 +90,8 @@ test_name "C64580: Non-root default user external facts directory is searched fo
     end
 
     step "Agent #{agent}: chown and chmod the facts to the user #{non_root_user}" do
-      on(agent, "chown -R #{non_root_user} '#{user_base_facts_dir}'")
-      on(agent, "chmod -R a+rx '#{user_base_facts_dir}'")
+      agent.chown(non_root_user, user_base_facts_dir, true)
+      agent.chmod('a+rx', user_base_facts_dir, true)
     end
 
     step "Agent #{agent}: run facter as #{non_root_user} and make sure we get the fact" do
@@ -100,12 +101,12 @@ test_name "C64580: Non-root default user external facts directory is searched fo
     end
 
     step "Agent #{agent}: remove #{user_facts_path}" do
-      on(agent, "rm -rf '#{user_facts_path}'")
+      agent.rm_rf(user_facts_path)
     end
 
     step "Agent #{agent}: create facts directory (#{user_puppetlabs_facts_dir})" do
-      on(agent, "rm -rf '#{user_puppetlabs_facts_dir}'")
-      on(agent, "mkdir -p '#{user_puppetlabs_facts_dir}'")
+      agent.rm_rf(user_puppetlabs_facts_dir)
+      agent.mkdir_p(user_puppetlabs_facts_dir)
     end
 
     step "Agent #{agent}: create and resolve a custom fact in #{user_puppetlabs_facts_dir}" do
@@ -113,8 +114,8 @@ test_name "C64580: Non-root default user external facts directory is searched fo
     end
 
     step "Agent #{agent}: chown and chmod the facts to the user #{non_root_user}" do
-      on(agent, "chown -R #{non_root_user} '#{user_base_puppetlabs_dir}'")
-      on(agent, "chmod -R a+rx '#{user_base_puppetlabs_dir}'")
+      agent.chown(non_root_user, user_base_puppetlabs_dir, true)
+      agent.chmod('a+rx', user_base_puppetlabs_dir, true)
     end
 
     step "Agent #{agent}: run facter as #{non_root_user} and make sure we get the fact" do
@@ -129,8 +130,11 @@ test_name "C64580: Non-root default user external facts directory is searched fo
     end
 
     step "Agent #{agent}: chown and chmod the facts to the user #{non_root_user}" do
-      on(agent, "chown -R #{non_root_user} '#{user_base_facts_dir}' '#{user_base_puppetlabs_dir}'")
-      on(agent, "chmod -R a+rx '#{user_base_facts_dir}' '#{user_base_puppetlabs_dir}'")
+      agent.chown(non_root_user, user_base_facts_dir, true)
+      agent.chown(non_root_user, user_base_puppetlabs_dir, true)
+      agent.chmod('a+rx', user_base_facts_dir, true)
+      agent.chmod('a+rx', user_base_puppetlabs_dir, true)
+
     end
 
     step "Agent #{agent}: run facter as #{non_root_user} and .facter will take precedence over .puppetlabs" do
