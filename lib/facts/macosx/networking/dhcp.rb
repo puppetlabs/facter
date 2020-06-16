@@ -7,7 +7,7 @@ module Facts
         FACT_NAME = 'networking.dhcp'
 
         def call_the_resolver
-          fact_value = Facter::Resolvers::Macosx::Ipaddress.resolve(:dhcp)
+          fact_value = Facter::Resolvers::Macosx::Networking.resolve(:dhcp)
 
           Facter::ResolvedFact.new(FACT_NAME, fact_value)
         end

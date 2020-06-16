@@ -3,17 +3,16 @@
 module Facts
   module Macosx
     module Networking
-      class Ip
-        FACT_NAME = 'networking.ip'
-        ALIASES = 'ipaddress'
+      class Mtu
+        FACT_NAME = 'networking.mtu'
 
         def call_the_resolver
           interfaces = Facter::Resolvers::Macosx::Networking.resolve(:interfaces)
           primary = Facter::Resolvers::Macosx::Networking.resolve(:primary_interface)
 
-          fact_value = interfaces.dig(primary, :bindings, 0, :address) if interfaces
+          fact_value = interfaces.dig(primary, :mtu) if interfaces
 
-          [Facter::ResolvedFact.new(FACT_NAME, fact_value), Facter::ResolvedFact.new(ALIASES, fact_value, :legacy)]
+          Facter::ResolvedFact.new(FACT_NAME, fact_value)
         end
       end
     end

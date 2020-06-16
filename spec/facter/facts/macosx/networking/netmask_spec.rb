@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-describe Facts::Macosx::Networking::Ip do
+describe Facts::Macosx::Networking::Netmask do
   describe '#call_the_resolver' do
-    subject(:fact) { Facts::Macosx::Networking::Ip.new }
+    subject(:fact) { Facts::Macosx::Networking::Netmask.new }
 
-    let(:value) { '10.0.0.1' }
+    let(:value) { '255.255.255.0' }
     let(:primary_interface) { 'en0' }
     let(:interfaces) do
       { 'en0' => { mac: '64:5a:ed:ea:5c:81:',
@@ -27,10 +27,10 @@ describe Facts::Macosx::Networking::Ip do
       expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:interfaces)
     end
 
-    it 'returns the ip fact' do
+    it 'returns the netmask fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
-        contain_exactly(an_object_having_attributes(name: 'networking.ip', value: value),
-                        an_object_having_attributes(name: 'ipaddress', value: value, type: :legacy))
+        contain_exactly(an_object_having_attributes(name: 'networking.netmask', value: value),
+                        an_object_having_attributes(name: 'netmask', value: value, type: :legacy))
     end
 
     context 'when primary interface can not be retrieved' do
@@ -39,8 +39,8 @@ describe Facts::Macosx::Networking::Ip do
 
       it 'returns nil' do
         expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
-          contain_exactly(an_object_having_attributes(name: 'networking.ip', value: value),
-                          an_object_having_attributes(name: 'ipaddress', value: value, type: :legacy))
+          contain_exactly(an_object_having_attributes(name: 'networking.netmask', value: value),
+                          an_object_having_attributes(name: 'netmask', value: value, type: :legacy))
       end
     end
 
