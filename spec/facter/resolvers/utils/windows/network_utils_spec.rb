@@ -88,32 +88,6 @@ describe NetworkUtils do
     end
   end
 
-  describe '#build_binding' do
-    context 'when input is ipv4 address' do
-      let(:netmask) { IPAddr.new('255.255.240.0/255.255.240.0').to_s }
-      let(:network) { IPAddr.new('10.16.112.0/255.255.240.0').to_s }
-      let(:addr) { '10.16.121.248' }
-
-      it 'returns ipv4 binding' do
-        expect(NetworkUtils.build_binding(addr, 20)).to eql(address: addr, netmask: netmask, network: network)
-      end
-    end
-
-    context 'when input is ipv6 address' do
-      let(:network) do
-        IPAddr.new('fe80:0000:0000:0000:0000:0000:0000:0000/ffff:ffff:ffff:ffff:0000:0000:0000:0000').to_s
-      end
-      let(:netmask) do
-        IPAddr.new('ffff:ffff:ffff:ffff:0000:0000:0000:0000/ffff:ffff:ffff:ffff:0000:0000:0000:0000').to_s
-      end
-      let(:addr) { 'fe80::dc20:a2b9:5253:9b46' }
-
-      it 'returns ipv6 binding' do
-        expect(NetworkUtils.build_binding(addr, 64)).to eql(address: addr, netmask: netmask, network: network)
-      end
-    end
-  end
-
   describe '#extract_address' do
     context 'when address is ipv6' do
       let(:addr) { 'fe80::38bf:8f11:6227:9e6b%6' }
@@ -138,40 +112,6 @@ describe NetworkUtils do
 
       it 'returns mac address' do
         expect(NetworkUtils.find_mac_address(adapter)).to eql('00:50:56:9A:F8:6B')
-      end
-    end
-  end
-
-  describe '#get_scope' do
-    context "when address's scope is link" do
-      let(:address) { 'fe80::b13f:903e:5f5:3b52' }
-
-      it 'returns scope6' do
-        expect(NetworkUtils.get_scope(address)).to eql('link')
-      end
-    end
-
-    context "when address's scope is global" do
-      let(:address) { '::ffff:192.0.2.128' }
-
-      it 'returns scope6' do
-        expect(NetworkUtils.get_scope(address)).to eql('global')
-      end
-    end
-
-    context "when address's scope is ipv4 compatible" do
-      let(:address) { '::192.0.2.128' }
-
-      it 'returns scope6' do
-        expect(NetworkUtils.get_scope(address)).to eql('compat,global')
-      end
-    end
-
-    context "when address's scope is site" do
-      let(:address) { 'fec0::' }
-
-      it 'returns scope6' do
-        expect(NetworkUtils.get_scope(address)).to eql('site')
       end
     end
   end

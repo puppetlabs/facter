@@ -56,7 +56,8 @@ module Facter
 
               extract_mtu(properties, values)
               extract_mac(properties, values)
-              extract_ips(properties, values)
+              extract_ip_data(properties, values)
+              extract_scope6(values)
 
               parsed_interfaces_data[interface] = values
             end
@@ -73,7 +74,7 @@ module Facter
             values[:mac] = mac unless mac.nil?
           end
 
-          def extract_ips(properties, values)
+          def extract_ip_data(properties, values)
             ip = extract_values(properties, /inet (\S+)/)
             mask = extract_values(properties, /netmask (\S+)/).map { |val| val.hex.to_s(2).count('1') }
 
@@ -98,6 +99,12 @@ module Facter
               bindings << ::Resolvers::Utils::Networking.build_binding(ip, mask)
             end
             bindings
+          end
+
+          def extract_scope6(values)
+            return if values[:bindings6].nil?
+
+            values[:scope6] = ::Resolvers::Utils::Networking.get_scope(values[:bindings6][0][:address])
           end
         end
       end

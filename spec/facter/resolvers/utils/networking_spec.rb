@@ -9,28 +9,62 @@ describe Resolvers::Utils::Networking do
   let(:mask6_length) { 57 }
 
   describe '#build_binding' do
-    it 'returns an ipv4 address' do
-      expect(networking_helper.build_binding(ipv4, mask4_length)[:address]).to eq(ipv4)
+    context 'when input is ipv4 address' do
+      let(:netmask) { IPAddr.new('255.255.240.0/255.255.240.0').to_s }
+      let(:network) { IPAddr.new('10.16.112.0/255.255.240.0').to_s }
+      let(:addr) { '10.16.121.248' }
+
+      it 'returns ipv4 binding' do
+        expect(networking_helper.build_binding(addr, 20)).to eql(address: addr, netmask: netmask, network: network)
+      end
     end
 
-    it 'returns an ipv4 netmask' do
-      expect(networking_helper.build_binding(ipv4, mask4_length)[:netmask]).to eq('255.192.0.0')
+    context 'when input is ipv6 address' do
+      let(:network) do
+        IPAddr.new('fe80:0000:0000:0000:0000:0000:0000:0000/ffff:ffff:ffff:ffff:0000:0000:0000:0000').to_s
+      end
+      let(:netmask) do
+        IPAddr.new('ffff:ffff:ffff:ffff:0000:0000:0000:0000/ffff:ffff:ffff:ffff:0000:0000:0000:0000').to_s
+      end
+      let(:addr) { 'fe80::dc20:a2b9:5253:9b46' }
+
+      it 'returns ipv6 binding' do
+        expect(networking_helper.build_binding(addr, 64)).to eql(address: addr, netmask: netmask, network: network)
+      end
+    end
+  end
+
+  describe '#get_scope' do
+    context "when address's scope is link" do
+      let(:address) { 'fe80::b13f:903e:5f5:3b52' }
+
+      it 'returns scope6' do
+        expect(networking_helper.get_scope(address)).to eql('link')
+      end
     end
 
-    it 'returns an ipv4 network' do
-      expect(networking_helper.build_binding(ipv4, mask4_length)[:network]).to eq('192.128.0.0')
+    context "when address's scope is global" do
+      let(:address) { '::ffff:192.0.2.128' }
+
+      it 'returns scope6' do
+        expect(networking_helper.get_scope(address)).to eql('global')
+      end
     end
 
-    it 'returns an ipv6 address' do
-      expect(networking_helper.build_binding(ipv6, mask6_length)[:address]).to eq(ipv6)
+    context "when address's scope is ipv4 compatible" do
+      let(:address) { '::192.0.2.128' }
+
+      it 'returns scope6' do
+        expect(networking_helper.get_scope(address)).to eql('compat,global')
+      end
     end
 
-    it 'returns an ipv6 netmask' do
-      expect(networking_helper.build_binding(ipv6, mask6_length)[:netmask]).to eq('ffff:ffff:ffff:ff80::')
-    end
+    context "when address's scope is site" do
+      let(:address) { 'fec0::' }
 
-    it 'returns an ipv6 network' do
-      expect(networking_helper.build_binding(ipv6, mask6_length)[:network]).to eq('fe80::')
+      it 'returns scope6' do
+        expect(networking_helper.get_scope(address)).to eql('site')
+      end
     end
   end
 end

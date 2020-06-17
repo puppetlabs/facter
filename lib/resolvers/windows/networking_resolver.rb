@@ -120,7 +120,7 @@ module Facter
         def find_bindings(sock_addr, unicast, addr)
           return unless [NetworkingFFI::AF_INET, NetworkingFFI::AF_INET6].include?(sock_addr[:sa_family])
 
-          NetworkUtils.build_binding(addr, unicast[:OnLinkPrefixLength])
+          ::Resolvers::Utils::Networking.build_binding(addr, unicast[:OnLinkPrefixLength])
         end
 
         def find_primary_interface(sock_addr, name, addr)
@@ -159,7 +159,7 @@ module Facter
             interface[:ip6] = bind[:address]
             interface[:netmask6] = bind[:netmask]
             interface[:network6] = bind[:network]
-            interface[:scope6] =  NetworkUtils.get_scope(bind[:address])
+            interface[:scope6] =  ::Resolvers::Utils::Networking.get_scope(bind[:address])
           else
             interface[:network] = bind[:network]
             interface[:netmask] = bind[:netmask]
