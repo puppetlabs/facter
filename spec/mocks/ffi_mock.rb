@@ -16,6 +16,8 @@ module FFI
     @error_number = arg
   end
 
+  def self.type_size(arg); end
+
   module Library
     def ffi_convention(arg); end
 
@@ -30,6 +32,10 @@ module FFI
     def getkerninfo(*); end
 
     def getloadavg(*); end
+
+    def sysctl(*); end
+
+    def sysctlbyname(*); end
 
     def WSAAddressToStringW(*); end
 

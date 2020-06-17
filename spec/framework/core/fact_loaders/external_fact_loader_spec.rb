@@ -2,6 +2,7 @@
 
 describe Facter::ExternalFactLoader do
   let(:collection) { double(LegacyFacter::Util::Collection) }
+  let(:external_fact) { Facter::Util::Fact.new('external_fact', options: { fact_type: :external }) }
 
   before do
     allow(LegacyFacter).to receive(:collection).and_return(collection)
@@ -43,7 +44,7 @@ describe Facter::ExternalFactLoader do
   describe '#external_facts' do
     context 'when loads one external fact' do
       before do
-        allow(collection).to receive(:external_facts).and_return(['external_fact'])
+        allow(collection).to receive(:external_facts).and_return({ 'external_fact' => external_fact })
         allow(Facter::Options).to receive(:external_dir?).and_return(true)
         allow(Facter::Options).to receive(:external_dir).and_return(['external_fact_dir'])
       end

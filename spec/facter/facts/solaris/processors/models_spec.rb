@@ -12,7 +12,7 @@ describe Facts::Solaris::Processors::Models do
         receive(:resolve).with(:models).and_return(models)
     end
 
-    it 'calls Facter::Resolvers::Macosx::Processors' do
+    it 'calls Facter::Resolvers::Solaris::Processors' do
       fact.call_the_resolver
       expect(Facter::Resolvers::Solaris::Processors).to have_received(:resolve).with(:models)
     end

@@ -14,6 +14,8 @@ module Win32
       def [](*); end
 
       def keys; end
+
+      def read(*); end
     end
   end
 end

@@ -8,7 +8,7 @@ module LegacyFacter
   module Util
     module Config
       def self.ext_fact_loader
-        @ext_fact_loader || LegacyFacter::Util::DirectoryLoader.default_loader
+        @ext_fact_loader || LegacyFacter::Util::DirectoryLoader.new
       end
 
       def self.ext_fact_loader=(loader)
