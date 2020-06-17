@@ -10,17 +10,6 @@ def install_facter_3_dependencies
   run('bundle install')
 end
 
-def use_custom_beaker
-  message('USE CUSTOM BEAKER')
-  beaker_path, _ = run('bundle info beaker --path', FACTER_3_ACCEPTANCE_PATH)
-  Dir.chdir(beaker_path.split("\n").last) do
-    run('git init')
-    run("git remote add origin https://github.com/Filipovici-Andrei/beaker.git")
-    run('git fetch')
-    run("git reset --hard origin/github_actions")
-  end
-end
-
 def initialize_beaker
   beaker_platform_with_options = platform_with_options(beaker_platform)
 
@@ -35,6 +24,7 @@ def beaker_platform
   {
       'ubuntu-18.04' => 'ubuntu1804-64a',
       'ubuntu-16.04' => 'ubuntu1604-64a',
+      'ubuntu-20.04' => 'ubuntu2004-64a',
       'macos-10.15' => 'osx1015-64a',
       'windows-2016' => 'windows2016-64a',
       'windows-2019' => 'windows2019-64a'
@@ -135,7 +125,6 @@ HOST_PLATFORM = ARGV[0]
 install_bundler
 
 Dir.chdir(FACTER_3_ACCEPTANCE_PATH) { install_facter_3_dependencies }
-use_custom_beaker
 
 Dir.chdir(FACTER_3_ACCEPTANCE_PATH) do
   initialize_beaker
