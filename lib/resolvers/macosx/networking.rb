@@ -30,10 +30,10 @@ module Facter
           def dhcp
             return if @fact_list[:primary_interface].nil?
 
-            result = Facter::Core::Execution.execute("ipconfig getpacket #{@fact_list[:primary_interface]}",
-                                                     logger: log)
+            result = Facter::Core::Execution.execute("ipconfig getoption #{@fact_list[:primary_interface]} " \
+                                                       'server_identifier', logger: log)
 
-            @fact_list[:dhcp] = result.match(/server_identifier \(ip\): (.+)/)&.captures&.first
+            @fact_list[:dhcp] = result.match(/^[\d.a-f:\s]+$/)&.to_s&.strip
           end
 
           def interfaces_data
@@ -64,7 +64,7 @@ module Facter
           end
 
           def extract_mtu(properties, values)
-            mtu = properties.match(/mtu (\d+)/)&.captures&.first.to_i
+            mtu = properties.match(/mtu (\d+)/)&.captures&.first&.to_i
             values[:mtu] = mtu unless mtu.nil?
           end
 

@@ -11,8 +11,8 @@ describe Facter::Resolvers::Macosx::Networking do
       allow(Facter::Core::Execution).to receive(:execute).with('route -n get default', logger: log_spy)
                                                          .and_return(primary)
       allow(Facter::Core::Execution).to receive(:execute).with('ifconfig -a', logger: log_spy).and_return(interfaces)
-      allow(Facter::Core::Execution).to receive(:execute).with('ipconfig getpacket en0', logger: log_spy)
-                                                         .and_return(dhcp)
+      allow(Facter::Core::Execution)
+        .to receive(:execute).with('ipconfig getoption en0 server_identifier', logger: log_spy).and_return(dhcp)
     end
 
     after do
@@ -20,7 +20,7 @@ describe Facter::Resolvers::Macosx::Networking do
     end
 
     let(:interfaces) { load_fixture('ifconfig_mac').read }
-    let(:dhcp) { load_fixture('osx_dhcp').read }
+    let(:dhcp) { '192.168.143.1 ' }
     let(:primary) { load_fixture('osx_route').read }
 
     it 'detects primary interface' do
