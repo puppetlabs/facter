@@ -142,5 +142,14 @@ describe Facts::Macosx::Networking::Interfaces do
 
       expect(result.value['lo0']).to match(expected)
     end
+
+    it 'expands the correct binding' do
+      ipv6 = 'aa51::'
+      interfaces['lo0'][:bindings6].last[:address] = ipv6
+
+      result = fact.call_the_resolver
+
+      expect(result.value['lo0']['ip6']).to match(ipv6)
+    end
   end
 end
