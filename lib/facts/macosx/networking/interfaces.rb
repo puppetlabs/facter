@@ -21,23 +21,20 @@ module Facts
 
         def expand_bindings(interfaces)
           interfaces.each_value do |values|
-            v4_binding(values) if values[:bindings]
-            v6_binding(values) if values[:bindings6]
+            expand_binding(values, values[:bindings]) if values[:bindings]
+            expand_binding(values, values[:bindings6], false) if values[:bindings6]
           end
         end
 
         private
 
-        def v6_binding(values)
-          values[:ip6] = values[:bindings6][0][:address]
-          values[:netmask6] = values[:bindings6][0][:netmask]
-          values[:network6] = values[:bindings6][0][:network]
-        end
+        def expand_binding(values, bindings, ipv4_type = true)
+          binding = ::Resolvers::Utils::Networking.find_valid_binding(bindings)
+          ip_protocol_type = ipv4_type ? '' : '6'
 
-        def v4_binding(values)
-          values[:ip] = values[:bindings][0][:address]
-          values[:netmask] = values[:bindings][0][:netmask]
-          values[:network] = values[:bindings][0][:network]
+          values["ip#{ip_protocol_type}".to_sym] = binding[:address]
+          values["netmask#{ip_protocol_type}".to_sym] = binding[:netmask]
+          values["network#{ip_protocol_type}".to_sym] = binding[:network]
         end
       end
     end

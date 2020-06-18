@@ -25,10 +25,6 @@ class NetworkUtils
       addr.read_wide_string_without_length.split('%').first
     end
 
-    def ignored_ip_address(addr)
-      addr.empty? || addr.start_with?('127.', '169.254.') || addr.start_with?('fe80') || addr.eql?('::1')
-    end
-
     def find_mac_address(adapter)
       adapter[:PhysicalAddress].first(adapter[:PhysicalAddressLength])
                                .map { |e| format('%<mac_address>02x', mac_address: e.to_i) }

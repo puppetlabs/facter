@@ -126,7 +126,7 @@ module Facter
         def find_primary_interface(sock_addr, name, addr)
           if !@fact_list[:primary_interface] &&
              ([NetworkingFFI::AF_INET, NetworkingFFI::AF_INET6].include?(sock_addr[:sa_family]) &&
-                 !NetworkUtils.ignored_ip_address(addr))
+                 !::Resolvers::Utils::Networking.ignored_ip_address(addr))
             @fact_list[:primary_interface] = name
           end
         end
@@ -134,22 +134,15 @@ module Facter
         def set_interfaces_other_facts
           @fact_list[:interfaces].each do |interface_name, value|
             if value[:bindings]
-              binding = find_valid_binding(value[:bindings])
+              binding = ::Resolvers::Utils::Networking.find_valid_binding(value[:bindings])
               populate_interface(binding, value)
             end
             if value[:bindings6]
-              binding = find_valid_binding(value[:bindings6])
+              binding = ::Resolvers::Utils::Networking.find_valid_binding(value[:bindings6])
               populate_interface(binding, value, true)
             end
             set_networking_other_facts(value, interface_name)
           end
-        end
-
-        def find_valid_binding(bindings)
-          bindings.each do |binding|
-            return binding unless NetworkUtils.ignored_ip_address(binding[:address])
-          end
-          bindings.empty? ? nil : bindings.first
         end
 
         def populate_interface(bind, interface, ipv6 = false)

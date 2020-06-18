@@ -50,44 +50,6 @@ describe NetworkUtils do
     end
   end
 
-  describe '#ignored_ip_address' do
-    context 'when input is empty' do
-      it 'returns true' do
-        expect(NetworkUtils.ignored_ip_address('')).to be(true)
-      end
-    end
-
-    context 'when input starts with 127.' do
-      it 'returns true' do
-        expect(NetworkUtils.ignored_ip_address('127.255.0.2')).to be(true)
-      end
-    end
-
-    context 'when input is a valid ipv4 address' do
-      it 'returns false' do
-        expect(NetworkUtils.ignored_ip_address('169.255.0.2')).to be(false)
-      end
-    end
-
-    context 'when input starts with fe80' do
-      it 'returns true' do
-        expect(NetworkUtils.ignored_ip_address('fe80::')).to be(true)
-      end
-    end
-
-    context 'when input equal with ::1' do
-      it 'returns true' do
-        expect(NetworkUtils.ignored_ip_address('::1')).to be(true)
-      end
-    end
-
-    context 'when input is a valid ipv6 address' do
-      it 'returns false' do
-        expect(NetworkUtils.ignored_ip_address('fe70::7d01:99a1:3900:531b')).to be(false)
-      end
-    end
-  end
-
   describe '#extract_address' do
     context 'when address is ipv6' do
       let(:addr) { 'fe80::38bf:8f11:6227:9e6b%6' }

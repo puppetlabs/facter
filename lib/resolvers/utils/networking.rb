@@ -32,6 +32,17 @@ module Resolvers
                     end
           scope6.join
         end
+
+        def find_valid_binding(bindings)
+          bindings.each do |binding|
+            return binding unless ignored_ip_address(binding[:address])
+          end
+          bindings.empty? ? nil : bindings.first
+        end
+
+        def ignored_ip_address(addr)
+          addr.empty? || addr.start_with?('127.', '169.254.') || addr.start_with?('fe80') || addr.eql?('::1')
+        end
       end
     end
   end
