@@ -18,10 +18,12 @@ module Resolvers
         end
 
         def get_scope(ip)
+          require 'socket'
+
           scope6 = []
           addrinfo = Addrinfo.new(['AF_INET6', 0, nil, ip], :INET6)
 
-          scope6 << 'compat,' if addrinfo.ipv6_v4compat?
+          scope6 << 'compat,' if addrinfo.ipv6_v4mapped?
           scope6 << if addrinfo.ipv6_linklocal?
                       'link'
                     elsif addrinfo.ipv6_sitelocal?
