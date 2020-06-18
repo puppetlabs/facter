@@ -4,10 +4,10 @@ name: Acceptance tests
 on:
   push:
     branches:
-      - master
+      - 4.x
   pull_request:
     branches:
-      - master
+      - 4.x
 
 jobs:
   acceptance_tests:
