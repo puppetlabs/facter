@@ -52,15 +52,37 @@ module Facter
         end
 
         def fill_defaults(network_info)
-          network_info.each do |interface_name , bindings|
-            binding.each do |binding_type, binding_info|
-              ::Resolvers::Utils::Networking.find_valid_binding
-              # binding_info.each do |binding|
-              #   binding[:address]
-              # end
-            end
-            puts interface_name.inspect
-            puts bindings.inspect
+          network_info.each do |interface_name , binding_types|
+            puts binding_types.inspect
+            puts binding_types[:bindings].inspect
+            puts binding_types[:bindings6].inspect
+
+            # binding_types[:bindings6]
+            #
+            # binding_types.each do |binding_type, bindings|
+            #   binding = ::Resolvers::Utils::Networking.find_valid_binding(bindings)
+            #
+            #   ip_6 = binding_type == 'bindings6' ? true : false
+            #   populate_interface(binding, binding_types, ip_6)
+            # end
+          end
+        end
+
+        def populate_interface(bind, interface, ipv6 = false)
+          return if !bind || bind.empty?
+
+          puts ipv6
+          puts interface.inspect
+          puts bind.inspect
+          if ipv6
+            interface[:ip6] = bind[:address]
+            interface[:netmask6] = bind[:netmask]
+            interface[:network6] = bind[:network]
+            interface[:scope6] =  ::Resolvers::Utils::Networking.get_scope(bind[:address])
+          else
+            interface[:network] = bind[:network]
+            interface[:netmask] = bind[:netmask]
+            interface[:ip] = bind[:address]
           end
         end
 
@@ -108,13 +130,13 @@ module Facter
           interface_name, ip4_address, ip4_mask_length = retrieve_name_and_ip_info(ip_tokens)
 
           binding = ::Resolvers::Utils::Networking.build_binding(ip4_address, ip4_mask_length)
-          build_network_info_structure!(network_info, interface_name, 'bindings')
+          build_network_info_structure!(network_info, interface_name, :bindings)
 
           populate_other_ipv4_facts(network_info, interface_name, binding)
         end
 
         def populate_other_ipv4_facts(network_info, interface_name, binding)
-          network_info[interface_name]['bindings'] << binding
+          network_info[interface_name][:bindings] << binding
           # network_info[interface_name][:ip] ||= binding[:address]
           # network_info[interface_name][:network] ||= binding[:network]
           # network_info[interface_name][:netmask] ||= binding[:netmask]
@@ -136,14 +158,14 @@ module Facter
 
           binding = ::Resolvers::Utils::Networking.build_binding(ip6_address, ip6_mask_length)
 
-          build_network_info_structure!(network_info, interface_name, 'bindings6')
+          build_network_info_structure!(network_info, interface_name, :bindings6)
 
           network_info[interface_name][:scope6] ||= ip_tokens[5]
           populate_other_ipv6_facts(network_info, interface_name, binding)
         end
 
         def populate_other_ipv6_facts(network_info, interface_name, binding)
-          network_info[interface_name]['bindings6'] << binding
+          network_info[interface_name][:bindings6] << binding
           # network_info[interface_name][:ip6] ||= binding[:address]
           # network_info[interface_name][:network6] ||= binding[:network]
           # network_info[interface_name][:netmask6] ||= binding[:netmask]
