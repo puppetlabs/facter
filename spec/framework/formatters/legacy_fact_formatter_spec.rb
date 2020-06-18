@@ -224,4 +224,16 @@ describe Facter::LegacyFactFormatter do
       expect(legacy_formatter.format([])).to eq(nil)
     end
   end
+
+  context 'when fact starts with double ":"' do
+    let(:resolved_fact) do
+      instance_spy(Facter::ResolvedFact, name: 'networking', value: { ip6: '::1' },
+                                         user_query: 'networking', filter_tokens: [], type: :core)
+    end
+
+    it 'formats the fact correctly' do
+      expect(legacy_formatter.format([resolved_fact]))
+        .to eq("{\n  ip6 => \"::1\"\n}")
+    end
+  end
 end
