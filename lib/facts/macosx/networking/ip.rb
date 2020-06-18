@@ -8,7 +8,10 @@ module Facts
         ALIASES = 'ipaddress'
 
         def call_the_resolver
-          fact_value = Facter::Resolvers::Macosx::Ipaddress.resolve(:ip)
+          interfaces = Facter::Resolvers::Macosx::Networking.resolve(:interfaces)
+          primary = Facter::Resolvers::Macosx::Networking.resolve(:primary_interface)
+
+          fact_value = interfaces.dig(primary, :bindings, 0, :address) unless interfaces.nil?
 
           [Facter::ResolvedFact.new(FACT_NAME, fact_value), Facter::ResolvedFact.new(ALIASES, fact_value, :legacy)]
         end
