@@ -46,7 +46,22 @@ module Facter
             find_dhcp!(ip_tokens, interfaces)
           end
 
+          fill_defaults(interfaces)
+
           @fact_list[:interfaces] = interfaces
+        end
+
+        def fill_defaults(network_info)
+          network_info.each do |interface_name , bindings|
+            binding.each do |binding_type, binding_info|
+              ::Resolvers::Utils::Networking.find_valid_binding
+              # binding_info.each do |binding|
+              #   binding[:address]
+              # end
+            end
+            puts interface_name.inspect
+            puts bindings.inspect
+          end
         end
 
         def find_dhcp!(tokens, network_info)
@@ -100,9 +115,9 @@ module Facter
 
         def populate_other_ipv4_facts(network_info, interface_name, binding)
           network_info[interface_name]['bindings'] << binding
-          network_info[interface_name][:ip] ||= binding[:address]
-          network_info[interface_name][:network] ||= binding[:network]
-          network_info[interface_name][:netmask] ||= binding[:netmask]
+          # network_info[interface_name][:ip] ||= binding[:address]
+          # network_info[interface_name][:network] ||= binding[:network]
+          # network_info[interface_name][:netmask] ||= binding[:netmask]
         end
 
         def retrieve_name_and_ip_info(tokens)
@@ -129,9 +144,9 @@ module Facter
 
         def populate_other_ipv6_facts(network_info, interface_name, binding)
           network_info[interface_name]['bindings6'] << binding
-          network_info[interface_name][:ip6] ||= binding[:address]
-          network_info[interface_name][:network6] ||= binding[:network]
-          network_info[interface_name][:netmask6] ||= binding[:netmask]
+          # network_info[interface_name][:ip6] ||= binding[:address]
+          # network_info[interface_name][:network6] ||= binding[:network]
+          # network_info[interface_name][:netmask6] ||= binding[:netmask]
         end
 
         def retrieve_default_interface
