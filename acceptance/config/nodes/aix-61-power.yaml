@@ -1,0 +1,7 @@
+---
+HOSTS:
+  pe-aix-61-acceptance:
+    roles:
+      - agent
+    platform: aix-6.1-power
+    hypervisor: none

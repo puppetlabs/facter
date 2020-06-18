@@ -1,0 +1,78 @@
+# This test verifies that a ttls configured cached facts when initially called
+# create a json cache file
+test_name "ttls configured cached external yaml resolver creates and read json cache files" do
+  tag 'risk:medium'
+
+  require 'facter/acceptance/user_fact_utils'
+  extend Facter::Acceptance::UserFactUtils
+
+  # This fact must be resolvable on ALL platforms
+  # Do NOT use the 'kernel' fact as it is used to configure the tests
+  external_cachegroup = 'external_fact'
+  cached_fact_name = 'single_fact'
+  initial_fact_value = 'initial_external_value'
+  cached_fact_value = 'cached_external_value'
+
+  agents.each do |agent|
+    step "Agent #{agent}: create config file" do
+      external_dir = agent.tmpdir('external_dir')
+      ext = '.yaml'
+      external_fact = File.join(external_dir, "#{external_cachegroup}#{ext}")
+
+      external_fact_content = <<EOM
+#{cached_fact_name}: "#{initial_fact_value}"
+EOM
+
+      create_remote_file(agent, external_fact, external_fact_content)
+
+      config_dir = get_default_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
+      config_file = File.join(config_dir, "facter.conf")
+      cached_facts_dir = get_cached_facts_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
+
+      cached_fact_file = File.join(cached_facts_dir, "#{external_cachegroup}#{ext}")
+
+      # Setup facter conf
+      on(agent, "mkdir -p '#{config_dir}'")
+      cached_fact_content = <<EOM
+{
+  "#{cached_fact_name}": "#{cached_fact_value}"
+}
+EOM
+
+      config = <<EOM
+facts : {
+    ttls : [
+        { "#{external_cachegroup}#{ext}" : 30 days }
+    ]
+}
+EOM
+      create_remote_file(agent, config_file, config)
+
+      teardown do
+        on(agent, "rm -rf '#{config_dir}' '#{cached_facts_dir}' '#{external_dir}'")
+      end
+
+      step "should create a JSON file for a fact that is to be cached" do
+        on(agent, "rm -rf '#{cached_facts_dir}'")
+        on(agent, facter("--external-dir '#{external_dir}' --debug #{cached_fact_name}")) do |facter_output|
+          assert_match(/caching values for .+ facts/, facter_output.stderr, "Expected debug message to state that values will be cached")
+        end
+        on(agent, "cat #{cached_fact_file}", :acceptable_exit_codes => [0]) do |cat_output|
+          assert_match(/#{cached_fact_name}/, cat_output.stdout, "Expected cached fact file to contain fact information")
+        end
+      end
+
+      step "should read from a cached JSON file for a fact that has been cached" do
+        on(agent, "rm -rf '#{cached_facts_dir}'")
+        on(agent, facter("--external-dir '#{external_dir}' --debug #{cached_fact_name}"))
+
+        create_remote_file(agent, cached_fact_file, cached_fact_content)
+
+        on(agent, facter("--external-dir '#{external_dir}' --debug #{cached_fact_name}")) do |facter_output|
+          assert_match(/loading cached values for .+ facts/, stderr, "Expected debug message to state that values are read from cache")
+          assert_match(/#{cached_fact_value}/, stdout, "Expected fact to match the cached fact file")
+        end
+      end
+    end
+  end
+end
