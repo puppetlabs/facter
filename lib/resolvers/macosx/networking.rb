@@ -18,6 +18,9 @@ module Facter
             primary_interface
             dhcp
             interfaces_data
+            unless @fact_list[:interfaces].nil?
+              ::Resolvers::Utils::Networking.expand_main_bindings(@fact_list[:interfaces])
+            end
             @fact_list[fact_name]
           end
 
@@ -57,7 +60,6 @@ module Facter
               extract_mtu(properties, values)
               extract_mac(properties, values)
               extract_ip_data(properties, values)
-              extract_scope6(values)
 
               parsed_interfaces_data[interface] = values
             end
@@ -99,12 +101,6 @@ module Facter
               bindings << ::Resolvers::Utils::Networking.build_binding(ip, mask)
             end
             bindings
-          end
-
-          def extract_scope6(values)
-            return if values[:bindings6].nil?
-
-            values[:scope6] = ::Resolvers::Utils::Networking.get_scope(values[:bindings6][0][:address])
           end
         end
       end

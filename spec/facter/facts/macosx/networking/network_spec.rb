@@ -8,7 +8,10 @@ describe Facts::Macosx::Networking::Network do
     let(:primary_interface) { 'en0' }
     let(:interfaces) do
       { 'en0' => { mac: '64:5a:ed:ea:5c:81:',
-                   bindings: [{ address: '10.0.0.1', netmask: '255.255.255.0', network: '192.168.143.0' }] } }
+                   bindings: [{ address: '10.0.0.1', netmask: '255.255.255.0', network: '192.168.143.0' }],
+                   ip: '10.0.0.1',
+                   netmask: '255.255.255.0',
+                   network: '192.168.143.0' } }
     end
 
     before do

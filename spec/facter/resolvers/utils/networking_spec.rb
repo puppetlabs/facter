@@ -105,4 +105,129 @@ describe Resolvers::Utils::Networking do
       end
     end
   end
+
+  describe '#expand_main_bindings' do
+    let(:interfaces) do
+      {
+        'alw0' =>
+          { mtu: 1484,
+            mac: '2e:ba:e4:83:4b:b7',
+            bindings6:
+              [{ address: 'fe80::2cba:e4ff:fe83:4bb7',
+                 netmask: 'ffff:ffff:ffff:ffff::',
+                 network: 'fe80::' }] },
+        'bridge0' => { mtu: 1500, mac: '82:17:0e:93:9d:00' },
+        'en0' =>
+            { mtu: 1500,
+              mac: '64:5a:ed:ea:5c:81',
+              bindings:
+                [{ address: '192.168.1.2',
+                   netmask: '255.255.255.0',
+                   network: '192.168.1.0' }] },
+        'lo0' =>
+            { mtu: 16_384,
+              bindings:
+                [{ address: '127.0.0.1', netmask: '255.0.0.0', network: '127.0.0.0' }],
+              bindings6:
+                [{ address: '::1',
+                   netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+                   network: '::1' },
+                 { address: 'fe80::1',
+                   netmask: 'ffff:ffff:ffff:ffff::',
+                   network: 'fe80::' }] }
+      }
+    end
+
+    it 'expands the ipv4 binding' do
+      expected = {
+        mtu: 1500,
+        mac: '64:5a:ed:ea:5c:81',
+        bindings:
+            [{ address: '192.168.1.2',
+               netmask: '255.255.255.0',
+               network: '192.168.1.0' }],
+        ip: '192.168.1.2',
+        netmask: '255.255.255.0',
+        network: '192.168.1.0'
+      }
+
+      networking_helper.expand_main_bindings(interfaces)
+
+      expect(interfaces['en0']).to eq(expected)
+    end
+
+    it 'expands the ipv6 binding' do
+      expected = {
+        mtu: 1484,
+        mac: '2e:ba:e4:83:4b:b7',
+        bindings6:
+            [{ address: 'fe80::2cba:e4ff:fe83:4bb7',
+               netmask: 'ffff:ffff:ffff:ffff::',
+               network: 'fe80::' }],
+        ip6: 'fe80::2cba:e4ff:fe83:4bb7',
+        netmask6: 'ffff:ffff:ffff:ffff::',
+        network6: 'fe80::',
+        scope6: 'link'
+      }
+
+      networking_helper.expand_main_bindings(interfaces)
+
+      expect(interfaces['alw0']).to eq(expected)
+    end
+
+    it 'expands the both the ipv6 and ipv4 binding' do
+      expected = {
+        mtu: 16_384,
+        bindings:
+            [{ address: '127.0.0.1', netmask: '255.0.0.0', network: '127.0.0.0' }],
+        bindings6:
+            [{ address: '::1',
+               netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+               network: '::1' },
+             { address: 'fe80::1',
+               netmask: 'ffff:ffff:ffff:ffff::',
+               network: 'fe80::' }],
+        ip: '127.0.0.1',
+        ip6: '::1',
+        netmask: '255.0.0.0',
+        netmask6: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+        network: '127.0.0.0',
+        network6: '::1',
+        scope6: 'host'
+      }
+
+      networking_helper.expand_main_bindings(interfaces)
+
+      expect(interfaces['lo0']).to eq(expected)
+    end
+
+    context 'when there is a global ip address' do
+      let(:interfaces) do
+        {
+          'lo0' =>
+            { mtu: 16_384,
+              bindings6:
+                [{ address: '::1',
+                   netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+                   network: '::1' },
+                 { address: 'fe87::1',
+                   netmask: 'ffff:ffff:ffff:ffff::',
+                   network: 'fe87::' }] }
+        }
+      end
+
+      it 'expands the correct binding' do
+        expected = {
+          ip6: 'fe87::1',
+          netmask6: 'ffff:ffff:ffff:ffff::',
+          network6: 'fe87::',
+          scope6: 'link'
+        }
+
+        networking_helper.expand_main_bindings(interfaces)
+
+        expect(interfaces['lo0']).to include(expected)
+      end
+    end
+  end
 end

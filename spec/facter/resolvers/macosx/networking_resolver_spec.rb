@@ -37,7 +37,7 @@ describe Facter::Resolvers::Macosx::Networking do
     end
 
     it 'checks that interface lo0 has the expected keys' do
-      expected = %i[mtu bindings6 bindings scope6]
+      expected = %i[mtu bindings6 bindings ip ip6 netmask netmask6 network network6 scope6]
       expect(networking.resolve(:interfaces)['lo0'].keys).to match_array(expected)
     end
 
@@ -71,7 +71,7 @@ describe Facter::Resolvers::Macosx::Networking do
     end
 
     it 'checks that interface en0 has the expected keys' do
-      expected = %i[mtu mac bindings]
+      expected = %i[mtu mac bindings ip netmask network]
       expect(networking.resolve(:interfaces)['en0'].keys).to match_array(expected)
     end
 
