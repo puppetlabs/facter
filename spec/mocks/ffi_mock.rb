@@ -19,11 +19,13 @@ module FFI
   def self.type_size(arg); end
 
   module Library
+    LIBC = 'libc'
+
     def ffi_convention(arg); end
 
-    def ffi_lib(arg); end
+    def ffi_lib(*); end
 
-    def attach_function(function, args, return_type); end
+    def attach_function(*); end
 
     def enum(*); end
 
