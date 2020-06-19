@@ -70,7 +70,7 @@ describe Facter::Resolvers::Ec2 do
       ec2.resolve(:userdata)
 
       expect(log_spy).to have_received(:debug)
-        .with('http://169.254.169.254/latest/user-data/ timed out while trying to connect')
+        .with('Trying to connect to http://169.254.169.254/latest/user-data/ but got: Net::OpenTimeout')
     end
   end
 end
