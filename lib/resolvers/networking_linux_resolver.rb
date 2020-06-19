@@ -46,45 +46,9 @@ module Facter
             find_dhcp!(ip_tokens, interfaces)
           end
 
-          fill_defaults(interfaces)
+          ::Resolvers::Utils::Networking.expand_main_bindings(interfaces)
 
           @fact_list[:interfaces] = interfaces
-        end
-
-        def fill_defaults(network_info)
-          network_info.each do |_interface_name, value|
-            if value[:bindings]
-              binding = ::Resolvers::Utils::Networking.find_valid_binding(value[:bindings])
-              populate_interface(binding, value)
-            end
-            if value[:bindings6]
-              binding = ::Resolvers::Utils::Networking.find_valid_binding(value[:bindings6])
-              populate_interface(binding, value, true)
-            end
-          end
-        end
-
-        def set_networking_other_facts(value, interface_name)
-          return unless @fact_list[:primary_interface] == interface_name
-
-          %i[mtu dhcp mac ip ip6 scope6 netmask netmask6 network network6].each do |key|
-            @fact_list[key] = value[key]
-          end
-        end
-
-        def populate_interface(bind, interface, ipv6 = false)
-          return if !bind || bind.empty?
-
-          if ipv6
-            interface[:ip6] = bind[:address]
-            interface[:netmask6] = bind[:netmask]
-            interface[:network6] = bind[:network]
-            interface[:scope6] =  ::Resolvers::Utils::Networking.get_scope(bind[:address])
-          else
-            interface[:network] = bind[:network]
-            interface[:netmask] = bind[:netmask]
-            interface[:ip] = bind[:address]
-          end
         end
 
         def find_dhcp!(tokens, network_info)
