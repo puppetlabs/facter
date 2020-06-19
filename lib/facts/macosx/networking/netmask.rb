@@ -11,7 +11,7 @@ module Facts
           interfaces = Facter::Resolvers::Macosx::Networking.resolve(:interfaces)
           primary = Facter::Resolvers::Macosx::Networking.resolve(:primary_interface)
 
-          fact_value = interfaces.dig(primary, :bindings, 0, :netmask) unless interfaces.nil?
+          fact_value = interfaces.dig(primary, :netmask) unless interfaces.nil?
 
           [Facter::ResolvedFact.new(FACT_NAME, fact_value), Facter::ResolvedFact.new(ALIASES, fact_value, :legacy)]
         end

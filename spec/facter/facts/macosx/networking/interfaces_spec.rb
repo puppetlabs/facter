@@ -12,7 +12,10 @@ describe Facts::Macosx::Networking::Interfaces do
             bindings6:
               [{ address: 'fe80::2cba:e4ff:fe83:4bb7',
                  netmask: 'ffff:ffff:ffff:ffff::',
-                 network: 'fe80::' }] },
+                 network: 'fe80::' }],
+            ip6: 'fe80::2cba:e4ff:fe83:4bb7',
+            netmask6: 'ffff:ffff:ffff:ffff::',
+            network6: 'fe80::' },
         'bridge0' => { mtu: 1500, mac: '82:17:0e:93:9d:00' },
         'en0' =>
           { mtu: 1500,
@@ -20,7 +23,11 @@ describe Facts::Macosx::Networking::Interfaces do
             bindings:
               [{ address: '192.168.1.2',
                  netmask: '255.255.255.0',
-                 network: '192.168.1.0' }] },
+                 network: '192.168.1.0' }],
+            ip: '192.168.1.2',
+            netmask: '255.255.255.0',
+            network: '192.168.1.0',
+            dhcp: '192.587.6.9' },
         'gif0' => { mtu: 1280 },
         'lo0' =>
           { mtu: 16_384,
@@ -32,7 +39,13 @@ describe Facts::Macosx::Networking::Interfaces do
                  network: '::1' },
                { address: 'fe80::1',
                  netmask: 'ffff:ffff:ffff:ffff::',
-                 network: 'fe80::' }] }
+                 network: 'fe80::' }],
+            ip: '127.0.0.1',
+            netmask: '255.0.0.0',
+            network: '127.0.0.0',
+            ip6: '::1',
+            netmask6: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+            network6: '::1' }
       }
     end
     let(:dhcp) { '192.587.6.9' }
@@ -141,15 +154,6 @@ describe Facts::Macosx::Networking::Interfaces do
       result = fact.call_the_resolver
 
       expect(result.value['lo0']).to match(expected)
-    end
-
-    it 'expands the correct binding' do
-      ipv6 = 'aa51::'
-      interfaces['lo0'][:bindings6].last[:address] = ipv6
-
-      result = fact.call_the_resolver
-
-      expect(result.value['lo0']['ip6']).to match(ipv6)
     end
   end
 end

@@ -10,7 +10,10 @@ describe Facts::Macosx::Networking::Ip6 do
       { 'en0' => { mac: '64:5a:ed:ea:5c:81:',
                    bindings6: [{ address: 'fe80::2cba:e4ff:fe83:4bb7',
                                  netmask: 'ffff:ffff:ffff:ffff::',
-                                 network: 'fe80::' }] } }
+                                 network: 'fe80::' }],
+                   ip6: 'fe80::2cba:e4ff:fe83:4bb7',
+                   netmask6: 'ffff:ffff:ffff:ffff::',
+                   network6: 'fe80::' } }
     end
 
     before do

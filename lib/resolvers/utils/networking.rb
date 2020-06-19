@@ -17,13 +17,20 @@ module Resolvers
           { address: addr, netmask: mask.to_s, network: ip.mask(mask_length).to_s }
         end
 
+        def expand_main_bindings(interfaces)
+          interfaces.each_value do |values|
+            expand_binding(values, values[:bindings]) if values[:bindings]
+            expand_binding(values, values[:bindings6], false) if values[:bindings6]
+          end
+        end
+
         def get_scope(ip)
           require 'socket'
 
           scope6 = []
           addrinfo = Addrinfo.new(['AF_INET6', 0, nil, ip], :INET6)
 
-          scope6 << 'compat,' if addrinfo.ipv6_v4mapped?
+          scope6 << 'compat,' if addrinfo.ipv6_v4compat?
           scope6 << if addrinfo.ipv6_linklocal?
                       'link'
                     elsif addrinfo.ipv6_sitelocal?
@@ -44,6 +51,18 @@ module Resolvers
 
         def ignored_ip_address(addr)
           addr.empty? || addr.start_with?('127.', '169.254.') || addr.start_with?('fe80') || addr.eql?('::1')
+        end
+
+        private
+
+        def expand_binding(values, bindings, ipv4_type = true)
+          binding = find_valid_binding(bindings)
+          ip_protocol_type = ipv4_type ? '' : '6'
+
+          values["ip#{ip_protocol_type}".to_sym] = binding[:address]
+          values["netmask#{ip_protocol_type}".to_sym] = binding[:netmask]
+          values["network#{ip_protocol_type}".to_sym] = binding[:network]
+          values[:scope6] = get_scope(binding[:address]) unless ipv4_type
         end
       end
     end
