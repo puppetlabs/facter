@@ -52,7 +52,7 @@ module Facter
         end
 
         def fill_defaults(network_info)
-          network_info.each do |interface_name , value|
+          network_info.each do |_interface_name, value|
             if value[:bindings]
               binding = ::Resolvers::Utils::Networking.find_valid_binding(value[:bindings])
               populate_interface(binding, value)
@@ -156,7 +156,6 @@ module Facter
 
           network_info[interface_name][:scope6] ||= ip_tokens[5]
           network_info[interface_name][:bindings6] << binding
-
         end
 
         def retrieve_default_interface
