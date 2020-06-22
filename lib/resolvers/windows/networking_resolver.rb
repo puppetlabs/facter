@@ -26,7 +26,12 @@ module Facter
           return unless (adapter_addresses = get_adapter_addresses(size_ptr, adapter_addresses, flags))
 
           iterate_list(adapter_addresses)
-          add_dhcp_to_primary_interface
+
+          unless @fact_list[:interfaces].nil?
+            ::Resolvers::Utils::Networking.expand_main_bindings(@fact_list[:interfaces])
+            set_primary_other_facts
+          end
+
           @fact_list[fact_name]
         end
 
@@ -73,7 +78,6 @@ module Facter
             net_interface[name] = build_interface_info(adapter_address, name)
           end
 
-          ::Resolvers::Utils::Networking.expand_main_bindings(net_interface) unless net_interface.empty?
           @fact_list[:interfaces] = net_interface unless net_interface.empty?
         end
 
@@ -126,15 +130,18 @@ module Facter
         def find_primary_interface(sock_addr, name, addr)
           if !@fact_list[:primary_interface] &&
              ([NetworkingFFI::AF_INET, NetworkingFFI::AF_INET6].include?(sock_addr[:sa_family]) &&
-                 !NetworkUtils.ignored_ip_address(addr))
+                 !::Resolvers::Utils::Networking.ignored_ip_address(addr))
             @fact_list[:primary_interface] = name.to_s
           end
         end
 
-        def add_dhcp_to_primary_interface
-          return unless @fact_list[:dhcp] && @fact_list[:primary_interface]
+        def set_primary_other_facts
+          primary = @fact_list[:primary_interface]
+          return if primary.nil?
 
-          @fact_list[@fact_list[:primary_interface]][:dhcp] = @fact_list[:dhcp]
+          %i[mtu dhcp mac ip ip6 scope6 netmask netmask6 network network6].each do |key|
+            @fact_list[key] = @fact_list[:interfaces][primary.to_sym][key]
+          end
         end
       end
     end

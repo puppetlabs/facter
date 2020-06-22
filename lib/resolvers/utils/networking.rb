@@ -30,7 +30,7 @@ module Resolvers
           scope6 = []
           addrinfo = Addrinfo.new(['AF_INET6', 0, nil, ip], :INET6)
 
-          scope6 << 'compat,' if addrinfo.ipv6_v4compat?
+          scope6 << 'compat,' if IPAddr.new(ip).ipv4_compat?
           scope6 << if addrinfo.ipv6_linklocal?
                       'link'
                     elsif addrinfo.ipv6_sitelocal?
