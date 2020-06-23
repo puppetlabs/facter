@@ -175,7 +175,7 @@ describe Resolvers::Utils::Networking do
       expect(interfaces['alw0']).to eq(expected)
     end
 
-    it 'expands the both the ipv6 and ipv4 binding' do
+    it 'expands both the ipv6 and ipv4 binding' do
       expected = {
         mtu: 16_384,
         bindings:

@@ -53,7 +53,8 @@ module Facter
 
           def parse_interfaces_response(response)
             parsed_interfaces_data = {}
-            interfaces_data = Hash[*response.split(/^([A-Za-z0-9_]+): /)[1..-1]].sort
+            interfaces_data = Hash[*response.split(/^([A-Za-z0-9_]+): /)[1..-1]]
+
             interfaces_data.each do |interface, properties|
               values = {}
 
@@ -67,12 +68,12 @@ module Facter
           end
 
           def extract_mtu(properties, values)
-            mtu = properties.match(/mtu (\d+)/)&.captures&.first&.to_i
+            mtu = properties.match(/mtu\s+(\d+)/)&.captures&.first&.to_i
             values[:mtu] = mtu unless mtu.nil?
           end
 
           def extract_mac(properties, values)
-            mac = properties.match(/ether (\S+)/)&.captures&.first
+            mac = properties.match(/(?:ether|lladdr)\s+(\w?\w:\w?\w:\w?\w:\w?\w:\w?\w:\w?\w)/)&.captures&.first
             values[:mac] = mac unless mac.nil?
           end
 

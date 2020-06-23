@@ -60,8 +60,7 @@ describe Facts::Macosx::Networking::Network do
       let(:interfaces) do
         { 'en0' => { mac: '64:5a:ed:ea:5c:81:',
                      bindings6: [{ address: 'fe80::2cba:e4ff:fe83:4bb7',
-                                   netmask: 'ffff:ffff:fff
-f:ffff::',
+                                   netmask: 'ffff:ffff:ffff:ffff::',
                                    network: 'fe80::' }] } }
       end
       let(:value) { nil }
