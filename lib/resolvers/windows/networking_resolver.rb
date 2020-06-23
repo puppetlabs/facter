@@ -29,7 +29,7 @@ module Facter
 
           unless @fact_list[:interfaces].nil?
             ::Resolvers::Utils::Networking.expand_main_bindings(@fact_list[:interfaces])
-            set_primary_other_facts
+            expand_primary_interface_bindings
           end
 
           @fact_list[fact_name]
@@ -135,7 +135,7 @@ module Facter
           end
         end
 
-        def set_primary_other_facts
+        def expand_primary_interface_bindings
           primary = @fact_list[:primary_interface]
           return if primary.nil?
 
