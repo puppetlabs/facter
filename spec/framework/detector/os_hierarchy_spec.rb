@@ -6,7 +6,7 @@ describe Facter::OsHierarchy do
   before do
     allow(Facter::Util::FileHelper)
       .to receive(:safe_read)
-      .with(File.join(ROOT_DIR, 'os_hierarchy.json'))
+      .with(File.join(ROOT_DIR, 'lib', 'facter', 'framework', 'detector', '..', '..', 'os_hierarchy.json'))
       .and_return(load_fixture('os_hierarchy').read)
     allow(Facter::Log).to receive(:new).and_return(log)
   end
@@ -18,7 +18,7 @@ describe Facter::OsHierarchy do
       before do
         allow(Facter::Util::FileHelper)
           .to receive(:safe_read)
-          .with(File.join(ROOT_DIR, 'os_hierarchy.json'))
+          .with(File.join(ROOT_DIR, 'lib', 'facter', 'framework', 'detector', '..', '..', 'os_hierarchy.json'))
           .and_return(load_fixture('broken_os_hierarchy').read)
       end
 

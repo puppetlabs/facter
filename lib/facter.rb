@@ -3,10 +3,8 @@
 require 'pathname'
 require_relative 'util/api_debugger' if ENV['API_DEBUG']
 
-ROOT_DIR = Pathname.new(File.expand_path('..', __dir__)) unless defined?(ROOT_DIR)
-
-require "#{ROOT_DIR}/lib/framework/core/file_loader"
-require "#{ROOT_DIR}/lib/framework/core/options/options_validator"
+require 'facter/framework/core/file_loader'
+require 'facter/framework/core/options/options_validator'
 
 module Facter
   class ResolveCustomFactError < StandardError; end
@@ -228,7 +226,7 @@ module Facter
     #
     # @api public
     def version
-      version_file = ::File.join(ROOT_DIR, 'VERSION')
+      version_file = ::File.join(File.dirname(__FILE__), 'facter', 'VERSION')
       ::File.read(version_file).strip
     end
 

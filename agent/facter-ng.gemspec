@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
-lib = File.expand_path('../lib', __dir__)
-$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require_relative '../config/config'
+require_relative '../lib/facter/config/config'
 
 Gem::Specification.new do |spec|
   spec.name          = 'facter-ng'
@@ -23,7 +21,7 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '~> 2.3'
   spec.files.reject! do |f|
-    f.match(%r{^(test|spec|features)/})
+    f.match(%r{^(test|spec|features|acceptance)/})
   end
 
   spec.files.reject! do |f|
@@ -32,7 +30,7 @@ Gem::Specification.new do |spec|
 
   spec.bindir = 'bin'
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
-  spec.require_paths = ['agent/lib']
+  spec.require_paths = ['agent/lib', 'lib']
 
   spec.add_development_dependency 'bundler', '~> 2.0'
   spec.add_development_dependency 'coveralls', '~> 0.8.23'
