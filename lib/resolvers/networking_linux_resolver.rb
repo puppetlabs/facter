@@ -46,6 +46,8 @@ module Facter
             find_dhcp!(ip_tokens, interfaces)
           end
 
+          ::Resolvers::Utils::Networking.expand_main_bindings(interfaces)
+
           @fact_list[:interfaces] = interfaces
         end
 
@@ -92,17 +94,10 @@ module Facter
 
           interface_name, ip4_address, ip4_mask_length = retrieve_name_and_ip_info(ip_tokens)
 
-          binding = build_binding(ip4_address, ip4_mask_length)
-          build_network_info_structure!(network_info, interface_name, 'bindings')
+          binding = ::Resolvers::Utils::Networking.build_binding(ip4_address, ip4_mask_length)
+          build_network_info_structure!(network_info, interface_name, :bindings)
 
-          populate_other_ipv4_facts(network_info, interface_name, binding)
-        end
-
-        def populate_other_ipv4_facts(network_info, interface_name, binding)
-          network_info[interface_name]['bindings'] << binding
-          network_info[interface_name][:ip] ||= binding[:address]
-          network_info[interface_name][:network] ||= binding[:network]
-          network_info[interface_name][:netmask] ||= binding[:netmask]
+          network_info[interface_name][:bindings] << binding
         end
 
         def retrieve_name_and_ip_info(tokens)
@@ -119,19 +114,12 @@ module Facter
 
           interface_name, ip6_address, ip6_mask_length = retrieve_name_and_ip_info(ip_tokens)
 
-          binding = build_binding(ip6_address, ip6_mask_length)
+          binding = ::Resolvers::Utils::Networking.build_binding(ip6_address, ip6_mask_length)
 
-          build_network_info_structure!(network_info, interface_name, 'bindings6')
+          build_network_info_structure!(network_info, interface_name, :bindings6)
 
           network_info[interface_name][:scope6] ||= ip_tokens[5]
-          populate_other_ipv6_facts(network_info, interface_name, binding)
-        end
-
-        def populate_other_ipv6_facts(network_info, interface_name, binding)
-          network_info[interface_name]['bindings6'] << binding
-          network_info[interface_name][:ip6] ||= binding[:address]
-          network_info[interface_name][:network6] ||= binding[:network]
-          network_info[interface_name][:netmask6] ||= binding[:netmask]
+          network_info[interface_name][:bindings6] << binding
         end
 
         def retrieve_default_interface
@@ -141,16 +129,6 @@ module Facter
           default_interface = ip_route_tokens[4]
 
           @fact_list[:primary_interface] = default_interface
-        end
-
-        def build_binding(addr, mask_length)
-          require 'ipaddr'
-
-          ip = IPAddr.new(addr)
-          mask_helper = ip.ipv6? ? 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff' : '255.255.255.255'
-          mask = IPAddr.new(mask_helper).mask(mask_length)
-
-          { address: addr, netmask: mask.to_s, network: ip.mask(mask_length).to_s }
         end
 
         def build_network_info_structure!(network_info, interface_name, binding)

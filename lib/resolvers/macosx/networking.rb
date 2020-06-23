@@ -54,6 +54,7 @@ module Facter
           def parse_interfaces_response(response)
             parsed_interfaces_data = {}
             interfaces_data = Hash[*response.split(/^([A-Za-z0-9_]+): /)[1..-1]]
+
             interfaces_data.each do |interface, properties|
               values = {}
 
