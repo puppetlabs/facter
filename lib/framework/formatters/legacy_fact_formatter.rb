@@ -14,7 +14,8 @@ module Facter
 
       user_query = user_queries.first
       return format_for_no_query(resolved_facts) if user_query.empty?
-      return format_for_single_user_query(user_queries.first, resolved_facts) unless user_query.empty?
+
+      format_for_single_user_query(user_queries.first, resolved_facts)
     end
 
     private
@@ -25,7 +26,7 @@ module Facter
       pretty_json = hash_to_facter_format(fact_collection)
 
       pretty_json = remove_enclosing_accolades(pretty_json)
-      remove_comma_and_quation(pretty_json)
+      remove_comma_and_quotation(pretty_json)
     end
 
     def format_for_multiple_user_queries(user_queries, resolved_facts)
@@ -36,7 +37,7 @@ module Facter
       facts_to_display.each { |k, v| facts_to_display[k] = v.nil? ? '' : v }
       pretty_json = hash_to_facter_format(facts_to_display)
       pretty_json = remove_enclosing_accolades(pretty_json)
-      pretty_json = remove_comma_and_quation(pretty_json)
+      pretty_json = remove_comma_and_quotation(pretty_json)
 
       @log.debug('Remove quotes from value if value is a string')
       pretty_json.gsub(/^(\S*) => \"(.*)\"/, '\1 => \2')
@@ -60,7 +61,7 @@ module Facter
       pretty_json = JSON.pretty_generate(facts_hash)
 
       @log.debug('Change key value delimiter from : to =>')
-      pretty_json.gsub!(/":/, '" =>')
+      pretty_json.gsub!(/":\s/, '" => ')
 
       @log.debug('Remove quotes from parent nodes')
       pretty_json.gsub!(/\"(.*)\"\ =>/, '\1 =>')
@@ -83,7 +84,7 @@ module Facter
       pretty_fact_json.gsub(/^},/, '}')
     end
 
-    def remove_comma_and_quation(output)
+    def remove_comma_and_quotation(output)
       # quotation marks that come after \ are not removed
       @log.debug('Remove unnecessary comma and quotation marks on root facts')
       output.split("\n")

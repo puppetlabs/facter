@@ -45,42 +45,81 @@ describe Facter::Resolvers::NetworkingLinux do
     let(:result) do
       {
         'lo' => {
-          'bindings' =>
-                [
-                  { address: '127.0.0.1', netmask: '255.0.0.0', network: '127.0.0.0' }
-                ],
-          'bindings6' =>
-                [
-                  { address: '::1', netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff', network: '::1' }
-                ],
-          :dhcp => '10.32.22.9',
-          :ip => '127.0.0.1',
-          :ip6 => '::1',
-          :mtu => 65_536,
-          :netmask => '255.0.0.0',
-          :netmask6 => 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
-          :network => '127.0.0.0',
-          :network6 => '::1',
-          :scope6 => 'host'
+          bindings: [
+            { address: '127.0.0.1', netmask: '255.0.0.0', network: '127.0.0.0' }
+          ],
+          bindings6: [
+            { address: '::1', netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff', network: '::1' }
+          ],
+          dhcp: '10.32.22.9',
+          ip: '127.0.0.1',
+          ip6: '::1',
+          mtu: 65_536,
+          netmask: '255.0.0.0',
+          netmask6: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+          network: '127.0.0.0',
+          network6: '::1',
+          scope6: 'host'
         },
         'ens160' => {
-          'bindings' => [
+          bindings: [
             { address: '10.16.119.155', netmask: '255.255.240.0', network: '10.16.112.0' },
             { address: '10.16.127.70', netmask: '255.255.240.0', network: '10.16.112.0' }
           ],
-          'bindings6' => [
+          bindings6: [
             { address: 'fe80::250:56ff:fe9a:8481', netmask: 'ffff:ffff:ffff:ffff::', network: 'fe80::' }
           ],
-          :dhcp => '10.32.22.10',
-          :ip => '10.16.119.155',
-          :ip6 => 'fe80::250:56ff:fe9a:8481',
-          :mac => '00:50:56:9a:61:46',
-          :mtu => 1500,
-          :netmask => '255.255.240.0',
-          :netmask6 => 'ffff:ffff:ffff:ffff::',
-          :network => '10.16.112.0',
-          :network6 => 'fe80::',
-          :scope6 => 'link'
+          dhcp: '10.32.22.10',
+          ip: '10.16.119.155',
+          ip6: 'fe80::250:56ff:fe9a:8481',
+          mac: '00:50:56:9a:61:46',
+          mtu: 1500,
+          netmask: '255.255.240.0',
+          netmask6: 'ffff:ffff:ffff:ffff::',
+          network: '10.16.112.0',
+          network6: 'fe80::',
+          scope6: 'link'
+        }
+      }
+    end
+
+    let(:result_with_127_first) do
+      {
+        'lo' => {
+          bindings: [
+            { address: '127.0.0.1', netmask: '255.0.0.0', network: '127.0.0.0' }
+          ],
+          bindings6: [
+            { address: '::1', netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff', network: '::1' }
+          ],
+          dhcp: '10.32.22.9',
+          ip: '127.0.0.1',
+          ip6: '::1',
+          mtu: 65_536,
+          netmask: '255.0.0.0',
+          netmask6: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+          network: '127.0.0.0',
+          network6: '::1',
+          scope6: 'host'
+        },
+        'ens160' => {
+          bindings: [
+            { address: '127.0.0.1', netmask: '255.0.0.0', network: '127.0.0.0' },
+            { address: '10.16.127.70', netmask: '255.255.240.0', network: '10.16.112.0' }
+          ],
+          bindings6: [
+            { address: 'fe80::250:56ff:fe9a:8481', netmask: 'ffff:ffff:ffff:ffff::', network: 'fe80::' }
+          ],
+          dhcp: '10.32.22.10',
+          ip: '10.16.127.70',
+          ip6: 'fe80::250:56ff:fe9a:8481',
+          mac: '00:50:56:9a:61:46',
+          mtu: 1500,
+          netmask: '255.255.240.0',
+          netmask6: 'ffff:ffff:ffff:ffff::',
+          network: '10.16.112.0',
+          network6: 'fe80::',
+          scope6: 'link'
         }
       }
     end
@@ -108,6 +147,18 @@ describe Facter::Resolvers::NetworkingLinux do
 
         expect(Facter::Core::Execution).to have_received(:execute)
           .with('ip route get 1', logger: log_spy).twice
+      end
+    end
+
+    context 'when 127.0.0.1 is first ip' do
+      before do
+        allow(Facter::Core::Execution).to receive(:execute)
+          .with('ip -o address', logger: log_spy)
+          .and_return(load_fixture('ip_o_address_linux_with_127_first').read)
+      end
+
+      it 'is ignored and the next ip is used' do
+        expect(networking_linux.resolve(:interfaces)).to eq(result_with_127_first)
       end
     end
   end
