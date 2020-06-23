@@ -114,7 +114,7 @@ module Facter
 
           interface_name, ip6_address, ip6_mask_length = retrieve_name_and_ip_info(ip_tokens)
 
-          binding = build_binding(ip6_address, ip6_mask_length)
+          binding = ::Resolvers::Utils::Networking.build_binding(ip6_address, ip6_mask_length)
 
           build_network_info_structure!(network_info, interface_name, :bindings6)
 
@@ -129,16 +129,6 @@ module Facter
           default_interface = ip_route_tokens[4]
 
           @fact_list[:primary_interface] = default_interface
-        end
-
-        def build_binding(addr, mask_length)
-          require 'ipaddr'
-
-          ip = IPAddr.new(addr)
-          mask_helper = ip.ipv6? ? 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff' : '255.255.255.255'
-          mask = IPAddr.new(mask_helper).mask(mask_length)
-
-          { address: addr, netmask: mask.to_s, network: ip.mask(mask_length).to_s }
         end
 
         def build_network_info_structure!(network_info, interface_name, binding)
