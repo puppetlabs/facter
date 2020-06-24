@@ -1,6 +1,6 @@
 Facter 4
 ============
-Facter 4 is the newest version of Facter that is written in Ruby and compatible with Facter 3. Currenly Facter 4 is maintained in a separate git repository https://github.com/puppetlabs/facter-ng, but it will be moved to this repository later on.
+Facter 4 is the newest version of Facter that is written in Ruby and compatible with Facter 3. Currenly Facter 4 is maintained on [4.x branch]( https://github.com/puppetlabs/facter/tree/4.x)
 
 Native Facter
 =============
