@@ -5,22 +5,14 @@ describe Facts::Macosx::Networking::Scope6 do
     subject(:fact) { Facts::Macosx::Networking::Scope6.new }
 
     let(:value) { 'link' }
-    let(:interfaces) { { 'eth0' => { ip: 'ff80:158::', scope6: value } } }
-    let(:primary) { 'eth0' }
 
     before do
-      allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
-      allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:primary_interface).and_return(primary)
+      allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:scope6).and_return(value)
     end
 
-    it 'calls Facts::Macosx::Networking::Scope6 with interfaces' do
+    it 'calls Facter::Resolvers::Macosx::Networking with scope6' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:interfaces)
-    end
-
-    it 'calls Facts::Macosx::Networking::Scope6 with primary_interface' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:primary_interface)
+      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:scope6)
     end
 
     it 'returns scope6 fact' do
@@ -29,9 +21,8 @@ describe Facts::Macosx::Networking::Scope6 do
         .and have_attributes(name: 'networking.scope6', value: value)
     end
 
-    context 'when primary interface does not have an ipv6 address' do
+    context 'when scope6 can not be resolved' do
       let(:value) { nil }
-      let(:interfaces) { { 'eth0' => { ip: '10.16.122.163' } } }
 
       it 'returns nil' do
         expect(fact.call_the_resolver)
