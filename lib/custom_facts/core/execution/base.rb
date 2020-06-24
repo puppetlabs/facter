@@ -6,6 +6,8 @@ module Facter
       class Base
         STDERR_MESSAGE = 'Command %s resulted with the following stderr message: %s'
 
+        # This is part of the public API. No race condition can happen
+        # here because custom facts are executed sequentially
         def with_env(values)
           old = {}
           values.each do |var, value|
@@ -38,27 +40,22 @@ module Facter
           expand = options.fetch(:expand, true)
           logger = options[:logger]
 
-          # Set LC_ALL and LANG to force i18n to C for the duration of this exec;
-          # this ensures that any code that parses the
-          # output of the command can expect it to be in a consistent / predictable format / locale
-          with_env 'LC_ALL' => 'C', 'LANG' => 'C' do
-            expanded_command = if !expand && builtin_command?(command) || logger
-                                 command
-                               else
-                                 expand_command(command)
-                               end
+          expanded_command = if !expand && builtin_command?(command) || logger
+                               command
+                             else
+                               expand_command(command)
+                             end
 
-            if expanded_command.nil?
-              if on_fail == :raise
-                raise Facter::Core::Execution::ExecutionFailure.new,
-                      "Could not execute '#{command}': command not found"
-              end
-
-              return on_fail
+          if expanded_command.nil?
+            if on_fail == :raise
+              raise Facter::Core::Execution::ExecutionFailure.new,
+                    "Could not execute '#{command}': command not found"
             end
 
-            execute_command(expanded_command, on_fail, logger)
+            return on_fail
           end
+
+          execute_command(expanded_command, on_fail, logger)
         end
 
         private
@@ -82,7 +79,10 @@ module Facter
 
         def execute_command(command, on_fail, logger = nil)
           begin
-            out, stderr, _status_ = Open3.capture3(command.to_s)
+            # Set LC_ALL and LANG to force i18n to C for the duration of this exec;
+            # this ensures that any code that parses the
+            # output of the command can expect it to be in a consistent / predictable format / locale
+            out, stderr, _status_ = Open3.capture3({ 'LC_ALL' => 'C', 'LANG' => 'C' }, command.to_s)
             log_stderr(stderr, command, logger)
           rescue StandardError => e
             return '' if logger

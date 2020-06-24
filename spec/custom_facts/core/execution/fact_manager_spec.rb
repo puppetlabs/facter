@@ -79,19 +79,12 @@ describe Facter::Core::Execution::Base do
   end
 
   describe '#execute' do
-    it 'switches LANG and LC_ALL to C when executing the command' do
-      allow(ENV).to receive(:[]=)
-      allow(Open3).to receive(:capture3).with('foo').and_return('')
-      expect(ENV).to receive(:[]=).with('LC_ALL', 'C')
-      executor.execute('foo', logger: Facter::Log.new('class'))
-    end
-
     it 'expands the command before running it' do
       allow(File).to receive(:executable?).and_return(false)
       allow(FileTest).to receive(:file?).and_return(false)
       allow(File).to receive(:executable?).with('/sbin/foo').and_return(true)
       allow(FileTest).to receive(:file?).with('/sbin/foo').and_return(true)
-      expect(Open3).to receive(:capture3).with('/sbin/foo').and_return('')
+      expect(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, '/sbin/foo').and_return('')
       executor.execute('foo')
     end
 
@@ -107,7 +100,7 @@ describe Facter::Core::Execution::Base do
       end
 
       it 'does not expant builtin command' do
-        allow(Open3).to receive(:capture3).with('/bin/foo').and_return('')
+        allow(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, '/bin/foo').and_return('')
         allow(Open3).to receive(:capture2).with('type /bin/foo').and_return('builtin')
         executor.execute('/bin/foo', expand: false)
       end
@@ -125,8 +118,8 @@ describe Facter::Core::Execution::Base do
       end
 
       it 'throws exception' do
-        allow(Open3).to receive(:capture3).with('foo').and_return('')
-        allow(Open3).to receive(:capture2).with('type foo').and_return('builtin')
+        allow(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'foo').and_return('')
+        allow(Open3).to receive(:capture2).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'type foo').and_return('builtin')
         expect { execution_base.execute('foo', expand: false) }
           .to raise_error(ArgumentError,
                           'Unsupported argument on Windows expand with value false')
@@ -138,7 +131,8 @@ describe Facter::Core::Execution::Base do
       let(:command) { '/bin/foo' }
 
       before do
-        allow(Open3).to receive(:capture3).with(command).and_return(['', 'some error'])
+        allow(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, command)
+                                          .and_return(['', 'some error'])
         allow(Facter::Log).to receive(:new).with('foo').and_return(logger)
 
         allow(File).to receive(:executable?).with(command).and_return(true)
@@ -169,7 +163,7 @@ describe Facter::Core::Execution::Base do
 
     describe 'when command execution fails' do
       before do
-        allow(Open3).to receive(:capture3).with('/bin/foo').and_raise('kaboom!')
+        allow(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, '/bin/foo').and_raise('kaboom!')
         allow(File).to receive(:executable?).and_return(false)
         allow(FileTest).to receive(:file?).and_return(false)
         allow(File).to receive(:executable?).with('/bin/foo').and_return(true)
@@ -194,13 +188,13 @@ describe Facter::Core::Execution::Base do
       end
 
       it 'returns the output of the command' do
-        allow(Open3).to receive(:capture3).with('/sbin/foo').and_return('hi')
+        allow(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, '/sbin/foo').and_return('hi')
 
         expect(executor.execute('foo')).to eq 'hi'
       end
 
       it 'strips off trailing newlines' do
-        allow(Open3).to receive(:capture3).with('/sbin/foo').and_return "hi\n"
+        allow(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, '/sbin/foo').and_return "hi\n"
 
         expect(executor.execute('foo')).to eq 'hi'
       end
