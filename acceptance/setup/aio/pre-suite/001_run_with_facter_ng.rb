@@ -7,7 +7,7 @@ def create_facter_gem
   Dir.chdir(temp_dir) do
     download_and_build_facter_ng
 
-    facter_repo_dir = Pathname.new("#{temp_dir}/facter-ng")
+    facter_repo_dir = Pathname.new("#{temp_dir}/facter")
     facter_gem_path = Dir.entries(facter_repo_dir).select { |file| file =~ /facter-ng-[0-9]+.[0-9]+.[0-9]+(.pre)?.gem/ }
     File.join(facter_repo_dir, facter_gem_path)
   end
@@ -18,12 +18,12 @@ def download_and_build_facter_ng
   puts "Cloning branch #{branch_name}"
   Open3.capture2('echo $PATH')
 
-  Open3.capture2("git clone https://github.com/puppetlabs/facter-ng.git &&" \
-  'cd facter-ng &&' \
+  Open3.capture2("git clone https://github.com/puppetlabs/facter.git &&" \
+  'cd facter &&' \
   'git fetch &&' \
   "git reset --hard origin/#{branch_name}")
 
-  Dir.chdir('facter-ng') do
+  Dir.chdir('facter') do
     puts "Latest commit on branch #{branch_name}"
     output, _stderr = Open3.capture2('git log -1')
     puts output
