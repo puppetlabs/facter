@@ -3,11 +3,11 @@
 module Facts
   module Aix
     module Networking
-      class Primary
-        FACT_NAME = 'networking.primary'
+      class Scope6
+        FACT_NAME = 'networking.scope6'
 
         def call_the_resolver
-          fact_value = Facter::Resolvers::Aix::Networking.resolve(:primary_interface)
+          fact_value = Facter::Resolvers::Aix::Networking.resolve(:scope6)
 
           Facter::ResolvedFact.new(FACT_NAME, fact_value)
         end
