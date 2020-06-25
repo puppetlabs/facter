@@ -103,12 +103,14 @@ describe Facter::Resolvers::Networking do
       end
 
       it 'returns interfaces' do
-        expect(resolver.resolve(:interfaces)).to eql(Ethernet0:
-                                                                              {
-                                                                                dhcp: nil,
-                                                                                mac: '00:50:56:9A:F8:6B',
-                                                                                mtu: 1500
-                                                                              })
+       expected = {
+         'Ethernet0' => {
+            dhcp: nil,
+            mac: '00:50:56:9A:F8:6B',
+            mtu: 1500
+            }
+          }
+        expect(resolver.resolve(:interfaces)).to eql(expected)
       end
 
       it 'returns nil for mtu fact as primary interface is nil' do
@@ -160,7 +162,7 @@ describe Facter::Resolvers::Networking do
 
       it 'returns interface' do
         result = {
-          Ethernet0: {
+          'Ethernet0' => {
             bindings: [binding],
             dhcp: nil,
             ip: '10.16.127.3',
@@ -210,7 +212,7 @@ describe Facter::Resolvers::Networking do
 
       it 'returns interface' do
         result = {
-          Ethernet0: {
+          'Ethernet0' => {
             bindings6: [binding],
             dhcp: nil,
             ip6: 'fe80::7ca0:ab22:703a:b329',

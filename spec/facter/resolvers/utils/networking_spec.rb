@@ -107,34 +107,37 @@ describe Resolvers::Utils::Networking do
   end
 
   describe '#expand_main_bindings' do
-    let(:interfaces) do
+    let(:networking_facts) do
       {
-        'alw0' =>
-          { mtu: 1484,
-            mac: '2e:ba:e4:83:4b:b7',
-            bindings6:
+        primary_interface: 'en0',
+        interfaces:
+           { 'alw0' => {
+             mtu: 1484,
+             mac: '2e:ba:e4:83:4b:b7',
+             bindings6:
               [{ address: 'fe80::2cba:e4ff:fe83:4bb7',
                  netmask: 'ffff:ffff:ffff:ffff::',
-                 network: 'fe80::' }] },
-        'bridge0' => { mtu: 1500, mac: '82:17:0e:93:9d:00' },
-        'en0' =>
-            { mtu: 1500,
-              mac: '64:5a:ed:ea:5c:81',
-              bindings:
-                [{ address: '192.168.1.2',
-                   netmask: '255.255.255.0',
-                   network: '192.168.1.0' }] },
-        'lo0' =>
-            { mtu: 16_384,
-              bindings:
-                [{ address: '127.0.0.1', netmask: '255.0.0.0', network: '127.0.0.0' }],
-              bindings6:
-                [{ address: '::1',
-                   netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
-                   network: '::1' },
-                 { address: 'fe80::1',
-                   netmask: 'ffff:ffff:ffff:ffff::',
-                   network: 'fe80::' }] }
+                 network: 'fe80::' }]
+           },
+             'bridge0' => { mtu: 1500, mac: '82:17:0e:93:9d:00' },
+             'en0' =>
+           { mtu: 1500,
+             mac: '64:5a:ed:ea:5c:81',
+             bindings:
+               [{ address: '192.168.1.2',
+                  netmask: '255.255.255.0',
+                  network: '192.168.1.0' }] },
+             'lo0' =>
+           { mtu: 16_384,
+             bindings:
+               [{ address: '127.0.0.1', netmask: '255.0.0.0', network: '127.0.0.0' }],
+             bindings6:
+               [{ address: '::1',
+                  netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+                  network: '::1' },
+                { address: 'fe80::1',
+                  netmask: 'ffff:ffff:ffff:ffff::',
+                  network: 'fe80::' }] } }
       }
     end
 
@@ -143,17 +146,17 @@ describe Resolvers::Utils::Networking do
         mtu: 1500,
         mac: '64:5a:ed:ea:5c:81',
         bindings:
-            [{ address: '192.168.1.2',
-               netmask: '255.255.255.0',
-               network: '192.168.1.0' }],
+          [{ address: '192.168.1.2',
+             netmask: '255.255.255.0',
+             network: '192.168.1.0' }],
         ip: '192.168.1.2',
         netmask: '255.255.255.0',
         network: '192.168.1.0'
       }
 
-      networking_helper.expand_main_bindings(interfaces)
+      networking_helper.expand_main_bindings(networking_facts)
 
-      expect(interfaces['en0']).to eq(expected)
+      expect(networking_facts[:interfaces]['en0']).to eq(expected)
     end
 
     it 'expands the ipv6 binding' do
@@ -161,32 +164,32 @@ describe Resolvers::Utils::Networking do
         mtu: 1484,
         mac: '2e:ba:e4:83:4b:b7',
         bindings6:
-            [{ address: 'fe80::2cba:e4ff:fe83:4bb7',
-               netmask: 'ffff:ffff:ffff:ffff::',
-               network: 'fe80::' }],
+          [{ address: 'fe80::2cba:e4ff:fe83:4bb7',
+             netmask: 'ffff:ffff:ffff:ffff::',
+             network: 'fe80::' }],
         ip6: 'fe80::2cba:e4ff:fe83:4bb7',
         netmask6: 'ffff:ffff:ffff:ffff::',
         network6: 'fe80::',
         scope6: 'link'
       }
 
-      networking_helper.expand_main_bindings(interfaces)
+      networking_helper.expand_main_bindings(networking_facts)
 
-      expect(interfaces['alw0']).to eq(expected)
+      expect(networking_facts[:interfaces]['alw0']).to eq(expected)
     end
 
     it 'expands both the ipv6 and ipv4 binding' do
       expected = {
         mtu: 16_384,
         bindings:
-            [{ address: '127.0.0.1', netmask: '255.0.0.0', network: '127.0.0.0' }],
+          [{ address: '127.0.0.1', netmask: '255.0.0.0', network: '127.0.0.0' }],
         bindings6:
-            [{ address: '::1',
-               netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
-               network: '::1' },
-             { address: 'fe80::1',
-               netmask: 'ffff:ffff:ffff:ffff::',
-               network: 'fe80::' }],
+          [{ address: '::1',
+             netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+             network: '::1' },
+           { address: 'fe80::1',
+             netmask: 'ffff:ffff:ffff:ffff::',
+             network: 'fe80::' }],
         ip: '127.0.0.1',
         ip6: '::1',
         netmask: '255.0.0.0',
@@ -196,23 +199,46 @@ describe Resolvers::Utils::Networking do
         scope6: 'host'
       }
 
-      networking_helper.expand_main_bindings(interfaces)
+      networking_helper.expand_main_bindings(networking_facts)
 
-      expect(interfaces['lo0']).to eq(expected)
+      expect(networking_facts[:interfaces]['lo0']).to eq(expected)
+    end
+
+    it 'checks networking_facts have the expected keys' do
+      expected = %i[mtu mac ip netmask network interfaces primary_interface]
+
+      networking_helper.expand_main_bindings(networking_facts)
+
+      expect(networking_facts.keys).to match_array(expected)
+    end
+
+    it 'exoands the primary interface' do
+      expected = {
+        mtu: 1500,
+        mac: '64:5a:ed:ea:5c:81',
+        ip: '192.168.1.2',
+        netmask: '255.255.255.0',
+        network: '192.168.1.0'
+      }
+
+      networking_helper.expand_main_bindings(networking_facts)
+
+      expect(networking_facts).to include(expected)
     end
 
     context 'when there is a global ip address' do
-      let(:interfaces) do
+      let(:networking_facts) do
         {
-          'lo0' =>
-            { mtu: 16_384,
-              bindings6:
-                [{ address: '::1',
-                   netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
-                   network: '::1' },
-                 { address: 'fe87::1',
-                   netmask: 'ffff:ffff:ffff:ffff::',
-                   network: 'fe87::' }] }
+          interfaces:
+            { 'lo0' =>
+              { mtu: 16_384,
+                bindings6:
+                  [{ address: '::1',
+                     netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+                     network: '::1' },
+                   { address: 'fe87::1',
+                     netmask: 'ffff:ffff:ffff:ffff::',
+                     network: 'fe87::' }] } }
         }
       end
 
@@ -224,9 +250,9 @@ describe Resolvers::Utils::Networking do
           scope6: 'link'
         }
 
-        networking_helper.expand_main_bindings(interfaces)
+        networking_helper.expand_main_bindings(networking_facts)
 
-        expect(interfaces['lo0']).to include(expected)
+        expect(networking_facts[:interfaces]['lo0']).to include(expected)
       end
     end
   end

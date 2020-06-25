@@ -27,10 +27,7 @@ module Facter
 
           iterate_list(adapter_addresses)
 
-          unless @fact_list[:interfaces].nil?
-            ::Resolvers::Utils::Networking.expand_main_bindings(@fact_list[:interfaces])
-            expand_primary_interface_bindings
-          end
+          ::Resolvers::Utils::Networking.expand_main_bindings(@fact_list)
 
           @fact_list[fact_name]
         end
@@ -74,7 +71,7 @@ module Facter
               next
             end
             @fact_list[:domain] ||= adapter_address[:DnsSuffix].read_wide_string_without_length
-            name = adapter_address[:FriendlyName].read_wide_string_without_length.to_sym
+            name = adapter_address[:FriendlyName].read_wide_string_without_length
             net_interface[name] = build_interface_info(adapter_address, name)
           end
 
@@ -132,15 +129,6 @@ module Facter
              ([NetworkingFFI::AF_INET, NetworkingFFI::AF_INET6].include?(sock_addr[:sa_family]) &&
                  !::Resolvers::Utils::Networking.ignored_ip_address(addr))
             @fact_list[:primary_interface] = name.to_s
-          end
-        end
-
-        def expand_primary_interface_bindings
-          primary = @fact_list[:primary_interface]
-          return if primary.nil?
-
-          %i[mtu dhcp mac ip ip6 scope6 netmask netmask6 network network6].each do |key|
-            @fact_list[key] = @fact_list[:interfaces][primary.to_sym][key]
           end
         end
       end
