@@ -20,5 +20,14 @@ describe Facts::Linux::Networking::Scope6 do
         .to be_an_instance_of(Facter::ResolvedFact)
         .and have_attributes(name: 'networking.scope6', value: value)
     end
+
+    context 'when scope6 can not be retrieved' do
+      let(:value) { nil }
+
+      it 'returns nil' do
+        expect(fact.call_the_resolver)
+          .to be_an_instance_of(Facter::ResolvedFact).and have_attributes(name: 'networking.scope6', value: value)
+      end
+    end
   end
 end

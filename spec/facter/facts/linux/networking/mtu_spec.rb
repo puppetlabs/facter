@@ -20,5 +20,14 @@ describe Facts::Linux::Networking::Mtu do
         .to be_an_instance_of(Facter::ResolvedFact)
         .and have_attributes(name: 'networking.mtu', value: value)
     end
+
+    context 'when mtu can not be retrieved' do
+      let(:value) { nil }
+
+      it 'returns nil' do
+        expect(fact.call_the_resolver)
+          .to be_an_instance_of(Facter::ResolvedFact).and have_attributes(name: 'networking.mtu', value: value)
+      end
+    end
   end
 end

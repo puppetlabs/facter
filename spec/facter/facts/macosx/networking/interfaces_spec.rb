@@ -116,5 +116,15 @@ describe Facts::Macosx::Networking::Interfaces do
 
       expect(result.value['gif0']).to match({ 'mtu' => 1280 })
     end
+
+    context 'when interfaces can not be retrieved' do
+      let(:interfaces) { nil }
+
+      it 'returns nil' do
+        expect(fact.call_the_resolver)
+          .to be_an_instance_of(Facter::ResolvedFact)
+          .and have_attributes(name: 'networking.interfaces', value: interfaces)
+      end
+    end
   end
 end

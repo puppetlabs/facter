@@ -20,5 +20,15 @@ describe Facts::Linux::Networking::Mac do
         contain_exactly(an_object_having_attributes(name: 'networking.mac', value: value),
                         an_object_having_attributes(name: 'macaddress', value: value, type: :legacy))
     end
+
+    context 'when mac can not be retrieved' do
+      let(:value) { nil }
+
+      it 'returns nil' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+          contain_exactly(an_object_having_attributes(name: 'networking.mac', value: value),
+                          an_object_having_attributes(name: 'macaddress', value: value, type: :legacy))
+      end
+    end
   end
 end

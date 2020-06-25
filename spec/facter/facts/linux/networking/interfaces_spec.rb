@@ -32,5 +32,14 @@ describe Facts::Linux::Networking::Interfaces do
         .to be_an_instance_of(Facter::ResolvedFact)
         .and have_attributes(name: 'networking.interfaces', value: value)
     end
+
+    context 'when interfaces can not be retrieved' do
+      let(:value) { nil }
+
+      it 'returns nil' do
+        expect(fact.call_the_resolver)
+          .to be_an_instance_of(Facter::ResolvedFact).and have_attributes(name: 'networking.interfaces', value: value)
+      end
+    end
   end
 end
