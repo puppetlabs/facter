@@ -22,6 +22,7 @@ module Facter
           retrieve_interface_info
           retrieve_interfaces_mac_and_mtu
           retrieve_default_interface
+          ::Resolvers::Utils::Networking.expand_main_bindings(@fact_list)
           @fact_list[fact_name]
         end
 
@@ -45,8 +46,6 @@ module Facter
             fill_io_v6_info!(ip_tokens, interfaces)
             find_dhcp!(ip_tokens, interfaces)
           end
-
-          ::Resolvers::Utils::Networking.expand_main_bindings(interfaces)
 
           @fact_list[:interfaces] = interfaces
         end

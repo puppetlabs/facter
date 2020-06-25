@@ -65,7 +65,7 @@ module Resolvers
 
         def expand_primary_interface(networking_facts, primary)
           networking_facts[:interfaces][primary].each do |key, value|
-            networking_facts[key] = value unless %w[bindings bindings6].include?(key)
+            networking_facts[key] = value unless %i[bindings bindings6].include?(key)
           end
         end
 

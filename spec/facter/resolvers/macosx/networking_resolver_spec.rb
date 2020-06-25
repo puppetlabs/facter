@@ -14,9 +14,9 @@ describe Facter::Resolvers::Macosx::Networking do
       allow(Facter::Core::Execution)
         .to receive(:execute).with('ipconfig getoption en0 server_identifier', logger: log_spy).and_return(dhcp)
       allow(Facter::Core::Execution)
-          .to receive(:execute).with('ipconfig getoption llw0 server_identifier', logger: log_spy).and_return('')
+        .to receive(:execute).with('ipconfig getoption llw0 server_identifier', logger: log_spy).and_return('')
       allow(Facter::Core::Execution)
-          .to receive(:execute).with('ipconfig getoption awdl0 server_identifier', logger: log_spy).and_return(dhcp)
+        .to receive(:execute).with('ipconfig getoption awdl0 server_identifier', logger: log_spy).and_return(dhcp)
     end
 
     after do
