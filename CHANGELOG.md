@@ -1,3 +1,10 @@
+## [4.0.28](https://github.com/puppetlabs/facter/tree/4.0.28) (2020-06-25)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.27...4.0.28)
+
+### Fixed
+- \(maint\) Fix aio_agent_version on non AIO node [\#1938](https://github.com/puppetlabs/facter/pull/1938) ([smortex](https://github.com/smortex))
+
 ## [4.0.27](https://github.com/puppetlabs/facter/tree/4.0.27) (2020-06-24)
 
 [Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.26...4.0.27)
