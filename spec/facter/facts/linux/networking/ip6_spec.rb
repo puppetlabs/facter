@@ -20,5 +20,15 @@ describe Facts::Linux::Networking::Ip6 do
         contain_exactly(an_object_having_attributes(name: 'networking.ip6', value: value),
                         an_object_having_attributes(name: 'ipaddress6', value: value, type: :legacy))
     end
+
+    context 'when ip6 can not be retrieved' do
+      let(:value) { nil }
+
+      it 'returns nil' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+          contain_exactly(an_object_having_attributes(name: 'networking.ip6', value: value),
+                          an_object_having_attributes(name: 'ipaddress6', value: value, type: :legacy))
+      end
+    end
   end
 end
