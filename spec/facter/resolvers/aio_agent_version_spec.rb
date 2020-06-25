@@ -35,5 +35,18 @@ describe Facter::Resolvers::AioAgentVersion do
         expect(Facter::Resolvers::AioAgentVersion.resolve(:aio_agent_version)).to eql('7.0.1.8')
       end
     end
+
+    context 'when there is no AIO puppet agent' do
+      before do
+        allow(Facter::Util::FileHelper)
+          .to receive(:safe_read)
+          .with('/opt/puppetlabs/puppet/VERSION', nil)
+          .and_return(nil)
+      end
+
+      it 'resolves to nil' do
+        expect(Facter::Resolvers::AioAgentVersion.resolve(:aio_agent_version)).to be(nil)
+      end
+    end
   end
 end
