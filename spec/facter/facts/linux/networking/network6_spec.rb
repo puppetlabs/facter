@@ -5,22 +5,14 @@ describe Facts::Linux::Networking::Network6 do
     subject(:fact) { Facts::Linux::Networking::Network6.new }
 
     let(:value) { 'fe80::5989:97ff:75ae:dae7' }
-    let(:interfaces) { { 'eth0' => { network6: value }, 'en1' => { ip6: 'fe80::99bf:da20:ad3:9bfe' } } }
-    let(:primary) { 'eth0' }
 
     before do
-      allow(Facter::Resolvers::NetworkingLinux).to receive(:resolve).with(:interfaces).and_return(interfaces)
-      allow(Facter::Resolvers::NetworkingLinux).to receive(:resolve).with(:primary_interface).and_return(primary)
+      allow(Facter::Resolvers::NetworkingLinux).to receive(:resolve).with(:network6).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::NetworkingLinux with interfaces' do
+    it 'calls Facter::Resolvers::NetworkingLinux with network6' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::NetworkingLinux).to have_received(:resolve).with(:interfaces)
-    end
-
-    it 'calls Facter::Resolvers::NetworkingLinux with primary_interface' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::NetworkingLinux).to have_received(:resolve).with(:primary_interface)
+      expect(Facter::Resolvers::NetworkingLinux).to have_received(:resolve).with(:network6)
     end
 
     it 'returns network6 fact' do

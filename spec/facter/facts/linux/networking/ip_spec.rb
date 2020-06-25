@@ -5,22 +5,14 @@ describe Facts::Linux::Networking::Ip do
     subject(:fact) { Facts::Linux::Networking::Ip.new }
 
     let(:value) { '10.16.122.163' }
-    let(:interfaces) { { 'eth0' => { ip: value }, 'en1' => { ip6: 'fe80::99bf:da20:ad3:9bfe' } } }
-    let(:primary) { 'eth0' }
 
     before do
-      allow(Facter::Resolvers::NetworkingLinux).to receive(:resolve).with(:interfaces).and_return(interfaces)
-      allow(Facter::Resolvers::NetworkingLinux).to receive(:resolve).with(:primary_interface).and_return(primary)
+      allow(Facter::Resolvers::NetworkingLinux).to receive(:resolve).with(:ip).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::NetworkingLinux with interfaces' do
+    it 'calls Facter::Resolvers::NetworkingLinux with ip' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::NetworkingLinux).to have_received(:resolve).with(:interfaces)
-    end
-
-    it 'calls Facter::Resolvers::NetworkingLinux with primary_interface' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::NetworkingLinux).to have_received(:resolve).with(:primary_interface)
+      expect(Facter::Resolvers::NetworkingLinux).to have_received(:resolve).with(:ip)
     end
 
     it 'returns ipaddress fact' do
