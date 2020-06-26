@@ -18,7 +18,8 @@ describe Facts::Macosx::Networking::Interfaces do
             network6: 'fe80::' },
         'bridge0' => { mtu: 1500, mac: '82:17:0e:93:9d:00' },
         'en0' =>
-          { mtu: 1500,
+          { dhcp: '192.587.6.9',
+            mtu: 1500,
             mac: '64:5a:ed:ea:5c:81',
             bindings:
               [{ address: '192.168.1.2',
@@ -47,28 +48,14 @@ describe Facts::Macosx::Networking::Interfaces do
             network6: '::1' }
       }
     end
-    let(:dhcp) { '192.587.6.9' }
-    let(:primary) { 'en0' }
 
     before do
       allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
-      allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:dhcp).and_return(dhcp)
-      allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:primary_interface).and_return(primary)
     end
 
-    it 'calls Facter::Resolvers::NetworkingLinux with interfaces' do
+    it 'calls Facter::Resolvers::Macosx::Networking with interfaces' do
       fact.call_the_resolver
       expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:interfaces)
-    end
-
-    it 'calls Facter::Resolvers::NetworkingLinux with primary_interface' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:primary_interface)
-    end
-
-    it 'calls Facter::Resolvers::NetworkingLinux with dhcp' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:dhcp)
     end
 
     it 'returns networking.interfaces fact' do
@@ -128,6 +115,16 @@ describe Facts::Macosx::Networking::Interfaces do
       result = fact.call_the_resolver
 
       expect(result.value['gif0']).to match({ 'mtu' => 1280 })
+    end
+
+    context 'when interfaces can not be retrieved' do
+      let(:interfaces) { nil }
+
+      it 'returns nil' do
+        expect(fact.call_the_resolver)
+          .to be_an_instance_of(Facter::ResolvedFact)
+          .and have_attributes(name: 'networking.interfaces', value: interfaces)
+      end
     end
   end
 end

@@ -10,7 +10,7 @@ describe Facts::Macosx::Networking::Primary do
       allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:primary_interface).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Macosx::Networking' do
+    it 'calls Facter::Resolvers::Macosx::Networking with :primary_interface' do
       fact.call_the_resolver
       expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:primary_interface)
     end

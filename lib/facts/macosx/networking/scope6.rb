@@ -7,10 +7,7 @@ module Facts
         FACT_NAME = 'networking.scope6'
 
         def call_the_resolver
-          interfaces = Facter::Resolvers::Macosx::Networking.resolve(:interfaces)
-          primary = Facter::Resolvers::Macosx::Networking.resolve(:primary_interface)
-
-          fact_value = interfaces.dig(primary, :scope6) unless interfaces.nil?
+          fact_value = Facter::Resolvers::Macosx::Networking.resolve(:scope6)
 
           Facter::ResolvedFact.new(FACT_NAME, fact_value)
         end

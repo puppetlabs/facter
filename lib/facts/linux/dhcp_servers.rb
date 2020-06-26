@@ -14,11 +14,11 @@ module Facts
       private
 
       def construct_addresses_hash
-        primary = Facter::Resolvers::NetworkingLinux.resolve(:primary_interface)
+        primary_dhcp = Facter::Resolvers::NetworkingLinux.resolve(:dhcp)
         interfaces = Facter::Resolvers::NetworkingLinux.resolve(:interfaces)
         return unless interfaces
 
-        servers = { system: interfaces[primary][:dhcp] }
+        servers = { system: primary_dhcp }
         interfaces&.each { |interface_name, info| servers[interface_name] = info[:dhcp] if info[:dhcp] }
         servers
       end

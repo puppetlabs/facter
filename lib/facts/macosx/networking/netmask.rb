@@ -8,10 +8,7 @@ module Facts
         ALIASES = 'netmask'
 
         def call_the_resolver
-          interfaces = Facter::Resolvers::Macosx::Networking.resolve(:interfaces)
-          primary = Facter::Resolvers::Macosx::Networking.resolve(:primary_interface)
-
-          fact_value = interfaces.dig(primary, :netmask) unless interfaces.nil?
+          fact_value = Facter::Resolvers::Macosx::Networking.resolve(:netmask)
 
           [Facter::ResolvedFact.new(FACT_NAME, fact_value), Facter::ResolvedFact.new(ALIASES, fact_value, :legacy)]
         end

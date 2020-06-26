@@ -5,22 +5,14 @@ describe Facts::Macosx::Networking::Mtu do
     subject(:fact) { Facts::Macosx::Networking::Mtu.new }
 
     let(:value) { 1500 }
-    let(:primary) { 'en0' }
-    let(:interfaces) { { 'en0' => { mtu: 1500 } } }
 
     before do
-      allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:primary_interface).and_return(primary)
-      allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
+      allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:mtu).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Macosx::Networking with :primary_interface' do
+    it 'calls Facter::Resolvers::Macosx::Networking with :mtu' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:primary_interface)
-    end
-
-    it 'calls Facter::Resolvers::Macosx::Networking with :interfaces' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:interfaces)
+      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:mtu)
     end
 
     it 'returns mtu fact' do
@@ -28,18 +20,7 @@ describe Facts::Macosx::Networking::Mtu do
         .to be_an_instance_of(Facter::ResolvedFact).and have_attributes(name: 'networking.mtu', value: value)
     end
 
-    context 'when primary interface can not be retrieved' do
-      let(:primary) { nil }
-      let(:value) { nil }
-
-      it 'returns nil' do
-        expect(fact.call_the_resolver)
-          .to be_an_instance_of(Facter::ResolvedFact).and have_attributes(name: 'networking.mtu', value: value)
-      end
-    end
-
-    context 'when interfaces can not be retrieved' do
-      let(:interfaces) { nil }
+    context 'when mtu can not be retrieved' do
       let(:value) { nil }
 
       it 'returns nil' do

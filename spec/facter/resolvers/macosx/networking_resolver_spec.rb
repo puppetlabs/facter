@@ -13,6 +13,10 @@ describe Facter::Resolvers::Macosx::Networking do
       allow(Facter::Core::Execution).to receive(:execute).with('ifconfig -a', logger: log_spy).and_return(interfaces)
       allow(Facter::Core::Execution)
         .to receive(:execute).with('ipconfig getoption en0 server_identifier', logger: log_spy).and_return(dhcp)
+      allow(Facter::Core::Execution)
+        .to receive(:execute).with('ipconfig getoption llw0 server_identifier', logger: log_spy).and_return('')
+      allow(Facter::Core::Execution)
+        .to receive(:execute).with('ipconfig getoption awdl0 server_identifier', logger: log_spy).and_return(dhcp)
     end
 
     after do
@@ -27,7 +31,7 @@ describe Facter::Resolvers::Macosx::Networking do
       expect(networking.resolve(:primary_interface)).to eq('en0')
     end
 
-    it 'detects the dhcp server ip' do
+    it 'detects the primary interface dhcp server ip' do
       expect(networking.resolve(:dhcp)).to eq('192.168.143.1')
     end
 
@@ -71,12 +75,17 @@ describe Facter::Resolvers::Macosx::Networking do
     end
 
     it 'checks that interface en0 has the expected keys' do
-      expected = %i[mtu mac bindings ip netmask network]
+      expected = %i[mtu mac bindings ip netmask network dhcp]
       expect(networking.resolve(:interfaces)['en0'].keys).to match_array(expected)
     end
 
     it 'checks that interface en0 has the expected mtu' do
       expected = { mtu: 1500 }
+      expect(networking.resolve(:interfaces)['en0']).to include(expected)
+    end
+
+    it 'checks that interface en0 has the expected dhcp' do
+      expected = { dhcp: '192.168.143.1' }
       expect(networking.resolve(:interfaces)['en0']).to include(expected)
     end
 
@@ -93,6 +102,21 @@ describe Facter::Resolvers::Macosx::Networking do
     it 'checks interface bridge0' do
       expected = { mtu: 1500, mac: '82:17:0e:93:9d:00' }
       expect(networking.resolve(:interfaces)['bridge0']).to include(expected)
+    end
+
+    it 'checks that interface llw0 has no dhcp' do
+      expected = { dhcp: '192.168.143.1' }
+      expect(networking.resolve(:interfaces)['llw0']).not_to include(expected)
+    end
+
+    it 'checks that interface awdl0 has the expected keys' do
+      expected = %i[mtu mac bindings6 ip6 netmask6 network6 scope6 dhcp]
+      expect(networking.resolve(:interfaces)['awdl0'].keys).to match_array(expected)
+    end
+
+    it 'checks that interface awdl0 has dhcp' do
+      expected = { dhcp: '192.168.143.1' }
+      expect(networking.resolve(:interfaces)['awdl0']).to include(expected)
     end
 
     it 'checks interface utun2' do

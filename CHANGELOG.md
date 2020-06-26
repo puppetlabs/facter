@@ -1,4 +1,26 @@
+## [4.0.28](https://github.com/puppetlabs/facter/tree/4.0.28) (2020-06-25)
 
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.27...4.0.28)
+
+### Fixed
+- \(maint\) Fix aio_agent_version on non AIO node [\#1938](https://github.com/puppetlabs/facter/pull/1938) ([smortex](https://github.com/smortex))
+
+## [4.0.27](https://github.com/puppetlabs/facter/tree/4.0.27) (2020-06-24)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.26...4.0.27)
+
+### Added
+- \(FACT-2212\) Networking facts for OSX [\#1929](https://github.com/puppetlabs/facter/pull/1929) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- \(maint\) Add FreeBSD disks and partitions facts [\#553](https://github.com/puppetlabs/facter-ng/pull/553) ([smortex](https://github.com/smortex))
+- \(FACT-2638\) Use puppet AIO VERSION file to specify AIO version [\#549](https://github.com/puppetlabs/facter-ng/pull/549) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2654\) Add ec2 facts for Windows [\#546](https://github.com/puppetlabs/facter-ng/pull/546) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2620\) Add EC2 facts for linux [\#544](https://github.com/puppetlabs/facter-ng/pull/544) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2619\) External facts cache [\#541](https://github.com/puppetlabs/facter-ng/pull/541) ([florindragos](https://github.com/florindragos))
+- Add support for processors facts on \*BSD [\#489](https://github.com/puppetlabs/facter-ng/pull/489) ([smortex](https://github.com/smortex))
+
+### Fixed
+- \(FACT-2668\) Networking fact on linux should have logic for selecting IPs [\#1928](https://github.com/puppetlabs/facter/pull/1928) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2678\) Facter sometimes pollutes the calling processes environment (race condition) [\#1932](https://github.com/puppetlabs/facter/pull/1932) ([IrimieBogdan](https://github.com/IrimieBogdan))
 
 ## [4.0.26](https://github.com/puppetlabs/facter-ng/tree/4.0.26) (2020-06-11)
 
