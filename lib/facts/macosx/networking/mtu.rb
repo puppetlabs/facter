@@ -7,10 +7,7 @@ module Facts
         FACT_NAME = 'networking.mtu'
 
         def call_the_resolver
-          interfaces = Facter::Resolvers::Macosx::Networking.resolve(:interfaces)
-          primary = Facter::Resolvers::Macosx::Networking.resolve(:primary_interface)
-
-          fact_value = interfaces.dig(primary, :mtu) unless interfaces.nil?
+          fact_value = Facter::Resolvers::Macosx::Networking.resolve(:mtu)
 
           Facter::ResolvedFact.new(FACT_NAME, fact_value)
         end

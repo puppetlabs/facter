@@ -7,10 +7,7 @@ module Facts
         FACT_NAME = 'networking.scope6'
 
         def call_the_resolver
-          interfaces = Facter::Resolvers::NetworkingLinux.resolve(:interfaces)
-          primary = Facter::Resolvers::NetworkingLinux.resolve(:primary_interface)
-
-          fact_value = interfaces[primary][:scope6] if interfaces && interfaces[primary]
+          fact_value = Facter::Resolvers::NetworkingLinux.resolve(:scope6)
 
           Facter::ResolvedFact.new(FACT_NAME, fact_value)
         end

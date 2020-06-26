@@ -17,11 +17,12 @@ module Resolvers
           { address: addr, netmask: mask.to_s, network: ip.mask(mask_length).to_s }
         end
 
-        def expand_main_bindings(interfaces)
-          interfaces.each_value do |values|
-            expand_binding(values, values[:bindings]) if values[:bindings]
-            expand_binding(values, values[:bindings6], false) if values[:bindings6]
-          end
+        def expand_main_bindings(networking_facts)
+          primary = networking_facts[:primary_interface]
+          interfaces = networking_facts[:interfaces]
+
+          expand_interfaces(interfaces) unless interfaces.nil?
+          expand_primary_interface(networking_facts, primary) unless primary.nil? || interfaces.nil?
         end
 
         def get_scope(ip)
@@ -54,6 +55,19 @@ module Resolvers
         end
 
         private
+
+        def expand_interfaces(interfaces)
+          interfaces.each_value do |values|
+            expand_binding(values, values[:bindings]) if values[:bindings]
+            expand_binding(values, values[:bindings6], false) if values[:bindings6]
+          end
+        end
+
+        def expand_primary_interface(networking_facts, primary)
+          networking_facts[:interfaces][primary].each do |key, value|
+            networking_facts[key] = value unless %i[bindings bindings6].include?(key)
+          end
+        end
 
         def expand_binding(values, bindings, ipv4_type = true)
           binding = find_valid_binding(bindings)
