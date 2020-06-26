@@ -37,6 +37,7 @@ module Facter
           fill_fact_list(pairs)
           process_name
           pad_version_id
+          normalize_family_name
 
           @fact_list[fact_name]
         end
@@ -60,6 +61,10 @@ module Facter
                               else
                                 @fact_list[:name].split(' ')[0].strip
                               end
+        end
+
+        def normalize_family_name
+          @fact_list[:id_like] = @fact_list[:id_like].split.first if @fact_list[:id_like]
         end
       end
     end
