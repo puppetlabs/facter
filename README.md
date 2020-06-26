@@ -1,8 +1,8 @@
 # facter-ng
 
-[![Modules Status](https://github.com/puppetlabs/facter-ng/workflows/Acceptance%20tests/badge.svg?branch=master)](https://github.com/puppetlabs/facter/actions)
-[![Modules Status](https://github.com/puppetlabs/facter-ng/workflows/Unit%20tests/badge.svg?branch=master)](https://github.com/puppetlabs/facter/actions)
-[![Modules Status](https://github.com/puppetlabs/facter-ng/workflows/Checks/badge.svg?branch=master)](https://github.com/puppetlabs/facter/actions)
+[![Modules Status](https://github.com/puppetlabs/facter/workflows/Acceptance%20tests/badge.svg?branch=master)](https://github.com/puppetlabs/facter/actions)
+[![Modules Status](https://github.com/puppetlabs/facter/workflows/Unit%20tests/badge.svg?branch=master)](https://github.com/puppetlabs/facter/actions)
+[![Modules Status](https://github.com/puppetlabs/facter/workflows/Checks/badge.svg?branch=master)](https://github.com/puppetlabs/facter/actions)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/bf43445f767f2d64170a/test_coverage)](https://codeclimate.com/github/puppetlabs/facter/test_coverage)
 [![Maintainability](https://api.codeclimate.com/v1/badges/bf43445f767f2d64170a/maintainability)](https://codeclimate.com/github/puppetlabs/facter/maintainability)
 [<img src="https://img.shields.io/badge/slack-puppet--dev-brightgreen?logo=slack">](https://puppetcommunity.slack.com/messages/C0W1X7ZAL)
