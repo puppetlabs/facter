@@ -103,13 +103,13 @@ describe Facter::Resolvers::Networking do
       end
 
       it 'returns interfaces' do
-       expected = {
-         'Ethernet0' => {
+        expected = {
+          'Ethernet0' => {
             dhcp: nil,
             mac: '00:50:56:9A:F8:6B',
             mtu: 1500
-            }
           }
+        }
         expect(resolver.resolve(:interfaces)).to eql(expected)
       end
 
