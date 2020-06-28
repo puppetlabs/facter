@@ -24,7 +24,7 @@ module Facts
       end
 
       def check_parallels
-        subsystem_vendor_id = Facter::Resolvers::SystemProfiler_2.resolve(:subsystem_vendor_id)
+        subsystem_vendor_id = Facter::Resolvers::SystemProfiler.resolve(:subsystem_vendor_id)
         return 'parallels' if subsystem_vendor_id&.start_with?('0x1ab8')
       end
     end
