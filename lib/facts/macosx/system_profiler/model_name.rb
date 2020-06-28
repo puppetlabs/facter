@@ -8,7 +8,7 @@ module Facts
         ALIASES = 'sp_machine_name'
 
         def call_the_resolver
-          fact_value = Facter::Resolvers::SystemProfiler.resolve(:model_name)
+          fact_value = Facter::Resolvers::Macosx::SystemProfiler.resolve(:model_name)
           [Facter::ResolvedFact.new(FACT_NAME, fact_value), Facter::ResolvedFact.new(ALIASES, fact_value, :legacy)]
         end
       end
