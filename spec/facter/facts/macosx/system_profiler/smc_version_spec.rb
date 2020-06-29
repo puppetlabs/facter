@@ -7,13 +7,13 @@ describe Facts::Macosx::SystemProfiler::SmcVersion do
     let(:value) { '2.29f24' }
 
     before do
-      allow(Facter::Resolvers::SystemProfiler).to \
+      allow(Facter::Resolvers::Macosx::SystemProfiler).to \
         receive(:resolve).with(:smc_version_system).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::SystemProfiler' do
+    it 'calls Facter::Resolvers::Macosx::SystemProfiler' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::SystemProfiler).to have_received(:resolve).with(:smc_version_system)
+      expect(Facter::Resolvers::Macosx::SystemProfiler).to have_received(:resolve).with(:smc_version_system)
     end
 
     it 'returns a resolved fact' do

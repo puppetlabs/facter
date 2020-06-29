@@ -7,13 +7,13 @@ describe Facts::Macosx::SystemProfiler::L3Cache do
     let(:value) { '6 MB' }
 
     before do
-      allow(Facter::Resolvers::SystemProfiler).to \
+      allow(Facter::Resolvers::Macosx::SystemProfiler).to \
         receive(:resolve).with(:l3_cache).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::SystemProfiler' do
+    it 'calls Facter::Resolvers::Macosx::SystemProfiler' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::SystemProfiler).to have_received(:resolve).with(:l3_cache)
+      expect(Facter::Resolvers::Macosx::SystemProfiler).to have_received(:resolve).with(:l3_cache)
     end
 
     it 'returns a resolved fact' do

@@ -5,33 +5,33 @@ describe Facts::Macosx::IsVirtual do
     subject(:fact) { Facts::Macosx::IsVirtual.new }
 
     before do
-      allow(Facter::Resolvers::SystemProfiler).to receive(:resolve)
+      allow(Facter::Resolvers::Macosx::SystemProfiler).to receive(:resolve)
         .with(:model_identifier)
         .and_return('MacBookPro11,4')
 
-      allow(Facter::Resolvers::SystemProfiler).to receive(:resolve)
+      allow(Facter::Resolvers::Macosx::SystemProfiler).to receive(:resolve)
         .with(:boot_rom_version)
         .and_return('1037.60.58.0.0 (iBridge: 17.16.12551.0.0,0)')
 
-      allow(Facter::Resolvers::SystemProfiler).to receive(:resolve)
+      allow(Facter::Resolvers::Macosx::SystemProfiler).to receive(:resolve)
         .with(:subsystem_vendor_id)
         .and_return('0x123')
     end
 
-    it 'calls Facter::Resolvers::SystemProfile with model_identifier' do
-      expect(Facter::Resolvers::SystemProfiler).to receive(:resolve)
+    it 'calls Facter::Resolvers::Macosx::SystemProfile with model_identifier' do
+      expect(Facter::Resolvers::Macosx::SystemProfiler).to receive(:resolve)
         .with(:model_identifier)
       fact.call_the_resolver
     end
 
-    it 'calls Facter::Resolvers::SystemProfile with boot_rom_version' do
-      expect(Facter::Resolvers::SystemProfiler).to receive(:resolve)
+    it 'calls Facter::Resolvers::Macosx::SystemProfile with boot_rom_version' do
+      expect(Facter::Resolvers::Macosx::SystemProfiler).to receive(:resolve)
         .with(:boot_rom_version)
       fact.call_the_resolver
     end
 
-    it 'calls Facter::Resolvers::SystemProfile with subsystem_vendor_id' do
-      allow(Facter::Resolvers::SystemProfiler).to receive(:resolve)
+    it 'calls Facter::Resolvers::Macosx::SystemProfile with subsystem_vendor_id' do
+      allow(Facter::Resolvers::Macosx::SystemProfiler).to receive(:resolve)
         .with(:subsystem_vendor_id)
       fact.call_the_resolver
     end
@@ -39,7 +39,7 @@ describe Facts::Macosx::IsVirtual do
     context 'when on virtual machine' do
       context 'with hypervisor vmware' do
         before do
-          allow(Facter::Resolvers::SystemProfiler)
+          allow(Facter::Resolvers::Macosx::SystemProfiler)
             .to receive(:resolve)
             .with(:model_identifier)
             .and_return('VMware')
@@ -56,7 +56,7 @@ describe Facts::Macosx::IsVirtual do
 
       context 'when hypervisor VirtualBox' do
         before do
-          allow(Facter::Resolvers::SystemProfiler)
+          allow(Facter::Resolvers::Macosx::SystemProfiler)
             .to receive(:resolve)
             .with(:boot_rom_version)
             .and_return('VirtualBox')
@@ -73,7 +73,7 @@ describe Facts::Macosx::IsVirtual do
 
       context 'when hypervisor Parallels' do
         before do
-          allow(Facter::Resolvers::SystemProfiler)
+          allow(Facter::Resolvers::Macosx::SystemProfiler)
             .to receive(:resolve)
             .with(:subsystem_vendor_id)
             .and_return('0x1ab8')

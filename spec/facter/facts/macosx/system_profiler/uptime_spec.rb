@@ -7,13 +7,13 @@ describe Facts::Macosx::SystemProfiler::Uptime do
     let(:value) { '26 days 22:12' }
 
     before do
-      allow(Facter::Resolvers::SystemProfiler).to \
+      allow(Facter::Resolvers::Macosx::SystemProfiler).to \
         receive(:resolve).with(:time_since_boot).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::SystemProfiler' do
+    it 'calls Facter::Resolvers::Macosx::SystemProfiler' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::SystemProfiler).to have_received(:resolve).with(:time_since_boot)
+      expect(Facter::Resolvers::Macosx::SystemProfiler).to have_received(:resolve).with(:time_since_boot)
     end
 
     it 'returns a resolved fact' do

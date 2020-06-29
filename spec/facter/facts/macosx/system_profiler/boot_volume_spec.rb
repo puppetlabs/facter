@@ -7,13 +7,13 @@ describe Facts::Macosx::SystemProfiler::BootVolume do
     let(:value) { 'Macintosh HD' }
 
     before do
-      allow(Facter::Resolvers::SystemProfiler).to \
+      allow(Facter::Resolvers::Macosx::SystemProfiler).to \
         receive(:resolve).with(:boot_volume).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::SystemProfiler' do
+    it 'calls Facter::Resolvers::Macosx::SystemProfiler' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::SystemProfiler).to have_received(:resolve).with(:boot_volume)
+      expect(Facter::Resolvers::Macosx::SystemProfiler).to have_received(:resolve).with(:boot_volume)
     end
 
     it 'returns a resolved fact' do

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::Resolvers::SystemProfiler do
+describe Facter::Resolvers::Macosx::SystemProfiler do
   subject(:system_profiler) { Facter::Resolvers::SystemProfiler }
 
   let(:log_spy) { instance_spy(Facter::Log) }

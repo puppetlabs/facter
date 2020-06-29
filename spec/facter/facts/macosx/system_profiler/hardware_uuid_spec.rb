@@ -7,13 +7,13 @@ describe Facts::Macosx::SystemProfiler::HardwareUuid do
     let(:value) { '7C3B701F-B88A-56C6-83F4-ACBD450075C4' }
 
     before do
-      allow(Facter::Resolvers::SystemProfiler).to \
+      allow(Facter::Resolvers::Macosx::SystemProfiler).to \
         receive(:resolve).with(:hardware_uuid).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::SystemProfiler' do
+    it 'calls Facter::Resolvers::Macosx::SystemProfiler' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::SystemProfiler).to have_received(:resolve).with(:hardware_uuid)
+      expect(Facter::Resolvers::Macosx::SystemProfiler).to have_received(:resolve).with(:hardware_uuid)
     end
 
     it 'returns a resolved fact' do
