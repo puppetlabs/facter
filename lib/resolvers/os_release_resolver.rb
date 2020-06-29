@@ -37,6 +37,7 @@ module Facter
           fill_fact_list(pairs)
           process_name
           pad_version_id
+          normalize_opensuse_identifier
 
           @fact_list[fact_name]
         end
@@ -60,6 +61,10 @@ module Facter
                               else
                                 @fact_list[:name].split(' ')[0].strip
                               end
+        end
+
+        def normalize_opensuse_identifier
+          @fact_list[:identifier] = 'opensuse' if @fact_list[:identifier] =~ /opensuse/i
         end
       end
     end

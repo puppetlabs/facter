@@ -37,6 +37,12 @@ describe Facter::Resolvers::OsRelease do
 
       expect(result).to eq('bionic')
     end
+
+    it 'returns os identifier' do
+      result = Facter::Resolvers::OsRelease.resolve(:identifier)
+
+      expect(result).to eq('')
+    end
   end
 
   context 'when /etc/os-release file is not readable' do
@@ -74,6 +80,32 @@ describe Facter::Resolvers::OsRelease do
       result = Facter::Resolvers::OsRelease.resolve(:version_codename)
 
       expect(result).to eq('buster')
+    end
+
+    it 'returns os identifier' do
+      result = Facter::Resolvers::OsRelease.resolve(:identifier)
+
+      expect(result).to eq('debian')
+    end
+  end
+
+  context 'when on opensuse-leap' do
+    let(:os_release_content) { load_fixture('os_release_opensuse-leap').readlines }
+
+    it 'returns os identifier' do
+      result = Facter::Resolvers::OsRelease.resolve(:identifier)
+
+      expect(result).to eq('opensuse')
+    end
+
+    context 'when opensuse identifier is capitalized' do
+      it 'returns os identifier' do
+        os_release_content[2] = 'ID="Opensuse-Leap"'
+
+        result = Facter::Resolvers::OsRelease.resolve(:identifier)
+
+        expect(result).to eq('opensuse')
+      end
     end
   end
 end
