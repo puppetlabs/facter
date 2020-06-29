@@ -11,7 +11,9 @@ module Facter
             @log.debug "Executing command: system_profiler #{category_name}"
             output = Facter::Core::Execution.execute(
               "system_profiler #{category_name}", logger: @log
-            ).force_encoding('UTF-8')
+            )&.force_encoding('UTF-8')
+
+            return unless output
 
             system_profiler_hash = output_to_hash(output)
 
