@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-describe Facts::Macosx::IsVirtual do
-  describe '#call_the_resolver' do
-    subject(:fact) { Facts::Macosx::IsVirtual.new }
+describe Facts::Macosx::Virtual do
+  subject(:fact) { Facts::Macosx::Virtual.new }
 
+  describe '#call_the_resolver' do
     before do
       allow(Facter::Resolvers::Macosx::SystemProfiler).to receive(:resolve)
         .with(:model_identifier)
@@ -37,10 +37,12 @@ describe Facts::Macosx::IsVirtual do
         expect(Facter::Resolvers::Macosx::SystemProfiler).to have_received(:resolve).with(:subsystem_vendor_id)
       end
 
-      it 'returns resolved fact with false value' do
+      it 'returns resolved fact with true value' do
         expect(fact.call_the_resolver)
           .to be_an_instance_of(Facter::ResolvedFact)
-          .and have_attributes(name: 'is_virtual', value: false)
+          .and have_attributes(name: 'virtual', value: nil)
+
+        fact.call_the_resolver
       end
     end
 
@@ -56,7 +58,7 @@ describe Facts::Macosx::IsVirtual do
         it 'returns resolved fact with true value' do
           expect(fact.call_the_resolver)
             .to be_an_instance_of(Facter::ResolvedFact)
-            .and have_attributes(name: 'is_virtual', value: true)
+            .and have_attributes(name: 'virtual', value: 'vmware')
         end
       end
 
@@ -71,7 +73,7 @@ describe Facts::Macosx::IsVirtual do
         it 'returns resolved fact with true value' do
           expect(fact.call_the_resolver)
             .to be_an_instance_of(Facter::ResolvedFact)
-            .and have_attributes(name: 'is_virtual', value: true)
+            .and have_attributes(name: 'virtual', value: 'virtualbox')
         end
       end
 
@@ -86,7 +88,7 @@ describe Facts::Macosx::IsVirtual do
         it 'returns resolved fact with true value' do
           expect(fact.call_the_resolver)
             .to be_an_instance_of(Facter::ResolvedFact)
-            .and have_attributes(name: 'is_virtual', value: true)
+            .and have_attributes(name: 'virtual', value: 'parallels')
         end
       end
     end
