@@ -64,7 +64,7 @@ module Facter
         end
 
         def normalize_opensuse_identifier
-          @fact_list[:identifier] = 'opensuse' if @fact_list[:identifier] =~ /opensuse/
+          @fact_list[:identifier] = 'opensuse' if @fact_list[:identifier] =~ /opensuse/i
         end
       end
     end
