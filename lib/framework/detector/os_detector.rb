@@ -10,7 +10,7 @@ class OsDetector
   def initialize(*_args)
     @log = Facter::Log.new(self)
     @os_hierarchy = Facter::OsHierarchy.new
-    @identifier = detect
+    # @identifier = detect
   end
 
   private
