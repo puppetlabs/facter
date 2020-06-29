@@ -168,5 +168,50 @@ describe Facter::Resolvers::Macosx::SystemProfiler do
         .with('SPEthernetDataType')
         .and_return(sp_ethernet_data_type)
     end
+
+    it 'returns type' do
+      expect(system_profiler.resolve(:type)).to eq('Ethernet Controller')
+    end
+
+    it 'returns bus' do
+      expect(system_profiler.resolve(:bus)).to eq('PCI')
+    end
+
+    it 'returns vendor_id' do
+      expect(system_profiler.resolve(:vendor_id)).to eq('0x8086')
+    end
+
+    it 'returns device_id' do
+      expect(system_profiler.resolve(:device_id)).to eq('0x100f')
+    end
+
+    it 'returns subsystem_vendor_id' do
+      expect(system_profiler.resolve(:subsystem_vendor_id)).to eq('0x1ab8')
+    end
+
+    it 'returns subsystem_id' do
+      expect(system_profiler.resolve(:subsystem_id)).to eq('0x0400')
+    end
+
+    it 'returns revision_id' do
+      expect(system_profiler.resolve(:revision_id)).to eq('0x0000')
+    end
+
+    it 'returns bsd_name' do
+      expect(system_profiler.resolve(:bsd_name)).to eq('en0')
+    end
+
+    it 'returns kext_name' do
+      expect(system_profiler.resolve(:kext_name)).to eq('AppleIntel8254XEthernet.kext')
+    end
+
+    it 'returns location' do
+      expect(system_profiler.resolve(:location))
+        .to eq('/System/Library/Extensions/IONetworkingFamily.kext/Contents/PlugIns/AppleIntel8254XEthernet.kext')
+    end
+
+    it 'returns version' do
+      expect(system_profiler.resolve(:version)).to eq('3.1.5')
+    end
   end
 end
