@@ -97,5 +97,15 @@ describe Facter::Resolvers::OsRelease do
 
       expect(result).to eq('opensuse')
     end
+
+    context 'when opensuse identifier is capitalized' do
+      it 'returns os identifier' do
+        os_release_content[2] = 'ID="Opensuse-Leap"'
+
+        result = Facter::Resolvers::OsRelease.resolve(:identifier)
+
+        expect(result).to eq('opensuse')
+      end
+    end
   end
 end
