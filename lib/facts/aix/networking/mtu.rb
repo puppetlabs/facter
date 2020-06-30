@@ -3,11 +3,11 @@
 module Facts
   module Aix
     module Networking
-      class Primary
-        FACT_NAME = 'networking.primary'
+      class Mtu
+        FACT_NAME = 'networking.mtu'
 
         def call_the_resolver
-          fact_value = Facter::Resolvers::Aix::Networking.resolve(:primary_interface)
+          fact_value = Facter::Resolvers::Aix::Networking.resolve(:mtu)
 
           Facter::ResolvedFact.new(FACT_NAME, fact_value)
         end

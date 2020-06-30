@@ -7,12 +7,12 @@ describe Facts::Aix::Networking::Primary do
     let(:value) { 'en0' }
 
     before do
-      allow(Facter::Resolvers::Aix::Networking).to receive(:resolve).with(:primary).and_return(value)
+      allow(Facter::Resolvers::Aix::Networking).to receive(:resolve).with(:primary_interface).and_return(value)
     end
 
     it 'calls Facter::Resolvers::Networking' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Aix::Networking).to have_received(:resolve).with(:primary)
+      expect(Facter::Resolvers::Aix::Networking).to have_received(:resolve).with(:primary_interface)
     end
 
     it 'returns primary interface name' do
