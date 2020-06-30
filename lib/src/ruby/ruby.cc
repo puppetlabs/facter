@@ -77,6 +77,16 @@ namespace facter { namespace ruby {
         // https://github.com/ruby/ruby/blob/v2_1_9/ruby.c#L2011-L2022 for comments.
         // The only piece we seem to need out of rb_w32_sysinit is WSAStartup.
         util::windows::wsa winsocket;
+
+        // Disable stdout buffering while loading custom facts, similar to `stderr` in `init_stdhandle`
+        // https://github.com/ruby/ruby/blob/9e41a75255d15765648279629fd3134cae076398/win32/win32.c#L2655
+        // This is needed in a specific case:
+        // - run facter from ruby with backticks
+        // - have a custom fact executing external command with backticks
+        // In this case, `\x00` character will be shown on stdout instead of fact output
+        // We suppose that somwhere between ruby(`facter my_fact`)<->c(rb_load)<->ruby(Facter.add)<->c(rb_funcall_passing_block)<->ruby(`echo test`)
+        // stdout gets the wchar end of string that will break it
+        setvbuf(stdout, NULL, _IONBF, 0);
 #endif
         api& ruby = api::instance();
         module mod(facts, {}, !initialize_puppet);
@@ -95,6 +105,10 @@ namespace facter { namespace ruby {
         } else {
             mod.resolve_facts();
         }
+#ifdef _WIN32
+        // Enable stdout line buffering (disabled due custom facts loading)
+        setvbuf(stdout, NULL, _IOLBF, 0);
+#endif
     }
 
     void load_custom_facts(collection& facts, vector<string> const& paths)
