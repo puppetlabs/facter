@@ -92,6 +92,8 @@ RSpec/FilePath:
     - 'spec/framework/formatters/legacy_fact_formatter_spec.rb'
     - 'spec/framework/formatters/yaml_fact_formatter_spec.rb'
     - 'spec/framework/utils/utils_spec.rb'
+    - 'spec/facter/resolvers/macosx/utils/system_profile_executor_spec.rb'
+
 
 # Offense count: 15
 # Configuration parameters: AssignmentOnly.

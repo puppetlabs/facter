@@ -7,13 +7,13 @@ describe Facts::Macosx::SystemProfiler::Memory do
     let(:value) { '16 GB' }
 
     before do
-      allow(Facter::Resolvers::SystemProfiler).to \
+      allow(Facter::Resolvers::Macosx::SystemProfiler).to \
         receive(:resolve).with(:memory).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::SystemProfiler' do
+    it 'calls Facter::Resolvers::Macosx::SystemProfiler' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::SystemProfiler).to have_received(:resolve).with(:memory)
+      expect(Facter::Resolvers::Macosx::SystemProfiler).to have_received(:resolve).with(:memory)
     end
 
     it 'returns a resolved fact' do
