@@ -1,3 +1,15 @@
+## [4.0.29](https://github.com/puppetlabs/facter/tree/4.0.29) (2020-07-01)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.28...4.0.29)
+
+### Added
+- \(FACT-2218\) virtual fact for OSX [\#1945](https://github.com/puppetlabs/facter/pull/1945) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2232\) Add Aix networking facts [\#1937](https://github.com/puppetlabs/facter-ng/pull/1937) ([oanatmaria](https://github.com/oanatmaria))
+
+### Fixed
+- \(FACT-2676\) fix os identifier for opensuse-leap [\#1944](https://github.com/puppetlabs/facter-ng/pull/1944) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- FACT-2679 Get DHCP for all interfaces on OSX [\#1940](https://github.com/puppetlabs/facter-ng/pull/1940) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+
 ## [4.0.28](https://github.com/puppetlabs/facter/tree/4.0.28) (2020-06-25)
 
 [Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.27...4.0.28)
