@@ -29,7 +29,8 @@ module Facts
         def check_other_facts
           product_name = Facter::Resolvers::Linux::DmiBios.resolve(:product_name)
           bios_vendor =  Facter::Resolvers::Linux::DmiBios.resolve(:bios_vendor)
-          return 'kvm' if bios_vendor&.include?('Amazon EC2')
+
+          return 'kvm' if bios_vendor&.include?('Amazon EC2') || bios_vendor&.include?('Google')
           return unless product_name
 
           Facter::FactsUtils::HYPERVISORS_HASH.each { |key, value| return value if product_name.include?(key) }
