@@ -3,22 +3,24 @@ require 'benchmark'
 
 module Facter
   module Framework
-    class Timer
-      class << self
-        def measure
-          time = Benchmark.measure { yield }
+    module Benchmarking
+      class Timer
+        class << self
+          def measure
+            time = Benchmark.measure { yield }
 
-          puts "fact name:, took: #{time.format('%t')}"
+            puts "fact name:, took: #{time.format('%t')}"
 
-          time
-        end
+            time
+          end
 
-        def measure_for_fact(fact_name)
-          time = Benchmark.measure { yield }
+          def measure_for_fact(fact_name)
+            time = Benchmark.measure { yield }
 
-          puts "fact name #{fact_name}, took: #{time.format('%t')}"
+            puts "fact name #{fact_name}, took: #{time.format('%t')}"
 
-          time
+            time
+          end
         end
       end
     end

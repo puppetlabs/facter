@@ -38,7 +38,9 @@ module Facter
         threads << Thread.new do
           begin
             fact = CoreFact.new(searched_fact)
-            fact.create
+            fact_value = nil
+            Facter::Framework::Benchmarking::Timer.measure_for_fact(searched_fact.name) { fact_value = fact.create }
+            fact_value
           rescue StandardError => e
             @@log.error(e.backtrace.join("\n"))
             nil
