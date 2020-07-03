@@ -6,9 +6,13 @@ module Facts
       class Kvm
         FACT_NAME = 'hypervisors.kvm'
 
+        def initialize
+          @log = Facter::Log.new(self)
+        end
+
         def call_the_resolver
           hypervisor = discover_hypervisor
-          log.debug("Detected hypervisor #{hypervisor}")
+          @log.debug("Detected hypervisor #{hypervisor}")
 
           return Facter::ResolvedFact.new(FACT_NAME, nil) if %w[virtualbox parallels].include?(hypervisor)
 
@@ -21,7 +25,7 @@ module Facts
 
         def kvm?
           bios_vendor = Facter::Resolvers::Linux::DmiBios.resolve(:bios_vendor)
-          log.debug("Detected bios vendor: #{bios_vendor}")
+          @log.debug("Detected bios vendor: #{bios_vendor}")
 
           Facter::Resolvers::VirtWhat.resolve(:vm) == 'kvm' ||
             Facter::Resolvers::Lspci.resolve(:vm) == 'kvm' ||
@@ -31,7 +35,7 @@ module Facts
 
         def discover_hypervisor
           product_name = Facter::Resolvers::Linux::DmiBios.resolve(:product_name)
-          log.debug("Detected product name: #{product_name}")
+          @log.debug("Detected product name: #{product_name}")
 
           return unless product_name
 
@@ -42,7 +46,7 @@ module Facts
 
         def discover_provider
           manufacturer = Facter::Resolvers::Linux::DmiBios.resolve(:sys_vendor)
-          log.debug("Detected manufacturer: #{manufacturer}")
+          @log.debug("Detected manufacturer: #{manufacturer}")
 
           return { google: true } if manufacturer == 'Google'
 
