@@ -23,16 +23,6 @@ module Facts
 
         private
 
-        def kvm?
-          bios_vendor = Facter::Resolvers::Linux::DmiBios.resolve(:bios_vendor)
-          @log.debug("Detected bios vendor: #{bios_vendor}")
-
-          Facter::Resolvers::VirtWhat.resolve(:vm) == 'kvm' ||
-            Facter::Resolvers::Lspci.resolve(:vm) == 'kvm' ||
-            bios_vendor&.include?('Amazon EC2') ||
-            bios_vendor&.include?('Google')
-        end
-
         def discover_hypervisor
           product_name = Facter::Resolvers::Linux::DmiBios.resolve(:product_name)
           @log.debug("Detected product name: #{product_name}")
@@ -42,6 +32,16 @@ module Facts
           Facter::FactsUtils::HYPERVISORS_HASH.each { |key, value| return value if product_name.include?(key) }
 
           product_name
+        end
+
+        def kvm?
+          bios_vendor = Facter::Resolvers::Linux::DmiBios.resolve(:bios_vendor)
+          @log.debug("Detected bios vendor: #{bios_vendor}")
+
+          Facter::Resolvers::VirtWhat.resolve(:vm) == 'kvm' ||
+            Facter::Resolvers::Lspci.resolve(:vm) == 'kvm' ||
+            bios_vendor&.include?('Amazon EC2') ||
+            bios_vendor&.include?('Google')
         end
 
         def discover_provider
