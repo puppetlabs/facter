@@ -17,7 +17,7 @@ describe Facts::Linux::Hypervisors::Kvm do
 
       it 'have nil value' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact)
-                                             .and have_attributes(name: 'hypervisors.kvm', value: nil)
+          .and have_attributes(name: 'hypervisors.kvm', value: nil)
       end
     end
 
@@ -34,7 +34,7 @@ describe Facts::Linux::Hypervisors::Kvm do
 
       it 'have nil value' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact)
-                                            .and have_attributes(name: 'hypervisors.kvm', value: nil)
+          .and have_attributes(name: 'hypervisors.kvm', value: nil)
       end
     end
 
@@ -54,23 +54,74 @@ describe Facts::Linux::Hypervisors::Kvm do
 
       it 'returns empty hash' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact)
-                                            .and have_attributes(name: 'hypervisors.kvm', value: {})
+          .and have_attributes(name: 'hypervisors.kvm', value: {})
       end
     end
 
     context 'when Lspci returns kvm' do
+      before do
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('KVM')
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return('unknown')
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:sys_vendor).and_return('unknown')
+        allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return('unknown')
+        allow(Facter::Resolvers::Lspci).to receive(:resolve).with(:vm).and_return('kvm')
+      end
 
+      it 'calls Facter::Resolvers::Lspci' do
+        fact.call_the_resolver
+
+        expect(Facter::Resolvers::Lspci).to have_received(:resolve).with(:vm)
+      end
+
+      it 'returns empty hash' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact)
+          .and have_attributes(name: 'hypervisors.kvm', value: {})
+      end
     end
 
     context 'when VM is provided by AWS with KVM hypervisor' do
+      before do
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('KVM')
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return('Amazon EC2')
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:sys_vendor).and_return('Amazon')
+        allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return('unknown')
+        allow(Facter::Resolvers::Lspci).to receive(:resolve).with(:vm).and_return('unknown')
+      end
 
+      it 'returns aws' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact)
+          .and have_attributes(name: 'hypervisors.kvm', value: { 'amazon' => true })
+      end
     end
 
     context 'when VM is provided by GCE with KVM hypervisor' do
+      before do
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('KVM')
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return('Google')
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:sys_vendor).and_return('Google')
+        allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return('unknown')
+        allow(Facter::Resolvers::Lspci).to receive(:resolve).with(:vm).and_return('unknown')
+      end
 
+      it 'returns google cloud' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact)
+          .and have_attributes(name: 'hypervisors.kvm', value: { 'google' => true })
+      end
     end
 
-    context 'when VM is provided by OpenStack with KVM hypervisor'
+    context 'when VM is provided by OpenStack with KVM hypervisor' do
+      before do
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('KVM')
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return('OpenStack')
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:sys_vendor).and_return('OpenStack')
+        allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return('unknown')
+        allow(Facter::Resolvers::Lspci).to receive(:resolve).with(:vm).and_return('kvm')
+      end
+
+      it 'returns google cloud' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact)
+          .and have_attributes(name: 'hypervisors.kvm', value: { 'openstack' => true })
+      end
+    end
   end
 end
-
