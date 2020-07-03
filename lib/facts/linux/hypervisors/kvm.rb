@@ -7,30 +7,32 @@ module Facts
         FACT_NAME = 'hypervisors.kvm'
 
         def call_the_resolver
-          product_name = check_other_facts
+          hypervisor = discover_hypervisor
+          log.debug("Detected hypervisor #{hypervisor}")
 
-          if product_name == 'virtualbox' || product_name == 'parallels'
-            return Facter::ResolvedFact.new(FACT_NAME, nil)
-          end
+          return Facter::ResolvedFact.new(FACT_NAME, nil) if %w[virtualbox parallels].include?(hypervisor)
 
-          fact_value = discover_provider(product_name) || {} if kvm?(product_name)
+          fact_value = discover_provider if kvm?
 
           Facter::ResolvedFact.new(FACT_NAME, fact_value)
         end
 
         private
 
-        def kvm?(product_name)
+        def kvm?
+          bios_vendor = Facter::Resolvers::Linux::DmiBios.resolve(:bios_vendor)
+          log.debug("Detected bios vendor: #{bios_vendor}")
+
           Facter::Resolvers::VirtWhat.resolve(:vm) == 'kvm' ||
-            product_name == 'kvm' ||
-            Facter::Resolvers::Lspci.resolve(:vm) == 'kvm'
+            Facter::Resolvers::Lspci.resolve(:vm) == 'kvm' ||
+            bios_vendor&.include?('Amazon EC2') ||
+            bios_vendor&.include?('Google')
         end
 
-        def check_other_facts
+        def discover_hypervisor
           product_name = Facter::Resolvers::Linux::DmiBios.resolve(:product_name)
-          bios_vendor =  Facter::Resolvers::Linux::DmiBios.resolve(:bios_vendor)
+          log.debug("Detected product name: #{product_name}")
 
-          return 'kvm' if bios_vendor&.include?('Amazon EC2') || bios_vendor&.include?('Google')
           return unless product_name
 
           Facter::FactsUtils::HYPERVISORS_HASH.each { |key, value| return value if product_name.include?(key) }
@@ -38,13 +40,17 @@ module Facts
           product_name
         end
 
-        def discover_provider(product_name)
+        def discover_provider
           manufacturer = Facter::Resolvers::Linux::DmiBios.resolve(:sys_vendor)
+          log.debug("Detected manufacturer: #{manufacturer}")
+
           return { google: true } if manufacturer == 'Google'
 
-          return { openstack: true } if product_name == /^OpenStack/
+          return { openstack: true } if manufacturer =~ /^OpenStack/
 
           return { amazon: true } if manufacturer =~ /^Amazon/
+
+          {}
         end
       end
     end
