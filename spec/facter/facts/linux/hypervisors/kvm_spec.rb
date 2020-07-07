@@ -15,7 +15,7 @@ describe Facts::Linux::Hypervisors::Kvm do
         expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:product_name)
       end
 
-      it 'have nil value' do
+      it 'has nil value' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact)
           .and have_attributes(name: 'hypervisors.kvm', value: nil)
       end
@@ -32,7 +32,7 @@ describe Facts::Linux::Hypervisors::Kvm do
         expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:product_name)
       end
 
-      it 'have nil value' do
+      it 'has nil value' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact)
           .and have_attributes(name: 'hypervisors.kvm', value: nil)
       end
@@ -118,7 +118,7 @@ describe Facts::Linux::Hypervisors::Kvm do
         allow(Facter::Resolvers::Lspci).to receive(:resolve).with(:vm).and_return('kvm')
       end
 
-      it 'returns google cloud' do
+      it 'returns open stack' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact)
           .and have_attributes(name: 'hypervisors.kvm', value: { 'openstack' => true })
       end
