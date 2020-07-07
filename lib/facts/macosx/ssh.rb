@@ -9,6 +9,8 @@ module Facts
         result = Facter::Resolvers::SshResolver.resolve(:ssh)
         ssh_facts = {}
         result.each { |ssh| ssh_facts.merge!(create_ssh_fact(ssh)) }
+
+        ssh_facts = nil if ssh_facts.empty?
         Facter::ResolvedFact.new(FACT_NAME, ssh_facts)
       end
 
