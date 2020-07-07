@@ -40,7 +40,7 @@ module Facter
             fact = CoreFact.new(searched_fact)
             fact.create
           rescue StandardError => e
-            @@log.error(e.backtrace.join("\n"))
+            @@log.error(e.message + ' ' + e.backtrace.join("\n"))
             nil
           end
         end
