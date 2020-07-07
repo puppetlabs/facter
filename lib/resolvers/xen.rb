@@ -6,6 +6,8 @@ module Facter
       @semaphore = Mutex.new
       @fact_list ||= {}
 
+      XEN_PATH = '/proc/xen/capabilities'
+
       class << self
         private
 
@@ -18,7 +20,14 @@ module Facter
           xen_type = 'xenu' if !xen_type && (File.exist?('/proc/xen') || File.exist?('/dev/xvda1'))
 
           @fact_list[:vm] = xen_type
+          @fact_list[:privileged] = privileged?
+
           @fact_list[fact_name]
+        end
+
+        def privileged?
+          content = Util::FileHelper.safe_read(XEN_PATH, nil)
+          content&.strip == 'control_d'
         end
       end
     end
