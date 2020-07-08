@@ -8,13 +8,13 @@ describe Facts::Linux::IsVirtual do
     let(:value) { true }
 
     before do
-      allow(Facter::Resolvers::DockerLxc).to \
+      allow(Facter::Resolvers::Containers).to \
         receive(:resolve).with(:vm).and_return(vm)
     end
 
-    it 'calls Facter::Resolvers::DockerLxc' do
+    it 'calls Facter::Resolvers::Containers' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::DockerLxc).to have_received(:resolve).with(:vm)
+      expect(Facter::Resolvers::Containers).to have_received(:resolve).with(:vm)
     end
 
     it 'returns virtual fact' do

@@ -5,7 +5,7 @@ describe Facts::Linux::Hypervisors::Docker do
     subject(:fact) { Facts::Linux::Hypervisors::Docker.new }
 
     before do
-      allow(Facter::Resolvers::DockerLxc).to \
+      allow(Facter::Resolvers::Containers).to \
         receive(:resolve).with(:hypervisor).and_return(hv)
     end
 
@@ -13,9 +13,9 @@ describe Facts::Linux::Hypervisors::Docker do
       let(:hv) { { docker: { 'id' => 'testid' } } }
       let(:value) { { 'id' => 'testid' } }
 
-      it 'calls Facter::Resolvers::DockerLxc' do
+      it 'calls Facter::Resolvers::Containers' do
         fact.call_the_resolver
-        expect(Facter::Resolvers::DockerLxc).to have_received(:resolve).with(:hypervisor)
+        expect(Facter::Resolvers::Containers).to have_received(:resolve).with(:hypervisor)
       end
 
       it 'returns virtual fact' do

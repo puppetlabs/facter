@@ -3,17 +3,17 @@
 module Facts
   module Linux
     module Hypervisors
-      class Lxc
-        FACT_NAME = 'hypervisors.lxc'
+      class SystemdNspawn
+        FACT_NAME = 'hypervisors.systemd_nspawn'
 
         def call_the_resolver
-          fact_value = check_lxc
+          fact_value = check_nspawn
           Facter::ResolvedFact.new(FACT_NAME, fact_value)
         end
 
-        def check_lxc
+        def check_nspawn
           info = Facter::Resolvers::Containers.resolve(:hypervisor)
-          info[:lxc] if info
+          info[:systemd_nspawn] if info
         end
       end
     end

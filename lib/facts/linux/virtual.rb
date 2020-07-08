@@ -18,7 +18,7 @@ module Facts
       end
 
       def check_docker_lxc
-        Facter::Resolvers::DockerLxc.resolve(:vm)
+        Facter::Resolvers::Containers.resolve(:vm)
       end
 
       def check_vmware

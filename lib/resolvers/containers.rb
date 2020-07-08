@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class DockerLxc < BaseResolver
+    class Containers < BaseResolver
       # :virtual
       # :hypervisor
 
@@ -20,13 +20,14 @@ module Facter
         def read_cgroup(fact_name)
           output_cgroup = Util::FileHelper.safe_read('/proc/1/cgroup', nil)
           output_environ = Util::FileHelper.safe_read('/proc/1/environ', nil)
-          return if output_cgroup.nil? || output_environ.nil?
+          return unless output_cgroup && output_environ
 
           output_docker = %r{docker/(.+)}.match(output_cgroup)
           output_lxc = %r{^/lxc/([^/]+)}.match(output_cgroup)
           lxc_from_environ = /container=lxc/ =~ output_environ
 
           info, vm = extract_vm_and_info(output_docker, output_lxc, lxc_from_environ)
+          info, vm = extract_for_nspawn(output_environ) unless vm
           @fact_list[:vm] = vm
           @fact_list[:hypervisor] = { vm.to_sym => info } if vm
           @fact_list[fact_name]
@@ -42,6 +43,15 @@ module Facter
           info = output_lxc[1] if output_lxc
 
           [info ? { INFO[vm] => info } : {}, vm]
+        end
+
+        def extract_for_nspawn(output_environ)
+          nspawn = /container=systemd-nspawn/ =~ output_environ
+          if nspawn
+            vm = 'systemd_nspawn'
+            info = Util::FileHelper.safe_read('/etc/machine-id', nil)
+          end
+          [info ? { 'id' => info.strip } : {}, vm]
         end
       end
     end
