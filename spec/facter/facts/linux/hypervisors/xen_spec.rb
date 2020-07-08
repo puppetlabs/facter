@@ -85,19 +85,6 @@ describe Facts::Linux::Hypervisors::Xen do
         end
       end
 
-      context 'when hvm context' do
-        before do
-          allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return('xen')
-          allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('xenhvm')
-          allow(Facter::Resolvers::Xen).to receive(:resolve).with(:privileged).and_return(false)
-        end
-
-        it 'returns xen with hvm context' do
-          expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact)
-            .and have_attributes(name: 'hypervisors.xen', value: { 'context' => 'hvm', 'privileged' => false })
-        end
-      end
-
       context 'when pv context' do
         before do
           allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return('xen')
@@ -122,19 +109,6 @@ describe Facts::Linux::Hypervisors::Xen do
         it 'returns privileged xen' do
           expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact)
             .and have_attributes(name: 'hypervisors.xen', value: { 'context' => 'hvm', 'privileged' => true })
-        end
-      end
-
-      context 'when unprivileged' do
-        before do
-          allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return('xen')
-          allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('xenhvm')
-          allow(Facter::Resolvers::Xen).to receive(:resolve).with(:privileged).and_return(false)
-        end
-
-        it 'returns privileged xen' do
-          expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact)
-            .and have_attributes(name: 'hypervisors.xen', value: { 'context' => 'hvm', 'privileged' => false })
         end
       end
     end
