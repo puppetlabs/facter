@@ -46,7 +46,7 @@ describe Facts::Linux::Hypervisors::Kvm do
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return('kvm')
       end
 
-      it 'calls  Facter::Resolvers::VirtWhat' do
+      it 'calls Facter::Resolvers::VirtWhat' do
         fact.call_the_resolver
 
         expect(Facter::Resolvers::VirtWhat).to have_received(:resolve).with(:vm)
