@@ -10,10 +10,10 @@ module Facter
         private
 
         def post_resolve(fact_name)
-          @fact_list.fetch(fact_name) { virtual_box_version(fact_name) }
+          @fact_list.fetch(fact_name) { run_dmidecode(fact_name) }
         end
 
-        def virtual_box_version(fact_name)
+        def run_dmidecode(fact_name)
           output = Facter::Core::Execution.execute('dmidecode', logger: log)
 
           @fact_list[:virtualbox_version] = output.match(/vboxVer_(\S+)/)&.captures&.first
