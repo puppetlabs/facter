@@ -12,7 +12,7 @@ module Facts
         end
 
         def check_docker
-          info = Facter::Resolvers::DockerLxc.resolve(:hypervisor)
+          info = Facter::Resolvers::Containers.resolve(:hypervisor)
           info[:docker] if info
         end
       end
