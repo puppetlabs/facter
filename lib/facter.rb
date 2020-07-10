@@ -3,6 +3,7 @@
 require 'pathname'
 require_relative 'util/api_debugger' if ENV['API_DEBUG']
 
+require 'facter/version'
 require 'facter/framework/core/file_loader'
 require 'facter/framework/core/options/options_validator'
 
@@ -226,8 +227,7 @@ module Facter
     #
     # @api public
     def version
-      version_file = ::File.join(File.dirname(__FILE__), 'facter', 'VERSION')
-      ::File.read(version_file).strip
+      Facter::VERSION
     end
 
     # Gets a hash mapping fact names to their values

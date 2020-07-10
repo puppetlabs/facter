@@ -116,7 +116,7 @@ module Facter
     desc '--version, -v', 'Print the version', hide: true
     map ['--version', '-v'] => :version
     def version
-      puts FACTER_VERSION.to_s
+      puts Facter::VERSION
     end
 
     desc '--list-block-groups', 'List block groups'

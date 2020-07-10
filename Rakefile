@@ -2,6 +2,7 @@
 
 require 'bundler/gem_tasks'
 require 'rspec/core/rake_task'
+require 'facter/version'
 
 RSpec::Core::RakeTask.new(:spec)
 Dir.glob(File.join('tasks/**/*.rake')).each { |file| load file }
@@ -31,7 +32,7 @@ if Bundler.rubygems.find_name('github_changelog_generator').any?
     config.user = 'puppetlabs'
     config.project = 'facter'
     config.release_branch = '4.x'
-    config.since_tag = File.read('VERSION').strip
+    config.since_tag = Facter::VERSION
     config.future_release = retrieve_from_keyboard
     config.exclude_labels = ['maintenance']
     config.add_pr_wo_labels = true
