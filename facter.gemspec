@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
-require_relative 'lib/facter/config/config'
+lib = File.expand_path('lib', __dir__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
+require 'facter/version'
 
 Gem::Specification.new do |spec|
   spec.name          = 'facter'
-  spec.version       = FACTER_VERSION
+  spec.version       = Facter::VERSION
   spec.authors       = ['Puppet']
   spec.email         = ['team-nw@puppet.com']
 
@@ -14,7 +17,7 @@ Gem::Specification.new do |spec|
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
   # On our internal Jenkins, there is no git. As it is a clean machine, we don't need to worry about anything else.
-  spec.files = if system('git --help > /dev/null')
+  spec.files = if system('git --help &> /dev/null')
                  `git ls-files -z`.split("\x0")
                else
                  Dir.glob('**/*')

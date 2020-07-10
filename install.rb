@@ -256,7 +256,7 @@ class Installer
 
       unless installed_wrapper
         tmp_file2 = Tempfile.new('facter-wrapper')
-        cwv = <<~SCRIPT
+        cwv = <<-SCRIPT
           @echo off
           SETLOCAL
           if exist "%~dp0environment.bat" (
@@ -281,7 +281,7 @@ class Installer
     cd File.dirname(__FILE__) do
       # Set these values to what you want installed.
       bins  = glob(%w[bin/facter])
-      libs  = glob(%w[lib/**/*.rb lib/facter/os_hierarchy.json lib/facter/fact_groups.conf lib/facter/VERSION])
+      libs  = glob(%w[lib/**/*.rb lib/facter/os_hierarchy.json lib/facter/fact_groups.conf])
 
       prepare_installation
 
