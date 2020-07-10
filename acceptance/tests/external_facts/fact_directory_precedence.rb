@@ -28,15 +28,13 @@ test_name "C59201: Fact directory precedence and resolution order for facts" do
     etc_puppetlabs_factsd_path = "#{etc_puppetlabs_factsd_dir}/test.yaml"
 
     teardown do
-      agent.rm_rf(factsd_dir)
-      agent.rm_rf(etc_factsd_dir)
-      agent.rm_rf(etc_puppetlabs_factsd_dir)
+      on(agent, "rm -rf '#{factsd_dir}' '#{etc_factsd_dir}' '#{etc_puppetlabs_factsd_dir}'")
     end
 
     # ensure the fact directory we want to use exists
     step "Agent #{agent}: create facts directory (#{etc_puppetlabs_factsd_dir})" do
-      agent.rm_rf(etc_puppetlabs_factsd_dir)
-      agent.mkdir_p(etc_puppetlabs_factsd_dir)
+      on(agent, "rm -rf '#{etc_puppetlabs_factsd_dir}'")
+      on(agent, "mkdir -p '#{etc_puppetlabs_factsd_dir}'")
     end
 
     # A fact in the etc_puppetlabs_factsd_dir directory should resolve to the fact
@@ -49,13 +47,13 @@ test_name "C59201: Fact directory precedence and resolution order for facts" do
 
     # remove the fact
     step "Agent #{agent}: remove the fact in #{etc_puppetlabs_factsd_dir}" do
-      agent.rm_rf(etc_puppetlabs_factsd_path)
+      on(agent, "rm -f '#{etc_puppetlabs_factsd_path}'")
     end
 
     # ensure the fact directory we want to use exists
     step "Agent #{agent}: create facts directory (#{etc_factsd_dir})" do
-      agent.rm_rf(etc_factsd_dir)
-      agent.mkdir_p(etc_factsd_dir)
+      on(agent, "rm -rf '#{etc_factsd_dir}'")
+      on(agent, "mkdir -p '#{etc_factsd_dir}'")
     end
 
     # A fact in the etc_factsd_dir directory should resolve to the fact
@@ -68,13 +66,13 @@ test_name "C59201: Fact directory precedence and resolution order for facts" do
 
     # remove the fact
     step "Agent #{agent}: remove the fact in #{etc_factsd_dir}" do
-      agent.rm_rf(etc_factsd_path)
+      on(agent, "rm -f '#{etc_factsd_path}'")
     end
 
     # ensure the fact directory we want to use exists
     step "Agent #{agent}: create facts directory (#{factsd_dir})" do
-      agent.rm_rf(factsd_dir)
-      agent.mkdir_p(factsd_dir)
+      on(agent, "rm -rf '#{factsd_dir}'")
+      on(agent, "mkdir -p '#{factsd_dir}'")
     end
 
     # A fact in the factsd_dir directory should resolve to the fact
@@ -87,7 +85,7 @@ test_name "C59201: Fact directory precedence and resolution order for facts" do
 
     # remove the fact
     step "Agent #{agent}: remove the fact in #{factsd_dir}" do
-      agent.rm_rf(factsd_path)
+      on(agent, "rm -f '#{factsd_path}'")
     end
 
     # A fact in the etc_factsd_dir directory should take precedence over the same fact in factsd_dir

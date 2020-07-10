@@ -1,3 +1,0 @@
-#! /usr/bin/env sh
-echo 'this script fails'
-exit 1

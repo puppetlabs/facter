@@ -548,7 +548,7 @@ module Facter
             'os.name'                  => 'windows',
             'os.release.full'          => os_version,
             'os.release.major'         => os_version,
-            'os.windows.system32'      => /C:\\(WINDOWS|[Ww]indows)\\(system32|sysnative)/,
+            'os.windows.system32'      => /C:\\(WINDOWS|Windows)\\(system32|sysnative)/,
             'processors.count'         => /[1-9]/,
             'processors.physicalcount' => /[1-9]/,
             'processors.isa'           => /x86|x64/,

@@ -7,7 +7,7 @@ test_name "C14905: custom fact command line option --custom-dir loads custom fac
   extend Facter::Acceptance::UserFactUtils
 
   content = <<EOM
-Facter.add('single_custom_fact') do
+Facter.add('custom_fact') do
   setcode do
     "single_fact"
   end
@@ -21,11 +21,11 @@ EOM
       create_remote_file(agent, custom_fact, content)
 
       teardown do
-        agent.rm_rf(custom_dir)
+        on(agent, "rm -rf '#{custom_dir}'")
       end
 
       step "Agent #{agent}: --custom-dir option should resolve custom facts from the specific directory" do
-        on(agent, facter("--custom-dir \"#{custom_dir}\" single_custom_fact")) do |facter_output|
+        on(agent, facter("--custom-dir '#{custom_dir}' custom_fact")) do |facter_output|
           assert_equal("single_fact", facter_output.stdout.chomp, "Incorrect custom fact value")
         end
       end

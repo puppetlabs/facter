@@ -1,8 +1,9 @@
+
 # How to contribute
 
 Third-party patches are essential for keeping facter great. We simply can't
 access the huge number of platforms and myriad configurations for running
-facter. We want to keep it as easy as possible to contribute changes that
+Facter. We want to keep it as easy as possible to contribute changes that
 get things working in your environment. There are a few guidelines that we
 need contributors to follow so that we can have a chance of keeping on
 top of things.
@@ -17,49 +18,19 @@ top of things.
   * A ticket is not necessary for [trivial changes](https://puppet.com/community/trivial-patch-exemption-policy)
 * Fork the repository on GitHub.
 
-## New Facts
-
-All new facts should also be included in `lib/schema/facter.yaml`. Without this
-facts won't pass acceptance tests.
-
 ## Making Changes
 
 * Create a topic branch from where you want to base your work.
   * This is usually the master branch.
-  * Only target release branches if you are certain your fix must be on that
-    branch.
-  * If you use facter as part of the [puppet-agent](https://github.com/puppetlabs/puppet-agent),
-    double-check the base branch to make sure your fix gets in the correct
-    stream.
-
-    | facter | puppet-agent |
-    |--------|--------------|
-    | 3.11.x | 5.5.x        |
-    | 3.12.x | 6.0.x        |
-    | 3.13.x | 6.4.x        |
-    | master | master       |
-
-    For example, if you use puppet5 you will want to base your work on top of
-    the `3.11.x` branch, so your fix would end up in a subsequent release of
-    puppet-agent `5.5.x`.
-
-    Once merged, your work will be automatically promoted to the other release
+  * Once merged, your work will be automatically promoted to the other release
     streams when our internal CI passes.
   * To quickly create a topic branch based on master, run `git checkout -b
     fix/master/my_contribution master`. Please avoid working directly on the
     `master` branch.
 * Make commits of logical units.
 * Check for unnecessary whitespace with `git diff --check` before committing.
-* If you have python 2 in your path you can run `make cpplint` to ensure your
-  code formatting is clean. The linter runs as part of Travis CI and could fail
-  the CI build.
-* If you have cppcheck in your path you can run `make cppcheck` to ensure your
-  code passes static analysis. cppcheck runs as part of Travis CI and could
-  fail the CI build.
-* Make sure your commit messages are in the proper format. If the commit
-  addresses an issue filed in the
-  [Facter Jira project](https://tickets.puppetlabs.com/browse/FACT), start
-  the first line of the commit with the issue number in parentheses.
+* Make sure your commit messages are in the proper format. We use the [50/72 rule](https://git-scm.com/book/en/v2/Distributed-Git-Contributing-to-a-Project) in commit messages.
+* If the commit addresses an issue filed in the [Facter Jira project](https://tickets.puppetlabs.com/browse/FACT), start the first line of the commit with the issue number in parentheses.
 
 ````
     (FACT-1234) Make the example in CONTRIBUTING imperative and concrete
@@ -77,13 +48,13 @@ facts won't pass acceptance tests.
 
 * Make sure you have added the necessary tests for your changes.
 * Run _all_ the tests to assure nothing else was accidentally broken.
+  * We recommend running `./check.sh` to have the same checks run as on github
 
 ## Making Trivial Changes
 
 For [changes of a trivial nature](https://puppet.com/community/trivial-patch-exemption-policy), it is not always necessary to create a new
 ticket in Jira. In this case, it is appropriate to start the first line of a
-commit with one of  `(docs)`, `(maint)`, or `(packaging)` instead of a ticket
-number.
+commit with one of  `(docs)` or `(maint)` instead of a ticket number.
 
 If a Jira ticket exists for the documentation commit, you can include it
 after the `(docs)` token.
@@ -101,9 +72,7 @@ after the `(docs)` token.
     the new documentation or comments added.
 ```
 
-For commits that address trivial repository maintenance tasks or packaging
-issues, start the first line of the commit with `(maint)` or `(packaging)`,
-respectively.
+For commits that address trivial repository maintenance tasks start the first line of the commit with `(maint)`
 
 ## Submitting Changes
 
@@ -115,10 +84,10 @@ respectively.
 
 # Additional Resources
 
-* [Puppet community guidelines](https://docs.puppet.com/community/community_guidelines.html)
+* [Puppet community guidelines](https://puppet.com/community/community-guidelines/)
 * [Bug tracker (Jira)](https://tickets.puppetlabs.com/browse/FACT)
 * [Contributor License Agreement](http://links.puppet.com/cla)
 * [General GitHub documentation](http://help.github.com/)
-* [GitHub pull request documentation](http://help.github.com/send-pull-requests/)
-* #puppet-dev IRC channel on freenode.org
+* [GitHub pull request documentation](https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request-from-a-fork)
 * [puppet-dev mailing list](https://groups.google.com/forum/#!forum/puppet-dev)
+* [Puppet-dev Slack channel](https://puppetcommunity.slack.com/archives/C0W1X7ZAL)

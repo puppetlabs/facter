@@ -1,0 +1,14 @@
+# frozen_string_literal: true
+
+module Facter
+  module <%= os_name %>
+    class <%= camelcase_fact_name %>
+      FACT_NAME = '<%= fact_name %>'
+
+      def call_the_resolver
+        fact_value = 'should call a resolver'
+        ResolvedFact.new(FACT_NAME, fact_value)
+      end
+    end
+  end
+end

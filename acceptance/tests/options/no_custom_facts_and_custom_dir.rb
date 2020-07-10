@@ -7,7 +7,7 @@ test_name "C100001: custom fact commandline options --no-custom-facts together w
     custom_dir = agent.tmpdir('custom_dir')
 
     teardown do
-      agent.rm_rf(custom_dir)
+      on(agent, "rm -rf '#{custom_dir}'")
     end
 
     step "Agent #{agent}: --no-custom-facts and --custom-dir options should result in a error" do

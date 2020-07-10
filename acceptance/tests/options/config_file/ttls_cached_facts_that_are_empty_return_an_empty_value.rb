@@ -30,17 +30,17 @@ EOM
       cached_fact_file = File.join(cached_facts_dir, cached_factname)
 
       # Setup facter conf
-      agent.mkdir_p(config_dir)
+      on(agent, "mkdir -p '#{config_dir}'")
       create_remote_file(agent, config_file, config)
 
       teardown do
-        agent.rm_rf(config_dir)
-        agent.rm_rf(cached_facts_dir)
+        on(agent, "rm -rf '#{config_dir}'", :acceptable_exit_codes => [0, 1])
+        on(agent, "rm -rf '#{cached_facts_dir}'", :acceptable_exit_codes => [0, 1])
       end
 
       step "should return an empty string for an empty JSON document" do
         # Setup a known cached fact
-        agent.rm_rf(cached_facts_dir)
+        on(agent, "rm -rf '#{cached_facts_dir}'", :acceptable_exit_codes => [0, 1])
         on(agent, facter(""))
         create_remote_file(agent, cached_fact_file, empty_cached_fact_content)
 

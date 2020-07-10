@@ -1,1 +1,0 @@
-puts "rbver=#{RUBY_VERSION}"

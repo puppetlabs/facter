@@ -1,0 +1,7 @@
+lease {
+  interface "lo";
+  option routers 10.32.112.1;
+  option dhcp-message-type 5;
+  option dhcp-server-identifier 10.32.22.9;
+  option domain-name-servers 10.240.0.10,10.240.1.10;
+}

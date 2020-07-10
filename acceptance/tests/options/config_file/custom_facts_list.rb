@@ -38,17 +38,14 @@ global : {
     custom-dir : [ "#{custom_dir_1}", "#{custom_dir_2}" ],
 }
 EOM
-      config_content = escape_paths(agent, config_content)
       create_remote_file(agent, config_file, config_content)
 
       teardown do
-        agent.rm_rf(custom_dir_1)
-        agent.rm_rf(custom_dir_2)
-        agent.rm_rf(config_dir)
+        on(agent, "rm -rf '#{custom_dir_1}' '#{custom_dir_2}' '#{config_dir}'")
       end
 
       step "Agent #{agent}: resolve a fact from each configured custom-dir path" do
-        on(agent, facter("--config \"#{config_file}\" --json")) do |facter_output|
+        on(agent, facter("--config '#{config_file}' --json")) do |facter_output|
           results = JSON.parse(facter_output.stdout)
           assert_equal("config_value_1", results['config_fact_1'], "Incorrect custom fact value for config_fact_1")
           assert_equal("config_value_2", results['config_fact_2'], "Incorrect custom fact value for config_fact_2")

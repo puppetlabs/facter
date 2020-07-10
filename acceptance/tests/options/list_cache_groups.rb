@@ -13,8 +13,7 @@ test_name "C99970: the `--list-cache-groups` command line flag prints available 
     etc_factsd_path = "#{etc_factsd_dir}/#{filename}"
 
     teardown do
-      agent.rm_rf(external_dir)
-      agent.rm_rf(etc_factsd_path)
+      on(agent, "rm -rf '#{external_dir}' '#{etc_factsd_path}'")
     end
 
     step "the various cache groups should be listed" do
@@ -31,7 +30,7 @@ test_name "C99970: the `--list-cache-groups` command line flag prints available 
       ext = get_external_fact_script_extension(agent['platform'])
       external_fact_script = File.join(external_dir, "#{external_filename}#{ext}")
       create_remote_file(agent, external_fact_script, external_fact_content(agent['platform'], "a", "b"))
-      agent.chmod('+x', external_fact_script)
+      on(agent, "chmod +x '#{external_fact_script}'")
 
       external_fact_script_txt = File.join(external_dir, "#{external_filename}.txt")
       create_remote_file(agent, external_fact_script_txt, '')
@@ -42,17 +41,17 @@ test_name "C99970: the `--list-cache-groups` command line flag prints available 
       external_fact_script_yaml = File.join(external_dir, "#{external_filename}.yaml")
       create_remote_file(agent, external_fact_script_yaml, '')
 
-      on(agent, facter("--external-dir \"#{external_dir}\" --list-cache-groups")) do |facter_output|
+      on(agent, facter("--external-dir #{external_dir} --list-cache-groups")) do |facter_output|
         assert_match(/#{external_filename}#{ext}/, facter_output.stdout, "external facts script files should be listed as cacheable")
         assert_match(/#{external_filename}.txt/, facter_output.stdout, "external facts txt files should be listed as cacheable")
         assert_match(/#{external_filename}.json/, facter_output.stdout, "external facts json files should be listed as cacheable")
         assert_match(/#{external_filename}.yaml/, facter_output.stdout, "external facts yaml files should be listed as cacheable")
       end
-      agent.rm_rf(external_dir)
+      on(agent, "rm -rf '#{external_dir}'")
     end
 
     step "external facts groups should be listed only without --no-external-facts" do
-      agent.mkdir_p(etc_factsd_dir)
+      on(agent, "mkdir -p '#{etc_factsd_dir}'")
       create_remote_file(agent, etc_factsd_path, 'test_fact: test_value')
       on(agent, facter("--list-cache-groups")) do |facter_output|
         assert_match(/#{filename}/, facter_output.stdout, "external facts script files should be listed as cacheable")
@@ -60,7 +59,7 @@ test_name "C99970: the `--list-cache-groups` command line flag prints available 
       on(agent, facter("--list-cache-groups --no-external-facts")) do |facter_output|
         assert_no_match(/#{filename}/, facter_output.stdout, "external facts script files should now be listed as cacheable when --no-external-facts is used")
       end
-      agent.rm_rf(etc_factsd_path)
+      on(agent, "rm -f '#{etc_factsd_path}'")
     end
   end
 end

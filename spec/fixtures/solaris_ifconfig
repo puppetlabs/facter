@@ -1,0 +1,3 @@
+net0: flags=100001004843<UP,BROADCAST,RUNNING,MULTICAST,DHCP,IPv4,PHYSRUNNING> mtu 1500 index 2
+        inet 10.16.115.67 netmask fffff000 broadcast 10.16.127.255
+        ether 0:50:56:9a:45:1c

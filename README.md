@@ -1,299 +1,50 @@
-Facter 4
-============
-Facter 4 is the newest version of Facter that is written in Ruby and compatible with Facter 3. Currenly Facter 4 is maintained on [4.x branch]( https://github.com/puppetlabs/facter/tree/4.x)
+# facter-ng
 
-Native Facter
-=============
+[![Modules Status](https://github.com/puppetlabs/facter/workflows/Acceptance%20tests/badge.svg?branch=master)](https://github.com/puppetlabs/facter/actions)
+[![Modules Status](https://github.com/puppetlabs/facter/workflows/Unit%20tests/badge.svg?branch=master)](https://github.com/puppetlabs/facter/actions)
+[![Modules Status](https://github.com/puppetlabs/facter/workflows/Checks/badge.svg?branch=master)](https://github.com/puppetlabs/facter/actions)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/bf43445f767f2d64170a/test_coverage)](https://codeclimate.com/github/puppetlabs/facter/test_coverage)
+[![Maintainability](https://api.codeclimate.com/v1/badges/bf43445f767f2d64170a/maintainability)](https://codeclimate.com/github/puppetlabs/facter/maintainability)
+[<img src="https://img.shields.io/badge/slack-puppet--dev-brightgreen?logo=slack">](https://puppetcommunity.slack.com/messages/C0W1X7ZAL)
 
-An implementation of facter functionality in C++11, providing:
 
-* a shared library which gather facts about the system
-* an executable for standalone command line usage
-* a ruby file to enable `require 'facter'`.
+Facter is a command-line tool that gathers basic facts about nodes (systems) such as hardware details, network settings, OS type and version, and more. These facts are made available as variables in your Puppet manifests and can be used to inform conditional expressions in Puppet.
 
-Please see our [extensibility document](Extensibility.md) to learn more
-about extending native facter using custom and external facts.
+## Supported platforms
+* Linux
+* macOS
+* Windows
+* Solaris
+* AIX
 
-Build Requirements
-------------------
+## Requirements
+* Ruby 2.3+
 
-* GCC 4.8+ or Clang 5.0+ (OSX)
-* CMake >= 3.2.2
-* Boost C++ Libraries >= 1.54
-* yaml-cpp >= 0.5.1
-* [leatherman](https://github.com/puppetlabs/leatherman) >= 1.4.3
-* [cpp-hocon](https://github.com/puppetlabs/cpp-hocon) >= 0.1.0
+## Basic concepts
+The project has three main parts, the framework, facts and resolvers. 
+In the framework we implement functionality that is agnostic of specific facts like parsing user input, formatting output, etc.
 
-Optional Build Libraries
-------------------------
+Facts are the nuggets of information that will be provided by facter e.g. `os.name`, `networking.interfaces`, etc.
 
-* OpenSSL - enables SSH fingerprinting facts.
-* libblkid (Linux only) - enables the partitions fact.
-* libcurl >= 7.18.0 - enables facts that perform HTTP requests.
+Resolvers have the role of gathering data from the system. 
+For example a resolver can execute a command on the system, can read a file or any operation that retries some data from a single source on the system. 
 
-Initial Setup
--------------
+![Facter user interaction](docs/diagrams/facter_user_interaction.png?raw=true)
 
-Note: Testing custom facts requires Ruby 1.9+ with libruby built as a dynamic library; that often implies development builds of Ruby.
+## Getting started
+After cloning the project, run `bundle install` to install all dependencies.
 
-### Setup on Fedora 23
+You can run facter by executing `./bin/facter`. 
+The command will output all the facts that facter detected for the current os.
 
-The following will install all required tools and libraries:
+In order to generate a fact, we can use the rake task `rake 'create_fact[<os>,<fact_name>]'` e.g. `rake 'create_fact[ubuntu,facterversion]'`
+When generating a fact, the unit test for that fact is also generated. Facts should call on or more resolvers in order to obtain the data they need.
 
-    dnf install boost-devel openssl-devel yaml-cpp-devel libblkid-devel libcurl-devel gcc-c++ make wget tar cmake
+The implementation can be validated locally by running the `./check.sh` script. 
 
-### Setup on Mac OSX El Capitan (homebrew)
-
-This assumes Clang is installed and the system OpenSSL libraries will be used.
-
-The following will install all required libraries:
-
-    brew install cmake boost yaml-cpp
-
-### Setup on Ubuntu 15.10 (Trusty)
-
-The following will install most required tools and libraries:
-
-    apt-get install build-essential libboost-all-dev libssl-dev libyaml-cpp-dev libblkid-dev libcurl4-openssl-dev wget tar cmake
-
-### Setup on FreeBSD 10
-
-The following will install most required tools and libraries:
-
-    pkg install git ruby21 cmake boost-all yaml-cpp gcc49
-
-### Setup on Windows
-
-[MinGW-w64](http://mingw-w64.sourceforge.net/) is used for full C++11 support, and [Chocolatey](https://chocolatey.org) can be used to install. You should have at least 2GB of memory for compilation.
-
-* install [CMake](https://chocolatey.org/packages/cmake)
-* install [MinGW-w64](https://chocolatey.org/packages/mingw)
-
-        choco install mingw --params "/threads:win32"
-
-For the remaining tasks, build commands can be executed in the shell from Start > MinGW-w64 project > Run Terminal
-
-* select an install location for dependencies, such as C:\\tools or cmake\\release\\ext; we'll refer to it as $install
-
-* build [Boost](http://sourceforge.net/projects/boost/files/latest/download)
-
-        .\bootstrap mingw
-        .\b2 toolset=gcc --build-type=minimal install --prefix=$install --with-program_options --with-system --with-filesystem --with-date_time --with-thread --with-regex --with-log --with-locale --with-chrono boost.locale.iconv=off
-
-* build [yaml-cpp](https://github.com/jbeder/yaml-cpp)
-
-        cmake -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH=$install -DCMAKE_INSTALL_PREFIX=$install .
-        mingw32-make install
-
-* build [libcurl](http://curl.haxx.se/download)
-
-        mingw32-make mingw32
-        cp -r include\curl $install\include
-        cp -r lib\libcurl.a $install\lib
-
-In Powershell:
-
-    choco install cmake 7zip.commandline -y
-    $env:PATH = "C:\Program Files\CMake\bin;$env:PATH"
-    choco install mingw --params "/threads:win32" -y
-    $env:PATH = "C:\tools\mingw64\bin;$env:PATH"
-    $install = "C:\tools"
-
-    (New-Object Net.WebClient).DownloadFile("https://downloads.sourceforge.net/boost/boost_1_54_0.7z", "$pwd/boost_1_54_0.7z")
-    7za x boost_1_54_0.7z
-    pushd boost_1_54_0
-    .\bootstrap mingw
-    .\b2 toolset=gcc --build-type=minimal install --prefix=$install --with-program_options --with-system --with-filesystem --with-date_time --with-thread --with-regex --with-log --with-locale --with-chrono boost.locale.iconv=off
-    popd
-
-    (New-Object Net.WebClient).DownloadFile("https://github.com/jbeder/yaml-cpp/archive/yaml-cpp-0.5.3.tar.gz", "$pwd/yaml-cpp-0.5.3.tar.gz")
-    7za x yaml-cpp-0.5.3.tar.gz
-    7za x yaml-cpp-0.5.3.tar
-    pushd yaml-cpp-yaml-cpp-0.5.3
-    cmake -G "MinGW Makefiles" -DCMAKE_PREFIX_PATH="$install" -DCMAKE_INSTALL_PREFIX="$install" .
-    mingw32-make install
-    popd
-
-    (New-Object Net.WebClient).DownloadFile("http://curl.haxx.se/download/curl-7.42.1.zip", "$pwd/curl-7.42.1.zip")
-    7za x curl-7.42.1.zip
-    pushd curl-7.42.1
-    mingw32-make mingw32
-    cp -r include\curl $install\include
-    cp -r lib\libcurl.a $install\lib
-    popd
-
-Note that OpenSSL isn't needed on Windows.
-
-### Setup on OpenBSD 6.0
-
-The following will install all required tools and libraries:
-
-	pkg_add boost cmake curl g++ ruby yaml-cpp
-
-Optionally `leatherman` can be installed from packages too if not
-built locally.
-
-### Build and install Leatherman and cpp-hocon
-
-[Leatherman](https://github.com/puppetlabs/leatherman) and [cpp-hocon](https://github.com/puppetlabs/cpp-hocon) are built similar to the Pre-Build instructions below. If building on Windows, install to the same `$install` location used for other dependencies.
-
-Pre-Build
----------
-
-All of the following examples start by assuming the current directory is the root of the repo.
-
-On Windows, add `-G "MinGW Makefiles" -DCMAKE_PREFIX_PATH=\<binary install path\> -DBOOST_STATIC=ON` to the `cmake` invocation.
-
-Before building facter, use `cmake` to generate build files:
-
-    $ mkdir release
-    $ cd release
-    $ cmake ..
-
-To generate build files with debug information:
-
-    $ mkdir debug
-    $ cd debug
-    $ cmake -DCMAKE_BUILD_TYPE=Debug ..
-
-Build
------
-
-To build facter, use 'make':
-
-    $ cd release
-    $ make
-
-To build facter with debug information:
-
-    $ cd debug
-    $ make
-
-Run
----
-
-You can run facter from where it was built:
-
-`$ release/bin/facter`
-
-For a debug build:
-
-`$ debug/bin/facter`
-
-Test
-----
-
-If a ruby was found during configuration, execute the following command before running tests:
-
-    $ bundle install --gemfile lib/Gemfile
-
-You can run facter tests using the test target:
-
-    $ cd release
-    $ make test
-
-For a debug build:
-
-    $ cd debug
-    $ make test
-
-For verbose test output, run `ctest` instead of using the test target:
-
-    $ cd release
-    $ ctest -V
-
-Install
--------
-
-You can install facter into your system:
-
-    $ cd release
-    $ make && sudo make install
-
-By default, facter will install files into `/usr/local/bin`, `/usr/local/lib`, and `/usr/local/include`.
-If the project is configured with Ruby in the PATH, *facter.rb* will be installed to that Ruby's vendor dir.
-The install location for *facter.rb* can be overridden using by setting RUBY_LIB_INSTALL.
-
-To install to a different location, set the install prefix:
-
-    $ cd release
-    $ cmake -DCMAKE_INSTALL_PREFIX=~ ..
-    $ make clean install
-
-This would install facter into `~/bin`, `~/lib`, and `~/include`.
-
-Ruby Usage
-----------
-
-Using the Ruby API requires that facter.rb is installed into the Ruby load path, as done in the previous install steps.
-
-```ruby
-    require 'facter'
-
-    # Use the Facter API...
-    puts "kernel: #{Facter.value(:kernel)}"
-```
-
-Configuration
--------------
-
-Facter can be configured via a HOCON config file of the following format:
-
-```
-global : {
-    external-dir     : [ "path1", "path2" ],
-    custom-dir       : [ "custom/path" ],
-    no-exernal-facts : false,
-    no-custom-facts  : false,
-    no-ruby          : false
-}
-cli : {
-    debug     : false,
-    trace     : true,
-    verbose   : false,
-    log-level : "warn"
-}
-facts : {
-    blocklist : [ "file system", "EC2" ]
-    ttls : [
-        { "timezone" : 30 days },
-    ]
-}
-```
-All options are respected when running Facter standalone, while calling Facter from Ruby will only load `external-dir`, `custom-dir`, and the fact-specific configuration.
-
-The file will be loaded by default from `/etc/puppetlabs/facter/facter.conf` on Unix and `C:\ProgramData\PuppetLabs\facter\etc\facter.conf` on Windows. A different location can be specified using the `--config` command line option.
-
-Elements in the blocklist are fact groupings which will not be resolved when Facter runs. Use the `--list-block-group` command line option to see valid blockable groups.
-
-Elements in the ttls section are key-value pairs of fact groupings that will be cached with the duration for which to cache them. Cached facts are stored as JSON in `/opt/puppetlabs/facter/cache/cached_facts` on Unix and `C:\ProgramData\PuppetLabs\facter\cache\cached_facts` on Windows. Use the `--list-cache-groups` command line option to see valid cacheable groups.
-
-Uninstall
----------
-
-Run the following command to remove files that were previously installed:
-
-    $ sudo xargs rm < release/install_manifest.txt
-
-Documentation
--------------
-
-To generate API documentation, install doxygen 1.8.7 or later.
-
-    $ cd lib
-    $ doxygen
-
-To view the documentation, open `lib/html/index.html` in a web browser.
-
-Debugging
----------
-
-If when running the tests you encounter this error message:
-
-"could not locate a ruby library"
-
-You may need to use a different shared ruby library in Leatherman. To do
-this, run this command, where the location below is the default for a
-puppet agent installation:
-
-    $ export LEATHERMAN_RUBY=/opt/puppetlabs/puppet/lib/libruby.dylib
+## Goals - fast, easy, compatible
+* Gain performance similar to the C++ version of Facter. We plan to achieve this goal by gathering multiple facts with only one call and by using the faster Win32 API rather than WMI for the Windows implementation. 
+* Facilitate community contribution. At the moment, C++ presents a possible impediment for community contributions. 
+* Enable native integration with other Ruby-based projects such as Bolt and puppet.
+* Enable native integration for custom facts.
+* Provide 100% compatibility with C++ Facter (drop-in replacement).

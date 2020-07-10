@@ -127,14 +127,6 @@ EOM
           '/bin/bash'
         end
       end
-
-      def escape_paths(host, str)
-        if host['platform'] =~ /windows/ && !host.is_cygwin?
-          str.gsub('\\') { '\\\\' }
-        else
-          str
-        end
-      end
     end
   end
 end

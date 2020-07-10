@@ -30,18 +30,18 @@ FILE
     cached_fact_file = File.join(cached_facts_dir, cached_fact_name)
 
     teardown do
-      agent.rm_rf(config_dir)
-      agent.rm_rf(cached_facts_dir)
+      on(agent, "rm -rf '#{config_dir}'", :acceptable_exit_codes => [0, 1])
+      on(agent, "rm -rf '#{cached_facts_dir}'", :acceptable_exit_codes => [0, 1])
     end
 
     step "Agent #{agent}: create config file in default location" do
-      agent.mkdir_p(config_dir)
+      on(agent, "mkdir -p '#{config_dir}'")
       create_remote_file(agent, config_file, config)
     end
 
     step "facter should not refresh an expired cache when --no-cache is specified" do
       # clear the fact cache
-      agent.rm_rf(cached_facts_dir)
+      on(agent, "rm -rf '#{cached_facts_dir}'", :acceptable_exit_codes => [0, 1])
 
       # run once to cache the uptime fact
       on(agent, facter(""))
@@ -49,14 +49,15 @@ FILE
       # override cached content
       create_remote_file(agent, cached_fact_file, bad_cached_content)
       # update the modify time on the new cached fact to prompt a refresh
-      agent.modified_at(cached_fact_file, '198001010000')
+      on(agent, "touch -mt 0301010000 '#{cached_fact_file}'")
 
       on(agent, facter("--no-cache")) do |facter_output|
         assert_no_match(/caching/, facter_output.stderr, "facter should not have tried to refresh the cache")
       end
 
-      cat_output = agent.cat(cached_fact_file)
-      assert_match(/#{bad_cached_content.chomp}/, cat_output.strip, "facter should not have updated the cached value")
+      on(agent, "cat '#{cached_fact_file}'", :acceptable_exit_codes => [0]) do |cat_output|
+        assert_match(/#{bad_cached_content}/, cat_output.stdout, "facter should not have updated the cached value")
+      end
     end
   end
 end

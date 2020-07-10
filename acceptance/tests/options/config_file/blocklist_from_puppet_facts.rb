@@ -13,12 +13,12 @@ test_name "C100036: when run from puppet facts, facts can be blocked via a list 
       facter_conf_default_path = File.join(facter_conf_default_dir, "facter.conf")
 
       teardown do
-        agent.rm_rf(facter_conf_default_dir)
+        on(agent, "rm -rf '#{facter_conf_default_dir}'", :acceptable_exit_codes => [0, 1])
       end
 
       step "Agent #{agent}: create default config file" do
         # create the directories
-        agent.mkdir_p(facter_conf_default_dir)
+        on(agent, "mkdir -p '#{facter_conf_default_dir}'")
         create_remote_file(agent, facter_conf_default_path, <<-FILE)
         facts : { blocklist : [ "file system", "EC2" ] }
         FILE

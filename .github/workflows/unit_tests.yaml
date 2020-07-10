@@ -1,0 +1,43 @@
+---
+name: Unit tests
+
+on:
+  push:
+    branches:
+      - 4.x
+  pull_request:
+    branches:
+      - 4.x
+
+jobs:
+  linux_unit_tests:
+    name: Ruby version
+    strategy:
+      matrix:
+        ruby: [ 2.3, 2.7, jruby ]
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout current PR
+        uses: actions/checkout@v2
+
+      - name: Rspec checks
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+      - run: gem update bundler
+      - run: bundle install --jobs 3 --retry 3
+      - run: bundle exec rake spec
+
+  windows_unit_tests:
+    runs-on: windows-2019
+    steps:
+      - name: Checkout current PR
+        uses: actions/checkout@v2
+
+      - name: Rspec checks
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+      - run: gem update bundler
+      - run: bundle install --jobs 3 --retry 3
+      - run: bundle exec rake spec

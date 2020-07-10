@@ -1,0 +1,15 @@
+Ethernet Cards:
+
+    ethernet:
+
+      Type: Ethernet Controller
+      Bus: PCI
+      Vendor ID: 0x8086
+      Device ID: 0x100f
+      Subsystem Vendor ID: 0x1ab8
+      Subsystem ID: 0x0400
+      Revision ID: 0x0000
+      BSD name: en0
+      Kext name: AppleIntel8254XEthernet.kext
+      Location: /System/Library/Extensions/IONetworkingFamily.kext/Contents/PlugIns/AppleIntel8254XEthernet.kext
+      Version: 3.1.5

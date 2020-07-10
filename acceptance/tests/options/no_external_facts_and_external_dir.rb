@@ -7,7 +7,7 @@ test_name "C100002: external fact commandline options --no-external-facts togeth
     external_dir = agent.tmpdir('external_dir')
 
     teardown do
-      agent.rm_rf(external_dir)
+      on(agent, "rm -rf '#{external_dir}'")
     end
 
     step "Agent #{agent}: --no-external-facts and --external-dir options should result in a error" do

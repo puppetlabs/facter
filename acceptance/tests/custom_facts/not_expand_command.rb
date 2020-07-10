@@ -18,7 +18,7 @@ confine :to, :platform => /el-7/
     env = {'FACTERLIB' => fact_dir}
 
     teardown do
-      agent.rm_rf(fact_dir)
+      on(agent, "rm -rf '#{fact_dir}'")
     end
 
     step "Agent: Verify that command is not expanded" do

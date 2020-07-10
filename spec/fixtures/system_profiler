@@ -1,0 +1,33 @@
+Hardware:
+
+    Hardware Overview:
+
+      Model Name: MacBook Pro
+      Model Identifier: MacBookPro11,4
+      Processor Name: Intel Core i7
+      Processor Speed: 2.8 GHz
+      Number of Processors: 1
+      Total Number of Cores: 4
+      L2 Cache (per Core): 256 KB
+      L3 Cache: 6 MB
+      Hyper-Threading Technology: Enabled
+      Memory: 16 GB
+      Boot ROM Version: 1037.60.58.0.0 (iBridge: 17.16.12551.0.0,0)
+      SMC Version (system): 2.29f24
+      Serial Number (system): 123456789AAA
+      Hardware UUID: 12345678-1111-2222-AAAA-AABBCCDDEEFF
+      Activation Lock Status: Disabled
+
+Software:
+
+    System Software Overview:
+
+      System Version: macOS 10.15.2 (19C57)
+      Kernel Version: Darwin 19.2.0
+      Boot Volume: Macintosh HD
+      Boot Mode: Normal
+      Computer Name: Test1’s MacBook Pro
+      User Name: Test1 Test2 (test1.test2)
+      Secure Virtual Memory: Enabled
+      System Integrity Protection: Enabled
+      Time since boot: 3:28

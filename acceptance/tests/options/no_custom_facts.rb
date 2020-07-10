@@ -16,12 +16,12 @@ EOM
   agents.each do |agent|
     step "Agent #{agent}: create custom fact directory and custom fact" do
       custom_dir = get_user_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
-      agent.mkdir_p(custom_dir)
+      on(agent, "mkdir -p '#{custom_dir}'")
       custom_fact = File.join(custom_dir, 'custom_fact.rb')
       create_remote_file(agent, custom_fact, content)
 
       teardown do
-        agent.rm_rf(custom_fact)
+        on(agent, "rm -f '#{custom_fact}'")
       end
 
       step "Agent #{agent}: --no-custom-facts option should not load custom facts" do

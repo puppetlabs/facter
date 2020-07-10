@@ -18,7 +18,7 @@ test_name 'FACT-2054: Execute on Windows with expand => false should raise an er
     env = {'FACTERLIB' => fact_dir}
 
     teardown do
-      agent.rm_rf(fact_dir)
+      on(agent, "rm -rf '#{fact_dir}'")
     end
 
     step "Agent: Verify that exception is raised" do

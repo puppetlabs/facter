@@ -1,1 +1,0 @@
-snowman_fact=olaf

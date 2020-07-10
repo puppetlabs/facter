@@ -18,7 +18,7 @@ test_name 'C14891: Facter should properly detect operatingsystem on Ubuntu after
     create_remote_file(agent, script_name, script_contents)
 
     teardown do
-      agent.rm_rf(script_dir)
+      on(agent, "rm -rf '#{script_dir}'")
     end
 
     on(agent, "#{Puppet::Acceptance::CommandUtils.ruby_command(agent)} #{script_name}", :acceptable_exit_codes => 0)

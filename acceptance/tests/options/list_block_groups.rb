@@ -2,7 +2,7 @@
 # will cause the names of blockable resolvers to be printed to stdout. It should not list
 # any resolver name that is not blockable.
 test_name "C99969: the `--list-block-groups` command line flag prints available block groups to stdout" do
-  tag 'risk:medium'
+  tag 'risk:medium', 'facter_3'
 
   agents.each do |agent|
     step "the EC2 blockgroup should be listed" do

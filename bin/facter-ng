@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'facter/framework/cli/cli_launcher.rb'
+
+cli_launcher = CliLauncher.new(ARGV)
+
+cli_launcher.validate_options
+cli_launcher.prepare_arguments
+cli_launcher.start

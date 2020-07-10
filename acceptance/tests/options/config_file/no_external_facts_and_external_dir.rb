@@ -18,16 +18,14 @@ global : {
     no-external-facts : true,
 }
 EOM
-      config_content = escape_paths(agent, config_content)
       create_remote_file(agent, config_file, config_content)
 
       teardown do
-        agent.rm_rf(external_dir)
-        agent.rm_rf(config_dir)
+        on(agent, "rm -rf '#{external_dir}' '#{config_dir}'")
       end
 
       step "Agent #{agent}: config option no-external-facts : true and external-dir should result in an options conflict error" do
-        on(agent, facter("--config \"#{config_file}\""), :acceptable_exit_codes => 1) do |facter_output|
+        on(agent, facter("--config '#{config_file}'"), :acceptable_exit_codes => 1) do |facter_output|
           assert_match(/options conflict/, facter_output.stderr, "Output does not contain error string")
         end
       end

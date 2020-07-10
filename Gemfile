@@ -1,13 +1,12 @@
-source ENV['GEM_SOURCE'] || 'https://artifactory.delivery.puppetlabs.net/artifactory/api/gems/rubygems/'
+# frozen_string_literal: true
 
-def location_for(place, fake_version = nil)
-  if place =~ /^(git[:@][^#]*)#(.*)/
-    [fake_version, { :git => $1, :branch => $2, :require => false }].compact
-  elsif place =~ /^file:\/\/(.*)/
-    ['>= 0', { :path => File.expand_path($1), :require => false }]
-  else
-    [place, { :require => false }]
-  end
+source ENV['GEM_SOURCE'] || 'https://rubygems.org'
+
+gemspec name: 'facter'
+
+group(:release, optional: true) do
+  gem 'github_changelog_generator' if Gem::Version.new(RUBY_VERSION.dup) >= Gem::Version.new('2.3.0')
 end
 
-gem 'packaging', *location_for(ENV['PACKAGING_LOCATION'] || '~> 0.99')
+local_gemfile = File.expand_path('Gemfile.local', __dir__)
+eval_gemfile(local_gemfile) if File.exist?(local_gemfile)

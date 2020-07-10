@@ -39,10 +39,10 @@ test_name 'C100161: Ruby can load libfacter without raising an error' do
     create_remote_file(agent, fact_program, fact_content)
 
     teardown do
-      agent.rm_rf(fact_dir)
+      on(agent, "rm -rf '#{fact_dir}'")
     end
 
-    if agent['platform'] =~ /windows/ && agent.is_cygwin?
+    if agent['platform'] =~ /windows/
       # on Windows we have to figure out where facter.rb is so we can include the path
       # figure out the root of the Puppet installation
       puppet_ruby_path = on(agent, "env PATH=\"#{agent['privatebindir']}:${PATH}\" which ruby").stdout.chomp

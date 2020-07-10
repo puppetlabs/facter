@@ -24,22 +24,22 @@ EOM
     step "Agent #{agent}: create config file" do
       config_dir = get_default_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
       config_file = File.join(config_dir, "facter.conf")
-      agent.mkdir_p(config_dir)
+      on(agent, "mkdir -p '#{config_dir}'")
       create_remote_file(agent, config_file, config)
 
       teardown do
-        agent.rm_rf(config_dir)
+        on(agent, "rm -rf '#{config_dir}'", :acceptable_exit_codes => [0,1])
       end
 
       step "no-ruby option should disable custom facts" do
         step "Agent #{agent}: create custom fact directory and custom fact" do
           custom_dir = get_user_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
-          agent.mkdir_p(custom_dir)
+          on(agent, "mkdir -p '#{custom_dir}'")
           custom_fact = File.join(custom_dir, 'custom_fact.rb')
           create_remote_file(agent, custom_fact, custom_fact_content)
 
           teardown do
-            agent.rm_rf(custom_dir)
+            on(agent, "rm -rf '#{custom_dir}'", :acceptable_exit_codes => [0,1])
           end
 
           on(agent, facter("custom_fact", :environment => { 'FACTERLIB' => custom_dir })) do |facter_output|

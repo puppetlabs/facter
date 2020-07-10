@@ -1,0 +1,4 @@
+CuDv:
+        name = "proc0"
+        status = 1
+        PdDvLn = "processor/sys/proc_rspc"

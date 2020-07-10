@@ -16,11 +16,11 @@ test_name "C99972: facts can be blocked via a blocklist in the config file" do
       FILE
 
       teardown do
-        agent.rm_rf(custom_conf_dir)
+        on(agent, "rm -rf '#{custom_conf_dir}'", :acceptable_exit_codes => [0, 1])
       end
 
       step "blocked facts should not be resolved" do
-        on(agent, facter("--config \"#{config_file}\"")) do |facter_output|
+        on(agent, facter("--config '#{config_file}'")) do |facter_output|
           # every platform attempts to resolve at least EC2 facts
           assert_match(/blocking collection of .+ facts/, facter_output.stderr, "Expected stderr to contain statement about blocking fact collection")
 
