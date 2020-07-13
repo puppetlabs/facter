@@ -34,6 +34,8 @@ module Facter
 
             next unless /^envID:/ =~ parts[0]
 
+            @fact_list[:id] = parts[1]
+
             return 'openvzhn' if parts[1] == '0'
 
             return 'openvzve'
