@@ -14,24 +14,12 @@ Gem::Specification.new do |spec|
   spec.summary       = 'New version of Facter'
   spec.description   = 'New version of Facter'
 
-  # Specify which files should be added to the gem when it is released.
-  # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
-  # On our internal Jenkins, there is no git. As it is a clean machine, we don't need to worry about anything else.
-  spec.files = if system('git --help &> /dev/null')
-                 `git ls-files -z`.split("\x0")
-               else
-                 Dir.glob('**/*')
-               end
+  spec.files = Dir['bin/facter'] +
+               Dir['lib/**/*.rb'] +
+               Dir['lib/**/*.json'] +
+               Dir['lib/**/*.conf']
 
   spec.required_ruby_version = '~> 2.3'
-  spec.files.reject! do |f|
-    f.match(%r{^(test|spec|features|acceptance)/})
-  end
-
-  spec.files.reject! do |f|
-    f == 'bin/facter-ng'
-  end
-
   spec.bindir = 'bin'
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
