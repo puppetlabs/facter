@@ -14,15 +14,13 @@ module Facter
             @fact_list.fetch(fact_name) { read_mounts }
           end
 
-          def read_mounts # rubocop:disable Metrics/AbcSize
+          def read_mounts
             mounts = {}
             FilesystemHelper.read_mountpoints.each do |fs|
               device = fs.name
               filesystem = fs.mount_type
               path = fs.mount_point
               options = fs.options.split(',').map(&:strip).map { |o| o == 'rootfs' ? 'root' : o }
-
-              next if path =~ %r{^/(proc|sys)} && filesystem != 'tmpfs' || filesystem == 'autofs'
 
               mounts[path] = read_stats(path).tap do |hash|
                 hash[:device] = device
