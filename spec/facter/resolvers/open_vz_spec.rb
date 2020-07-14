@@ -19,8 +19,12 @@ describe Facter::Resolvers::OpenVz do
   context 'when /proc/vz dir is empty' do
     let(:vz_dir_entries) { ['.', '..'] }
 
-    it 'returns nil' do
+    it 'returns nil for vm' do
       expect(openvz_resolver.resolve(:vm)).to be_nil
+    end
+
+    it 'returns nil for container id' do
+      expect(openvz_resolver.resolve(:id)).to be_nil
     end
   end
 
@@ -34,8 +38,24 @@ describe Facter::Resolvers::OpenVz do
     context 'when /proc/self/status is nil' do
       let(:status_file) { nil }
 
-      it 'returns nil' do
+      it 'returns nil for vm' do
         expect(openvz_resolver.resolve(:vm)).to be_nil
+      end
+
+      it 'returns nil for container id' do
+        expect(openvz_resolver.resolve(:id)).to be_nil
+      end
+    end
+
+    context 'when /proc/self/status is readable and openvz host' do
+      let(:status_file) { load_fixture('proc_self_status_host').readlines }
+
+      it 'returns openvzhn' do
+        expect(openvz_resolver.resolve(:vm)).to eql('openvzhn')
+      end
+
+      it 'returns container id' do
+        expect(openvz_resolver.resolve(:id)).to eql('0')
       end
     end
 
@@ -43,7 +63,11 @@ describe Facter::Resolvers::OpenVz do
       let(:status_file) { load_fixture('proc_self_status').readlines }
 
       it 'returns openvzhn' do
-        expect(openvz_resolver.resolve(:vm)).to eql('openvzhn')
+        expect(openvz_resolver.resolve(:vm)).to eql('openvzve')
+      end
+
+      it 'returns container id' do
+        expect(openvz_resolver.resolve(:id)).to eql('101')
       end
     end
   end
