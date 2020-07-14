@@ -133,4 +133,27 @@ describe Facter do
     end
   end
 
+  describe '.load_external' do
+    context 'when set to false' do
+      it 'skips resolving external facts' do
+        Facter.search_external([
+          File.expand_path('../../../lib/tests/fixtures/facts/external/yaml'),
+        ])
+        Facter.load_external(false);
+        facts = Facter.to_hash
+        expect(facts['yaml_fact1']).to be_nil
+      end
+    end
+
+    context 'when set to true' do
+      it 'resolves external facts' do
+        Facter.search_external([
+          File.expand_path('../../../lib/tests/fixtures/facts/external/yaml'),
+        ])
+        Facter.load_external(true);
+        facts = Facter.to_hash
+        expect(facts['yaml_fact1'] == "foo")
+      end
+    end
+  end
 end
