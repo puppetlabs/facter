@@ -9,34 +9,27 @@ describe Facter::Resolvers::Macosx::Mountpoints do
   end
 
   let(:mount) do
-    double(Sys::Filesystem::Mount,
-           mount_point: '/', mount_time: nil,
-           mount_type: 'ext4', options: 'rw,noatime', name:
-           '/dev/nvme0n1p2', dump_frequency: 0, pass_number: 0)
+    double(Sys::Filesystem::Mount, mount_type: 'ext4', mount_point: '/proc/a', options: 'rw', name: '/dev/nvme0n1p2',
+                                   dump_frequency: 0, pass_number: 0)
   end
 
   let(:stat) do
     double(Sys::Filesystem::Stat,
-           path: '/', base_type: nil, fragment_size: 4096, block_size: 4096, blocks: 113_879_332,
+           path: '/proc/a', base_type: nil, fragment_size: 4096, block_size: 4096, blocks: 113_879_332,
            blocks_available: 16_596_603, blocks_free: 22_398_776)
   end
 
   let(:fact) do
-    { '/' => { available: '85.44 GiB',
-               available_bytes: 91_745_386_496,
-               capacity: '80.33%',
-               device: '/dev/nvme0n1p2',
-               filesystem: 'ext4',
-               options: %w[rw noatime],
-               size: '434.42 GiB',
-               size_bytes: 466_449_743_872,
-               used: '348.97 GiB',
-               used_bytes: 374_704_357_376 } }
-  end
-
-  let(:ignored_mounts) do
-    [double(Sys::Filesystem::Mount, mount_type: 'ext4', mount_point: '/proc/a', name: '/dev/ignore', options: 'rw'),
-     double(Sys::Filesystem::Mount, mount_type: 'autofs', mount_point: '/mnt/auto', name: '/dev/ignore', options: 'rw')]
+    { '/proc/a' => { available: '85.44 GiB',
+                     available_bytes: 91_745_386_496,
+                     capacity: '80.33%',
+                     device: '/dev/nvme0n1p2',
+                     filesystem: 'ext4',
+                     options: ['rw'],
+                     size: '434.42 GiB',
+                     size_bytes: 466_449_743_872,
+                     used: '348.97 GiB',
+                     used_bytes: 374_704_357_376 } }
   end
 
   before do
@@ -54,12 +47,6 @@ describe Facter::Resolvers::Macosx::Mountpoints do
   it 'correctly builds the mountpoints fact' do
     result = Facter::Resolvers::Macosx::Mountpoints.resolve(:mountpoints)
     expect(result).to match(fact)
-  end
-
-  it 'drops automounts and non-tmpfs mounts under /proc or /sys' do
-    allow(Facter::FilesystemHelper).to receive(:read_mountpoints).and_return(ignored_mounts)
-    result = Facter::Resolvers::Macosx::Mountpoints.resolve(:mountpoints)
-    expect(result).to be_empty
   end
 
   describe '.root_device' do
