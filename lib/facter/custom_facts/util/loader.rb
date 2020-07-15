@@ -66,6 +66,7 @@ module LegacyFacter
       # @return [Array<String>]
       def search_path
         search_paths = []
+        search_paths += $LOAD_PATH.map { |path| File.expand_path('facter', path) }
 
         if @environment_vars.include?('FACTERLIB')
           search_paths += @environment_vars['FACTERLIB'].split(File::PATH_SEPARATOR)
