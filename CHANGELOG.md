@@ -1,3 +1,24 @@
+## [4.0.30](https://github.com/puppetlabs/facter/tree/4.0.30) (2020-07-15)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.29...4.0.30)
+
+### Added
+- \(FACT-2690\) Added Hyper-V fact for Linux [\#1968](https://github.com/puppetlabs/facter/pull/1968) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- \(FACT-2694\) Add linux openvz fact [\#1970](https://github.com/puppetlabs/facter/pull/1970) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2656\) Add solaris networking facts [\#1947](https://github.com/puppetlabs/facter/pull/1947) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- \(FACT-2689\) Add hypervisors docker fact [\#1950](https://github.com/puppetlabs/facter/pull/1950) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2683\) Added remaining legacy networking facts for OSX [\#1952](https://github.com/puppetlabs/facter/pull/1952) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- \(FACT-2692\) Add hypervisors lxc fact [\#1953](https://github.com/puppetlabs/facter/pull/1953) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2691\) Add kvm fact on linux [\#1955](https://github.com/puppetlabs/facter/pull/1955) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2697\) Add Xen fact [\#1957](https://github.com/puppetlabs/facter/pull/1957) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2695\) implementation for virtualbox hypervisor fact [\#1956](https://github.com/puppetlabs/facter/pull/1956) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- \(FACT-2693\) Add systemd_nspawn fact [\#1958](https://github.com/puppetlabs/facter/pull/1958) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2696\) Add vmware fact [\#1963](https://github.com/puppetlabs/facter/pull/1963) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+### Fixed
+- \(FACT-2673\) Fix mountpoints logic for osx [\#1971](https://github.com/puppetlabs/facter/pull/1971) ([oanatmaria](https://github.com/oanatmaria))
+- \(maint\) Silent solaris_zones facts on FreeBSD [\#1954](https://github.com/puppetlabs/facter/pull/1954) ([smortex](https://github.com/smortex))
+
 ## [4.0.29](https://github.com/puppetlabs/facter/tree/4.0.29) (2020-07-01)
 
 [Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.28...4.0.29)
