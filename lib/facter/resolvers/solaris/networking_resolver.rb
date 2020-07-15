@@ -10,6 +10,7 @@ module Facter
         @log = Facter::Log.new(self)
         @semaphore = Mutex.new
         @fact_list ||= {}
+        @interfaces = {}
 
         BINDINGS_KEY = {
           FFI::AF_INET => :bindings,
@@ -25,9 +26,10 @@ module Facter
 
           def read_facts(fact_name)
             lifreqs = load_interfaces
+            @interfaces = {}
 
             lifreqs.each do |lifreq|
-              @fact_list[lifreq.name] ||= {}
+              @interfaces[lifreq.name] ||= {}
 
               add_mac(lifreq)
               add_bindings(lifreq)
@@ -35,7 +37,7 @@ module Facter
               add_dhcp(lifreq.name)
             end
 
-            @fact_list = { interfaces: @fact_list }
+            @fact_list = { interfaces: @interfaces } unless @interfaces.empty?
             primary_interface
 
             ::Resolvers::Utils::Networking.expand_main_bindings(@fact_list)
@@ -51,7 +53,7 @@ module Facter
             @log.debug("Error! #{::FFI::LastError.error}") if ioctl == -1
 
             mac = arp.sa_data_to_mac
-            @fact_list[lifreq.name][:mac] ||= mac if mac.count('0') < 12
+            @interfaces[lifreq.name][:mac] ||= mac if mac.count('0') < 12
           end
 
           def add_bindings(lifreq)
@@ -61,8 +63,8 @@ module Facter
             bindings = ::Resolvers::Utils::Networking.build_binding(ip, netmask_length)
 
             bindings_key = BINDINGS_KEY[lifreq.ss_family]
-            @fact_list[lifreq.name][bindings_key] ||= []
-            @fact_list[lifreq.name][bindings_key] << bindings
+            @interfaces[lifreq.name][bindings_key] ||= []
+            @interfaces[lifreq.name][bindings_key] << bindings
           end
 
           def add_mtu(lifreq)
@@ -70,7 +72,7 @@ module Facter
 
             @log.debug("Error! #{::FFI::LastError.error}") if ioctl == -1
 
-            @fact_list[lifreq.name][:mtu] = lifreq[:lifr_lifru][:lifru_metric]
+            @interfaces[lifreq.name][:mtu] = lifreq[:lifr_lifru][:lifru_metric]
           end
 
           def load_netmask(lifreq)
@@ -141,7 +143,7 @@ module Facter
           def add_dhcp(interface_name)
             result = Facter::Core::Execution.execute("dhcpinfo -i #{interface_name} ServerID", logger: log)
 
-            @fact_list[interface_name][:dhcp] = result.chomp
+            @interfaces[interface_name][:dhcp] = result.chomp
           end
         end
       end
