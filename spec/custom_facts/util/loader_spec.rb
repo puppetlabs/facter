@@ -70,6 +70,18 @@ describe LegacyFacter::Util::Loader do
   describe 'when determining the search path' do
     let(:loader) { LegacyFacter::Util::Loader.new }
 
+    it 'includes the facter subdirectory of all paths in ruby LOAD_PATH' do
+      dirs = $LOAD_PATH.collect { |d| File.expand_path('facter', d) }
+      allow(loader).to receive(:valid_search_path?).and_return(true)
+      allow(File).to receive(:directory?).and_return true
+
+      paths = loader.search_path
+
+      dirs.each do |dir|
+        expect(paths).to include(dir)
+      end
+    end
+
     it 'excludes invalid search paths' do
       dirs = $LOAD_PATH.collect { |d| File.join(d, 'custom_facts') }
       allow(loader).to receive(:valid_search_path?).and_return(false)
