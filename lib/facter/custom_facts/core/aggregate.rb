@@ -48,6 +48,10 @@ module Facter
         @deps = LegacyFacter::Core::DirectedGraph.new
       end
 
+      def <=>(other)
+        weight <=> other.weight
+      end
+
       def options(options)
         accepted_options = %i[name timeout weight fact_type]
         accepted_options.each do |option_name|
