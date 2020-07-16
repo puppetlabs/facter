@@ -68,7 +68,7 @@ module LegacyFacter
         def parse_executable_output(output)
           res = nil
           begin
-            res = YAML.safe_load output
+            res = YAML.safe_load(output, [Symbol, Time])
           rescue Exception => e
             Facter.debug("Could not parse executable fact output as YAML or JSON (#{e.message})")
           end
