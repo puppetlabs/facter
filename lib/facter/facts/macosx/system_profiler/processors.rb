@@ -5,7 +5,7 @@ module Facts
     module SystemProfiler
       class Processors
         FACT_NAME = 'system_profiler.processors'
-        ALIASES = 'sp_cpu_type'
+        ALIASES = 'sp_packages'
 
         def call_the_resolver
           fact_value = Facter::Resolvers::Macosx::SystemProfiler.resolve(:number_of_processors)

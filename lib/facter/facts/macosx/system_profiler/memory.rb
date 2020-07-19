@@ -5,7 +5,7 @@ module Facts
     module SystemProfiler
       class Memory
         FACT_NAME = 'system_profiler.memory'
-        ALIASES = 'sp_memory'
+        ALIASES = 'sp_physical_memory'
 
         def call_the_resolver
           fact_value = Facter::Resolvers::Macosx::SystemProfiler.resolve(:memory)
