@@ -1,7 +1,7 @@
 # This test is intended to ensure with --debug and --no-color, facter does not send any escape sequences
 # to colorize the output
 test_name "C99975: --debug and --no-color command-line options should print DEBUG messages without color escape sequences" do
-  tag 'risk:low'
+  tag 'risk:high'
 
   confine :except, :platform => 'windows' # On windows we don't get an escape sequence so we can't detect a color change
 

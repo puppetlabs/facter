@@ -5,7 +5,7 @@
 test_name "C14777: custom facts loaded from facter subdirectory found in $LOAD_PATH directory" do
   confine :except, :platform => 'cisco_nexus' # see BKR-749
 
-  tag 'risk:medium'
+  tag 'risk:high'
 
   require 'puppet/acceptance/common_utils'
   extend Puppet::Acceptance::CommandUtils

@@ -1,6 +1,6 @@
 # This test verifies that setting both custom-dir and no-custom-facts results in an error
 test_name "C99994: config option no-custom-facts conflicts with custom-dir" do
-  tag 'risk:low'
+  tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils

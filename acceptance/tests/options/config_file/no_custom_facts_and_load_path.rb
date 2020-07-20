@@ -2,7 +2,7 @@
 # the loading of custom facts in facter directories under the $LOAD_PATH
 test_name "C100004: config file option no-custom-facts : true does not load $LOAD_PATH facter directories" do
   confine :except, :platform => 'cisco_nexus' # see BKR-749
-  tag 'risk:low'
+  tag 'risk:high'
 
   require 'puppet/acceptance/common_utils'
   extend Puppet::Acceptance::CommandUtils

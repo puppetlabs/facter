@@ -1,7 +1,7 @@
 # This test verifies that facter can load facts from a single custom-dir specified
 # in the configuration file
 test_name "C98143: config custom-dir allows single custom fact directory" do
-  tag 'risk:low'
+  tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
