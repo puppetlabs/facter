@@ -1,6 +1,6 @@
 # This test verifies that we can load a custom fact using the environment variable FACTERLIB
 test_name "C14779: custom facts are loaded from the environment variable FACTERLIB path" do
-  tag 'risk:medium'
+  tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
