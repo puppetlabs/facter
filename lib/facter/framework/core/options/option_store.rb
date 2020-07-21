@@ -25,13 +25,13 @@ module Facter
     @color = false
 
     class << self
-      attr_reader :debug, :verbose, :log_level, :show_legacy, :trace, :ruby,
+      attr_reader :debug, :verbose, :log_level, :show_legacy, :ruby,
                   :custom_facts, :blocked_facts
 
       attr_accessor :config, :user_query, :strict, :json, :haml, :external_facts,
                     :cache, :yaml, :puppet, :ttls, :block, :cli, :config_file_custom_dir,
                     :config_file_external_dir, :default_external_dir, :fact_groups,
-                    :block_list, :color
+                    :block_list, :color, :trace
 
       attr_writer :external_dir
 
@@ -131,10 +131,6 @@ module Facter
         end
       end
 
-      def trace=(bool)
-        Facter.trace(bool)
-      end
-
       def set(key, value)
         send("#{key}=".to_sym, value)
       end
@@ -150,6 +146,7 @@ module Facter
         @user_query = []
         @cli = nil
         @cache = true
+        @trace = false
         reset_config
       end
 

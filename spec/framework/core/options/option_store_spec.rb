@@ -34,7 +34,8 @@ describe Facter::OptionStore do
         verbose: false,
         config: nil,
         cache: true,
-        color: false
+        color: false,
+        trace: false
       )
     end
   end
@@ -253,11 +254,6 @@ describe Facter::OptionStore do
           option_store.log_level = :trace
         end.to change(option_store, :log_level)
           .from(:warn).to(:debug)
-      end
-
-      it 'sets the Facter::Log level' do
-        option_store.trace = true
-        expect(Facter).to have_received(:trace).with(true)
       end
     end
 

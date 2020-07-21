@@ -95,7 +95,9 @@ describe Logger do
         it 'print CYAN (36) debug message' do
           log.debug('debug_message')
 
-          expect(multi_logger_double).to have_received(:debug).with("Class - \e[0;36mdebug_message\e[0m")
+          expect(multi_logger_double)
+            .to have_received(:debug)
+            .with("Class - #{Facter::CYAN}debug_message#{Facter::RESET}")
         end
       end
     end
@@ -139,7 +141,9 @@ describe Logger do
         it 'print Green (32) info message' do
           log.info('info_message')
 
-          expect(multi_logger_double).to have_received(:info).with("Class - \e[0;32minfo_message\e[0m")
+          expect(multi_logger_double)
+            .to have_received(:info)
+            .with("Class - #{Facter::GREEN}info_message#{Facter::RESET}")
         end
       end
     end
@@ -183,7 +187,9 @@ describe Logger do
         it 'print Yellow (33) info message' do
           log.warn('warn_message')
 
-          expect(multi_logger_double).to have_received(:warn).with("Class - \e[0;33mwarn_message\e[0m")
+          expect(multi_logger_double)
+            .to have_received(:warn)
+            .with("Class - #{Facter::YELLOW}warn_message#{Facter::RESET}")
         end
       end
     end
@@ -213,7 +219,7 @@ describe Logger do
 
       log.error('error_message', true)
 
-      expect(multi_logger_double).to have_received(:error).with("Class - \e[0;31merror_message\e[0m")
+      expect(multi_logger_double).to have_received(:error).with("Class - #{Facter::RED}error_message#{Facter::RESET}")
     end
 
     it 'writes error message not colorized on Windows' do
@@ -236,6 +242,27 @@ describe Logger do
       Facter::Log.level = :error
 
       expect(multi_logger_double).to have_received(:level=).with(:error)
+    end
+  end
+
+  describe '#log_exception' do
+    let(:exception) { Exception.new('Test exception') }
+
+    it 'writes exception message without --trace option' do
+      log.log_exception(exception)
+
+      expect(multi_logger_double).to have_received(:error).with("Class - #{colorize('Test exception', Facter::RED)}\n")
+    end
+
+    it 'writes exception message and backtrace with --trace option' do
+      allow(Facter::Options).to receive(:[])
+      allow(Facter::Options).to receive(:[]).with(:trace).and_return(true)
+      allow(exception).to receive(:backtrace).and_return(['backtrace:1'])
+      log.log_exception(exception)
+
+      expect(multi_logger_double)
+        .to have_received(:error)
+        .with("Class - #{colorize('Test exception', Facter::RED)}\nbacktrace:1")
     end
   end
 end

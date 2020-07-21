@@ -105,10 +105,22 @@ describe Facter::InternalFactManager do
         expect(resolved_facts).to match_array []
       end
 
-      it 'logs backtrace as error' do
+      it 'logs backtrace as error with --trace option' do
+        allow(Facter::Options).to receive(:[])
+        allow(Facter::Options).to receive(:[]).with(:trace).and_return(true)
         internal_fact_manager.resolve_facts([searched_fact])
 
-        expect(logger_double).to have_received(:error).with('Facter::InternalFactManager - error_message backtrace')
+        expect(logger_double)
+          .to have_received(:error)
+          .with("Facter::InternalFactManager - #{colorize('error_message', Facter::RED)}\nbacktrace")
+      end
+
+      it 'logs error message as error without --trace option' do
+        internal_fact_manager.resolve_facts([searched_fact])
+
+        expect(logger_double)
+          .to have_received(:error)
+          .with("Facter::InternalFactManager - #{colorize('error_message', Facter::RED)}\n")
       end
     end
   end

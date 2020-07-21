@@ -30,6 +30,12 @@ SimpleCov.start do
   add_filter 'spec'
 end
 
+def colorize(str, color)
+  return str if OsDetector.instance.identifier.eql?(:windows)
+
+  "#{color}#{str}#{Facter::RESET}"
+end
+
 default_coverage = 90
 SimpleCov.minimum_coverage ENV['COVERAGE'] || default_coverage
 
