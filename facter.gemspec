@@ -17,7 +17,8 @@ Gem::Specification.new do |spec|
   spec.files = Dir['bin/facter'] +
                Dir['lib/**/*.rb'] +
                Dir['lib/**/*.json'] +
-               Dir['lib/**/*.conf']
+               Dir['lib/**/*.conf'] +
+               Dir['lib/**/*.erb']
 
   spec.required_ruby_version = '~> 2.3'
   spec.bindir = 'bin'
