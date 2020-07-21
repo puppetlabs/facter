@@ -56,7 +56,7 @@ module LegacyFacter
         # wrapper.
         def results
           parse_results
-        rescue Exception => e
+        rescue StandardError => e
           Facter.log_exception(e, "Failed to handle #{filename} as #{self.class} facts: #{e.message}")
           nil
         end
@@ -68,8 +68,8 @@ module LegacyFacter
         def parse_executable_output(output)
           res = nil
           begin
-            res = YAML.safe_load output
-          rescue Exception => e
+            res = YAML.safe_load(output, [Symbol, Time])
+          rescue StandardError => e
             Facter.debug("Could not parse executable fact output as YAML or JSON (#{e.message})")
           end
           res = KeyValuePairOutputFormat.parse output unless res.is_a?(Hash)

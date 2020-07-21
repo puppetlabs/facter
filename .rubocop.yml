@@ -13,10 +13,6 @@ require:
 Layout/LineLength:
   Max: 120
 
-Lint/RescueException:
-  Exclude:
-    - 'lib/facter/custom_facts/util/parser.rb'
-
 Lint/RaiseException:
   Enabled: true
 
