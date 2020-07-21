@@ -15,7 +15,8 @@ module Facts
             @log.debug('Vmware hypervisor detected')
             fact_value = {}
 
-            fact_value[:version] = Facter::Resolvers::DmiDecode.resolve(:vmware_version) || ''
+            version = Facter::Resolvers::DmiDecode.resolve(:vmware_version)
+            fact_value[:version] = version if version && !version.empty?
 
             return Facter::ResolvedFact.new(FACT_NAME, fact_value)
           end

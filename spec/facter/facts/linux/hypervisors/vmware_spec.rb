@@ -17,6 +17,30 @@ describe Facts::Linux::Hypervisors::Vmware do
         end
       end
 
+      context 'when vmware_version is nil' do
+        before do
+          allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return('vmware')
+          allow(Facter::Resolvers::DmiDecode).to receive(:resolve).with(:vmware_version).and_return(nil)
+        end
+
+        it 'returns vmware' do
+          expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact)
+            .and have_attributes(name: 'hypervisors.vmware', value: {})
+        end
+      end
+
+      context 'when vmware_version is empty string' do
+        before do
+          allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return('vmware')
+          allow(Facter::Resolvers::DmiDecode).to receive(:resolve).with(:vmware_version).and_return('')
+        end
+
+        it 'returns vmware' do
+          expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact)
+            .and have_attributes(name: 'hypervisors.vmware', value: {})
+        end
+      end
+
       context 'when DmiBios resolver with product_name returns VMware' do
         before do
           allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return('unknown')
