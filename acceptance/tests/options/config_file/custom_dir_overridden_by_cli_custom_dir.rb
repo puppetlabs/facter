@@ -1,7 +1,7 @@
 # This test verifies that the custom-dir specified in the configuration file can be overridden by using
 # --custom-dir on the command line
 test_name "C100015: config custom-dir overridden by command line --custom-dir" do
-  tag 'risk:medium'
+  tag 'risk:high'
 
   require 'json'
   require 'facter/acceptance/user_fact_utils'

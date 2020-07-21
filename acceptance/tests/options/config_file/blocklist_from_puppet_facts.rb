@@ -1,7 +1,7 @@
 # This test verifies that when a fact group is blocked in the config file the
 # corresponding facts do not resolve when being run from the puppet facts command.
 test_name "C100036: when run from puppet facts, facts can be blocked via a list in the config file" do
-  tag 'risk:medium'
+  tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils

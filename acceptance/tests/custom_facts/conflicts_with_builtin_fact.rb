@@ -1,5 +1,5 @@
 test_name 'Facter should appropriately resolve a custom fact when it conflicts with a builtin fact' do
-  tag 'risk:medium'
+  tag 'risk:high'
 
   def create_custom_fact_on(host, custom_fact_dir, fact_file_name, fact)
     fact_file_contents = <<-CUSTOM_FACT
@@ -17,7 +17,9 @@ CUSTOM_FACT
 
   def clear_custom_facts_on(host, custom_fact_dir)
     step "Clean-up the previous test's custom facts" do
-      agent.rm_rf("#{custom_fact_dir}/*")
+      agents.each do |agent|
+        agent.rm_rf("#{custom_fact_dir}/*")
+      end
     end
   end
 

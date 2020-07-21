@@ -1,7 +1,7 @@
 # This test verifies that setting external-dir and no-external-facts in the config file
 # results in an error
 test_name "C99993: config option no-external-facts conflicts with external-dir" do
-  tag 'risk:low'
+  tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils

@@ -1,7 +1,7 @@
 # This test verifies that setting no-custom-facts in the config file disables
 # finding facts under the environment variable FACTERLIB
 test_name "C99997: config option no-custom-facts : true does not load facts from FACTERLIB" do
-  tag 'risk:low'
+  tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils

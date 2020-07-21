@@ -1,7 +1,7 @@
 # This tests checks that we can call facter with a --external-dir and get an external fact
 # from that directory
 test_name "C99974: external fact commandline options --external-dir resolves an external fact" do
-  tag 'risk:low'
+  tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils

@@ -1,7 +1,7 @@
 # This test verifies that --no-external-facts does not load external facts
 
 test_name "C99961: external fact command line option --no-external-facts does not load external facts" do
-  tag 'risk:medium'
+  tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils

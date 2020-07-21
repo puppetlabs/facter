@@ -1,7 +1,7 @@
 # This test is intended to demonstrate that setting cli.verbose to true in the
 # config file causes INFO level logging to output to stderr.
 test_name "C99989: verbose config field prints verbose information to stderr" do
-  tag 'risk:medium'
+  tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
