@@ -1,0 +1,288 @@
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
+.
+.TH "FACTER" "8" "July 2020" "Puppet, Inc." "Facter manual"
+.
+.SH "NAME"
+\fBfacter\fR
+.
+.SH "SYNOPSIS"
+facter [options] [query] [query] [\.\.\.]
+.
+.SH "DESCRIPTION"
+Collect and display facts about the current system\. The library behind Facter is easy to extend, making Facter an easy way to collect information about a system\.
+.
+.P
+If no queries are given, then all facts will be returned\.
+.
+.P
+Many of the command line options can also be set via the HOCON config file\. This file can also be used to block or cache certain fact groups\.
+.
+.SH "OPTIONS"
+.
+.TP
+\fB\-\-color\fR:
+.
+.IP
+Enable color output\.
+.
+.TP
+\fB\-c\fR, \fB\-\-config\fR:
+.
+.IP
+The location of the config file\.
+.
+.TP
+\fB\-\-custom\-dir\fR:
+.
+.IP
+A directory to use for custom facts\.
+.
+.TP
+\fB\-d\fR, \fB\-\-debug\fR:
+.
+.IP
+Enable debug output\.
+.
+.TP
+\fB\-\-external\-dir\fR:
+.
+.IP
+A directory to use for external facts\.
+.
+.TP
+\fB\-\-hocon\fR:
+.
+.IP
+Output in Hocon format\.
+.
+.TP
+\fB\-j\fR, \fB\-\-json\fR:
+.
+.IP
+Output in JSON format\.
+.
+.TP
+\fB\-\-list\-block\-groups\fR:
+.
+.IP
+List the names of all blockable fact groups\.
+.
+.TP
+\fB\-\-list\-cache\-groups\fR:
+.
+.IP
+List the names of all cacheable fact groups\.
+.
+.TP
+\fB\-l\fR, \fB\-\-log\-level\fR:
+.
+.IP
+Set logging level\. Supported levels are: none, trace, debug, info, warn, error, and fatal\.
+.
+.TP
+\fB\-\-no\-block\fR:
+.
+.IP
+Disable fact blocking\.
+.
+.TP
+\fB\-\-no\-cache\fR:
+.
+.IP
+Disable loading and refreshing facts from the cache
+.
+.TP
+\fB\-\-no\-custom\-facts\fR:
+.
+.IP
+Disable custom facts\.
+.
+.TP
+\fB\-\-no\-external\-facts\fR:
+.
+.IP
+Disable external facts\.
+.
+.TP
+\fB\-\-ruby\fR:
+.
+.IP
+Disable loading Ruby, facts requiring Ruby, and custom facts\.
+.
+.TP
+\fB\-\-trace\fR:
+.
+.IP
+Enable backtraces for custom facts\.
+.
+.TP
+\fB\-\-verbose\fR:
+.
+.IP
+Enable verbose (info) output\.
+.
+.TP
+\fB\-\-show\-legacy\fR:
+.
+.IP
+Show legacy facts when querying all facts\.
+.
+.TP
+\fB\-y\fR, \fB\-\-yaml\fR:
+.
+.IP
+Output in YAML format\.
+.
+.TP
+\fB\-\-strict\fR:
+.
+.IP
+Enable more aggressive error reporting\.
+.
+.TP
+\fB\-p\fR, \fB\-\-puppet\fR:
+.
+.IP
+Load the Puppet libraries, thus allowing Facter to load Puppet\-specific facts\.
+.
+.SH "FILES"
+\fI/etc/puppetlabs/facter/facter\.conf\fR
+.
+.P
+A HOCON config file that can be used to specify directories for custom and external facts, set various command line options, and specify facts to block\. See example below for details, or visit the GitHub README\.
+.
+.SH "EXAMPLES"
+Display all facts:
+.
+.IP "" 4
+.
+.nf
+
+$ facter
+disks => {
+  sda => {
+    model => "Virtual disk",
+    size => "8\.00 GiB",
+    size_bytes => 8589934592,
+    vendor => "ExampleVendor"
+  }
+}
+dmi => {
+  bios => {
+    release_date => "06/23/2013",
+    vendor => "Example Vendor",
+    version => "6\.00"
+  }
+}
+[\e\.\e\.\e\.]
+.
+.fi
+.
+.IP "" 0
+.
+.P
+Display a single structured fact:
+.
+.IP "" 4
+.
+.nf
+
+$ facter processors
+{
+  count => 2,
+  isa => "x86_64",
+  models => [
+    "Intel(R) Xeon(R) CPU E5\-2680 v2 @ 2\.80GHz",
+    "Intel(R) Xeon(R) CPU E5\-2680 v2 @ 2\.80GHz"
+  ],
+  physicalcount => 2
+}
+.
+.fi
+.
+.IP "" 0
+.
+.P
+Display a single fact nested within a structured fact:
+.
+.IP "" 4
+.
+.nf
+
+$ facter processors\.isa
+x86_64
+.
+.fi
+.
+.IP "" 0
+.
+.P
+Display a single legacy fact\. Note that non\-structured facts existing in previous versions of Facter are still available, but are not displayed by default due to redundancy with newer structured facts:
+.
+.IP "" 4
+.
+.nf
+
+$ facter processorcount
+2
+.
+.fi
+.
+.IP "" 0
+.
+.P
+Format facts as JSON:
+.
+.IP "" 4
+.
+.nf
+
+$ facter \e\-\e\-json os\.name os\.release\.major processors\.isa
+{
+  "os\.name": "Ubuntu",
+  "os\.release\.major": "14\.04",
+  "processors\.isa": "x86_64"
+}
+.
+.fi
+.
+.IP "" 0
+.
+.P
+An example config file\.
+.
+.IP "" 4
+.
+.nf
+
+# always loaded (CLI and as Ruby module)
+global : {
+    external\-dir : "~/external/facts",
+    custom\-dir   :  [
+       "~/custom/facts",
+       "~/custom/facts/more\-facts"
+    ],
+    no\-external\-facts : false,
+    no\-custom\-facts   : false,
+    no\-ruby           : false
+}
+# loaded when running from the command line
+cli : {
+    debug     : false,
+    trace     : true,
+    verbose   : false,
+    log\-level : "info"
+}
+# always loaded, fact\-sepcific configuration
+facts : {
+    # for valid blocklist entries, use \-\-list\-block\-groups
+    blocklist : [ "file system", "EC2" ],
+    # for valid time\-to\-live entries, use \-\-list\-cache\-groups
+    ttls : [ { "timezone" : 30 days } ]
+}
+.
+.fi
+.
+.IP "" 0
+

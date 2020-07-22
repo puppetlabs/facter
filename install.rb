@@ -126,11 +126,11 @@ class Installer
               'overrides RbConfig::CONFIG["sitelibdir"]') do |sitelibdir|
         InstallOptions.sitelibdir = sitelibdir
       end
-      # opts.on('--mandir[=OPTIONAL]',
-      #         'Installation directory for man pages',
-      #          'overrides RbConfig::CONFIG["mandir"]') do |mandir|
-      #   InstallOptions.mandir = mandir
-      # end
+      opts.on('--mandir[=OPTIONAL]',
+              'Installation directory for man pages',
+              'overrides RbConfig::CONFIG["mandir"]') do |mandir|
+        InstallOptions.mandir = mandir
+      end
       opts.on('--full', 'Performs a full installation. All', 'optional installation steps are run.') do |_full|
         InstallOptions.configs = true
       end
@@ -182,30 +182,26 @@ class Installer
       end
     end
 
-    # if InstallOptions.mandir
-    #   mandir = InstallOptions.mandir
-    # else
-    #   mandir = RbConfig::CONFIG['mandir']
-    # end
+    mandir = InstallOptions.mandir || RbConfig::CONFIG['mandir']
 
     # This is the new way forward
     destdir = InstallOptions.destdir || ''
 
     # configdir = join(destdir, configdir)
     bindir = join(destdir, bindir)
-    # mandir = join(destdir, mandir)
+    mandir = join(destdir, mandir)
     sitelibdir = join(destdir, sitelibdir)
 
     # makedirs(configdir) if InstallOptions.configs
     makedirs(bindir)
-    # makedirs(mandir)
+    makedirs(mandir)
     makedirs(sitelibdir)
 
     InstallOptions.site_dir = sitelibdir
     # InstallOptions.config_dir = configdir
     InstallOptions.bin_dir  = bindir
     InstallOptions.lib_dir  = libdir
-    # InstallOptions.man_dir  = mandir
+    InstallOptions.man_dir  = mandir
   end
 
   ##
@@ -281,12 +277,14 @@ class Installer
     cd File.dirname(__FILE__) do
       # Set these values to what you want installed.
       bins  = glob(%w[bin/facter])
-      libs  = glob(%w[lib/**/*.rb lib/facter/os_hierarchy.json lib/facter/fact_groups.conf])
+      libs  = glob(%w[lib/**/*.rb lib/facter/os_hierarchy.json lib/facter/fact_groups.conf lib/facter/templates/*])
+      man   = glob(%w{man/man[0-9]/*})
 
       prepare_installation
 
       do_bins(bins, InstallOptions.bin_dir)
       do_libs(libs)
+      do_man(man) unless windows?
     end
   end
 end

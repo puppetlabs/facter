@@ -16,7 +16,8 @@ Gem::Specification.new do |spec|
                Dir['lib/**/*.rb'] +
                Dir['lib/**/*.json'] +
                Dir['lib/**/*.conf'] +
-               Dir['agent/**/*']
+               Dir['agent/**/*'] +
+               Dir['lib/**/*.erb']
 
   spec.required_ruby_version = '~> 2.3'
 

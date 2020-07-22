@@ -35,6 +35,11 @@ module Facter
                  type: :boolean,
                  desc: 'Print this help message.'
 
+    class_option :man,
+                 hide: true,
+                 type: :boolean,
+                 desc: 'Display manual.'
+
     class_option :hocon,
                  type: :boolean,
                  desc: 'Output in Hocon format.'
@@ -103,6 +108,18 @@ module Facter
                  aliases: '-p',
                  desc: 'Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.'
 
+    desc '--man', 'Manual', hide: true
+    map ['--man'] => :man
+    def man(*args)
+      require 'erb'
+      negate_options = %w[block cache custom_facts external_facts]
+
+      template = File.join(File.dirname(__FILE__), '..', '..', 'templates', 'man.erb')
+      erb = ERB.new(File.read(template), nil, '-')
+      erb.filename = template
+      puts erb.result(binding)
+    end
+
     desc 'query', 'Default method', hide: true
     desc '[options] [query] [query] [...]', ''
     def query(*args)
@@ -119,13 +136,13 @@ module Facter
       puts Facter::VERSION
     end
 
-    desc '--list-block-groups', 'List block groups'
+    desc '--list-block-groups', 'List block groups', hide: true
     map ['--list-block-groups'] => :list_block_groups
     def list_block_groups(*_args)
       puts Facter::FactGroups.new.groups.to_yaml.lines[1..-1].join
     end
 
-    desc '--list-cache-groups', 'List cache groups'
+    desc '--list-cache-groups', 'List cache groups', hide: true
     map ['--list-cache-groups'] => :list_cache_groups
     def list_cache_groups(*_args)
       puts Facter::FactGroups.new.groups.to_yaml.lines[1..-1].join
