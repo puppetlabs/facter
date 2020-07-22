@@ -9,7 +9,11 @@ test_name "C86545: --debug and --color command-line options should print DEBUG m
       # set the TERM type to be a color xterm to help ensure we emit the escape sequence to change the color
       on(agent, facter('--debug --color'), :environment => { 'TERM' => 'xterm-256color' }) do |facter_output|
         assert_match(/DEBUG/, facter_output.stderr, "Expected DEBUG information in stderr")
-        assert_match(/\e\[0;/, facter_output.stderr, "Expected to see an escape sequence in the output")
+        assert_match(
+          /\e\[(\d{2,3})?;?(\d{1})?;?(\d{2,3})?m/,
+          facter_output.stderr,
+          "Expected to see an escape sequence in the output"
+        )
       end
     end
   end
