@@ -5,7 +5,7 @@ module Facts
     module SystemProfiler
       class HardwareUuid
         FACT_NAME = 'system_profiler.hardware_uuid'
-        ALIASES = 'sp_hardware_uuid'
+        ALIASES = 'sp_platform_uuid'
 
         def call_the_resolver
           fact_value = Facter::Resolvers::Macosx::SystemProfiler.resolve(:hardware_uuid)

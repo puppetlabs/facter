@@ -5,7 +5,7 @@ module Facts
     module SystemProfiler
       class ProcessorName
         FACT_NAME = 'system_profiler.processor_name'
-        ALIASES = 'sp_processor_name'
+        ALIASES = 'sp_cpu_type'
 
         def call_the_resolver
           fact_value = Facter::Resolvers::Macosx::SystemProfiler.resolve(:processor_name)
