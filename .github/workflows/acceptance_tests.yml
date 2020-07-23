@@ -17,22 +17,15 @@ jobs:
         os: [windows-2016, windows-2019, ubuntu-16.04, ubuntu-18.04, ubuntu-20.04, macos-10.15]
     runs-on: ${{ matrix.os }}
     env:
-      FACTER_3_ROOT: facter_3
       FACTER_4_ROOT: facter_4
       SHA: latest
+      RELEASE_STREAM: puppet7
 
     steps:
       - name: Checkout current PR
         uses: actions/checkout@v2
         with:
           path: facter_4
-
-      - name: Clone facter 3 repo
-        uses: actions/checkout@v2
-        with:
-          repository: puppetlabs/facter
-          ref: github_acceptance_tests
-          path: facter_3
 
       - name: Install Ruby 2.6
         uses: ruby/setup-ruby@v1
@@ -49,11 +42,18 @@ jobs:
           sudo chmod a-w /home/runner /usr/share &&
           sudo chmod -R a-w /usr/share/rust /home/runner/.config /home/linuxbrew
 
-      - name: Instal dhclient for Linux
+      - name: Install dhclient for Linux
         if: runner.os == 'Linux'
         run: |
           sudo apt install dhcpcd5
           sudo dhclient
+
+      #Ipv6 is missing on the GitHub OSX machine and we need it for the networking facts tests
+      - name: Add ipv6 on OSX
+        if: runner.os == 'macOS'
+        run: |
+          primary_interface=`route -n get default | awk '/interface: */{print $NF}'`
+          sudo ifconfig $primary_interface inet6 add ::1/64
 
       - name: Run acceptance tests on Linux like platform
         if: runner.os != 'Windows'
@@ -62,4 +62,3 @@ jobs:
       - name: Run acceptance tests on Windows like platform
         if: runner.os == 'Windows'
         run: ruby $Env:FACTER_4_ROOT/.github/actions/presuite.rb ${{ matrix.os }}
-

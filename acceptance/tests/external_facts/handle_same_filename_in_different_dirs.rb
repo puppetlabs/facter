@@ -16,9 +16,9 @@ test_name 'Should handle same filename in two external directories only if ttl i
     fact1_value = 'fact1_value'
     fact2_value = 'fact2_value'
     external_filename = 'text.yaml'
-    external_dir1 = agent.tmpdir('external_dir')
+    external_dir1 = agent.tmpdir('external_dir1')
     external_fact_file1 = File.join(external_dir1, external_filename)
-    external_dir2 = agent.tmpdir('external_dir')
+    external_dir2 = agent.tmpdir('external_dir2')
     external_fact_file2 = File.join(external_dir2, external_filename)
     create_remote_file(agent, external_fact_file1, "#{fact1}: #{fact1_value}")
     create_remote_file(agent, external_fact_file2, "#{fact2}: #{fact2_value}")
@@ -27,11 +27,13 @@ test_name 'Should handle same filename in two external directories only if ttl i
     config_file = File.join(config_dir, 'facter.conf')
 
     teardown do
-      on(agent, "rm -rf '#{external_dir1}' '#{external_dir2}' '#{config_file}'")
+      agent.rm_rf(external_dir1)
+      agent.rm_rf(external_dir2)
+      agent.rm_rf(config_file)
     end
 
     step 'works if ttl is not enabled' do
-      on(agent, facter("--external-dir '#{external_dir1}' --external-dir '#{external_dir2}' --debug #{fact1} #{fact2}")) do |facter_output|
+      on(agent, facter("--external-dir \"#{external_dir1}\" --external-dir \"#{external_dir2}\" --debug #{fact1} #{fact2}")) do |facter_output|
         assert_match(/#{fact1} => #{fact1_value}/, stdout, 'Expected fact to match first fact')
         assert_match(/#{fact2} => #{fact2_value}/, stdout, 'Expected fact to match second fact')
       end
@@ -45,9 +47,9 @@ facts : {
     ]
 }
 EOM
-      on(agent, "mkdir -p '#{config_dir}'")
+      agent.mkdir_p(config_dir)
       create_remote_file(agent, config_file, config)
-      on(agent, facter("--external-dir '#{external_dir1}' --external-dir '#{external_dir2}' --debug #{fact1} #{fact2}"), :acceptable_exit_codes => 1) do |facter_output|
+      on(agent, facter("--external-dir \"#{external_dir1}\" --external-dir \"#{external_dir2}\" --debug #{fact1} #{fact2}"), :acceptable_exit_codes => 1) do |facter_output|
         assert_match(/ERROR.*Caching is enabled for group "#{external_filename}" while there are at least two external facts files with the same filename/, stderr, 'Expected error message')
         assert_match(/#{fact1} => #{fact1_value}/, stdout, 'Expected fact to match first fact')
         assert_not_match(/#{fact2} => #{fact2_value}/, stdout, 'Expected fact not to match second fact')

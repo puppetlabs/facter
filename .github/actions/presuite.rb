@@ -5,8 +5,8 @@ def install_bundler
   run('gem install bundler')
 end
 
-def install_facter_3_dependencies
-  message('INSTALL FACTER 3 ACCEPTANCE DEPENDENCIES')
+def install_facter_acceptance_dependencies
+  message('INSTALL FACTER ACCEPTANCE DEPENDENCIES')
   run('bundle install')
 end
 
@@ -66,28 +66,16 @@ def env_path_var
   (HOST_PLATFORM.include? 'windows') ? { 'PATH' => "#{puppet_bin_dir};#{ENV['PATH']}" } : {}
 end
 
-def replace_facter_3_with_facter_4
-  message('SET FACTER 4 FLAG TO TRUE')
-  run("#{puppet_command} config set facterng true")
+def update_facter_lib
+  pr_facter_lib_path = [ '..', 'lib', '*']
+  facter_lib_windows_path = 'C:\\Program Files\\Puppet Labs\\Puppet\\puppet\\lib\\ruby\\vendor_ruby\\facter'
+  facter_lib_linux_path = '/opt/puppetlabs/puppet/lib/ruby/vendor_ruby/facter'
 
-  install_latest_facter_4(gem_command)
+  facter_lib_path = (HOST_PLATFORM.include? 'windows') ? facter_lib_windows_path : facter_lib_linux_path
 
-  message('CHANGE FACTER 3 WITH FACTER 4')
-
-  extension = (HOST_PLATFORM.include? 'windows') ? '.bat' : ''
-  run("mv facter-ng#{extension} facter#{extension}", puppet_bin_dir)
-end
-
-
-def install_latest_facter_4(gem_command)
-  message('BUILD FACTER 4 LATEST AGENT GEM')
-  run("#{gem_command} build agent/facter-ng.gemspec", ENV['FACTER_4_ROOT'])
-
-  message('UNINSTALL DEFAULT FACTER 4 AGENT GEM')
-  run("#{gem_command} uninstall facter-ng")
-
-  message('INSTALL FACTER 4 GEM')
-  run("#{gem_command} install -f facter-ng-*.gem", ENV['FACTER_4_ROOT'])
+  message('OVERWRITE FACTER FILES')
+  run("rm -rf #{facter_lib_path} #{facter_lib_path + '.rb'}")
+  run("mv #{File.join(pr_facter_lib_path)} #{facter_lib_path.sub('facter', '')}")
 end
 
 def run_acceptance_tests
@@ -119,21 +107,17 @@ def run(command, dir = './', env = {})
 end
 
 ENV['DEBIAN_DISABLE_RUBYGEMS_INTEGRATION'] = 'no_warnings'
-FACTER_3_ACCEPTANCE_PATH = File.join(ENV['FACTER_3_ROOT'], 'acceptance')
+ACCEPTANCE_PATH = File.join(ENV['FACTER_4_ROOT'], 'acceptance')
 HOST_PLATFORM = ARGV[0]
 
 install_bundler
 
-Dir.chdir(FACTER_3_ACCEPTANCE_PATH) { install_facter_3_dependencies }
-
-Dir.chdir(FACTER_3_ACCEPTANCE_PATH) do
+Dir.chdir(ACCEPTANCE_PATH) do
+  install_facter_acceptance_dependencies
   initialize_beaker
   install_puppet_agent
-end
+  update_facter_lib
 
-replace_facter_3_with_facter_4
-
-Dir.chdir(FACTER_3_ACCEPTANCE_PATH) do
   _, status = run_acceptance_tests
   exit(status.exitstatus)
 end
