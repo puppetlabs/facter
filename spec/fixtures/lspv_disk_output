@@ -1,0 +1,11 @@
+PHYSICAL VOLUME:    hdisk0                   VOLUME GROUP:     rootvg
+PV IDENTIFIER:      00f9280c31fc0ae6 VG IDENTIFIER     00f9280c00004c00000001737084c416
+PV STATE:           active
+STALE PARTITIONS:   0                        ALLOCATABLE:      yes
+PP SIZE:            32 megabyte(s)           LOGICAL VOLUMES:  12
+TOTAL PPs:          959 (30688 megabytes)    VG DESCRIPTORS:   2
+FREE PPs:           1 (32 megabytes)         HOT SPARE:        no
+USED PPs:           958 (30656 megabytes)    MAX REQUEST:      256 kilobytes
+FREE DISTRIBUTION:  00..00..00..00..01
+USED DISTRIBUTION:  192..192..191..192..191
+MIRROR POOL:        None

@@ -9,9 +9,6 @@ module Facter
         class << self
           private
 
-          MEGABYTES_EXPONENT = 1024**2
-          GIGABYTES_EXPONENT = 1024**3
-
           def post_resolve(fact_name)
             @fact_list.fetch(fact_name) { query_cudv(fact_name) }
           end
@@ -43,7 +40,7 @@ module Facter
 
             return if stdout.empty?
 
-            info_hash = extract_info(stdout)
+            info_hash =  InfoExtractor.extract(stdout, /PPs:|PP SIZE|TYPE:|LABEL:|MOUNT/)
             size_bytes = compute_size(info_hash)
 
             part_info = {
@@ -51,29 +48,21 @@ module Facter
               size_bytes: size_bytes,
               size: Facter::FactsUtils::UnitConverter.bytes_to_human_readable(size_bytes)
             }
-            mount = info_hash['MOUNTPOINT']
+            mount = info_hash['MOUNT POINT']
             label = info_hash['LABEL']
             part_info[:mount] = mount unless %r{N/A} =~ mount
-            part_info[:label] = label unless /None/ =~ label
+            part_info[:label] = label.strip unless /None/ =~ label
             part_info
-          end
-
-          def extract_info(lsl_content)
-            lsl_content = lsl_content.strip.split("\n").map do |line|
-              next unless /PPs:|PP SIZE|TYPE:|LABEL:|MOUNT/ =~ line
-
-              line.split(/:|\s\s/).reject(&:empty?)
-            end
-
-            lsl_content.flatten!.select! { |elem| elem }.map! { |elem| elem.delete("\s") }
-
-            Hash[*lsl_content]
           end
 
           def compute_size(info_hash)
             physical_partitions = info_hash['PPs'].to_i
-            size_physical_partition = info_hash['PPSIZE']
-            exp = size_physical_partition[/mega/] ? MEGABYTES_EXPONENT : GIGABYTES_EXPONENT
+            size_physical_partition = info_hash['PP SIZE']
+            exp = if size_physical_partition[/mega/]
+                    InfoExtractor::MEGABYTES_EXPONENT
+                  else
+                    InfoExtractor::GIGABYTES_EXPONENT
+                  end
             size_physical_partition.to_i * physical_partitions * exp
           end
         end
