@@ -3,10 +3,11 @@
 require 'logger'
 
 module Facter
-  RED = 31
-  GREEN = 32
-  YELLOW = 33
-  CYAN = 36
+  RED     = "\e[31m"
+  GREEN   = "\e[32m"
+  YELLOW  = "\e[33m"
+  CYAN    = "\e[36m"
+  RESET   = "\e[0m"
 
   DEFAULT_LOG_LEVEL = :warn
 
@@ -104,12 +105,19 @@ module Facter
       end
     end
 
+    def log_exception(exception)
+      msg = colorize(exception.message, RED) + "\n"
+      msg += exception.backtrace.join("\n") if Options[:trace]
+
+      @@logger.error(@class_name + ' - ' + msg)
+    end
+
     private
 
     def colorize(msg, color)
       return msg if OsDetector.instance.identifier.eql?(:windows)
 
-      "\e[0;#{color}m#{msg}\e[0m"
+      "#{color}#{msg}#{RESET}"
     end
 
     def debugging_active?

@@ -13,7 +13,6 @@ module Facter
   Options.init
   Log.output(STDOUT)
   @already_searched = {}
-  @trace = false
 
   class << self
     def clear_messages
@@ -196,7 +195,7 @@ module Facter
     #
     # @api public
     def trace?
-      @trace
+      Options[:trace]
     end
 
     # Enable or disable trace
@@ -206,7 +205,7 @@ module Facter
     #
     # @api public
     def trace(bool)
-      @trace = bool
+      Options[:trace] = bool
     end
 
     # Gets the value for a fact. Returns `nil` if no such fact exists.
@@ -255,7 +254,7 @@ module Facter
       elsif message
         arr << message
       end
-      if @trace
+      if Options[:trace]
         arr << 'backtrace:'
         arr.concat(exception.backtrace)
       end
