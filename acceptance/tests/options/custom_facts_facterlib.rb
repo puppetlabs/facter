@@ -6,7 +6,8 @@ test_name "C14779: custom facts are loaded from the environment variable FACTERL
   extend Facter::Acceptance::UserFactUtils
 
   content = <<EOM
-Facter.add('custom_fact') do
+Facter.add('custom_fact_facterlib') do
+  # has_weight 1
   setcode do
     "facterlib"
   end
@@ -20,11 +21,11 @@ EOM
       create_remote_file(agent, custom_fact, content)
 
       teardown do
-        on(agent, "rm -rf '#{custom_dir}'")
+        agent.rm_rf(custom_dir)
       end
 
       step "Agent #{agent}: facter should resolve a fact from the directory specified by the environment variable FACTERLIB" do
-        on(agent, facter('custom_fact', :environment => { 'FACTERLIB' => custom_dir })) do |facter_output|
+        on(agent, facter('custom_fact_facterlib', :environment => { 'FACTERLIB' => custom_dir })) do |facter_output|
           assert_equal("facterlib", facter_output.stdout.chomp, "Incorrect custom fact value for fact in FACTERLIB")
         end
       end

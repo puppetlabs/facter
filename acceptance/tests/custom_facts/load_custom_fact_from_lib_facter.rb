@@ -40,7 +40,7 @@ puts Facter.value('my_custom_fact')
     test_script_dir = agent.tmpdir('test_script')
     fact_dir = Pathname.new("#{fact_temp_dir}/lib/facter")
 
-    agent.mkdir_p(fact_dir)
+    agent.mkdir_p(fact_dir.to_s)
 
     fact_file = File.join(fact_dir, 'custom_fact.rb')
     test_script_file = File.join(test_script_dir, 'test_script.rb')

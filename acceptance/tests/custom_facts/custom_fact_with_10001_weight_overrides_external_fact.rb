@@ -16,12 +16,12 @@ test_name "C100153: custom fact with weight of >= 10001 overrides an external fa
     create_remote_file(agent, cust_fact_path, custom_fact_content(fact_name, 'CUSTOM', "has_weight 10001"))
 
     teardown do
-      on(agent, "rm -rf '#{facts_dir}'")
+      agent.rm_rf(facts_dir)
     end
 
     # Custom fact with weight >= 10001 should override an external fact
     step "Agent #{agent}: resolve a custom fact with weight of 10001 overriding the external fact" do
-      on(agent, facter("--external-dir=#{facts_dir} --custom-dir=#{facts_dir} test")) do |facter_output|
+      on(agent, facter("--external-dir \"#{facts_dir}\" --custom-dir=#{facts_dir} test")) do |facter_output|
         assert_equal("CUSTOM", facter_output.stdout.chomp)
       end
     end

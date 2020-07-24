@@ -22,15 +22,15 @@ test_name "C99968: --no-cache command-line option causes facter to not cache fac
     cached_facts_dir = get_cached_facts_dir(agent['platform'], kernel_version)
     cached_fact_file = File.join(cached_facts_dir, cached_fact_name)
 
-    on(agent, "rm -f '#{cached_fact_file}'", :acceptable_exit_codes => [0, 1])
+    agent.rm_rf(cached_fact_file)
 
     teardown do
-      on(agent, "rm -rf '#{config_dir}'", :acceptable_exit_codes => [0, 1])
-      on(agent, "rm -rf '#{cached_facts_dir}'", :acceptable_exit_codes => [0, 1])
+      agent.rm_rf(config_dir)
+      agent.rm_rf(cached_facts_dir)
     end
 
     step "Agent #{agent}: create config file in default location" do
-      on(agent, "mkdir -p '#{config_dir}'")
+      agent.mkdir_p(config_dir)
       create_remote_file(agent, config_file, config)
     end
 

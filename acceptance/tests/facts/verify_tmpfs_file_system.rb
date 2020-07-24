@@ -28,12 +28,13 @@ test_name 'C98163: mountpoints fact should show mounts on tmpfs' do
         atboot  => true,
       }
     FILE
-    on(agent, "mkdir -p #{mount_point}")
+    agent.mkdir_p(mount_point)
     create_remote_file(agent, manifest, manifest_content)
 
     teardown do
       on(agent, "umount #{mount_point}")
-      on(agent, "rm -rf #{mount_point} #{manifest_dir}")
+      agent.rm_rf(mount_point)
+      agent.rm_rf(manifest_dir)
     end
 
     step "Apply the manifest to mount directory '#{mount_point}'" do

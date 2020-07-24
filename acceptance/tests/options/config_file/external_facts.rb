@@ -12,7 +12,7 @@ test_name "C98142: config external-dir allows single external fact directory" do
       ext = get_external_fact_script_extension(agent['platform'])
       external_fact = File.join(external_dir, "external_fact#{ext}")
       create_remote_file(agent, external_fact, external_fact_content(agent['platform'], 'single_fact', 'external_value'))
-      on(agent, "chmod +x '#{external_fact}'")
+      agent.chmod('+x', external_fact)
 
       config_dir = agent.tmpdir("config_dir")
       config_file = File.join(config_dir, "facter.conf")
@@ -21,14 +21,16 @@ global : {
     external-dir : "#{external_dir}",
 }
 EOM
+      config_content = escape_paths(agent, config_content)
       create_remote_file(agent, config_file, config_content)
 
       teardown do
-        on(agent, "rm -rf '#{external_dir}' '#{config_dir}'")
+        agent.rm_rf(external_dir)
+        agent.rm_rf(config_dir)
       end
 
       step "Agent #{agent}: resolve a fact in the external-dir in the configuration file" do
-        on(agent, facter("--config '#{config_file}' single_fact")) do |facter_output|
+        on(agent, facter("--config \"#{config_file}\" single_fact")) do |facter_output|
           assert_equal("external_value", facter_output.stdout.chomp, "Incorrect external fact value")
         end
       end
