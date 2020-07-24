@@ -28,14 +28,12 @@ module Facter
         def read_augeas_from_gem
           require 'augeas'
 
-          return ::Augeas.create { |aug| aug.get('/augeas/version') } if ::Augeas.respond_to?(:create)
-
-          # it is used for legacy augeas <= 0.5.0
-          return ::Augeas.open { |aug| aug.get('/augeas/version') } if ::Augeas.respond_to?(:open)
-        rescue StandardError => e
-          log.debug('ruby-augeas not available')
-          log.log_exception(e)
-          nil
+          if Gem.loaded_specs['augeas']
+            ::Augeas.create { |aug| aug.get('/augeas/version') }
+          else
+            # it is used for legacy augeas <= 0.5.0 (ruby-augeas gem)
+            ::Augeas.open { |aug| aug.get('/augeas/version') }
+          end
         end
       end
     end

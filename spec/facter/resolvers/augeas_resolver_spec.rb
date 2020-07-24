@@ -33,11 +33,8 @@ describe Facter::Resolvers::Augeas do
     end
 
     context 'when augeas gem > 0.5.0 is installed' do
-      let(:augeas_mock) { instance_spy(Augeas) }
-
       before do
-        allow(Augeas).to receive(:respond_to?).with(:create).and_return(true)
-        allow(Augeas).to receive(:respond_to?).with(:create, true).and_return(true)
+        allow(Gem).to receive(:loaded_specs).and_return({ 'augeas' => true })
         allow(Augeas).to receive(:create).and_return('1.12.0')
       end
 
@@ -47,12 +44,8 @@ describe Facter::Resolvers::Augeas do
     end
 
     context 'when augeas gem <= 0.5.0 is installed' do
-      let(:augeas_mock) { instance_spy(Augeas) }
-
       before do
-        allow(Augeas).to receive(:respond_to?).with(:create).and_return(false)
-        allow(Augeas).to receive(:respond_to?).with(:open).and_return(true)
-        allow(Augeas).to receive(:respond_to?).with(:open, true).and_return(true)
+        allow(Gem).to receive(:loaded_specs).and_return({})
         allow(Augeas).to receive(:open).and_return('1.12.0')
       end
 
@@ -62,26 +55,16 @@ describe Facter::Resolvers::Augeas do
     end
 
     context 'when augeas gem is not installed' do
-      let(:exception) { StandardError.new('error_message') }
+      let(:exception) { LoadError.new('load_error_message') }
 
       before do
         allow(Facter::Resolvers::Augeas).to receive(:require).with('augeas').and_raise(exception)
       end
 
-      it 'returns nil' do
-        expect(augeas.resolve(:augeas_version)).to be_nil
-      end
-
-      it 'logs a debug message' do
+      it 'raises a LoadError error' do
         augeas.resolve(:augeas_version)
 
-        expect(log_spy).to have_received(:debug).with('ruby-augeas not available')
-      end
-
-      it 'logs an exception' do
-        augeas.resolve(:augeas_version)
-
-        expect(log_spy).to have_received(:log_exception).with(exception)
+        expect(log_spy).to have_received(:debug).with('resolving fact augeas_version, but load_error_message')
       end
     end
   end
