@@ -76,6 +76,7 @@ def update_facter_lib
   pr_facter_lib_path = (HOST_PLATFORM.include? 'windows') ? pr_facter_lib_windows_path : pr_facter_lib_linux_path
 
   message('OVERWRITE FACTER FILES')
+  Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
   run("rm -rf '#{facter_lib_path}' '#{facter_lib_path + '.rb'}'")
   Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
   run("mv '#{pr_facter_lib_path}' '#{facter_lib_path.sub('facter', '')}'")
