@@ -36,6 +36,7 @@ jobs:
         if: runner.os != 'Windows'
         run: sudo chmod a-w /opt
 
+      #GitHub Linux machines have world writable folders which cause ruby to throw warnings, polluting stderr
       - name: Fix Linux permissions
         if: runner.os == 'Linux'
         run: |

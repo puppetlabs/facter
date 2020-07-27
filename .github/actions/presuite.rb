@@ -74,10 +74,9 @@ def update_facter_lib
 
   facter_lib_path = (HOST_PLATFORM.include? 'windows') ? facter_lib_windows_path : facter_lib_linux_path
   pr_facter_lib_path = (HOST_PLATFORM.include? 'windows') ? pr_facter_lib_windows_path : pr_facter_lib_linux_path
-  rm_force_parameter = (HOST_PLATFORM.include? 'windows') ? '-force' : '-f'
+
   message('OVERWRITE FACTER FILES')
-  run("rm -r #{rm_force_parameter} '#{facter_lib_path}' '#{facter_lib_path + '.rb'}'")
-  run("rm -r #{rm_force_parameter} '#{facter_lib_path + '.rb'}'")
+  run("rm -rf '#{facter_lib_path}' '#{facter_lib_path + '.rb'}'")
   Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
   run("mv '#{pr_facter_lib_path}' '#{facter_lib_path.sub('facter', '')}'")
   run("mv '#{pr_facter_lib_path + '.rb'}' '#{facter_lib_path.sub('facter', '')}'")
