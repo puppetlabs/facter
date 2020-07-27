@@ -67,7 +67,7 @@ def env_path_var
 end
 
 def update_facter_lib
-  pr_facter_lib_path = '..\\lib\\facter'
+  pr_facter_lib_path = '..\\lib\\*'
   facter_lib_windows_path = 'C:\\Program Files\\Puppet Labs\\Puppet\\puppet\\lib\\ruby\\vendor_ruby\\facter'
   facter_lib_linux_path = '/opt/puppetlabs/puppet/lib/ruby/vendor_ruby/facter'
 
@@ -79,8 +79,8 @@ def update_facter_lib
   run("rm -rf \"#{facter_lib_path}\" \"#{facter_lib_path + '.rb'}\"")
   Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
   run('pwd')
-  run("#{move_command} /Y \"#{pr_facter_lib_path}\" \"#{facter_lib_path.sub('facter', '')}\"")
-  run("#{move_command} \"#{pr_facter_lib_path + '.rb'}\" \"#{facter_lib_path.sub('facter', '')}\"")
+  run("#{move_command} \"#{pr_facter_lib_path}\" \"#{facter_lib_path.sub('facter', '')}\"")
+  # run("#{move_command} \"#{pr_facter_lib_path + '.rb'}\" \"#{facter_lib_path.sub('facter', '')}\"")
   Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
   run("\"C:\\Program Files\\Puppet Labs\\Puppet\\bin\\facter.bat\" -v")
 end
