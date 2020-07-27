@@ -72,7 +72,7 @@ def update_facter_lib
   facter_lib_linux_path = '/opt/puppetlabs/puppet/lib/ruby/vendor_ruby/facter'
 
   facter_lib_path = (HOST_PLATFORM.include? 'windows') ? facter_lib_windows_path : facter_lib_linux_path
-  move_command = (HOST_PLATFORM.include? 'windows') ? 'move' : 'mv'
+  move_command = (HOST_PLATFORM.include? 'windows') ? 'robocopy /MIR' : 'mv'
 
   message('OVERWRITE FACTER FILES')
   Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
