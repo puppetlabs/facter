@@ -67,15 +67,18 @@ def env_path_var
 end
 
 def update_facter_lib
-  pr_facter_lib_path = [ '..', 'lib', '*']
+  pr_facter_lib_windows_path = '..\\lib\\facter'
+  pr_facter_lib_linux_path = '../lib/facter'
   facter_lib_windows_path = 'C:\\Program Files\\Puppet Labs\\Puppet\\puppet\\lib\\ruby\\vendor_ruby\\facter'
   facter_lib_linux_path = '/opt/puppetlabs/puppet/lib/ruby/vendor_ruby/facter'
 
   facter_lib_path = (HOST_PLATFORM.include? 'windows') ? facter_lib_windows_path : facter_lib_linux_path
+  pr_facter_lib_path = (HOST_PLATFORM.include? 'windows') ? pr_facter_lib_windows_path : pr_facter_lib_linux_path
 
   message('OVERWRITE FACTER FILES')
-  run("rm -rf #{facter_lib_path} #{facter_lib_path + '.rb'}")
-  run("mv #{File.join(pr_facter_lib_path)} #{facter_lib_path.sub('facter', '')}")
+  run("rm -rf '#{facter_lib_path}' '#{facter_lib_path + '.rb'}'")
+  run("mv '#{pr_facter_lib_path}' '#{facter_lib_path.sub('facter', '')}'")
+  run("mv '#{pr_facter_lib_path + '.rb'}' '#{facter_lib_path.sub('facter', '')}'")
 end
 
 def run_acceptance_tests
