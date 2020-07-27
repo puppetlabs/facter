@@ -10,7 +10,7 @@ test_name 'C59029: networking facts should be fully populated' do
   @netmask_regex  = /^(((128|192|224|240|248|252|254)\.0\.0\.0)|(255\.(0|128|192|224|240|248|252|254)\.0\.0)|(255\.255\.(0|128|192|224|240|248|252|254)\.0)|(255\.255\.255\.(0|128|192|224|240|248|252|254)))$/
 
   expected_networking = {
-      "networking.dhcp"     => @ip_regex,
+      "networking.dhcp"     => agent['platform'] =~ /fedora-32/ ? '' : @ip_regex, # https://gitlab.freedesktop.org/NetworkManager/NetworkManager/-/issues/426
       "networking.ip"       => @ip_regex,
       "networking.ip6"      => /[a-f0-9]+:+/,
       "networking.mac"      => /[a-f0-9]{2}:/,
