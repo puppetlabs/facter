@@ -1,0 +1,13 @@
+               size       inuse        free         pin     virtual   mmode
+memory      2097152      884743     1212409      381480      454093     Ded
+pg space     131072        2737
+
+               work        pers        clnt       other
+pin          245356           0        2108      134016
+in use       454093           0      430650
+
+PageSize   PoolSize       inuse        pgsp         pin     virtual
+s    4 KB         -      638055        2737      198376      207405
+m   64 KB         -       15418           0       11444       15418
+L   16 MB         -           0           0           0           0
+S   16 GB         -           0           0           0           0
