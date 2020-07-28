@@ -76,10 +76,9 @@ def update_facter_lib
   move_command = (HOST_PLATFORM.include? 'windows') ? 'powershell mv' : 'mv'
 
   message('OVERWRITE FACTER FILES')
+  run("rm -rf '#{facter_lib_path}' '#{facter_lib_path + '.rb'}'")
   Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
-  run("rm -rf \"#{facter_lib_path}\" \"#{facter_lib_path + '.rb'}\"")
-  Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
-  run("#{move_command} #{pr_facter_lib_path} \"#{facter_lib_path.sub('facter', '')}\"")
+  run("#{move_command} '#{pr_facter_lib_path}' '#{facter_lib_path.sub('facter', '')}'")
   Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
 end
 
