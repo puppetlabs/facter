@@ -79,10 +79,13 @@ def update_facter_lib
   Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
   run("rm -rf \"#{facter_lib_path}\" \"#{facter_lib_path + '.rb'}\"")
   Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
-  Dir.chdir('..\\'){FileUtils.cp_lr("\"lib\\.\"", "\"#{facter_lib_path.sub('\\facter', '')}\"")}
+  Dir.chdir(File.join(ENV['FACTER_4_ROOT'])){FileUtils.cp_lr("\"lib\\.\"", "\"#{facter_lib_path.sub('\\facter', '')}\"")}
   # run("powershell.exe #{move_command} \"#{pr_facter_lib_path + '.rb'}\" \"#{facter_lib_path.sub('\\facter', '')}\"")
   Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
   run("\"C:\\Program Files\\Puppet Labs\\Puppet\\bin\\facter.bat\" -v")
+rescue Exception => ex
+  puts ex.message
+  puts ex.backtrace
 end
 
 def run_acceptance_tests
