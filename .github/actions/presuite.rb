@@ -69,7 +69,7 @@ end
 
 def update_facter_lib
   pr_facter_lib_path = 'facter'
-  facter_lib_windows_path = 'C:\\Program Files\\Puppet Labs\\Puppet\\puppet\\lib\\ruby\\vendor_ruby\\facter'
+  facter_lib_windows_path = 'C:/Program Files/Puppet Labs/Puppet/puppet/lib/ruby/vendor_ruby/facter'
   facter_lib_linux_path = '/opt/puppetlabs/puppet/lib/ruby/vendor_ruby/facter'
 
   facter_lib_path = (HOST_PLATFORM.include? 'windows') ? facter_lib_windows_path : facter_lib_linux_path
@@ -79,8 +79,7 @@ def update_facter_lib
   Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
   run("rm -rf \"#{facter_lib_path}\" \"#{facter_lib_path + '.rb'}\"")
   Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
-  Dir.chdir(File.expand_path('../', Dir.pwd)){FileUtils.cp_lr("\"lib\\facter\"", "\"#{facter_lib_path.sub('\\facter', '')}\"")}
-  # run("powershell.exe #{move_command} \"#{pr_facter_lib_path + '.rb'}\" \"#{facter_lib_path.sub('\\facter', '')}\"")
+  run("powershell mv ../lib/*, '#{facter_lib_path.sub('facter', '')}'")
   Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
   run("\"C:\\Program Files\\Puppet Labs\\Puppet\\bin\\facter.bat\" -v")
 rescue Exception => ex
