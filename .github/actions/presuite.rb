@@ -81,9 +81,9 @@ def update_facter_lib
   run("#{move_command} #{pr_facter_lib_path} #{facter_lib_path.sub('/facter', '')}")
   # Dir.chdir(facter_lib_path.sub('/facter', '')) {run('ls')}
   if HOST_PLATFORM.include? 'windows'
-    run('/opt/puppetlabs/puppet/bin/facter -v')
-  else
     run('\'C:/Program Files/Puppet Labs/Puppet/bin/facter\' -v')
+  else
+    run('/opt/puppetlabs/puppet/bin/facter -v')
   end
 end
 
