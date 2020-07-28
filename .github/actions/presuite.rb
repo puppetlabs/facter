@@ -79,8 +79,8 @@ def update_facter_lib
   run("rm -rf \"#{facter_lib_path}\" \"#{facter_lib_path + '.rb'}\"")
   Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
   run('pwd')
-  run("powershell.exe #{move_command} \"#{pr_facter_lib_path}\" \"#{facter_lib_path.sub('facter', '')}\"")
-  run("powershell.exe #{move_command} \"#{pr_facter_lib_path + '.rb'}\" \"#{facter_lib_path.sub('facter', '')}\"")
+  run("powershell.exe \"#{move_command} \"#{pr_facter_lib_path}\" \"#{facter_lib_path.sub('facter', '')}\"\"")
+  run("powershell.exe \"\"#{move_command} \"#{pr_facter_lib_path + '.rb'}\" \"#{facter_lib_path.sub('facter', '')}\"\"")
   Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
   run("\"C:\\Program Files\\Puppet Labs\\Puppet\\bin\\facter.bat\" -v")
 end
