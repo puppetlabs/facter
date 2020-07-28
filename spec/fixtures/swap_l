@@ -1,0 +1,3 @@
+swapfile             dev    swaplo   blocks     free
+/dev/zvol/dsk/rpool/swap 279,1         8  2097144  2097144
+/dev/zvol/dsk/rpool/swap_test 279,3         8  1433592  1433592
