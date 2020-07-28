@@ -59,6 +59,7 @@ jobs:
       - name: Run acceptance tests on Linux like platform
         if: runner.os != 'Windows'
         run: sudo -E "PATH=$PATH" ruby $FACTER_4_ROOT/.github/actions/presuite.rb ${{ matrix.os }}
+        shell: powershell
 
       - name: Run acceptance tests on Windows like platform
         if: runner.os == 'Windows'
