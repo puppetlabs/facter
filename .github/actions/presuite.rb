@@ -67,7 +67,7 @@ def env_path_var
 end
 
 def update_facter_lib
-  pr_facter_lib_path = '..\\lib\\*'
+  pr_facter_lib_path = '..\\lib\\facter'
   facter_lib_windows_path = 'C:\\Program Files\\Puppet Labs\\Puppet\\puppet\\lib\\ruby\\vendor_ruby\\facter'
   facter_lib_linux_path = '/opt/puppetlabs/puppet/lib/ruby/vendor_ruby/facter'
 
