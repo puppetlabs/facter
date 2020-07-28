@@ -77,9 +77,9 @@ def update_facter_lib
 
   message('OVERWRITE FACTER FILES')
   run("rm -rf #{facter_lib_path} #{facter_lib_path.sub('.rb', '')}")
-  Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
+  Dir.chdir(facter_lib_path.sub('facter.rb', '')) {run('ls')}
   run("#{move_command} #{pr_facter_lib_path} #{facter_lib_path.sub('.rb', '')}")
-  Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
+  Dir.chdir(facter_lib_path.sub('facter.rb', '')) {run('ls')}
 end
 
 def run_acceptance_tests
