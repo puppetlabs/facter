@@ -5,6 +5,7 @@ AllCops:
   TargetRubyVersion: 2.3
   Exclude:
     - acceptance/**/*
+    - vendor/**/*
 
 require:
   - rubocop-performance
