@@ -80,10 +80,11 @@ def update_facter_lib
   # Dir.chdir(facter_lib_path.sub('/facter', '')) {run('ls')}
   run("#{move_command} #{pr_facter_lib_path} #{facter_lib_path.sub('/facter', '')}")
   # Dir.chdir(facter_lib_path.sub('/facter', '')) {run('ls')}
-  run("#{(HOST_PLATFORM.include? 'windows') ? facter_lib_path.sub('facter', 'facter.bat'): facter_lib_path} -v")
-rescue Exception => ex
-  puts ex.message
-  puts ex.backtrace
+  if HOST_PLATFORM.include? 'windows'
+    run('/opt/puppetlabs/puppet/bin/facter -v')
+  else
+    run('\'C:/Program Files/Puppet Labs/Puppet/bin/facter\' -v')
+  end
 end
 
 def run_acceptance_tests
