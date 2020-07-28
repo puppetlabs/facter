@@ -77,9 +77,9 @@ def update_facter_lib
 
   message('OVERWRITE FACTER FILES')
   run("rm -rf #{facter_lib_path} #{facter_lib_path.sub('facter', 'facter.rb')}")
-  Dir.chdir(facter_lib_path.sub('/facter', '')) {run('ls')}
+  Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
   run("#{move_command} #{pr_facter_lib_path} #{facter_lib_path.sub('/facter', '')}")
-  Dir.chdir(facter_lib_path.sub('/facter', '')) {run('ls')}
+  Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
 rescue Exception => ex
   puts ex.message
   puts ex.backtrace
