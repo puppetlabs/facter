@@ -51,6 +51,8 @@ module Facter
         @external_facts.concat(@external_fact_loader.custom_facts)
       end
 
+      @external_facts = block_facts(@external_facts, options)
+
       if options[:external_facts]
         @log.debug('Loading external facts')
         @external_facts.concat(@external_fact_loader.external_facts)
