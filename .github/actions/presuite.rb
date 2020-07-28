@@ -68,20 +68,19 @@ def env_path_var
 end
 
 def update_facter_lib
-  pr_facter_lib_path = 'facter'
+  pr_facter_lib_path = '../lib/*'
   facter_lib_windows_path = 'C:/Program Files/Puppet Labs/Puppet/puppet/lib/ruby/vendor_ruby/facter'
   facter_lib_linux_path = '/opt/puppetlabs/puppet/lib/ruby/vendor_ruby/facter'
 
   facter_lib_path = (HOST_PLATFORM.include? 'windows') ? facter_lib_windows_path : facter_lib_linux_path
-  move_command = (HOST_PLATFORM.include? 'windows') ? 'copy' : 'mv'
+  move_command = (HOST_PLATFORM.include? 'windows') ? 'powershell mv' : 'mv'
 
   message('OVERWRITE FACTER FILES')
   Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
   run("rm -rf \"#{facter_lib_path}\" \"#{facter_lib_path + '.rb'}\"")
   Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
-  run("powershell mv ../lib/* \'#{facter_lib_path.sub('facter', '')}\'")
+  run("#{move_command} #{pr_facter_lib_path} \"#{facter_lib_path.sub('facter', '')}\"")
   Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
-  run("\"C:\\Program Files\\Puppet Labs\\Puppet\\bin\\facter.bat\" -v")
 end
 
 def run_acceptance_tests
@@ -124,6 +123,6 @@ Dir.chdir(ACCEPTANCE_PATH) do
   install_puppet_agent
   update_facter_lib
 
-  # _, status = run_acceptance_tests
-  # exit(status.exitstatus)
+  _, status = run_acceptance_tests
+  exit(status.exitstatus)
 end
