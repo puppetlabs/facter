@@ -79,12 +79,9 @@ def update_facter_lib
   Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
   run("rm -rf \"#{facter_lib_path}\" \"#{facter_lib_path + '.rb'}\"")
   Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
-  run("powershell mv ../lib/*, '#{facter_lib_path.sub('facter', '')}'")
+  run("powershell mv ../lib/* \'#{facter_lib_path.sub('facter', '')}\'")
   Dir.chdir(facter_lib_path.sub('facter', '')) {run('ls')}
   run("\"C:\\Program Files\\Puppet Labs\\Puppet\\bin\\facter.bat\" -v")
-rescue Exception => ex
-  puts ex.message
-  puts ex.backtrace
 end
 
 def run_acceptance_tests
