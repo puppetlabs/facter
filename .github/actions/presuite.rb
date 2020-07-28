@@ -69,17 +69,20 @@ end
 
 def update_facter_lib
   pr_facter_lib_path = '../lib/*'
-  facter_lib_windows_path = '\'C:/Program Files/Puppet Labs/Puppet/puppet/lib/ruby/vendor_ruby/facter.rb\''
-  facter_lib_linux_path = '/opt/puppetlabs/puppet/lib/ruby/vendor_ruby/facter.rb'
+  facter_lib_windows_path = '\'C:/Program Files/Puppet Labs/Puppet/puppet/lib/ruby/vendor_ruby/facter\''
+  facter_lib_linux_path = '/opt/puppetlabs/puppet/lib/ruby/vendor_ruby/facter'
 
   facter_lib_path = (HOST_PLATFORM.include? 'windows') ? facter_lib_windows_path : facter_lib_linux_path
   move_command = (HOST_PLATFORM.include? 'windows') ? 'powershell mv' : 'mv'
 
   message('OVERWRITE FACTER FILES')
-  run("rm -rf #{facter_lib_path} #{facter_lib_path.sub('.rb', '')}")
-  Dir.chdir(facter_lib_path.sub('/facter.rb', '')) {run('ls')}
-  run("#{move_command} #{pr_facter_lib_path} #{facter_lib_path.sub('/facter.rb', '')}")
-  Dir.chdir(facter_lib_path.sub('/facter.rb', '')) {run('ls')}
+  run("rm -rf #{facter_lib_path} #{facter_lib_path.sub('facter', 'facter.rb')}")
+  Dir.chdir(facter_lib_path.sub('/facter', '')) {run('ls')}
+  run("#{move_command} #{pr_facter_lib_path} #{facter_lib_path.sub('/facter', '')}")
+  Dir.chdir(facter_lib_path.sub('/facter', '')) {run('ls')}
+rescue Exception => ex
+  puts ex.message
+  puts ex.backtrace
 end
 
 def run_acceptance_tests
