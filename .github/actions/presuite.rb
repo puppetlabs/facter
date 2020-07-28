@@ -72,8 +72,8 @@ def update_facter_lib
   facter_lib_windows_path = "\"C:/Program Files/Puppet Labs/Puppet/puppet/lib/ruby/vendor_ruby/facter\""
   facter_lib_linux_path = '/opt/puppetlabs/puppet/lib/ruby/vendor_ruby/facter'
 
-  facter_lib_path = HOST_PLATFORM.include? ('windows') ? facter_lib_windows_path : facter_lib_linux_path
-  move_command = HOST_PLATFORM.include? ('windows') ? 'powershell mv' : 'mv'
+  facter_lib_path = (HOST_PLATFORM.include? 'windows') ? facter_lib_windows_path : facter_lib_linux_path
+  move_command = (HOST_PLATFORM.include? 'windows') ? 'powershell mv' : 'mv'
 
   message('OVERWRITE FACTER FILES')
   run("rm -rf #{facter_lib_path} #{facter_lib_path.sub('facter', 'facter.rb')}")
