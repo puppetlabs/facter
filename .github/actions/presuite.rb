@@ -72,7 +72,7 @@ end
 
 def update_facter_lib
   pr_facter_lib_path = [ '..', 'lib', '*']
-  facter_lib_windows_path = '"C:/Program Files/Puppet Labs/Puppet/puppet/lib/ruby/vendor_ruby/facter"'
+  facter_lib_windows_path = "'C:/Program Files/Puppet Labs/Puppet/puppet/lib/ruby/vendor_ruby/facter'"
   facter_lib_linux_path = '/opt/puppetlabs/puppet/lib/ruby/vendor_ruby/facter'
 
   facter_lib_path = (HOST_PLATFORM.include? 'windows') ? facter_lib_windows_path : facter_lib_linux_path
