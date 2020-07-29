@@ -60,17 +60,21 @@ describe Facter::FactLoader do
       expect(loaded_facts.size).to eq(0)
     end
 
-    it 'does not blocks external facts' do
-      options = { custom_facts: true, blocked_facts: ['custom_fact'] }
+    context 'when blocking custom facts' do
+      before do
+        facts_to_load = [loaded_fact_custom_fact]
 
-      facts_to_load = [loaded_fact_custom_fact]
+        allow(internal_fact_loader_double).to receive(:core_facts).and_return([])
+        allow(external_fact_loader_double).to receive(:custom_facts).and_return(facts_to_load)
+        allow(external_fact_loader_double).to receive(:external_facts).and_return([])
+      end
 
-      allow(internal_fact_loader_double).to receive(:core_facts).and_return([])
-      allow(external_fact_loader_double).to receive(:custom_facts).and_return(facts_to_load)
-      allow(external_fact_loader_double).to receive(:external_facts).and_return([])
+      it 'blocks one custom fact' do
+        options = { custom_facts: true, blocked_facts: ['custom_fact'] }
+        loaded_facts = Facter::FactLoader.instance.load(options)
 
-      loaded_facts = Facter::FactLoader.instance.load(options)
-      expect(loaded_facts).to eq(facts_to_load)
+        expect(loaded_facts.size).to eq(0)
+      end
     end
 
     it 'loads the same amount of core facts everytime' do
