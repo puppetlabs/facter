@@ -1,3 +1,18 @@
+## [4.0.31](https://github.com/puppetlabs/facter/tree/4.0.31) (2020-07-29)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.30...4.0.31)
+
+### Added
+- \(FACT-2718\) Block custom facts [\#1996](https://github.com/puppetlabs/facter/pull/1996) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2230\) Add Aix memory facts [\#1994](https://github.com/puppetlabs/facter/pull/1994) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2220\) Add Aix disks fact [\#1987](https://github.com/puppetlabs/facter/pull/1987) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2708\) Add man pages [\#1984 ](https://github.com/puppetlabs/facter/pull/1984) ([florindragos](https://github.com/florindragos))
+
+### Fixed
+- \(FACT-2710\) Correctly display vmware info [\#1988](https://github.com/puppetlabs/facter/pull/1987) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2702\) Fix system_profiler legacy facts [\#1982](https://github.com/puppetlabs/facter/pull/1982) ([oanatmaria](https://github.com/oanatmaria))
+- Handle Time and Symbol in executable facts [\#1977](https://github.com/puppetlabs/facter/pull/1977) ([gimmyxd](https://github.com/gimmyxd))
+
 ## [4.0.30](https://github.com/puppetlabs/facter/tree/4.0.30) (2020-07-15)
 
 [Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.29...4.0.30)
