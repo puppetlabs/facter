@@ -43,7 +43,7 @@ end
 def install_puppet_agent
   message('INSTALL PUPPET AGENT')
 
-  beaker_puppet_root, = run('bundle info beaker-puppet --path')
+  beaker_puppet_root, _ = run('bundle info beaker-puppet --path')
   presuite_file_path = File.join(beaker_puppet_root.chomp, 'setup', 'aio', '010_Install_Puppet_Agent.rb')
 
   run("beaker exec pre-suite --pre-suite #{presuite_file_path} --preserve-state", './', env_path_var)
@@ -58,14 +58,12 @@ end
 
 def puppet_command
   return '/opt/puppetlabs/puppet/bin/puppet' unless HOST_PLATFORM.include? 'windows'
-
-  '"C:\\Program Files\\Puppet Labs\\Puppet\\bin\\puppet"'
+  "\"C:\\Program Files\\Puppet Labs\\Puppet\\bin\\puppet\""
 end
 
 def gem_command
   return '/opt/puppetlabs/puppet/bin/gem' unless HOST_PLATFORM.include? 'windows'
-
-  '"C:\\Program Files\\Puppet Labs\\Puppet\\puppet\\bin\\gem"'
+  "\"C:\\Program Files\\Puppet Labs\\Puppet\\puppet\\bin\\gem\""
 end
 
 def env_path_var
@@ -73,15 +71,15 @@ def env_path_var
 end
 
 def update_facter_lib
-  pr_facter_lib_path = '../lib/*'
-  facter_lib_windows_path = "\"C:/Program Files/Puppet Labs/Puppet/puppet/lib/ruby/vendor_ruby/facter\""
+  pr_facter_lib_path = [ '..', 'lib', '*']
+  facter_lib_windows_path = '"C:\\Program Files\\Puppet Labs\\Puppet\\puppet\\lib\\ruby\\vendor_ruby\\facter"'
   facter_lib_linux_path = '/opt/puppetlabs/puppet/lib/ruby/vendor_ruby/facter'
 
   facter_lib_path = (HOST_PLATFORM.include? 'windows') ? facter_lib_windows_path : facter_lib_linux_path
 
-  message('OVERWRITE FACTER FILE')
-  run("rm -rf #{facter_lib_path} #{facter_lib_path + '.rb'}")
-  run("mv #{pr_facter_lib_path} #{facter_lib_path.sub('facter', '')}")
+  message('OVERWRITE FACTER FILES')
+  run("rm -rf #{facter_lib_path} #{facter_lib_path.sub('facter', 'facter.rb')}")
+  run("mv #{File.join(pr_facter_lib_path)} #{facter_lib_path.sub('facter', '')}")
 
   if HOST_PLATFORM.include? 'windows'
     run('\'C:/Program Files/Puppet Labs/Puppet/bin/facter\' -v')
