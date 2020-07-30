@@ -32,9 +32,10 @@ module Facter
           version_codename = output_strings[1].split(' ')
 
           @fact_list[:name] = name(output_strings[0])
-          @fact_list[:version] = version_codename[0].strip
-          codename = version_codename[1].strip
-          @fact_list[:codename] = codename.gsub(/[()]/, '')
+          @fact_list[:version] = version_codename[0]&.strip
+
+          codename = version_codename[1]&.strip
+          @fact_list[:codename] = codename ? codename.gsub(/[()]/, '') : nil
 
           @fact_list[:identifier] = identifier(@fact_list[:name])
         end
