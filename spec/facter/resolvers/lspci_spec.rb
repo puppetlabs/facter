@@ -37,4 +37,12 @@ describe Facter::Resolvers::Lspci do
       expect(lspci_resolver.resolve(:vm)).to eq('xenhvm')
     end
   end
+
+  context 'when lspci does not detect any hypervisor' do
+    let(:output) { 'lspci output with no hypervisor' }
+
+    it 'returns nil' do
+      expect(lspci_resolver.resolve(:vm)).to be_nil
+    end
+  end
 end
