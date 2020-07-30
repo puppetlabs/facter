@@ -161,5 +161,70 @@ describe Facter::Resolvers::NetworkingLinux do
         expect(networking_linux.resolve(:interfaces)).to eq(result_with_127_first)
       end
     end
+
+    context 'when dhcp is not available on the os' do
+      let(:result_with_nil_dhcp) do
+        {
+          'lo' => {
+            bindings: [
+              { address: '127.0.0.1', netmask: '255.0.0.0', network: '127.0.0.0' }
+            ],
+            bindings6: [
+              { address: '::1', netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff', network: '::1' }
+            ],
+            dhcp: nil,
+            ip: '127.0.0.1',
+            ip6: '::1',
+            mtu: 65_536,
+            netmask: '255.0.0.0',
+            netmask6: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+            network: '127.0.0.0',
+            network6: '::1',
+            scope6: 'host'
+          },
+          'ens160' => {
+            bindings: [
+              { address: '10.16.119.155', netmask: '255.255.240.0', network: '10.16.112.0' },
+              { address: '10.16.127.70', netmask: '255.255.240.0', network: '10.16.112.0' }
+            ],
+            bindings6: [
+              { address: 'fe80::250:56ff:fe9a:8481', netmask: 'ffff:ffff:ffff:ffff::', network: 'fe80::' }
+            ],
+            dhcp: nil,
+            ip: '10.16.119.155',
+            ip6: 'fe80::250:56ff:fe9a:8481',
+            mac: '00:50:56:9a:61:46',
+            mtu: 1500,
+            netmask: '255.255.240.0',
+            netmask6: 'ffff:ffff:ffff:ffff::',
+            network: '10.16.112.0',
+            network6: 'fe80::',
+            scope6: 'link'
+          }
+        }
+      end
+
+      before do
+        allow(Facter::Util::FileHelper).to receive(:safe_read)
+          .with('/run/systemd/netif/leases/1', nil).and_return(nil)
+        allow(Facter::Util::FileHelper).to receive(:safe_read)
+          .with('/run/systemd/netif/leases/2', nil).and_return(nil)
+
+        allow(File).to receive(:readable?).with('/var/lib/dhclient/').and_return(false)
+        allow(File).to receive(:readable?).with('/var/lib/dhcp/').and_return(false)
+        allow(File).to receive(:readable?).with('/var/lib/dhcp3/').and_return(false)
+        allow(File).to receive(:readable?).with('/var/lib/NetworkManager/').and_return(true)
+        allow(Dir).to receive(:entries).with('/var/lib/NetworkManager/').and_return(['internal.ens160.lease'])
+        allow(File).to receive(:readable?).with('/var/db/').and_return(false)
+
+        allow(Facter::Util::FileHelper).to receive(:safe_read)
+          .with('/var/lib/NetworkManager/internal.ens160.lease', nil)
+          .and_return('some_output')
+      end
+
+      it 'is ignored and the next ip is used' do
+        expect(networking_linux.resolve(:interfaces)).to eq(result_with_nil_dhcp)
+      end
+    end
   end
 end

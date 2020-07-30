@@ -85,7 +85,11 @@ module Facter
           return unless lease_file
 
           dhcp = Util::FileHelper.safe_read("/var/lib/NetworkManager/#{lease_file}", nil)
-          dhcp ? dhcp.match(/SERVER_ADDRESS=(.*)/)[1] : nil
+
+          return unless dhcp
+
+          dhcp = dhcp.match(/SERVER_ADDRESS=(.*)/)
+          dhcp[1] if dhcp
         end
 
         def fill_ip_v4_info!(ip_tokens, network_info)
