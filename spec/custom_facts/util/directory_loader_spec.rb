@@ -94,6 +94,21 @@ describe LegacyFacter::Util::DirectoryLoader do
         expect(collection.value('f1')).to eq 'higher_weight_fact'
       end
     end
+
+    context 'when blocking external facts' do
+      before do
+        Facter::Options[:blocked_facts] = ['data.yaml']
+      end
+
+      it 'is not loading blocked file' do
+        data = { 'f1' => 'one', 'f2' => 'two' }
+        write_to_file('data.yaml', YAML.dump(data))
+
+        dir_loader.load(collection)
+
+        expect(collection_double).not_to have_received(:add)
+      end
+    end
   end
 
   def write_to_file(file_name, to_write)
