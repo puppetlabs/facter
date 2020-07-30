@@ -1,6 +1,19 @@
-## [4.0.31](https://github.com/puppetlabs/facter/tree/4.0.31) (2020-07-29)
+## [4.0.32](https://github.com/puppetlabs/facter/tree/4.0.32) (2020-07-30)
 
-[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.30...4.0.31)
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.31...4.0.32)
+
+### Added
+- \(FACT-2717\) Block external facts [\#1998](https://github.com/puppetlabs/facter/pull/1998) ([florindragos](https://github.com/florindragos))
+
+### Fixed
+- \(FACT-2733\) Fix networking on Fedora 32 [\#2002](https://github.com/puppetlabs/facter/pull/2002) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2734\) Return nil codename if we cannot determine it from /etc/redhat-release [\#2003](https://github.com/puppetlabs/facter/pull/2003) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2699\) Detect augeas from gem if augparse is not available. [\#1993](https://github.com/puppetlabs/facter/pull/1993) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+
+## [4.0.31](https://github.com/puppetlabs/facter/tree/4.0.31) (2020-07-29) 
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.30...4.0.31) 
 
 ### Added
 - \(FACT-2718\) Block custom facts [\#1996](https://github.com/puppetlabs/facter/pull/1996) ([IrimieBogdan](https://github.com/IrimieBogdan))
