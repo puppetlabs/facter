@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'ipaddr'
-
 module Facter
   module Resolvers
     class Networking < BaseResolver

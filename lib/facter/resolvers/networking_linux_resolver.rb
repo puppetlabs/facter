@@ -11,6 +11,7 @@ module Facter
         private
 
         def post_resolve(fact_name)
+          log.debug('in networking_linux_resolver')
           @fact_list.fetch(fact_name) { retrieve_network_info(fact_name) }
 
           @fact_list[fact_name]
@@ -36,12 +37,17 @@ module Facter
         end
 
         def retrieve_interface_info
+          log.debug('retrieve_interface_info')
           output = Facter::Core::Execution.execute('ip -o address', logger: log)
+          log.debug("ip -o address result is:\n#{output}")
+
           interfaces = {}
 
           output.each_line do |ip_line|
             ip_tokens = ip_line.split(' ')
 
+            log.debug("ip_tokens = #{ip_tokens}")
+            log.debug("interfaces = #{interfaces}")
             fill_ip_v4_info!(ip_tokens, interfaces)
             fill_io_v6_info!(ip_tokens, interfaces)
             find_dhcp!(ip_tokens, interfaces)
@@ -93,9 +99,14 @@ module Facter
         end
 
         def fill_ip_v4_info!(ip_tokens, network_info)
+          log.debug('fill_ip_v4_info!')
           return unless ip_tokens[2].casecmp('inet').zero?
 
           interface_name, ip4_address, ip4_mask_length = retrieve_name_and_ip_info(ip_tokens)
+
+          log.debug("interface_name = #{interface_name}\n" \
+                      "ip4_address = #{ip4_address}\n" \
+                      "ip4_mask_length = #{ip4_mask_length}")
 
           binding = ::Resolvers::Utils::Networking.build_binding(ip4_address, ip4_mask_length)
           build_network_info_structure!(network_info, interface_name, :bindings)
