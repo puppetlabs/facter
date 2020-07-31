@@ -34,9 +34,6 @@ module Facter
             # it is used for legacy augeas <= 0.5.0 (ruby-augeas gem)
             ::Augeas.open { |aug| aug.get('/augeas/version') }
           end
-        rescue LoadError
-          log.debug('augeas is not available')
-          nil
         end
       end
     end
