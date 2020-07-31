@@ -64,7 +64,7 @@ describe Facter::Resolvers::Augeas do
       it 'raises a LoadError error' do
         augeas.resolve(:augeas_version)
 
-        expect(log_spy).to have_received(:debug).with('resolving fact augeas_version, but load_error_message')
+        expect(log_spy).to have_received(:debug).with('augeas is not available')
       end
     end
   end
