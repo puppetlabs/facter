@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: FACTER 3.14.10\n"
+"Project-Id-Version: FACTER 3.14.13\n"
 "Report-Msgid-Bugs-To: docs@puppet.com\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -1621,6 +1621,16 @@ msgstr ""
 
 #: lib/src/ruby/module.cc
 msgid "invalid log level specified."
+msgstr ""
+
+#. debug
+#: lib/src/ruby/module.cc
+msgid "Facter.load_external(true) called. External facts will be loaded"
+msgstr ""
+
+#. debug
+#: lib/src/ruby/module.cc
+msgid "Facter.load_external(false) called. External facts will NOT be loaded"
 msgstr ""
 
 #: lib/src/ruby/resolution.cc
