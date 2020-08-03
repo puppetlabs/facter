@@ -120,6 +120,7 @@ namespace facter { namespace ruby {
     };
 
     unique_ptr<require_context> require_context::_instance;
+    bool _external_facts_loaded = false;
 }}
 
 // Exports for a Ruby extension.
@@ -264,6 +265,7 @@ namespace facter { namespace ruby {
         ruby.rb_define_singleton_method(_self, "search_path", RUBY_METHOD_FUNC(ruby_search_path), 0);
         ruby.rb_define_singleton_method(_self, "search_external", RUBY_METHOD_FUNC(ruby_search_external), 1);
         ruby.rb_define_singleton_method(_self, "search_external_path", RUBY_METHOD_FUNC(ruby_search_external_path), 0);
+        ruby.rb_define_singleton_method(_self, "load_external", RUBY_METHOD_FUNC(ruby_load_external), 1);
 
         // Only define these if requested to do so
         // This prevents consumers of Facter from altering the logging behavior
@@ -475,14 +477,16 @@ namespace facter { namespace ruby {
         if (_collection.empty()) {
             bool include_ruby_facts = true;
             _collection.add_default_facts(include_ruby_facts);
-            _collection.add_external_facts(_external_search_paths);
-
             auto const& ruby = api::instance();
             _collection.add_environment_facts([&](string const& name) {
                 // Create a fact and explicitly set the value
                 // We honor environment variables above custom fact resolutions
                 ruby.to_native<fact>(create_fact(ruby.utf8_value(name)))->value(to_ruby(_collection[name]));
             });
+        }
+        if (_load_external && !_external_facts_loaded) {
+                _collection.add_external_facts(_external_search_paths);
+                _external_facts_loaded = true;
         }
         return _collection;
     }
@@ -768,6 +772,7 @@ namespace facter { namespace ruby {
             instance->_external_search_paths.clear();
             instance->_loaded_all = false;
             instance->_loaded_files.clear();
+            _external_facts_loaded = false;
 
             return ruby.nil_value();
         });
@@ -1168,4 +1173,18 @@ namespace facter { namespace ruby {
         return ruby.to_symbol(name);
     }
 
+    VALUE module::ruby_load_external(VALUE self, VALUE val)
+    {
+        return safe_eval("Facter.load_external", [&]() {
+           auto const& ruby = api::instance();
+           module* instance = from_self(self);
+           instance->_load_external = val;
+           if (val) {
+               LOG_DEBUG("Facter.load_external(true) called. External facts will be loaded", val != 0)
+           } else {
+               LOG_DEBUG("Facter.load_external(false) called. External facts will NOT be loaded", val != 0)
+           }
+           return ruby.nil_value();
+        });
+    }
 }}  // namespace facter::ruby

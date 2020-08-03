@@ -135,6 +135,7 @@ namespace facter { namespace ruby {
         static leatherman::ruby::VALUE ruby_exec(leatherman::ruby::VALUE self, leatherman::ruby::VALUE command);
         static leatherman::ruby::VALUE ruby_execute(int argc, leatherman::ruby::VALUE* argv, leatherman::ruby::VALUE self);
         static leatherman::ruby::VALUE ruby_on_message(leatherman::ruby::VALUE self);
+        static leatherman::ruby::VALUE ruby_load_external(leatherman::ruby::VALUE self, leatherman::ruby::VALUE name);
 
         // Helper functions
         static module* from_self(leatherman::ruby::VALUE self);
@@ -156,6 +157,7 @@ namespace facter { namespace ruby {
         std::vector<std::string> _external_search_paths;
         std::set<std::string> _loaded_files;
         bool _loaded_all;
+        bool _load_external = true;
         leatherman::ruby::VALUE _self;
         leatherman::ruby::VALUE _on_message_block;
 
