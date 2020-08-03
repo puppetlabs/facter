@@ -6,7 +6,7 @@ module Facts
       FACT_NAME = 'virtual'
 
       def call_the_resolver
-        fact_value = check_vmware || check_virtualbox || check_parallels
+        fact_value = check_vmware || check_virtualbox || check_parallels || 'physical'
 
         Facter::ResolvedFact.new(FACT_NAME, fact_value)
       end
