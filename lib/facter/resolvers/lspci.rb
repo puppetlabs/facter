@@ -28,6 +28,8 @@ module Facter
 
         def retrieve_vm(output)
           output.each_line { |line| REGEX_VALUES.each { |key, value| return value if line =~ /#{key}/ } }
+
+          nil
         end
       end
     end
