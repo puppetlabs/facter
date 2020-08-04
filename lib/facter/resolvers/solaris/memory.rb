@@ -80,8 +80,10 @@ module Facter
           end
 
           def pagesize
-            @fact_list[:pagesize] ||= Facter::Core::Execution.execute('pagesize', logger: log).strip.to_i
-            log.debug("Pagesize: #{@pagesize}")
+            unless @fact_list[:pagesize]
+              @fact_list[:pagesize] = Facter::Core::Execution.execute('pagesize', logger: log).strip.to_i
+              log.debug("Pagesize: #{@fact_list[:pagesize]}")
+            end
             @fact_list[:pagesize]
           end
         end
