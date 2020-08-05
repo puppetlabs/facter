@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = 'facter-ng'
-  spec.version       = '4.0.32'
+  spec.version       = '4.0.33'
   spec.authors       = ['Puppet']
   spec.email         = ['team-nw@puppet.com']
 

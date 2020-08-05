@@ -1,3 +1,15 @@
+## [4.0.33](https://github.com/puppetlabs/facter/tree/4.0.33) (2020-08-05)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.32...4.0.33)
+
+### Added
+- \(FACT-2040\) Added solaris memory resolver [\#1999](https://github.com/puppetlabs/facter/pull/1999) ([sebastian-miclea](https://github.com/sebastian-miclea))
+
+### Fixed
+- \(FACT-2735\) virtual not working on EXADATA baremetal [\#2004](https://github.com/puppetlabs/facter/pull/2004) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2736\) networking facts don't work on EXADATA baremetal [\#2008](https://github.com/puppetlabs/facter/pull/2008) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2724\) Confine blocks behave differently with Facter 4, causing spec tests to suddenly fail [\#2010](https://github.com/puppetlabs/facter/pull/2010) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
 ## [4.0.32](https://github.com/puppetlabs/facter/tree/4.0.32) (2020-07-30)
 
 [Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.31...4.0.32)
@@ -11,9 +23,9 @@
 - \(FACT-2699\) Detect augeas from gem if augparse is not available. [\#1993](https://github.com/puppetlabs/facter/pull/1993) ([IrimieBogdan](https://github.com/IrimieBogdan))
 
 
-## [4.0.31](https://github.com/puppetlabs/facter/tree/4.0.31) (2020-07-29) 
+## [4.0.31](https://github.com/puppetlabs/facter/tree/4.0.31) (2020-07-29)
 
-[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.30...4.0.31) 
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.30...4.0.31)
 
 ### Added
 - \(FACT-2718\) Block custom facts [\#1996](https://github.com/puppetlabs/facter/pull/1996) ([IrimieBogdan](https://github.com/IrimieBogdan))
