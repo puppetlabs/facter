@@ -20,6 +20,11 @@ module Facter
         INET_ADDRSTRLEN   = 16
         INET6_ADDRSTRLEN  = 46
       end
+
+      BINDINGS_KEY = {
+        FFI::AF_INET => :bindings,
+        FFI::AF_INET6 => :bindings6
+      }.freeze
     end
   end
 end
