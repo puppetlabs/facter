@@ -12,7 +12,9 @@
         "Rhel": [
           "Fedora",
           "Amzn",
-          "Centos"
+          "Centos",
+          "Ol",
+          "Scientific"
         ]
       },
       {

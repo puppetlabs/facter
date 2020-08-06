@@ -56,7 +56,7 @@ module Facter
         def process_name
           return unless @fact_list[:name]
 
-          @fact_list[:name] = if @fact_list[:name].downcase.start_with?('red')
+          @fact_list[:name] = if @fact_list[:name].downcase.start_with?('red', 'oracle')
                                 @fact_list[:name].split(' ')[0..1].join
                               else
                                 @fact_list[:name].split(' ')[0].strip
