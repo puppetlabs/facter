@@ -59,6 +59,7 @@ Metrics/AbcSize:
     - 'lib/facter/custom_facts/core/resolvable.rb'
     - 'lib/facter/resolvers/bsd/ffi/ffi_helper.rb'
     - 'install.rb'
+    - 'scripts/generate_changelog.rb'
 
 Metrics/PerceivedComplexity:
   Exclude:
