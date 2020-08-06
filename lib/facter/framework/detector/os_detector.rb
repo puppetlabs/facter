@@ -44,7 +44,11 @@ class OsDetector
     hierarchy = @os_hierarchy.construct_hierarchy(identifier)
     if hierarchy.empty?
       @log.debug("Could not detect hierarchy using os identifier: #{identifier} , trying with family")
-      hierarchy = @os_hierarchy.construct_hierarchy(detect_family)
+
+      detect_family.to_s.split.each do |family|
+        hierarchy = @os_hierarchy.construct_hierarchy(family)
+        return hierarchy unless hierarchy.empty?
+      end
     end
 
     if hierarchy.empty?
