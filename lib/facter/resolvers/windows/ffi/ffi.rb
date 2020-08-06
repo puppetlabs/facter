@@ -30,7 +30,7 @@ module FFI
     def read_wide_string_with_length(char_length)
       # char_length is number of wide chars (typically excluding NULLs), *not* bytes
       str = get_bytes(0, char_length * 2).force_encoding('UTF-16LE')
-      str.encode('UTF-8', str.encoding, {})
+      str.encode('UTF-8', str.encoding)
     end
 
     def read_wide_string_without_length
