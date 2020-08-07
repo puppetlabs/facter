@@ -12,11 +12,6 @@ module Facter
         @fact_list ||= {}
         @interfaces = {}
 
-        BINDINGS_KEY = {
-          FFI::AF_INET => :bindings,
-          FFI::AF_INET6 => :bindings6
-        }.freeze
-
         class << self
           private
 
@@ -141,7 +136,8 @@ module Facter
           end
 
           def add_dhcp(interface_name)
-            result = Facter::Core::Execution.execute("dhcpinfo -i #{interface_name} ServerID", logger: log)
+            dhcpinfo_command = Facter::Core::Execution.which('dhcpinfo') || '/sbin/dhcpinfo'
+            result = Facter::Core::Execution.execute("#{dhcpinfo_command} -i #{interface_name} ServerID", logger: log)
 
             @interfaces[interface_name][:dhcp] = result.chomp
           end
