@@ -198,7 +198,7 @@ describe OsDetector do
         context 'when family is known' do
           before do
             allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:id_like).and_return(:ubuntu)
-            allow(os_hierarchy).to receive(:construct_hierarchy).with(:ubuntu).and_return(%w[Linux Debian Ubuntu])
+            allow(os_hierarchy).to receive(:construct_hierarchy).with('ubuntu').and_return(%w[Linux Debian Ubuntu])
             Singleton.__init__(OsDetector)
           end
 
@@ -212,6 +212,25 @@ describe OsDetector do
             expect(logger)
               .to have_received(:debug)
               .with('Could not detect hierarchy using os identifier: my_linux_distro , trying with family')
+          end
+        end
+
+        context 'when there are multiple families' do
+          before do
+            allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:id_like).and_return('Rhel centos fedora')
+            allow(os_hierarchy).to receive(:construct_hierarchy).with('Rhel').and_return(%w[])
+            allow(os_hierarchy).to receive(:construct_hierarchy).with('centos').and_return(%w[Linux El])
+            Singleton.__init__(OsDetector)
+          end
+
+          it 'constructs hierarchy with linux and el' do
+            expect(OsDetector.instance.hierarchy).to eq(%w[Linux El])
+          end
+
+          it 'does not call construct hierarchy with fedora' do
+            OsDetector.instance
+
+            expect(os_hierarchy).not_to have_received(:construct_hierarchy).with('fedora')
           end
         end
       end
