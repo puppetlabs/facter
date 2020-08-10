@@ -1,0 +1,21 @@
+System Configuration:  Oracle Corporation  sun4v SPARC T7-1
+Memory size: 8192 Megabytes
+
+================================ Virtual CPUs ================================
+
+
+CPU ID Frequency Implementation         Status
+------ --------- ---------------------- -------
+0      4133 MHz  SPARC-M7               on-line
+1      4133 MHz  SPARC-M7               on-line
+2      4133 MHz  SPARC-M7               on-line
+3      4133 MHz  SPARC-M7               on-line
+4      4133 MHz  SPARC-M7               on-line
+5      4133 MHz  SPARC-M7               on-line
+6      4133 MHz  SPARC-M7               on-line
+7      4133 MHz  SPARC-M7               on-line
+
+======================================== IO Devices =======================================
+Slot +            Bus   Name +                            Model      Max Speed  Cur Speed
+Status            Type  Path                                         /Width     /Width
+-------------------------------------------------------------------------------------------

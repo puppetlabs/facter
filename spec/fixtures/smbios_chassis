@@ -1,0 +1,17 @@
+ID    SIZE TYPE
+3     55   SMB_TYPE_CHASSIS (system enclosure or chassis)
+
+  Manufacturer: No Enclosure
+  Version: N/A
+  Serial Number: None
+  Asset Tag: No Asset Tag
+
+  OEM Data: 0x1234
+  Lock Present: N
+  Chassis Type: 0x1 (other)
+  Boot-Up State: 0x3 (safe)
+  Power Supply State: 0x3 (safe)
+  Thermal State: 0x3 (safe)
+  Chassis Height: 0u
+  Power Cords: 0
+  Element Records: 0
