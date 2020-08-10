@@ -1,0 +1,12 @@
+ID    SIZE TYPE
+1     123  SMB_TYPE_SYSTEM (system information)
+
+  Manufacturer: VMware, Inc.
+  Product: VMware Virtual Platform
+  Version: None
+  Serial Number: VMware-42 1a 46 19 2d fc 12 90-73 48 ea 8f 1a 37 cb 95
+
+  UUID: 421a4619-2dfc-1290-7348-ea8f1a37cb95
+  Wake-Up Event: 0x6 (power switch)
+  SKU Number:
+  Family:
