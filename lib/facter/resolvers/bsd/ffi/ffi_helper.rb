@@ -9,17 +9,7 @@ module Facter
         extend FFI::Library
 
         ffi_lib 'c'
-        attach_function :getloadavg, %i[pointer int], :int
         attach_function :sysctl, %i[pointer uint pointer pointer pointer size_t], :int
-      end
-
-      def self.read_load_averages
-        raw_loadavg = FFI::MemoryPointer.new(:double, 3)
-
-        res = Libc.getloadavg(raw_loadavg, 3)
-        return unless res == 3
-
-        raw_loadavg.read_array_of_double(res)
       end
 
       def self.sysctl(type, oids)

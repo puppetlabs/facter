@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Facts
-  module Bsd
+  module Solaris
     class LoadAverages
       FACT_NAME = 'load_averages'
 
