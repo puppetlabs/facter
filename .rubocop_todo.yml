@@ -180,7 +180,7 @@ RSpec/SubjectStub:
     - 'spec/custom_facts/util/fact_spec.rb'
     - 'spec/custom_facts/util/resolution_spec.rb'
 
-# Offense count: 134
+# Offense count: 138
 # Configuration parameters: IgnoreNameless, IgnoreSymbolicNames.
 RSpec/VerifiedDoubles:
   Exclude:
@@ -191,6 +191,10 @@ RSpec/VerifiedDoubles:
     - 'spec/custom_facts/util/fact_spec.rb'
     - 'spec/custom_facts/util/resolution_spec.rb'
     - 'spec/facter/facts/aix/ssh_spec.rb'
+    - 'spec/facter/facts/freebsd/memory/swap/capacity_spec.rb'
+    - 'spec/facter/facts/freebsd/memory/swap/used_bytes_spec.rb'
+    - 'spec/facter/facts/freebsd/memory/system/capacity_spec.rb'
+    - 'spec/facter/facts/freebsd/memory/system/used_bytes_spec.rb'
     - 'spec/facter/facts/macosx/memory/swap/capacity_spec.rb'
     - 'spec/facter/facts/macosx/memory/swap/used_bytes_spec.rb'
     - 'spec/facter/facts/macosx/memory/system/capacity_spec.rb'
