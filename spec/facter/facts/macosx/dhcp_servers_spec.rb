@@ -4,8 +4,8 @@ describe Facts::Macosx::DhcpServers do
   subject(:fact) { Facts::Macosx::DhcpServers.new }
 
   before do
-    allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
-    allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:dhcp).and_return(dhcp)
+    allow(Facter::Resolvers::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
+    allow(Facter::Resolvers::Networking).to receive(:resolve).with(:dhcp).and_return(dhcp)
   end
 
   describe '#call_the_resolver' do
@@ -15,12 +15,12 @@ describe Facts::Macosx::DhcpServers do
 
     it 'calls Facter::Resolvers::NetworkingLinux with interfaces' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:interfaces)
+      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:interfaces)
     end
 
     it 'calls Facter::Resolvers::NetworkingLinux with dhcp' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:dhcp)
+      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:dhcp)
     end
 
     it 'returns dhcp_servers' do

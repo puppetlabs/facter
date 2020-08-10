@@ -14,10 +14,10 @@ module Facts
       private
 
       def construct_addresses_hash
-        interfaces = Facter::Resolvers::Networking.resolve(:interfaces)
+        interfaces = Facter::Resolvers::Windows::Networking.resolve(:interfaces)
         return unless interfaces
 
-        servers = { system: Facter::Resolvers::Networking.resolve(:dhcp) }
+        servers = { system: Facter::Resolvers::Windows::Networking.resolve(:dhcp) }
         interfaces&.each { |interface_name, info| servers[interface_name] = info[:dhcp] if info[:dhcp] }
         servers
       end

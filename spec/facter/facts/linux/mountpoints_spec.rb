@@ -32,12 +32,12 @@ describe Facts::Linux::Mountpoints do
       end
 
       before do
-        allow(Facter::Resolvers::Linux::Mountpoints).to receive(:resolve).with(:mountpoints).and_return(resolver_output)
+        allow(Facter::Resolvers::Mountpoints).to receive(:resolve).with(:mountpoints).and_return(resolver_output)
       end
 
-      it 'calls Facter::Resolvers::Linux::Mountpoints' do
+      it 'calls Facter::Resolvers::Mountpoints' do
         fact.call_the_resolver
-        expect(Facter::Resolvers::Linux::Mountpoints).to have_received(:resolve).with(:mountpoints)
+        expect(Facter::Resolvers::Mountpoints).to have_received(:resolve).with(:mountpoints)
       end
 
       it 'returns mountpoints information' do
@@ -48,7 +48,7 @@ describe Facts::Linux::Mountpoints do
 
     context 'when resolver returns nil' do
       before do
-        allow(Facter::Resolvers::Linux::Mountpoints).to receive(:resolve).with(:mountpoints).and_return(nil)
+        allow(Facter::Resolvers::Mountpoints).to receive(:resolve).with(:mountpoints).and_return(nil)
       end
 
       it 'returns mountpoints information' do

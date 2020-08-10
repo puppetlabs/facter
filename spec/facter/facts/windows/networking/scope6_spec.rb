@@ -7,12 +7,12 @@ describe Facts::Windows::Networking::Scope6 do
     let(:value) { 'link' }
 
     before do
-      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:scope6).and_return(value)
+      allow(Facter::Resolvers::Windows::Networking).to receive(:resolve).with(:scope6).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Networking' do
+    it 'calls Facter::Resolvers::Windows::Networking' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:scope6)
+      expect(Facter::Resolvers::Windows::Networking).to have_received(:resolve).with(:scope6)
     end
 
     it 'returns scope for ipv6 address' do

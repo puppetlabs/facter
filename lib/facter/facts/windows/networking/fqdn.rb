@@ -8,7 +8,7 @@ module Facts
         ALIASES = 'fqdn'
 
         def call_the_resolver
-          domain = Facter::Resolvers::Networking.resolve(:domain)
+          domain = Facter::Resolvers::Windows::Networking.resolve(:domain)
           hostname = Facter::Resolvers::Hostname.resolve(:hostname)
           return Facter::ResolvedFact.new(FACT_NAME, nil) if !hostname || hostname.empty?
 
