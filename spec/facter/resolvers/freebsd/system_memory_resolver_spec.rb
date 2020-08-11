@@ -16,7 +16,7 @@ describe Facter::Resolvers::Freebsd::SystemMemory do
       .and_return(17_043_554_304)
 
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('vmstat -H', logger: log_spy)
+      .with('vmstat -H --libxo json', logger: log_spy)
       .and_return(load_fixture('freebsd_vmstat').read)
   end
 

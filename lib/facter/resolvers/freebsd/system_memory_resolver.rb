@@ -24,12 +24,9 @@ module Facter
           end
 
           def read_available_memory_in_bytes
-            output = Facter::Core::Execution.execute('vmstat -H', logger: log)
-            if (data = output.split("\n")[-1].match(/^\s*\d+\s*\d+\s*\d+\s*\d+\s*(\d+)/))
-              @fact_list[:available_bytes] = data[1].to_i * 1024
-            end
-
-            @fact_list[:available_bytes]
+            output = Facter::Core::Execution.execute('vmstat -H --libxo json', logger: log)
+            data = JSON.parse(output)
+            @fact_list[:available_bytes] = data['memory']['free-memory'] * 1024
           end
 
           def read_total_memory_in_bytes
