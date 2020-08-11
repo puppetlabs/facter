@@ -13,6 +13,7 @@ module Facter
       @groups_file_path = group_list_path || default_path
       @groups ||= File.readable?(@groups_file_path) ? Hocon.load(@groups_file_path) : {}
       load_groups
+      load_groups_from_options
     end
 
     # Breakes down blocked groups in blocked facts
@@ -41,6 +42,18 @@ module Facter
     end
 
     private
+
+    def load_groups_from_options
+      Options.external_dir.each do |dir|
+        next unless Dir.exist?(dir)
+
+        ext_facts = Dir.entries(dir)
+        ext_facts.reject! { |ef| ef =~ /^(\.|\.\.)$/ }
+        ext_facts.each do |ef|
+          @groups[ef] = nil
+        end
+      end
+    end
 
     def load_groups
       config = ConfigReader.init(Options[:config])

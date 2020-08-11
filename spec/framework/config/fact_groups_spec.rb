@@ -34,6 +34,16 @@ describe Facter::FactGroups do
       expect(fct_grp.instance_variable_get(:@groups)).to include('foo' => 'bar')
     end
 
+    it 'merges external facts' do
+      external_path = '/path/to/external'
+      allow(Facter::Options).to receive(:external_dir).and_return([external_path])
+      allow(Dir).to receive(:exist?).with(external_path).and_return true
+      allow(Dir).to receive(:entries).with(external_path).and_return(['.', '..', 'external.sh'])
+      fct_grp = fact_groups.new
+
+      expect(fct_grp.instance_variable_get(:@groups)).to include('external.sh' => nil)
+    end
+
     it 'merges groups from facter.conf with default group override' do
       allow(Hocon).to receive(:load)
         .with(File.join(ROOT_DIR, 'lib', 'facter', 'framework', 'config', '..', '..', 'fact_groups.conf'))

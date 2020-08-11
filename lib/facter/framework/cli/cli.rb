@@ -138,14 +138,26 @@ module Facter
 
     desc '--list-block-groups', 'List block groups', hide: true
     map ['--list-block-groups'] => :list_block_groups
-    def list_block_groups(*_args)
-      puts Facter::FactGroups.new.groups.to_yaml.lines[1..-1].join
+    def list_block_groups(*args)
+      options = @options.map { |(k, v)| [k.to_sym, v] }.to_h
+      Facter::Options.init_from_cli(options, args)
+
+      block_groups = Facter::FactGroups.new.groups.to_yaml.lines[1..-1].join
+      block_groups.gsub!(/:\s*\n/, "\n")
+
+      puts block_groups
     end
 
     desc '--list-cache-groups', 'List cache groups', hide: true
     map ['--list-cache-groups'] => :list_cache_groups
-    def list_cache_groups(*_args)
-      puts Facter::FactGroups.new.groups.to_yaml.lines[1..-1].join
+    def list_cache_groups(*args)
+      options = @options.map { |(k, v)| [k.to_sym, v] }.to_h
+      Facter::Options.init_from_cli(options, args)
+
+      cache_groups = Facter::FactGroups.new.groups.to_yaml.lines[1..-1].join
+      cache_groups.gsub!(/:\s*\n/, "\n")
+
+      puts cache_groups
     end
 
     def self.exit_on_failure?
