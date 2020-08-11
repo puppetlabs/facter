@@ -7,7 +7,7 @@ describe Facter::Resolvers::Freebsd::SwapMemory do
   let(:available_bytes) { 4_294_967_296 }
   let(:total_bytes) { 4_294_967_296 }
   let(:used_bytes) { 0 }
-  let(:capacity) { '0.00%' }
+  let(:capacity) { '0%' }
   let(:encrypted) { true }
 
   before do
