@@ -67,6 +67,8 @@ module FFI
   class MemoryPointer
     def initialize(*); end
 
+    def read_array_of_double(*); end
+
     def to_ptr; end
 
     def [](*); end

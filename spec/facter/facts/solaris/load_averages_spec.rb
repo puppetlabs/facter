@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facts::Bsd::LoadAverages do
+describe Facts::Solaris::LoadAverages do
   describe '#call_the_resolver' do
-    subject(:fact) { Facts::Bsd::LoadAverages.new }
+    subject(:fact) { Facts::Solaris::LoadAverages.new }
 
     let(:value) { { '1m' => 0.01, '5m' => 0.02, '15m' => 0.03 } }
 
