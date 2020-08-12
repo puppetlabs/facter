@@ -30,6 +30,7 @@ Metrics/MethodLength:
     - 'lib/facter/framework/detector/os_detector.rb'
     - 'lib/facter/resolvers/bsd/ffi/ffi_helper.rb'
     - 'install.rb'
+    - 'scripts/generate_changelog.rb'
 
 Metrics/ModuleLength:
   Max: 100
@@ -77,6 +78,7 @@ Metrics/CyclomaticComplexity:
     - 'lib/facter/custom_facts/core/execution/posix.rb'
     - 'lib/facter/framework/detector/os_detector.rb'
     - 'install.rb'
+    - 'scripts/generate_changelog.rb'
 
 Metrics/ClassLength:
   Exclude:
@@ -88,6 +90,7 @@ Metrics/ClassLength:
     - 'lib/facter/resolvers/networking_linux_resolver.rb'
     - 'lib/facter/framework/core/cache_manager.rb'
     - 'install.rb'
+    - 'scripts/generate_changelog.rb'
 
 Naming/AccessorMethodName:
   Exclude:

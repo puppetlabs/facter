@@ -4,7 +4,7 @@
 require 'octokit'
 
 class ChangelogGenerator
-  attr_reader :version, :entries
+  attr_reader :version, :entries, :unlabeled_prs
 
   def initialize(version)
     unless version
@@ -15,9 +15,11 @@ class ChangelogGenerator
     @version = version
     @entries = {
       'feature' => { name: 'Added', entries: {} },
-      'bugfix' => { name: 'Fixes', entries: {} },
+      'bugfix' => { name: 'Fixed', entries: {} },
       'backwards-incompatible' => { name: 'Changed', entries: {} }
     }
+
+    @unlabeled_prs = []
 
     # Setting the changelog path early lets us check that it exists
     # before we spend time making API calls
@@ -75,6 +77,12 @@ class ChangelogGenerator
     prs = client.commit_pulls('puppetlabs/facter', commit.sha, { accept: 'application/vnd.github.groot-preview+json' })
 
     prs.each do |pr|
+      next if pr[:state] != 'closed' && pr[:merged_at].nil?
+
+      if pr[:labels].nil? || pr[:labels].empty?
+        unlabeled_prs << pr[:html_url] unless unlabeled_prs.include?(pr[:html_url])
+      end
+
       pr[:labels].each do |label|
         next unless entries.key?(label[:name])
 
@@ -94,19 +102,21 @@ class ChangelogGenerator
 
     new_lines = [
       "## [#{version}](https://github.com/puppetlabs/facter/tree/#{version}) (#{Time.now.strftime '%Y-%m-%d'})\n",
-      "[Full Changelog](https://github.com/puppetlabs/facter/compare/#{latest}...#{version})\n"
+      "[Full Changelog](https://github.com/puppetlabs/facter/compare/#{latest}...#{version})"
     ]
 
     entries.each_value do |type|
       next unless type[:entries].any?
 
-      new_lines << "### #{type[:name]}\n"
+      new_lines << "\n### #{type[:name]}\n"
 
       type[:entries].each do |_, entry|
         new_lines << "- #{entry[:title].strip} [\##{entry[:number]}](#{entry[:url]})" \
                      " ([#{entry[:author]}](#{entry[:profile]}))"
       end
     end
+
+    new_lines = check_unlabeled_prs(new_lines)
 
     content = (new_lines + ["\n"] + old_lines).join("\n")
 
@@ -116,6 +126,17 @@ class ChangelogGenerator
       warn "Unable to write entries to #{changelog}"
       exit 1
     end
+  end
+
+  def check_unlabeled_prs(content)
+    return content unless unlabeled_prs.any?
+
+    content << "\n### Unlabeled PRs:\n"
+    unlabeled_prs.each do |pr|
+      content << "- #{pr}"
+    end
+
+    content
   end
 
   def generate
