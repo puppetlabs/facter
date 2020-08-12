@@ -1,0 +1,35 @@
+ID    SIZE TYPE
+0     64   SMB_TYPE_BIOS (BIOS information)
+
+  Vendor: Phoenix Technologies LTD
+  Version String: 6.00
+  Release Date: 12/12/2018
+  Address Segment: 0xea49
+  ROM Size: 65536 bytes
+  Image Size: 88944 bytes
+  Characteristics: 0x7c09df90
+        SMB_BIOSFL_ISA (ISA is supported)
+        SMB_BIOSFL_PCI (PCI is supported)
+        SMB_BIOSFL_PCMCIA (PCMCIA is supported)
+        SMB_BIOSFL_PLUGNPLAY (Plug and Play is supported)
+        SMB_BIOSFL_APM (APM is supported)
+        SMB_BIOSFL_FLASH (BIOS is Flash Upgradeable)
+        SMB_BIOSFL_SHADOW (BIOS shadowing is allowed)
+        SMB_BIOSFL_ESCD (ESCD support is available)
+        SMB_BIOSFL_CDBOOT (Boot from CD is supported)
+        SMB_BIOSFL_SELBOOT (Selectable Boot supported)
+        SMB_BIOSFL_EDD (EDD Spec is supported)
+        SMB_BIOSFL_I5_PRINT (int 0x5 print screen svcs)
+        SMB_BIOSFL_I9_KBD (int 0x9 8042 keyboard svcs)
+        SMB_BIOSFL_I14_SER (int 0x14 serial svcs)
+        SMB_BIOSFL_I17_PRINTER (int 0x17 printer svcs)
+        SMB_BIOSFL_I10_CGA (int 0x10 CGA svcs)
+  Characteristics Extension Byte 1: 0x81
+        SMB_BIOSXB1_ACPI (ACPI is supported)
+        SMB_BIOSXB1_SMBAT (Smart Battery is supported)
+  Characteristics Extension Byte 2: 0x7
+        SMB_BIOSXB2_BBOOT (BIOS Boot Specification supported)
+        SMB_BIOSXB2_FKNETSVC (F-key Network Svc boot supported)
+        SMB_BIOSXB2_ETCDIST (Enable Targeted Content Distrib.)
+  Version Number: 0.0
+  Embedded Ctlr Firmware Version Number: 0.0

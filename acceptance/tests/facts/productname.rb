@@ -1,5 +1,5 @@
 test_name "C89604: verify productname fact" do
-  tag 'risk:low'
+  tag 'risk:high'
 
   confine :except, :platform => 'aix' # not supported on
   confine :except, :platform => 'huawei' # not supported on
