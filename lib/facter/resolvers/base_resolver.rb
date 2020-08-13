@@ -20,7 +20,7 @@ module Facter
           subscribe_to_manager
           post_resolve(fact_name)
         end
-      rescue LoadError => e
+      rescue LoadError, NameError => e
         log.debug("resolving fact #{fact_name}, but #{e}")
         @fact_list[fact_name] = nil
       end
