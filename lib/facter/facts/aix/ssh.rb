@@ -12,7 +12,7 @@ module Facts
       private
 
       def fact_value
-        resolver_data.map! { |el| create_ssh_fact(el) }.inject(:merge!)
+        resolver_data.map { |el| create_ssh_fact(el) }.inject(:merge)
       end
 
       def resolver_data
@@ -20,6 +20,8 @@ module Facts
       end
 
       def create_ssh_fact(ssh)
+        return {} unless ssh
+
         { ssh.name.to_sym => {
           fingerprints: {
             sha1: ssh.fingerprint.sha1,

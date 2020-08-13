@@ -28,5 +28,14 @@ describe Facts::Solaris::Ssh do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'ssh', value: value)
     end
+
+    context 'when resolver returns empty array' do
+      let(:ssh) { [] }
+
+      it 'returns nil fact' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+          have_attributes(name: 'ssh', value: nil)
+      end
+    end
   end
 end
