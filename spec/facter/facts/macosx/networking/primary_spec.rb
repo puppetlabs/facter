@@ -7,12 +7,12 @@ describe Facts::Macosx::Networking::Primary do
     let(:value) { 'en0' }
 
     before do
-      allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:primary_interface).and_return(value)
+      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:primary_interface).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Macosx::Networking with :primary_interface' do
+    it 'calls Facter::Resolvers::Networking with :primary_interface' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:primary_interface)
+      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:primary_interface)
     end
 
     it 'returns networking.primary fact' do

@@ -7,12 +7,12 @@ describe Facts::Macosx::Networking::Ip6 do
     let(:value) { 'fe80::2cba:e4ff:fe83:4bb7' }
 
     before do
-      allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:ip6).and_return(value)
+      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:ip6).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Macosx::Networking with :ip6' do
+    it 'calls Facter::Resolvers::Networking with :ip6' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:ip6)
+      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:ip6)
     end
 
     it 'returns the ip6 fact' do

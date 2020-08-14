@@ -8,7 +8,7 @@ module Facts
         ALIASES = 'domain'
 
         def call_the_resolver
-          fact_value = Facter::Resolvers::Networking.resolve(:domain)
+          fact_value = Facter::Resolvers::Windows::Networking.resolve(:domain)
 
           [Facter::ResolvedFact.new(FACT_NAME, fact_value), Facter::ResolvedFact.new(ALIASES, fact_value, :legacy)]
         end

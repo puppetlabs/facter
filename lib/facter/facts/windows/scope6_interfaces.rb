@@ -9,7 +9,7 @@ module Facts
       def call_the_resolver
         arr = []
         result = {}
-        interfaces = Facter::Resolvers::Networking.resolve(:interfaces)
+        interfaces = Facter::Resolvers::Windows::Networking.resolve(:interfaces)
         interfaces&.each { |interface_name, info| result["scope6_#{interface_name}"] = info[:scope6] if info[:scope6] }
 
         result.each { |fact, value| arr << Facter::ResolvedFact.new(fact, value, :legacy) }

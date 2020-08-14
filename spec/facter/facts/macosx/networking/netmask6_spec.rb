@@ -7,12 +7,12 @@ describe Facts::Macosx::Networking::Netmask6 do
     let(:value) { 'ffff:ffff:ffff:ffff::' }
 
     before do
-      allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:netmask6).and_return(value)
+      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:netmask6).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Macosx::Networking with :netmask6' do
+    it 'calls Facter::Resolvers::Networking with :netmask6' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:netmask6)
+      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:netmask6)
     end
 
     it 'returns the netmask6 fact' do

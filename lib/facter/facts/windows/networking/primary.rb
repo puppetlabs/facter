@@ -7,7 +7,7 @@ module Facts
         FACT_NAME = 'networking.primary'
 
         def call_the_resolver
-          fact_value = Facter::Resolvers::Networking.resolve(:primary_interface)
+          fact_value = Facter::Resolvers::Windows::Networking.resolve(:primary_interface)
 
           Facter::ResolvedFact.new(FACT_NAME, fact_value)
         end

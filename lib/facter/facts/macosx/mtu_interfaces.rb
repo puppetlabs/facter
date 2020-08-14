@@ -8,7 +8,7 @@ module Facts
 
       def call_the_resolver
         arr = []
-        interfaces = Facter::Resolvers::Macosx::Networking.resolve(:interfaces)
+        interfaces = Facter::Resolvers::Networking.resolve(:interfaces)
         interfaces&.each do |interface_name, info|
           arr << Facter::ResolvedFact.new("mtu_#{interface_name}", info[:mtu], :legacy) if info[:mtu]
         end

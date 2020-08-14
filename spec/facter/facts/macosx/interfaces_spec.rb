@@ -4,16 +4,16 @@ describe Facts::Macosx::Interfaces do
   subject(:fact) { Facts::Macosx::Interfaces.new }
 
   before do
-    allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
+    allow(Facter::Resolvers::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
   end
 
   describe '#call_the_resolver' do
     let(:interfaces) { { en1: { ip: '192.168.1.6' }, llw0: { ip: '192.168.1.3' } } }
     let(:interfaces_names) { 'en1,llw0' }
 
-    it 'calls Facter::Resolvers::Macosx::Networking' do
+    it 'calls Facter::Resolvers::Networking' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:interfaces)
+      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:interfaces)
     end
 
     it 'returns interfaces names' do

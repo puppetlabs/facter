@@ -6,7 +6,7 @@ module Facts
       FACT_NAME = 'mountpoints'
 
       def call_the_resolver
-        mountpoints = Facter::Resolvers::Linux::Mountpoints.resolve(FACT_NAME.to_sym)
+        mountpoints = Facter::Resolvers::Mountpoints.resolve(FACT_NAME.to_sym)
         return Facter::ResolvedFact.new(FACT_NAME, nil) unless mountpoints
 
         fact = {}

@@ -11,7 +11,7 @@ module Facts
 
       def partitions
         parts = Facter::Resolvers::Partitions.resolve(:partitions)
-        mountpoints = Facter::Resolvers::Linux::Mountpoints.resolve(:mountpoints)
+        mountpoints = Facter::Resolvers::Mountpoints.resolve(:mountpoints)
         return parts unless mountpoints
 
         mountpoints.each do |mnt|

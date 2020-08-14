@@ -25,14 +25,11 @@
     ]
   },
   {
-    "Solaris": [
-      {
-        "Bsd": [
-          "Freebsd"
-        ]
-      }
+    "Bsd": [
+      "Freebsd"
     ]
   },
+  "Solaris",
   "Macosx",
   "Windows",
   "Aix"

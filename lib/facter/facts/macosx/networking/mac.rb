@@ -8,7 +8,7 @@ module Facts
         ALIASES = 'macaddress'
 
         def call_the_resolver
-          fact_value = Facter::Resolvers::Macosx::Networking.resolve(:mac)
+          fact_value = Facter::Resolvers::Networking.resolve(:mac)
 
           [Facter::ResolvedFact.new(FACT_NAME, fact_value), Facter::ResolvedFact.new(ALIASES, fact_value, :legacy)]
         end

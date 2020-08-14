@@ -7,12 +7,12 @@ describe Facts::Windows::Networking::Mac do
     let(:value) { '00:50:56:9A:7E:98' }
 
     before do
-      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:mac).and_return(value)
+      allow(Facter::Resolvers::Windows::Networking).to receive(:resolve).with(:mac).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Networking' do
+    it 'calls Facter::Resolvers::Windows::Networking' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:mac)
+      expect(Facter::Resolvers::Windows::Networking).to have_received(:resolve).with(:mac)
     end
 
     it 'returns mac address fact' do

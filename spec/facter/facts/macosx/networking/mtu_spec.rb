@@ -7,12 +7,12 @@ describe Facts::Macosx::Networking::Mtu do
     let(:value) { 1500 }
 
     before do
-      allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:mtu).and_return(value)
+      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:mtu).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Macosx::Networking with :mtu' do
+    it 'calls Facter::Resolvers::Networking with :mtu' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:mtu)
+      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:mtu)
     end
 
     it 'returns mtu fact' do

@@ -7,7 +7,7 @@ module Facts
         FACT_NAME = 'networking.scope6'
 
         def call_the_resolver
-          fact_value = Facter::Resolvers::Macosx::Networking.resolve(:scope6)
+          fact_value = Facter::Resolvers::Networking.resolve(:scope6)
 
           Facter::ResolvedFact.new(FACT_NAME, fact_value)
         end

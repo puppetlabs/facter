@@ -7,12 +7,12 @@ describe Facts::Windows::Networking::Primary do
     let(:value) { 'Ethernet0' }
 
     before do
-      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:primary_interface).and_return(value)
+      allow(Facter::Resolvers::Windows::Networking).to receive(:resolve).with(:primary_interface).and_return(value)
     end
 
     it 'calls Facter::Windows::Resolvers::Fips' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:primary_interface)
+      expect(Facter::Resolvers::Windows::Networking).to have_received(:resolve).with(:primary_interface)
     end
 
     it 'returns true if fips enabled' do

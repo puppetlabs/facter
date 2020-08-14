@@ -4,15 +4,15 @@ describe Facts::Windows::NetmaskInterfaces do
   subject(:fact) { Facts::Windows::NetmaskInterfaces.new }
 
   before do
-    allow(Facter::Resolvers::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
+    allow(Facter::Resolvers::Windows::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
   end
 
   describe '#call_the_resolver' do
     let(:interfaces) { { 'eth0' => { netmask: '10.255.255.255' }, 'en1' => { netmask: '10.17.255.255' } } }
 
-    it 'calls Facter::Resolvers::Networking' do
+    it 'calls Facter::Resolvers::Windows::Networking' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:interfaces)
+      expect(Facter::Resolvers::Windows::Networking).to have_received(:resolve).with(:interfaces)
     end
 
     it 'returns legacy facts with names netmask_<interface_name>' do
