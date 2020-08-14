@@ -19,21 +19,12 @@ test_name "ttls configured cached external execution resolver with yaml output c
       ext = get_external_fact_script_extension(agent['platform'])
       external_fact = File.join(external_dir, "#{external_cachegroup}#{ext}")
       if agent['platform'] =~ /windows/
-        if agent.is_cygwin?
         external_fact_content = <<EOM
 @echo off
 SetLocal EnableDelayedExpansion
 echo {"#{cached_fact_name}": "#{initial_fact_value}"}
 
 EOM
-        else
-          external_fact_content = <<EOM
-@echo off
-SetLocal EnableDelayedExpansion
-echo {"#{cached_fact_name}": "#{initial_fact_value}"}
-
-EOM
-        end
       else
         external_fact_content = <<EOM
 #!/bin/sh
