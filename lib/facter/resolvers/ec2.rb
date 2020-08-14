@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'net/http'
-
 module Facter
   module Resolvers
     class Ec2 < BaseResolver
@@ -52,6 +50,8 @@ module Facter
         end
 
         def get_data_from(url)
+          require 'net/http'
+
           parsed_url = URI.parse(url)
           http = Net::HTTP.new(parsed_url.host)
           http.read_timeout = determine_session_timeout
