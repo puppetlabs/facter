@@ -7,24 +7,24 @@ describe Facts::Solaris::Os::Release do
     let(:value) { { 'full' => '10_u11', 'minor' => '11', 'major' => '10' } }
 
     before do
-      allow(Facter::Resolvers::SolarisRelease).to receive(:resolve).with(:full).and_return('10_u11')
-      allow(Facter::Resolvers::SolarisRelease).to receive(:resolve).with(:major).and_return('10')
-      allow(Facter::Resolvers::SolarisRelease).to receive(:resolve).with(:minor).and_return('11')
+      allow(Facter::Resolvers::Solaris::OsRelease).to receive(:resolve).with(:full).and_return('10_u11')
+      allow(Facter::Resolvers::Solaris::OsRelease).to receive(:resolve).with(:major).and_return('10')
+      allow(Facter::Resolvers::Solaris::OsRelease).to receive(:resolve).with(:minor).and_return('11')
     end
 
     it 'calls Facter::Resolvers::SolarisRelease with full' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::SolarisRelease).to have_received(:resolve).with(:full)
+      expect(Facter::Resolvers::Solaris::OsRelease).to have_received(:resolve).with(:full)
     end
 
     it 'calls Facter::Resolvers::SolarisRelease with major' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::SolarisRelease).to have_received(:resolve).with(:major)
+      expect(Facter::Resolvers::Solaris::OsRelease).to have_received(:resolve).with(:major)
     end
 
     it 'calls Facter::Resolvers::SolarisRelease with minor' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::SolarisRelease).to have_received(:resolve).with(:minor)
+      expect(Facter::Resolvers::Solaris::OsRelease).to have_received(:resolve).with(:minor)
     end
 
     it 'returns os.release, operatingsystemmajrelease and operatingsystemrelease fact' do

@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class ZPool < BaseResolver
+    class Zpool < BaseResolver
       @semaphore = Mutex.new
       @fact_list ||= {}
       class << self
