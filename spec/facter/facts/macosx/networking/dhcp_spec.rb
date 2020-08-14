@@ -7,12 +7,12 @@ describe Facts::Macosx::Networking::Dhcp do
     let(:value) { '192.168.158.6' }
 
     before do
-      allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:dhcp).and_return(value)
+      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:dhcp).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Macosx::Networking' do
+    it 'calls Facter::Resolvers::Networking' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:dhcp)
+      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:dhcp)
     end
 
     it 'returns networking.dhcp fact' do

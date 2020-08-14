@@ -8,8 +8,8 @@ module Facts
 
       def call_the_resolver
         resolved_facts = []
-        interfaces = Facter::Resolvers::Macosx::Networking.resolve(:interfaces)
-        primary_scope6 = Facter::Resolvers::Macosx::Networking.resolve(:scope6)
+        interfaces = Facter::Resolvers::Networking.resolve(:interfaces)
+        primary_scope6 = Facter::Resolvers::Networking.resolve(:scope6)
 
         interfaces&.each do |interface_name, info|
           if info[:scope6]

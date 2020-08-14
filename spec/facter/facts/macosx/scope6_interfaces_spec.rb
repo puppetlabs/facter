@@ -4,8 +4,8 @@ describe Facts::Macosx::Scope6Interfaces do
   subject(:fact) { Facts::Macosx::Scope6Interfaces.new }
 
   before do
-    allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
-    allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:scope6).and_return(scope6)
+    allow(Facter::Resolvers::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
+    allow(Facter::Resolvers::Networking).to receive(:resolve).with(:scope6).and_return(scope6)
   end
 
   describe '#call_the_resolver' do
@@ -14,12 +14,12 @@ describe Facts::Macosx::Scope6Interfaces do
 
     it 'calls Facter::Resolvers::NetworkingLinux with interfaces' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:interfaces)
+      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:interfaces)
     end
 
     it 'calls Facter::Resolvers::NetworkingLinux with scope6' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:scope6)
+      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:scope6)
     end
 
     it 'returns legacy facts with scope6_<interface_name>' do

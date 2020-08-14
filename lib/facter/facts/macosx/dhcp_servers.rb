@@ -14,8 +14,8 @@ module Facts
       private
 
       def construct_addresses_hash
-        primary_dhcp = Facter::Resolvers::Macosx::Networking.resolve(:dhcp)
-        interfaces = Facter::Resolvers::Macosx::Networking.resolve(:interfaces)
+        primary_dhcp = Facter::Resolvers::Networking.resolve(:dhcp)
+        interfaces = Facter::Resolvers::Networking.resolve(:interfaces)
         return unless interfaces
 
         servers = { system: primary_dhcp }

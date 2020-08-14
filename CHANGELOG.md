@@ -1,3 +1,20 @@
+## [4.0.34](https://github.com/puppetlabs/facter/tree/4.0.34) (2020-08-12)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.33...4.0.34)
+
+### Added
+
+- (FACT-2739) Extend os hierarchy to consider multiple os families [#2016](https://github.com/puppetlabs/facter/pull/2016) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- Add FreeBSD memory facts [#2020](https://github.com/puppetlabs/facter/pull/2020) ([smortex](https://github.com/smortex))
+- Add FreeBSD dmi facts [#2021](https://github.com/puppetlabs/facter/pull/2021) ([smortex](https://github.com/smortex))
+- (FACT-2727) add load averages for Solaris [#2023](https://github.com/puppetlabs/facter/pull/2023) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+
+### Fixed
+
+- (FACT-2714) Fix dhcp on solaris 10 [#2013](https://github.com/puppetlabs/facter/pull/2013) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (FACT-2732) OracleLinux 7 and Scientific Linux 7 OS facts incorrect in Facter 4.0.30 [#2014](https://github.com/puppetlabs/facter/pull/2014) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+
 ## [4.0.33](https://github.com/puppetlabs/facter/tree/4.0.33) (2020-08-05)
 
 [Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.32...4.0.33)

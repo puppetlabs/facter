@@ -7,7 +7,7 @@ module Facts
         FACT_NAME = 'networking.interfaces'
 
         def call_the_resolver
-          interfaces = Facter::Resolvers::Macosx::Networking.resolve(:interfaces)
+          interfaces = Facter::Resolvers::Networking.resolve(:interfaces)
 
           Facter::ResolvedFact.new(FACT_NAME, interfaces)
         end

@@ -7,12 +7,12 @@ describe Facts::Macosx::Networking::Network do
     let(:value) { '192.168.143.0' }
 
     before do
-      allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:network).and_return(value)
+      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:network).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Macosx::Networking with :network' do
+    it 'calls Facter::Resolvers::Networking with :network' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:network)
+      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:network)
     end
 
     it 'returns the network fact' do

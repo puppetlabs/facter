@@ -6,7 +6,7 @@ module Facts
       FACT_NAME = 'zpool_version'
 
       def call_the_resolver
-        fact_value = Facter::Resolvers::Solaris::ZPool.resolve(:zpool_version)
+        fact_value = Facter::Resolvers::ZPool.resolve(:zpool_version)
         Facter::ResolvedFact.new(FACT_NAME, fact_value)
       end
     end

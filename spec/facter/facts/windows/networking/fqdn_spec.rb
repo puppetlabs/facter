@@ -5,7 +5,7 @@ describe Facts::Windows::Networking::Fqdn do
     subject(:fact) { Facts::Windows::Networking::Fqdn.new }
 
     before do
-      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:domain).and_return(domain_name)
+      allow(Facter::Resolvers::Windows::Networking).to receive(:resolve).with(:domain).and_return(domain_name)
       allow(Facter::Resolvers::Hostname).to receive(:resolve).with(:hostname).and_return(hostname)
     end
 
@@ -14,9 +14,9 @@ describe Facts::Windows::Networking::Fqdn do
       let(:hostname) { 'hostname' }
       let(:value) { "#{hostname}.#{domain_name}" }
 
-      it 'calls Facter::Resolvers::Networking' do
+      it 'calls Facter::Resolvers::Windows::Networking' do
         fact.call_the_resolver
-        expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:domain)
+        expect(Facter::Resolvers::Windows::Networking).to have_received(:resolve).with(:domain)
       end
 
       it 'calls Facter::Resolvers::Hostname' do

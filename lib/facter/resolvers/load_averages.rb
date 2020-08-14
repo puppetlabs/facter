@@ -3,7 +3,6 @@
 module Facter
   module Resolvers
     class LoadAverages < BaseResolver
-      @log = Facter::Log.new(self)
       @semaphore = Mutex.new
       @fact_list ||= {}
       class << self
@@ -16,7 +15,7 @@ module Facter
         def read_load_averages(fact_name)
           require_relative 'utils/ffi/load_averages'
 
-          @log.debug('loading cpu load averages')
+          log.debug('loading cpu load averages')
           @fact_list[:load_averages] = %w[1m 5m 15m].zip(Utils::Ffi::LoadAverages.read_load_averages).to_h
 
           @fact_list[fact_name]

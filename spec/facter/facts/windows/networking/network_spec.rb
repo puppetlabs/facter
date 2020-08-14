@@ -7,12 +7,12 @@ describe Facts::Windows::Networking::Network do
     let(:value) { '10.16.112.0' }
 
     before do
-      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:network).and_return(value)
+      allow(Facter::Resolvers::Windows::Networking).to receive(:resolve).with(:network).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Networking' do
+    it 'calls Facter::Resolvers::Windows::Networking' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:network)
+      expect(Facter::Resolvers::Windows::Networking).to have_received(:resolve).with(:network)
     end
 
     it 'returns network ipv4 fact' do

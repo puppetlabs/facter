@@ -4,7 +4,7 @@ describe Facts::Macosx::Netmask6Interfaces do
   subject(:fact) { Facts::Macosx::Netmask6Interfaces.new }
 
   before do
-    allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
+    allow(Facter::Resolvers::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
   end
 
   describe '#call_the_resolver' do
@@ -15,7 +15,7 @@ describe Facts::Macosx::Netmask6Interfaces do
 
     it 'calls Facter::Resolvers::NetworkingLinux' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:interfaces)
+      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:interfaces)
     end
 
     it 'returns legacy facts with names netmask6_<interface_name>' do

@@ -1,5 +1,5 @@
 test_name "C96148: verify dmi facts" do
-  tag 'risk:med'
+  tag 'risk:high'
 
   confine :except, :platform => 'aix' # no dmi support
   confine :except, :platform => 'huawei' # no dmi support
