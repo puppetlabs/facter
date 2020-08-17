@@ -20,6 +20,7 @@ nodev	hugetlbfs
 nodev	devpts
 	    ext3
 	    ext2
+	    fuseblk
 	    ext4
 nodev	autofs
 nodev	mqueue

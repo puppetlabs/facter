@@ -22,7 +22,7 @@ module Facter
             filesystems = []
             output.each do |line|
               tokens = line.split(' ')
-              filesystems << tokens if tokens.size == 1
+              filesystems << tokens if tokens.size == 1 && tokens.first != 'fuseblk'
             end
             @fact_list[:systems] = filesystems.sort.join(',')
             @fact_list[fact_name]
