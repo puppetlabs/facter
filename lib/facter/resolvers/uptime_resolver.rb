@@ -23,33 +23,7 @@ module Facter
         def build_fact_list(seconds)
           return @fact_list[:uptime] = 'unknown' unless seconds
 
-          uptime_hash = create_uptime_hash(seconds)
-
-          @fact_list[:seconds] = uptime_hash[:seconds]
-          @fact_list[:hours]   = uptime_hash[:hours]
-          @fact_list[:days]    = uptime_hash[:days]
-          @fact_list[:uptime]  = uptime_hash[:uptime]
-        end
-
-        def create_uptime_hash(seconds)
-          results = {}
-          minutes = (seconds / 60) % 60
-
-          results[:seconds] = seconds
-          results[:hours]   = seconds / (60 * 60)
-          results[:days]    = results[:hours] / 24
-          results[:uptime]  = build_uptime_text(results[:days], results[:hours], minutes)
-
-          results
-        end
-
-        def build_uptime_text(days, hours, minutes)
-          case days
-          when 0 then "#{hours}:#{format('%<minutes>02d', minutes: minutes)} hours"
-          when 1 then '1 day'
-          else
-            "#{days} days"
-          end
+          @fact_list = Utils::UptimeHelper.create_uptime_hash(seconds)
         end
       end
     end
