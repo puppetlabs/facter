@@ -4,7 +4,7 @@ module Facts
   module Aix
     class Disks
       FACT_NAME = 'disks'
-      ALIASES = %w[blockdevices blockdevice_.*_model blockdevice_.*_size blockdevice_.*_vendor'].freeze
+      ALIASES = %w[blockdevices blockdevice_.*_size'].freeze
 
       def call_the_resolver
         facts = []
@@ -24,8 +24,7 @@ module Facts
 
       def add_regex_facts(disks, facts)
         disks&.each do |disk_name, disk_info|
-          facts.push(Facter::ResolvedFact.new("blockdevice_#{disk_name}_size", disk_info[:size], :legacy))
-          facts.push(Facter::ResolvedFact.new("blockdevice_#{disk_name}_size_bytes", disk_info[:size_bytes], :legacy))
+          facts.push(Facter::ResolvedFact.new("blockdevice_#{disk_name}_size", disk_info[:size_bytes].to_s, :legacy))
         end
       end
     end
