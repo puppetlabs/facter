@@ -6,11 +6,18 @@ describe Facts::Aix::Disks do
 
     let(:disk) do
       {
-        'disks' => {
-          'hdisk0' => {
-            'size' => '20.00 GiB',
-            'size_bytes' => 21_474_836_480
-          }
+        'hdisk0' => {
+          size: '20.00 GiB',
+          size_bytes: 21_474_836_480
+        }
+      }
+    end
+
+    let(:expecte_response) do
+      {
+        'hdisk0' => {
+          'size' => '20.00 GiB',
+          'size_bytes' => 21_474_836_480
         }
       }
     end
@@ -26,8 +33,13 @@ describe Facts::Aix::Disks do
 
     it 'returns resolved fact with name disk and value' do
       expect(fact.call_the_resolver)
-        .to be_an_instance_of(Facter::ResolvedFact)
-        .and have_attributes(name: 'disks', value: disk)
+        .to be_an_instance_of(Array)
+        .and contain_exactly(
+          an_object_having_attributes(name: 'disks', value: expecte_response),
+          an_object_having_attributes(name: 'blockdevices', value: 'hdisk0'),
+          an_object_having_attributes(name: 'blockdevice_hdisk0_size', value: '20.00 GiB', type: :legacy),
+          an_object_having_attributes(name: 'blockdevice_hdisk0_size_bytes', value: 21_474_836_480, type: :legacy)
+        )
     end
 
     context 'when resolver returns empty hash' do
@@ -35,8 +47,11 @@ describe Facts::Aix::Disks do
 
       it 'returns nil fact' do
         expect(fact.call_the_resolver)
-          .to be_an_instance_of(Facter::ResolvedFact)
-          .and have_attributes(name: 'disks', value: nil)
+          .to be_an_instance_of(Array)
+          .and contain_exactly(
+            an_object_having_attributes(name: 'disks', value: nil),
+            an_object_having_attributes(name: 'blockdevices', value: nil)
+          )
       end
     end
 
@@ -45,8 +60,11 @@ describe Facts::Aix::Disks do
 
       it 'returns nil fact' do
         expect(fact.call_the_resolver)
-          .to be_an_instance_of(Facter::ResolvedFact)
-          .and have_attributes(name: 'disks', value: nil)
+          .to be_an_instance_of(Array)
+          .and contain_exactly(
+            an_object_having_attributes(name: 'disks', value: nil),
+            an_object_having_attributes(name: 'blockdevices', value: nil)
+          )
       end
     end
   end
