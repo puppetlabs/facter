@@ -1,0 +1,6 @@
+VERSION 1.0
+DOMAINROLE|impl=LDoms|control=false|io=false|service=false|root=false
+DOMAINNAME|name=sol11-11
+DOMAINUUID|uuid=415dfab4-c373-4ac0-9414-8bf00801fb72
+DOMAINCONTROL|name=opdx-a0-sun2
+DOMAINCHASSIS|serialno=AK00358110
