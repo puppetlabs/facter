@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe Facts::Solaris::SolarisZones::Zone do
-  subject(:fact) { Facts::Solaris::SolarisZones::Zone.new }
+describe Facts::Solaris::Zones do
+  subject(:fact) { Facts::Solaris::Zones.new }
 
   let(:zone_name) { 'global' }
   let(:result) do
@@ -23,7 +23,7 @@ describe Facts::Solaris::SolarisZones::Zone do
   end
 
   before do
-    allow(Facter::Resolvers::SolarisZone).to receive(:resolve).with(:zone).and_return([result])
+    allow(Facter::Resolvers::Solaris::Zone).to receive(:resolve).with(:zone).and_return([result])
   end
 
   describe '#call_the_resolver' do
