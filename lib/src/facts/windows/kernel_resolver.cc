@@ -16,13 +16,13 @@ namespace facter { namespace facts { namespace windows {
 
     static boost::optional<string> get_release()
     {
-        dynamic_library ntoskrnl;
-        if (! ntoskrnl.load("ntoskrnl.exe")) {
+        dynamic_library ntdll;
+        if (! ntdll.load("ntdll.dll")) {
           return boost::none;
         }
 
         auto rtlGetVersion = reinterpret_cast<RtlGetVersionPtr>(
-            ntoskrnl.find_symbol("RtlGetVersion"));
+            ntdll.find_symbol("RtlGetVersion"));
         if (! rtlGetVersion) {
           return boost::none;
         }
