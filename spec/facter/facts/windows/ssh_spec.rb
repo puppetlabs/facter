@@ -6,12 +6,12 @@ describe Facts::Windows::Ssh do
 
     context 'when user is privileged' do
       let(:ssh) do
-        [Facter::Ssh.new(Facter::FingerPrint.new('test', 'test'), 'ecdsa', 'test', 'ecdsa')]
+        [Facter::Ssh.new(Facter::FingerPrint.new('sha1_value', 'sha256_value'), 'ecdsa', 'key_value', 'ecdsa')]
       end
       let(:value) do
         { 'ecdsa' => { 'fingerprints' =>
-                           { 'sha1' => 'test', 'sha256' => 'test' },
-                       'key' => 'test',
+                         { 'sha1' => 'sha1_value', 'sha256' => 'sha256_value' },
+                       'key' => 'key_value',
                        'type' => 'ecdsa' } }
       end
 
@@ -31,8 +31,13 @@ describe Facts::Windows::Ssh do
       end
 
       it 'returns ssh fact' do
-        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-          have_attributes(name: 'ssh', value: value)
+        expect(fact.call_the_resolver)
+          .to be_an_instance_of(Array)
+          .and contain_exactly(
+            an_object_having_attributes(name: 'ssh', value: value),
+            an_object_having_attributes(name: 'sshecdsakey', value: 'key_value'),
+            an_object_having_attributes(name: 'sshfp_ecdsa', value: "sha1_value\nsha256_value")
+          )
       end
     end
 
@@ -55,8 +60,10 @@ describe Facts::Windows::Ssh do
       end
 
       it 'returns ssh fact' do
-        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-          have_attributes(name: 'ssh', value: value)
+        expect(fact.call_the_resolver).to be_an_instance_of(Array)
+          .and contain_exactly(
+            an_object_having_attributes(name: 'ssh', value: value)
+          )
       end
     end
 
@@ -79,8 +86,10 @@ describe Facts::Windows::Ssh do
       end
 
       it 'returns ssh fact' do
-        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-          have_attributes(name: 'ssh', value: value)
+        expect(fact.call_the_resolver).to be_an_instance_of(Array)
+          .and contain_exactly(
+            an_object_having_attributes(name: 'ssh', value: nil)
+          )
       end
     end
   end
