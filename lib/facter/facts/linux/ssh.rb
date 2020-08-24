@@ -4,19 +4,28 @@ module Facts
   module Linux
     class Ssh
       FACT_NAME = 'ssh'
+      ALIASES = %w[ssh.*key sshfp_.*].freeze
 
       def call_the_resolver
-        Facter::ResolvedFact.new(FACT_NAME, fact_value)
+        resolved_facts = []
+        resolver_data = Facter::Resolvers::SshResolver.resolve(:ssh)
+
+        fact_value = extract_fact(resolver_data)
+
+        resolved_facts.push(Facter::ResolvedFact.new(FACT_NAME, fact_value))
+
+        resolver_data.each do |ssh_data|
+          resolved_facts.push(build_key_data(ssh_data))
+          resolved_facts.push(build_fp_data(ssh_data))
+        end
+
+        resolved_facts
       end
 
       private
 
-      def fact_value
+      def extract_fact(resolver_data)
         resolver_data.map { |el| create_ssh_fact(el) }.inject(:merge)
-      end
-
-      def resolver_data
-        Facter::Resolvers::SshResolver.resolve(:ssh)
       end
 
       def create_ssh_fact(ssh)
@@ -30,6 +39,20 @@ module Facts
           key: ssh.key,
           type: ssh.type
         } }
+      end
+
+      def build_key_data(ssh_data)
+        fact_name = "ssh#{ssh_data.name}key"
+        fact_value = ssh_data.key
+
+        Facter::ResolvedFact.new(fact_name, fact_value, :legacy)
+      end
+
+      def build_fp_data(ssh_data)
+        fact_name = "sshfp_#{ssh_data.name}"
+        fact_value = "#{ssh_data.fingerprint.sha1}\n#{ssh_data.fingerprint.sha256}"
+
+        Facter::ResolvedFact.new(fact_name, fact_value, :legacy)
       end
     end
   end

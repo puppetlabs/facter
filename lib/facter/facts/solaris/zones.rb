@@ -28,7 +28,7 @@ module Facts
         end
 
         resolved_facts << Facter::ResolvedFact.new('solaris_zones.zones', zones)
-        resolved_facts << Facter::ResolvedFact.new('zones', results.count, :legacy)
+        resolved_facts << Facter::ResolvedFact.new('zones', results.count.to_s, :legacy)
 
         resolved_facts.flatten
       end
