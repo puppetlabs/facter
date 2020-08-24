@@ -4,10 +4,11 @@ module Facter
   module Resolvers
     module Utils
       module Http
+        @log = Facter::Log.new(self)
+
         class << self
           CONNECTION_TIMEOUT = 0.6
           SESSION_TIMEOUT = 5
-          @log = Facter::Log.new(self)
 
           # Makes a GET http request and returns it's response.
           #
