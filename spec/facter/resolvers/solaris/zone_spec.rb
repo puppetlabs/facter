@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe Facter::Resolvers::SolarisZone do
-  subject(:solaris_zone) { Facter::Resolvers::SolarisZone }
+describe Facter::Resolvers::Solaris::Zone do
+  subject(:solaris_zone) { Facter::Resolvers::Solaris::Zone }
 
   let(:log_spy) { instance_spy(Facter::Log) }
 

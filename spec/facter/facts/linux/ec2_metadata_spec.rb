@@ -48,7 +48,16 @@ describe Facts::Linux::Ec2Metadata do
       context 'when resolver returns empty hash' do
         let(:value) { {} }
 
-        it 'returns ec2 userdata fact as nil' do
+        it 'returns ec2 metadata fact as nil' do
+          expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+            have_attributes(name: 'ec2_metadata', value: nil)
+        end
+      end
+
+      context 'when resolver returns nil' do
+        let(:value) { nil }
+
+        it 'returns ec2 metadata fact as nil' do
           expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
             have_attributes(name: 'ec2_metadata', value: nil)
         end

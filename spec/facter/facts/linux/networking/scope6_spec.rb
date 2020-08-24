@@ -17,8 +17,9 @@ describe Facts::Linux::Networking::Scope6 do
 
     it 'return scope6 fact' do
       expect(fact.call_the_resolver)
-        .to be_an_instance_of(Facter::ResolvedFact)
-        .and have_attributes(name: 'networking.scope6', value: value)
+        .to be_an_instance_of(Array)
+        .and contain_exactly(an_object_having_attributes(name: 'networking.scope6', value: value),
+                             an_object_having_attributes(name: 'scope6', value: value))
     end
 
     context 'when scope6 can not be retrieved' do
@@ -26,7 +27,9 @@ describe Facts::Linux::Networking::Scope6 do
 
       it 'returns nil' do
         expect(fact.call_the_resolver)
-          .to be_an_instance_of(Facter::ResolvedFact).and have_attributes(name: 'networking.scope6', value: value)
+          .to be_an_instance_of(Array)
+          .and contain_exactly(an_object_having_attributes(name: 'networking.scope6', value: value),
+                               an_object_having_attributes(name: 'scope6', value: value))
       end
     end
   end

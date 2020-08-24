@@ -1,3 +1,21 @@
+## [4.0.35](https://github.com/puppetlabs/facter/tree/4.0.35) (2020-08-19)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.34...4.0.35)
+
+### Added
+
+- (FACT-2726) Add solaris dmi facts [#2025](https://github.com/puppetlabs/facter/pull/2025) ([florindragos](https://github.com/florindragos))
+- (FACT-2722) Add disks fact for Solaris [#2027](https://github.com/puppetlabs/facter/pull/2027) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+
+### Fixed
+
+- (FACT-2723) --list-*-groups also displays external facts [#2024](https://github.com/puppetlabs/facter/pull/2024) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- (FACT-2742) Exclude net/https when running on jruby FIPS [#2030](https://github.com/puppetlabs/facter/pull/2030) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (FACT-2737) facter uptime shows host uptime inside docker container [#2031](https://github.com/puppetlabs/facter/pull/2031) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (FACT-2672) Fix ssh fact output [#2029](https://github.com/puppetlabs/facter/pull/2029) ([oanatmaria](https://github.com/oanatmaria))
+- (FACT-2402) Exclude fuseblk from filesystems [#2032](https://github.com/puppetlabs/facter/pull/2032) ([oanatmaria](https://github.com/oanatmaria))
+
+
 ## [4.0.34](https://github.com/puppetlabs/facter/tree/4.0.34) (2020-08-12)
 
 [Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.33...4.0.34)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe Facter::Resolvers::SolarisRelease do
-  subject(:solaris_release) { Facter::Resolvers::SolarisRelease }
+describe Facter::Resolvers::Solaris::OsRelease do
+  subject(:solaris_release) { Facter::Resolvers::Solaris::OsRelease }
 
   before do
     allow(Facter::Util::FileHelper).to receive(:safe_read)

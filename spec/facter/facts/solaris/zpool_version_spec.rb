@@ -7,12 +7,12 @@ describe Facts::Solaris::ZpoolVersion do
     let(:version) { '5' }
 
     before do
-      allow(Facter::Resolvers::ZPool).to receive(:resolve).with(:zpool_version).and_return(version)
+      allow(Facter::Resolvers::Zpool).to receive(:resolve).with(:zpool_version).and_return(version)
     end
 
     it 'calls Facter::Resolvers::ZPool' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::ZPool).to have_received(:resolve).with(:zpool_version)
+      expect(Facter::Resolvers::Zpool).to have_received(:resolve).with(:zpool_version)
     end
 
     it 'returns the ZPool version fact' do

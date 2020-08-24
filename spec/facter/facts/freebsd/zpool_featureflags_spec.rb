@@ -7,13 +7,13 @@ describe Facts::Freebsd::ZpoolFeatureflags do
     let(:zpool_feature_flags) { 'async_destroy,empty_bpobj,lz4_compress,multi_vdev_crash_dump,spacemap_histogram' }
 
     before do
-      allow(Facter::Resolvers::ZPool).to \
+      allow(Facter::Resolvers::Zpool).to \
         receive(:resolve).with(:zpool_featureflags).and_return(zpool_feature_flags)
     end
 
     it 'calls Facter::Resolvers::ZPool' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::ZPool).to have_received(:resolve).with(:zpool_featureflags)
+      expect(Facter::Resolvers::Zpool).to have_received(:resolve).with(:zpool_featureflags)
     end
 
     it 'returns the zpool_featureflags fact' do

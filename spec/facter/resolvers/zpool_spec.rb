@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe Facter::Resolvers::ZPool do
-  subject(:zpool_resolver) { Facter::Resolvers::ZPool }
+describe Facter::Resolvers::Zpool do
+  subject(:zpool_resolver) { Facter::Resolvers::Zpool }
 
   let(:log_spy) { instance_spy(Facter::Log) }
 
@@ -13,7 +13,7 @@ describe Facter::Resolvers::ZPool do
   end
 
   after do
-    Facter::Resolvers::ZPool.invalidate_cache
+    Facter::Resolvers::Zpool.invalidate_cache
   end
 
   context 'when zpool command is found' do
@@ -37,12 +37,12 @@ describe Facter::Resolvers::ZPool do
       end
 
       it 'returns zpool version fact' do
-        result = Facter::Resolvers::ZPool.resolve(:zpool_version)
+        result = Facter::Resolvers::Zpool.resolve(:zpool_version)
         expect(result).to eq('5000')
       end
 
       it 'returns zpool featureflags fact' do
-        result = Facter::Resolvers::ZPool.resolve(:zpool_featureflags)
+        result = Facter::Resolvers::Zpool.resolve(:zpool_featureflags)
         expect(result).to eq(zpool_featureflags)
       end
     end

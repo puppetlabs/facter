@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-describe Facts::Solaris::SolarisZones::Current do
-  subject(:fact) { Facts::Solaris::SolarisZones::Current.new }
+describe Facts::Solaris::CurrentZone do
+  subject(:fact) { Facts::Solaris::CurrentZone.new }
 
   let(:value) { 'global' }
 
   before do
-    allow(Facter::Resolvers::SolarisZoneName).to receive(:resolve).with(:current_zone_name).and_return('global')
+    allow(Facter::Resolvers::Solaris::ZoneName).to receive(:resolve).with(:current_zone_name).and_return('global')
   end
 
   describe '#call_the_resolver' do

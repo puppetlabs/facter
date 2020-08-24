@@ -7,13 +7,13 @@ module Facter
       @fact_list ||= {}
       EC2_METADATA_ROOT_URL = 'http://169.254.169.254/latest/meta-data/'
       EC2_USERDATA_ROOT_URL = 'http://169.254.169.254/latest/user-data/'
-      EC2_CONNECTION_TIMEOUT = 0.6
       EC2_SESSION_TIMEOUT = 5
 
       class << self
         private
 
         def post_resolve(fact_name)
+          log.debug('Querying Ec2 metadata')
           @fact_list.fetch(fact_name) { read_facts(fact_name) }
         end
 
@@ -29,7 +29,7 @@ module Facter
           metadata.each_line do |line|
             next if line.empty?
 
-            http_path_component = build_path_compoent(line)
+            http_path_component = build_path_component(line)
             next if http_path_component == 'security-credentials/'
 
             if http_path_component.end_with?('/')
@@ -44,27 +44,13 @@ module Facter
           end
         end
 
-        def build_path_compoent(line)
+        def build_path_component(line)
           array_match = /^(\d+)=.*$/.match(line)
           array_match ? "#{array_match[1]}/" : line.strip
         end
 
         def get_data_from(url)
-          require 'net/http'
-
-          parsed_url = URI.parse(url)
-          http = Net::HTTP.new(parsed_url.host)
-          http.read_timeout = determine_session_timeout
-          http.open_timeout = EC2_CONNECTION_TIMEOUT
-          resp = http.get(parsed_url.path)
-          response_code_valid?(resp.code) ? resp.body : ''
-        rescue StandardError => e
-          log.debug("Trying to connect to #{url} but got: #{e.message}")
-          ''
-        end
-
-        def response_code_valid?(http_code)
-          http_code.to_i.equal?(200)
+          Utils::Http.get_request(url, {}, { session: determine_session_timeout })
         end
 
         def determine_session_timeout

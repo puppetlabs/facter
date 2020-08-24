@@ -5,21 +5,14 @@ describe Facts::Linux::Scope6Interfaces do
 
   before do
     allow(Facter::Resolvers::NetworkingLinux).to receive(:resolve).with(:interfaces).and_return(interfaces)
-    allow(Facter::Resolvers::NetworkingLinux).to receive(:resolve).with(:scope6).and_return(scope6)
   end
 
   describe '#call_the_resolver' do
     let(:interfaces) { { 'eth0' => { scope6: 'link' }, 'en1' => { scope6: 'global' } } }
-    let(:scope6) { 'link' }
 
     it 'calls Facter::Resolvers::NetworkingLinux with interfaces' do
       fact.call_the_resolver
       expect(Facter::Resolvers::NetworkingLinux).to have_received(:resolve).with(:interfaces)
-    end
-
-    it 'calls Facter::Resolvers::NetworkingLinux with scope6' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::NetworkingLinux).to have_received(:resolve).with(:scope6)
     end
 
     it 'returns legacy facts with scope6_<interface_name>' do
@@ -27,9 +20,7 @@ describe Facts::Linux::Scope6Interfaces do
         contain_exactly(an_object_having_attributes(name: 'scope6_eth0',
                                                     value: interfaces['eth0'][:scope6], type: :legacy),
                         an_object_having_attributes(name: 'scope6_en1',
-                                                    value: interfaces['en1'][:scope6], type: :legacy),
-                        an_object_having_attributes(name: 'scope6',
-                                                    value: scope6, type: :legacy))
+                                                    value: interfaces['en1'][:scope6], type: :legacy))
     end
   end
 

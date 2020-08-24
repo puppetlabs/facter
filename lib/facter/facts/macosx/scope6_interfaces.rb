@@ -9,14 +9,12 @@ module Facts
       def call_the_resolver
         resolved_facts = []
         interfaces = Facter::Resolvers::Networking.resolve(:interfaces)
-        primary_scope6 = Facter::Resolvers::Networking.resolve(:scope6)
 
         interfaces&.each do |interface_name, info|
           if info[:scope6]
             resolved_facts << Facter::ResolvedFact.new("scope6_#{interface_name}", info[:scope6], :legacy)
           end
         end
-        resolved_facts << Facter::ResolvedFact.new('scope6', primary_scope6, :legacy) if primary_scope6
         resolved_facts
       end
     end
