@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Facts
-  module Macosx
+  module Freebsd
     class SshfpAlgorithm
       FACT_NAME = 'sshfp_.*'
       TYPE = :legacy

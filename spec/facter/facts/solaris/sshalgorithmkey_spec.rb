@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facts::Linux::Sshalgorithmkey do
+describe Facts::Solaris::Sshalgorithmkey do
   describe '#call_the_resolver' do
-    subject(:fact) { Facts::Linux::Sshalgorithmkey.new }
+    subject(:fact) { Facts::Solaris::Sshalgorithmkey.new }
 
     let(:ssh) do
       [Facter::Ssh.new(Facter::FingerPrint.new('test', 'test'), 'ecdsa', 'test', 'ecdsa'),

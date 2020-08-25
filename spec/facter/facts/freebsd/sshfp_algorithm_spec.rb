@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facts::Macosx::SshfpAlgorithm do
+describe Facts::Freebsd::SshfpAlgorithm do
   describe '#call_the_resolver' do
-    subject(:fact) { Facts::Macosx::SshfpAlgorithm.new }
+    subject(:fact) { Facts::Freebsd::SshfpAlgorithm.new }
 
     let(:ssh) do
       [Facter::Ssh.new(Facter::FingerPrint.new('sha11', 'sha2561'), 'ecdsa', 'test', 'ecdsa'),
@@ -21,7 +21,7 @@ describe Facts::Macosx::SshfpAlgorithm do
       expect(Facter::Resolvers::SshResolver).to have_received(:resolve).with(:ssh)
     end
 
-    it 'returns a list of resolved facts' do
+    it 'returns a resolved fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: "sshfp_#{legacy_fact1[:name]}", value: legacy_fact1[:value]),
                         an_object_having_attributes(name: "sshfp_#{legacy_fact2[:name]}", value: legacy_fact2[:value]))
