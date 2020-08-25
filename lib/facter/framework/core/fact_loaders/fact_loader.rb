@@ -64,11 +64,34 @@ module Facter
     def block_facts(facts, options)
       blocked_facts = options[:blocked_facts] || []
 
+      reject_list_core, reject_list_legacy = construct_reject_lists(blocked_facts, facts)
+
       facts = facts.reject do |fact|
-        blocked_facts.select { |blocked_fact| fact.name.match(/^#{blocked_fact}/) }.any?
+        reject_list_core.include?(fact) || reject_list_core.find do |fact_to_block|
+          fact_to_block.klass == fact.klass
+        end || reject_list_legacy.include?(fact)
       end
 
       facts
+    end
+
+    def construct_reject_lists(blocked_facts, facts)
+      reject_list_core = []
+      reject_list_legacy = []
+
+      blocked_facts.each do |blocked|
+        facts.each do |fact|
+          next unless fact.name =~ /^#{blocked}/
+
+          if fact.type == :core
+            reject_list_core << fact
+          else
+            reject_list_legacy << fact
+          end
+        end
+      end
+
+      [reject_list_core, reject_list_legacy]
     end
   end
 end

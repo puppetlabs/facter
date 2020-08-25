@@ -48,6 +48,25 @@ describe Facter::FactFilter do
         expect(resolved_fact.value).to eq('value_1')
       end
     end
+
+    context 'with legacy fact that should be blocked' do
+      let(:fact_value) { 'value_1' }
+      let(:resolved_fact) { Facter::ResolvedFact.new('my_fact', fact_value, :legacy) }
+
+      before do
+        resolved_fact.user_query = ''
+        resolved_fact.filter_tokens = []
+        allow(Facter::Options).to receive(:[]).with(:blocked_facts).and_return(['my_fact'])
+        allow(Facter::Options).to receive(:[]).with(:show_legacy).and_return(true)
+        allow(Facter::Options).to receive(:[]).with(:user_query).and_return('')
+      end
+
+      it 'filters blocked legacy facts' do
+        fact_filter_input = [resolved_fact]
+        Facter::FactFilter.new.filter_facts!(fact_filter_input)
+        expect(fact_filter_input).to eq([])
+      end
+    end
   end
 
   it 'filters value inside fact when value is array' do
