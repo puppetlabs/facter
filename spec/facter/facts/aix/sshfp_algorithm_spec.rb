@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facts::Linux::SshfpAlgorithm do
+describe Facts::Aix::SshfpAlgorithm do
   describe '#call_the_resolver' do
-    subject(:fact) { Facts::Linux::SshfpAlgorithm.new }
+    subject(:fact) { Facts::Aix::SshfpAlgorithm.new }
 
     let(:ssh) do
       [Facter::Ssh.new(Facter::FingerPrint.new('sha11', 'sha2561'), 'ecdsa', 'test', 'ecdsa'),
