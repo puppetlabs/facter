@@ -7,10 +7,12 @@ module Facter
         @log = Facter::Log.new(self)
         @semaphore = Mutex.new
         @fact_list ||= {}
+        MHZ_TO_HZ = 1_000_000
         class << self
           # :count
           # :models
           # :physical_count
+          # :speed
 
           private
 
@@ -38,6 +40,7 @@ module Facter
               count_processors(tokens)
               construct_models_list(tokens)
               count_physical_processors(tokens)
+              build_speed(tokens)
             end
           end
 
@@ -46,7 +49,9 @@ module Facter
           end
 
           def construct_models_list(tokens)
-            @fact_list[:models] << tokens.last.strip if tokens.first.strip == 'model name'
+            return unless tokens.first.strip == 'model name' || tokens.first.strip == 'cpu'
+
+            @fact_list[:models] << tokens.last.strip
           end
 
           def count_physical_processors(tokens)
@@ -54,7 +59,24 @@ module Facter
           end
 
           def physical_devices_count
-            Dir.entries('/sys/devices/system/cpu').count { |dir| dir =~ /cpu[0-9]+$/ }
+            Dir.entries('/sys/devices/system/cpu')
+               .select { |dir| dir =~ /cpu[0-9]+$/ }
+               .count { |dir| File.exist?("/sys/devices/system/cpu/#{dir}/topology/physical_package_id") }
+          end
+
+          def build_speed(tokens)
+            build_speed_for_power_pc(tokens) if tokens.first.strip == 'clock'
+            build_speed_for_x86(tokens) if tokens.first.strip == 'cpu MHz'
+          end
+
+          def build_speed_for_power_pc(tokens)
+            speed = tokens.last.strip.match(/^(\d+).*MHz/)[1]
+            @fact_list[:speed] = speed.to_i * MHZ_TO_HZ
+          end
+
+          def build_speed_for_x86(tokens)
+            speed = tokens.last.strip.match(/^(\d+).*/)[1]
+            @fact_list[:speed] = speed.to_i * MHZ_TO_HZ
           end
         end
       end
