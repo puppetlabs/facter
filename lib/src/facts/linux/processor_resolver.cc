@@ -95,11 +95,11 @@ namespace facter { namespace facts { namespace linux {
         return cpu0_valid;
     }
 
-    void processor_resolver::maybe_add_speed(data& data, std::string const& speed)
+    void processor_resolver::maybe_add_speed(data& data, std::string const& speed, int magnitude)
     {
         auto maybe_speed = maybe_stoi(speed);
         if (maybe_speed && maybe_speed.get() > 0) {
-            data.speed = maybe_speed.get() * static_cast<int64_t>(1000);
+            data.speed = maybe_speed.get() * static_cast<int64_t>(magnitude);
         }
     }
 
@@ -168,7 +168,7 @@ namespace facter { namespace facts { namespace linux {
                 // Parse out the processor speed (in MHz)
                 string speed;
                 if (lth_util::re_search(value, boost::regex("^(\\d+).*MHz"), &speed)) {
-                    maybe_add_speed(data, speed);
+                    maybe_add_speed(data, speed, 1000000);
                 }
             }
             return true;
@@ -190,7 +190,7 @@ namespace facter { namespace facts { namespace linux {
         // Read in the max speed from the first cpu
         // The speed is in kHz
         string speed = lth_file::read(root + "/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq");
-        maybe_add_speed(data, speed);
+        maybe_add_speed(data, speed, 1000);
     }
 
     processor_resolver::data processor_resolver::collect_data(collection& facts)
