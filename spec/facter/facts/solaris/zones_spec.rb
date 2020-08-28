@@ -38,7 +38,7 @@ describe Facts::Solaris::Zones do
           an_object_having_attributes(name: 'zone_global_status', value: result[:status], type: :legacy),
           an_object_having_attributes(name: 'zone_global_brand', value: result[:brand], type: :legacy),
           an_object_having_attributes(name: 'zone_global_iptype', value: result[:iptype], type: :legacy),
-          an_object_having_attributes(name: 'zones', value: 1, type: :legacy)
+          an_object_having_attributes(name: 'zones', value: '1', type: :legacy)
         )
     end
   end

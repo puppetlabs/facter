@@ -6,11 +6,18 @@ describe Facts::Aix::Disks do
 
     let(:disk) do
       {
-        'disks' => {
-          'hdisk0' => {
-            'size' => '20.00 GiB',
-            'size_bytes' => 21_474_836_480
-          }
+        'hdisk0' => {
+          size: '20.00 GiB',
+          size_bytes: 21_474_836_480
+        }
+      }
+    end
+
+    let(:expecte_response) do
+      {
+        'hdisk0' => {
+          'size' => '20.00 GiB',
+          'size_bytes' => 21_474_836_480
         }
       }
     end
@@ -26,8 +33,12 @@ describe Facts::Aix::Disks do
 
     it 'returns resolved fact with name disk and value' do
       expect(fact.call_the_resolver)
-        .to be_an_instance_of(Facter::ResolvedFact)
-        .and have_attributes(name: 'disks', value: disk)
+        .to be_an_instance_of(Array)
+        .and contain_exactly(
+          an_object_having_attributes(name: 'disks', value: expecte_response),
+          an_object_having_attributes(name: 'blockdevices', value: 'hdisk0'),
+          an_object_having_attributes(name: 'blockdevice_hdisk0_size', value: '21474836480', type: :legacy)
+        )
     end
 
     context 'when resolver returns empty hash' do

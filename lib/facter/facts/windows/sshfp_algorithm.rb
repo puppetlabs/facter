@@ -16,7 +16,7 @@ module Facts
 
         result&.each do |ssh|
           facts << Facter::ResolvedFact.new("sshfp_#{ssh.name.to_sym}",
-                                            "#{ssh.fingerprint.sha1} \n #{ssh.fingerprint.sha256}", :legacy)
+                                            "#{ssh.fingerprint.sha1}\n#{ssh.fingerprint.sha256}", :legacy)
         end
         facts
       end
