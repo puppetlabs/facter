@@ -108,6 +108,10 @@ module Facter
                  aliases: '-p',
                  desc: 'Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.'
 
+    class_option :parallel,
+                 type: :boolean,
+                 desc: 'Resolve facts in parallel'
+
     desc '--man', 'Manual', hide: true
     map ['--man'] => :man
     def man(*args)

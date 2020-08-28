@@ -35,7 +35,8 @@ describe Facter::OptionStore do
         config: nil,
         cache: true,
         color: false,
-        trace: false
+        trace: false,
+        parallel: false
       )
     end
   end

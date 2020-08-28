@@ -104,6 +104,18 @@ module Facter
       Facter::Options[:debug] = debug_bool
     end
 
+    def enable_parallel
+      Facter::Options[:parallel] = true
+    end
+
+    def disable_parallel
+      Facter::Options[:parallel] = false
+    end
+
+    def parallel?
+      Facter::Options[:parallel]
+    end
+
     # Returns a fact object by name.  If you use this, you still have to
     # call {Facter::Util::Fact#value `value`} on it to retrieve the actual
     # value.
