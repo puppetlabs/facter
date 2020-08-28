@@ -243,7 +243,7 @@ SCENARIO("resolving processor-specific facts for linux machines") {
             THEN("the processor facts are correctly resolved, with the speed being read from the 'clock' entry") {
                 fixture.reset(architecture_type::POWER);
 
-                // here, speed is in KHz
+                // here, speed is in MHz
                 vector<cpu_param> cpu_params({
                     // ensure that speed is read from the "clock" entry
                     make_tuple("Model A", "0", "0", boost::optional<int64_t>()),
@@ -273,7 +273,7 @@ SCENARIO("resolving processor-specific facts for linux machines") {
                     REQUIRE(result.models[i] == EXPECTED_MODELS[i]);
                 }
 
-                REQUIRE(result.speed == 15000);
+                REQUIRE(result.speed == 15000000);
             }
         }
 
@@ -281,7 +281,7 @@ SCENARIO("resolving processor-specific facts for linux machines") {
             THEN("the processor facts are correctly resolved, but the speed is not calculated") {
                 fixture.reset(architecture_type::POWER);
 
-                // here, speed is in KHz
+                // here, speed is in MHz
                 vector<cpu_param> cpu_params({
                     make_tuple("Model A", "0", "-1", 15),
                     make_tuple("Model B", "0", "-1", -1)
@@ -310,7 +310,7 @@ SCENARIO("resolving processor-specific facts for linux machines") {
             THEN("the processor facts are correctly resolved, with the speed being read from the 'clock' entry, but the physical count is not computed") {
                 fixture.reset(architecture_type::POWER);
 
-                // here, speed is in KHz
+                // here, speed is in MHz
                 vector<cpu_param> cpu_params({
                     make_tuple("Model A", "0", "0", boost::optional<int64_t>()),
                     // ensure that duplicate CPUs are not counted twice in the
@@ -341,7 +341,7 @@ SCENARIO("resolving processor-specific facts for linux machines") {
                     REQUIRE(result.models[i] == EXPECTED_MODELS[i]);
                 }
 
-                REQUIRE(result.speed == 15000);
+                REQUIRE(result.speed == 15000000);
             }
         }
     }
