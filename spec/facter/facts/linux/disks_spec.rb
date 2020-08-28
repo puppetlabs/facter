@@ -46,5 +46,25 @@ describe Facts::Linux::Disks do
           an_object_having_attributes(name: 'blockdevice_sda_vendor', value: 'VMware', type: :legacy)
         )
     end
+
+    context 'when resolver returns empty hash' do
+      let(:disk) { {} }
+
+      it 'returns nil fact' do
+        expect(fact.call_the_resolver)
+          .to be_an_instance_of(Facter::ResolvedFact)
+          .and have_attributes(name: 'disks', value: nil)
+      end
+    end
+
+    context 'when resolver returns nil' do
+      let(:disk) { nil }
+
+      it 'returns nil fact' do
+        expect(fact.call_the_resolver)
+          .to be_an_instance_of(Facter::ResolvedFact)
+          .and have_attributes(name: 'disks', value: nil)
+      end
+    end
   end
 end

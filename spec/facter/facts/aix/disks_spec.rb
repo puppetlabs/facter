@@ -46,11 +46,8 @@ describe Facts::Aix::Disks do
 
       it 'returns nil fact' do
         expect(fact.call_the_resolver)
-          .to be_an_instance_of(Array)
-          .and contain_exactly(
-            an_object_having_attributes(name: 'disks', value: nil),
-            an_object_having_attributes(name: 'blockdevices', value: nil)
-          )
+          .to be_an_instance_of(Facter::ResolvedFact)
+          .and have_attributes(name: 'disks', value: nil)
       end
     end
 
@@ -59,11 +56,8 @@ describe Facts::Aix::Disks do
 
       it 'returns nil fact' do
         expect(fact.call_the_resolver)
-          .to be_an_instance_of(Array)
-          .and contain_exactly(
-            an_object_having_attributes(name: 'disks', value: nil),
-            an_object_having_attributes(name: 'blockdevices', value: nil)
-          )
+          .to be_an_instance_of(Facter::ResolvedFact)
+          .and have_attributes(name: 'disks', value: nil)
       end
     end
   end
