@@ -18,13 +18,10 @@ module Facter
     def parse_and_resolve(arg_string)
       require 'facter/framework/cli/cli_launcher'
 
-      cli_launcher = CliLauncher.new(arg_string.split(' '))
       Facter::OptionsValidator.validate(arg_string.split(' '))
-      cli_launcher.prepare_arguments(nil)
+      processed_arguments = CliLauncher.prepare_arguments(arg_string.split(' '), nil)
 
-      args = cli_launcher.args
-
-      cli = Facter::Cli.new([], args)
+      cli = Facter::Cli.new([], processed_arguments)
       cli.invoke(:arg_parser)
     end
 
