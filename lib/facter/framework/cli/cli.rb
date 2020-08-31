@@ -134,7 +134,7 @@ module Facter
 
     desc 'arg_parser', 'Parse arguments', hide: true
     def arg_parser(*args)
-      output, status = Facter.to_user_output(@options, *args)
+      output, _status = Facter.to_user_output(@options, *args)
 
       output
     end

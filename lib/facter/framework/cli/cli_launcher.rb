@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-
 require 'facter/framework/logging/logger.rb'
 Facter::Log.output(STDERR)
 require 'facter'
@@ -9,11 +8,11 @@ require 'facter/framework/cli/cli'
 
 class CliLauncher
   class << self
-    def prepare_arguments(args, task = Facter::Cli.default_task )
+    def prepare_arguments(args, task = Facter::Cli.default_task)
       args.unshift(task) unless
         check_if_arguments_is_known(Facter::Cli.all_tasks, args) ||
-          check_if_arguments_is_known(Facter::Cli.instance_variable_get(:@map), args) ||
-          !task
+        check_if_arguments_is_known(Facter::Cli.instance_variable_get(:@map), args) ||
+        !task
 
       reorder_program_arguments(args)
     end
