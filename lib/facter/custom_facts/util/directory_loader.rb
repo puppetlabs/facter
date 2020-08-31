@@ -35,6 +35,7 @@ module LegacyFacter
       def initialize(dir = LegacyFacter::Util::Config.external_facts_dirs, weight = EXTERNAL_FACT_WEIGHT)
         @directories = [dir].flatten
         @weight = weight
+        @log ||= Facter::Log.new(self)
       end
 
       # Load facts from files in fact directory using the relevant parser classes to
@@ -84,10 +85,11 @@ module LegacyFacter
           next if parser.nil?
 
           data = parser.results
+
           if data == false
             LegacyFacter.warn "Could not interpret fact file #{fact.file}"
           elsif (data == {}) || data.nil?
-            LegacyFacter.warn "Fact file #{fact.file} was parsed but returned an empty data set"
+            @log.debug("Fact file #{fact.file} was parsed but no key=>value data was returned")
           else
             data.each do |p, v|
               collection.add(p, value: v, fact_type: :external,
