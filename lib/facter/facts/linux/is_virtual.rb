@@ -5,8 +5,6 @@ module Facts
     class IsVirtual
       FACT_NAME = 'is_virtual'
 
-      PHYSICAL_HYPERVISORS = %w[physical xen0 vmware_server vmware_workstation openvzhn vserver_host].freeze
-
       def call_the_resolver # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
         fact_value = check_docker_lxc || check_gce || retrieve_from_virt_what || check_vmware
         fact_value ||= check_open_vz || check_vserver || check_xen || check_other_facts || check_lspci || 'physical'
@@ -59,7 +57,7 @@ module Facts
       end
 
       def check_if_virtual(found_vm)
-        PHYSICAL_HYPERVISORS.count(found_vm).zero?
+        Facter::FactsUtils::PHYSICAL_HYPERVISORS.count(found_vm).zero?
       end
     end
   end
