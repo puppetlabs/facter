@@ -16,10 +16,15 @@ class CliLauncher
     Facter::OptionsValidator.validate(@args)
   end
 
-  def prepare_arguments
-    @args.unshift(Facter::Cli.default_task) unless
+  def args
+    @args
+  end
+
+  def prepare_arguments(task = Facter::Cli.default_task )
+    @args.unshift(task) unless
       check_if_arguments_is_known(Facter::Cli.all_tasks, @args) ||
-      check_if_arguments_is_known(Facter::Cli.instance_variable_get(:@map), @args)
+      check_if_arguments_is_known(Facter::Cli.instance_variable_get(:@map), @args) ||
+      !task
 
     @args = reorder_program_arguments(@args)
   end

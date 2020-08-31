@@ -130,6 +130,13 @@ module Facter
       exit status
     end
 
+    desc 'arg_parser', 'Parse arguments', hide: true
+    def arg_parser(*args)
+      output, status = Facter.to_user_output(@options, *args)
+
+      output
+    end
+
     desc '--version, -v', 'Print the version', hide: true
     map ['--version', '-v'] => :version
     def version

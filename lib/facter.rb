@@ -15,6 +15,19 @@ module Facter
   @already_searched = {}
 
   class << self
+    def parse_and_resolve(arg_string)
+      require 'facter/framework/cli/cli_launcher'
+
+      cli_launcher = CliLauncher.new(arg_string.split(' '))
+      Facter::OptionsValidator.validate(arg_string.split(' '))
+      cli_launcher.prepare_arguments(nil)
+
+      args = cli_launcher.args
+
+      cli = Facter::Cli.new([], args)
+      cli.invoke(:arg_parser)
+    end
+
     def clear_messages
       logger.debug('clear_messages is not implemented')
     end
