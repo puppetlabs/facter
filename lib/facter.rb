@@ -15,11 +15,13 @@ module Facter
   @already_searched = {}
 
   class << self
-    def parse_and_resolve(arg_string)
+    def resolve(args_as_string)
       require 'facter/framework/cli/cli_launcher'
 
-      Facter::OptionsValidator.validate(arg_string.split(' '))
-      processed_arguments = CliLauncher.prepare_arguments(arg_string.split(' '), nil)
+      args = args_as_string.split(' ')
+
+      Facter::OptionsValidator.validate(args)
+      processed_arguments = CliLauncher.prepare_arguments(args, nil)
 
       cli = Facter::Cli.new([], processed_arguments)
       cli.invoke(:arg_parser)
