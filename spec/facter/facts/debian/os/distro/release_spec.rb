@@ -6,8 +6,13 @@ describe Facts::Debian::Os::Distro::Release do
 
     shared_examples 'returns distro release fact' do
       it 'returns release fact' do
-        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-          have_attributes(name: 'os.distro.release', value: fact_value)
+        expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+          contain_exactly(an_object_having_attributes(name: 'os.distro.release', value: fact_value),
+                          an_object_having_attributes(name: 'lsbdistrelease', value: fact_value['full'], type: :legacy),
+                          an_object_having_attributes(name: 'lsbmajdistrelease', value: fact_value['major'],
+                                                      type: :legacy),
+                          an_object_having_attributes(name: 'lsbminordistrelease', value: fact_value['minor'],
+                                                      type: :legacy))
       end
     end
 
@@ -31,7 +36,10 @@ describe Facts::Debian::Os::Distro::Release do
       let(:os_release_value) { nil }
       let(:fact_value) { nil }
 
-      it_behaves_like 'returns distro release fact'
+      it 'returns release fact' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+          have_attributes(name: 'os.distro.release', value: fact_value)
+      end
     end
 
     context 'when version has no minor' do
