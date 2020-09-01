@@ -7,12 +7,12 @@ describe Facts::Windows::Networking::Network6 do
     let(:value) { 'fe80::' }
 
     before do
-      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:network6).and_return(value)
+      allow(Facter::Resolvers::Windows::Networking).to receive(:resolve).with(:network6).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Networking' do
+    it 'calls Facter::Resolvers::Windows::Networking' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:network6)
+      expect(Facter::Resolvers::Windows::Networking).to have_received(:resolve).with(:network6)
     end
 
     it 'returns network ipv6 fact' do

@@ -1,0 +1,24 @@
+module: unix                            instance: 0
+name:   system_pages                    class:    pages
+        availrmem                       672943
+        crtime                          0
+        desfree                         12254
+        desscan                         25
+        econtig                         4230422528
+        fastscan                        784319
+        freemem                         641451
+        kernelbase                      0
+        lotsfree                        24509
+        minfree                         6127
+        nalloc                          42231683
+        nalloc_calls                    21934
+        nfree                           40207768
+        nfree_calls                     14661
+        nscan                           0
+        pagesfree                       641451
+        pageslocked                     895695
+        pagestotal                      1568638
+        physmem                         1568638
+        pp_kernel                       914701
+        slowscan                        100
+        snaptime                        28502.92289964

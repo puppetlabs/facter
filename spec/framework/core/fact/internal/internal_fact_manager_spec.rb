@@ -87,8 +87,8 @@ describe Facter::InternalFactManager do
       before do
         allow(os_name_class_spy).to receive(:new).and_return(os_name_instance_spy)
 
-        exception = StandardError.new('error')
-        exception.set_backtrace(%w[error backtrace])
+        exception = StandardError.new('error_message')
+        exception.set_backtrace(%w[backtrace])
         allow(os_name_instance_spy).to receive(:call_the_resolver).and_raise(exception)
 
         allow(logger_double).to receive(:error)
@@ -105,10 +105,22 @@ describe Facter::InternalFactManager do
         expect(resolved_facts).to match_array []
       end
 
-      it 'logs backtrace as error' do
+      it 'logs backtrace as error with --trace option' do
+        allow(Facter::Options).to receive(:[])
+        allow(Facter::Options).to receive(:[]).with(:trace).and_return(true)
         internal_fact_manager.resolve_facts([searched_fact])
 
-        expect(logger_double).to have_received(:error).with("Facter::InternalFactManager - error\nbacktrace")
+        expect(logger_double)
+          .to have_received(:error)
+          .with("Facter::InternalFactManager - #{colorize('error_message', Facter::RED)}\nbacktrace")
+      end
+
+      it 'logs error message as error without --trace option' do
+        internal_fact_manager.resolve_facts([searched_fact])
+
+        expect(logger_double)
+          .to have_received(:error)
+          .with("Facter::InternalFactManager - #{colorize('error_message', Facter::RED)}\n")
       end
     end
   end

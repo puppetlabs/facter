@@ -4,8 +4,8 @@ describe Facts::Windows::DhcpServers do
   subject(:fact) { Facts::Windows::DhcpServers.new }
 
   before do
-    allow(Facter::Resolvers::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
-    allow(Facter::Resolvers::Networking).to receive(:resolve).with(:dhcp).and_return(dhcp)
+    allow(Facter::Resolvers::Windows::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
+    allow(Facter::Resolvers::Windows::Networking).to receive(:resolve).with(:dhcp).and_return(dhcp)
   end
 
   describe '#call_the_resolver' do
@@ -13,14 +13,14 @@ describe Facts::Windows::DhcpServers do
     let(:interfaces) { { 'eth0' => { dhcp: '10.16.122.163' }, 'en1' => { dhcp: '10.32.10.163' } } }
     let(:dhcp) { '10.16.122.163' }
 
-    it 'calls Facter::Resolvers::Networking with interfaces' do
+    it 'calls Facter::Resolvers::Windows::Networking with interfaces' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:interfaces)
+      expect(Facter::Resolvers::Windows::Networking).to have_received(:resolve).with(:interfaces)
     end
 
     it 'calls Facter::Resolvers::NetworkingLinux with dhcp' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:dhcp)
+      expect(Facter::Resolvers::Windows::Networking).to have_received(:resolve).with(:dhcp)
     end
 
     it 'returns dhcp_servers' do

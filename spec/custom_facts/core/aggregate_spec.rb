@@ -15,6 +15,19 @@ describe Facter::Core::Aggregate do
     expect(aggregate_res).to be_a_kind_of LegacyFacter::Core::Suitable
   end
 
+  it 'can be compared' do
+    aggregate1 = Facter::Core::Aggregate.new('aggregated1', fact)
+    aggregate1.options(weight: 1)
+    aggregate2 = Facter::Core::Aggregate.new('aggregated2', fact)
+    aggregate2.options(weight: 2)
+    aggregate3 = Facter::Core::Aggregate.new('aggregated3', fact)
+    aggregate3.options(weight: 3)
+
+    expect(
+      [aggregate1, aggregate2, aggregate3].sort { |a, b| b <=> a }
+    ).to eq([aggregate3, aggregate2, aggregate1])
+  end
+
   describe 'setting options' do
     it 'can set the timeout' do
       aggregate_res.options(timeout: 314)

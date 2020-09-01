@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "#{ROOT_DIR}/lib/framework/cli/cli_launcher"
+require 'facter/framework/cli/cli_launcher'
 
 describe CliLauncher do
   subject(:cli_launcher) { CliLauncher.new(args) }

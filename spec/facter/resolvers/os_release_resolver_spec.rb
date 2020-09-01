@@ -56,7 +56,7 @@ describe Facter::Resolvers::OsRelease do
   end
 
   context 'when on Debian' do
-    let(:os_release_content) { load_fixture('debian_os_release').readlines }
+    let(:os_release_content) { load_fixture('os_release_debian').readlines }
 
     it 'returns os NAME' do
       result = Facter::Resolvers::OsRelease.resolve(:name)
@@ -106,6 +106,16 @@ describe Facter::Resolvers::OsRelease do
 
         expect(result).to eq('opensuse')
       end
+    end
+  end
+
+  context 'when on Oracle Linux' do
+    let(:os_release_content) { load_fixture('os_release_oracle_linux').readlines }
+
+    it 'returns os NAME' do
+      result = Facter::Resolvers::OsRelease.resolve(:name)
+
+      expect(result).to eq('OracleLinux')
     end
   end
 end

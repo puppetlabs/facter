@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe Facter::Resolvers::Networking do
-  subject(:resolver) { Facter::Resolvers::Networking }
+describe Facter::Resolvers::Windows::Networking do
+  subject(:resolver) { Facter::Resolvers::Windows::Networking }
 
   describe '#resolve' do
     let(:logger) { instance_spy(Facter::Log) }

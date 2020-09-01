@@ -1,14 +1,110 @@
+## [4.0.35](https://github.com/puppetlabs/facter/tree/4.0.35) (2020-08-19)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.34...4.0.35)
+
+### Added
+
+- (FACT-2726) Add solaris dmi facts [#2025](https://github.com/puppetlabs/facter/pull/2025) ([florindragos](https://github.com/florindragos))
+- (FACT-2722) Add disks fact for Solaris [#2027](https://github.com/puppetlabs/facter/pull/2027) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+
+### Fixed
+
+- (FACT-2723) --list-*-groups also displays external facts [#2024](https://github.com/puppetlabs/facter/pull/2024) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- (FACT-2742) Exclude net/https when running on jruby FIPS [#2030](https://github.com/puppetlabs/facter/pull/2030) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (FACT-2737) facter uptime shows host uptime inside docker container [#2031](https://github.com/puppetlabs/facter/pull/2031) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (FACT-2672) Fix ssh fact output [#2029](https://github.com/puppetlabs/facter/pull/2029) ([oanatmaria](https://github.com/oanatmaria))
+- (FACT-2402) Exclude fuseblk from filesystems [#2032](https://github.com/puppetlabs/facter/pull/2032) ([oanatmaria](https://github.com/oanatmaria))
+
+
+## [4.0.34](https://github.com/puppetlabs/facter/tree/4.0.34) (2020-08-12)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.33...4.0.34)
+
+### Added
+
+- (FACT-2739) Extend os hierarchy to consider multiple os families [#2016](https://github.com/puppetlabs/facter/pull/2016) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- Add FreeBSD memory facts [#2020](https://github.com/puppetlabs/facter/pull/2020) ([smortex](https://github.com/smortex))
+- Add FreeBSD dmi facts [#2021](https://github.com/puppetlabs/facter/pull/2021) ([smortex](https://github.com/smortex))
+- (FACT-2727) add load averages for Solaris [#2023](https://github.com/puppetlabs/facter/pull/2023) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+
+### Fixed
+
+- (FACT-2714) Fix dhcp on solaris 10 [#2013](https://github.com/puppetlabs/facter/pull/2013) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (FACT-2732) OracleLinux 7 and Scientific Linux 7 OS facts incorrect in Facter 4.0.30 [#2014](https://github.com/puppetlabs/facter/pull/2014) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+
+## [4.0.33](https://github.com/puppetlabs/facter/tree/4.0.33) (2020-08-05)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.32...4.0.33)
+
+### Added
+- \(FACT-2040\) Added solaris memory resolver [\#1999](https://github.com/puppetlabs/facter/pull/1999) ([sebastian-miclea](https://github.com/sebastian-miclea))
+
+### Fixed
+- \(FACT-2735\) virtual not working on EXADATA baremetal [\#2004](https://github.com/puppetlabs/facter/pull/2004) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2736\) networking facts don't work on EXADATA baremetal [\#2008](https://github.com/puppetlabs/facter/pull/2008) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2724\) Confine blocks behave differently with Facter 4, causing spec tests to suddenly fail [\#2010](https://github.com/puppetlabs/facter/pull/2010) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+## [4.0.32](https://github.com/puppetlabs/facter/tree/4.0.32) (2020-07-30)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.31...4.0.32)
+
+### Added
+- \(FACT-2717\) Block external facts [\#1998](https://github.com/puppetlabs/facter/pull/1998) ([florindragos](https://github.com/florindragos))
+
+### Fixed
+- \(FACT-2733\) Fix networking on Fedora 32 [\#2002](https://github.com/puppetlabs/facter/pull/2002) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2734\) Return nil codename if we cannot determine it from /etc/redhat-release [\#2003](https://github.com/puppetlabs/facter/pull/2003) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2699\) Detect augeas from gem if augparse is not available. [\#1993](https://github.com/puppetlabs/facter/pull/1993) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+
+## [4.0.31](https://github.com/puppetlabs/facter/tree/4.0.31) (2020-07-29)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.30...4.0.31)
+
+### Added
+- \(FACT-2718\) Block custom facts [\#1996](https://github.com/puppetlabs/facter/pull/1996) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2230\) Add Aix memory facts [\#1994](https://github.com/puppetlabs/facter/pull/1994) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2220\) Add Aix disks fact [\#1987](https://github.com/puppetlabs/facter/pull/1987) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2708\) Add man pages [\#1984 ](https://github.com/puppetlabs/facter/pull/1984) ([florindragos](https://github.com/florindragos))
+
+### Fixed
+- \(FACT-2710\) Correctly display vmware info [\#1988](https://github.com/puppetlabs/facter/pull/1987) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2702\) Fix system_profiler legacy facts [\#1982](https://github.com/puppetlabs/facter/pull/1982) ([oanatmaria](https://github.com/oanatmaria))
+- Handle Time and Symbol in executable facts [\#1977](https://github.com/puppetlabs/facter/pull/1977) ([gimmyxd](https://github.com/gimmyxd))
+
+## [4.0.30](https://github.com/puppetlabs/facter/tree/4.0.30) (2020-07-15)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.29...4.0.30)
+
+### Added
+- \(FACT-2690\) Added Hyper-V fact for Linux [\#1968](https://github.com/puppetlabs/facter/pull/1968) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- \(FACT-2694\) Add linux openvz fact [\#1970](https://github.com/puppetlabs/facter/pull/1970) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2656\) Add solaris networking facts [\#1947](https://github.com/puppetlabs/facter/pull/1947) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- \(FACT-2689\) Add hypervisors docker fact [\#1950](https://github.com/puppetlabs/facter/pull/1950) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2683\) Added remaining legacy networking facts for OSX [\#1952](https://github.com/puppetlabs/facter/pull/1952) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- \(FACT-2692\) Add hypervisors lxc fact [\#1953](https://github.com/puppetlabs/facter/pull/1953) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2691\) Add kvm fact on linux [\#1955](https://github.com/puppetlabs/facter/pull/1955) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2697\) Add Xen fact [\#1957](https://github.com/puppetlabs/facter/pull/1957) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- \(FACT-2695\) implementation for virtualbox hypervisor fact [\#1956](https://github.com/puppetlabs/facter/pull/1956) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- \(FACT-2693\) Add systemd_nspawn fact [\#1958](https://github.com/puppetlabs/facter/pull/1958) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2696\) Add vmware fact [\#1963](https://github.com/puppetlabs/facter/pull/1963) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+### Fixed
+- \(FACT-2673\) Fix mountpoints logic for osx [\#1971](https://github.com/puppetlabs/facter/pull/1971) ([oanatmaria](https://github.com/oanatmaria))
+- \(maint\) Silent solaris_zones facts on FreeBSD [\#1954](https://github.com/puppetlabs/facter/pull/1954) ([smortex](https://github.com/smortex))
+
 ## [4.0.29](https://github.com/puppetlabs/facter/tree/4.0.29) (2020-07-01)
 
 [Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.28...4.0.29)
 
 ### Added
 - \(FACT-2218\) virtual fact for OSX [\#1945](https://github.com/puppetlabs/facter/pull/1945) ([IrimieBogdan](https://github.com/IrimieBogdan))
-- \(FACT-2232\) Add Aix networking facts [\#1937](https://github.com/puppetlabs/facter-ng/pull/1937) ([oanatmaria](https://github.com/oanatmaria))
+- \(FACT-2232\) Add Aix networking facts [\#1937](https://github.com/puppetlabs/facter/pull/1937) ([oanatmaria](https://github.com/oanatmaria))
 
 ### Fixed
-- \(FACT-2676\) fix os identifier for opensuse-leap [\#1944](https://github.com/puppetlabs/facter-ng/pull/1944) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
-- FACT-2679 Get DHCP for all interfaces on OSX [\#1940](https://github.com/puppetlabs/facter-ng/pull/1940) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- \(FACT-2676\) fix os identifier for opensuse-leap [\#1944](https://github.com/puppetlabs/facter/pull/1944) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- FACT-2679 Get DHCP for all interfaces on OSX [\#1940](https://github.com/puppetlabs/facter/pull/1940) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
 
 ## [4.0.28](https://github.com/puppetlabs/facter/tree/4.0.28) (2020-06-25)
 

@@ -10,7 +10,7 @@ describe Facts::Windows::Ssh do
       end
       let(:value) do
         { 'ecdsa' => { 'fingerprints' =>
-                           { 'sha1' => 'test', 'sha256' => 'test' },
+                         { 'sha1' => 'test', 'sha256' => 'test' },
                        'key' => 'test',
                        'type' => 'ecdsa' } }
       end

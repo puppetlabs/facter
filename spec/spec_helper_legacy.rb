@@ -5,7 +5,7 @@ require 'rspec'
 require 'pathname'
 
 ROOT_DIR = Pathname.new(File.expand_path('../', __dir__)) unless defined?(ROOT_DIR)
-require "#{ROOT_DIR}/lib/custom_facts/core/file_loader"
+require 'facter/custom_facts/core/file_loader'
 
 require "#{ROOT_DIR}/spec/custom_facts/puppetlabs_spec/verbose"
 require "#{ROOT_DIR}/spec/custom_facts/shared_contexts/platform.rb"

@@ -17,7 +17,10 @@ describe Facter::Resolvers::Linux::Memory do
     context 'when there is swap memory' do
       let(:total) { 4_036_680 * 1024 }
       let(:free) { 3_547_792 * 1024 }
-      let(:used) { total - free }
+      let(:buffers) { 4_288 * 1024 }
+      let(:cached) { 298_624 * 1024 }
+      let(:s_reclaimable) { 29_072 * 1024 }
+      let(:used) { total - free - buffers - cached - s_reclaimable }
       let(:swap_total) { 2_097_148 * 1024 }
       let(:swap_free) { 2_097_148 * 1024 }
       let(:swap_used) { swap_total - swap_free }
@@ -63,7 +66,10 @@ describe Facter::Resolvers::Linux::Memory do
     context 'when there is not swap memory' do
       let(:total) { 4_134_510_592 }
       let(:free) { 3_465_723_904 }
-      let(:used) { total - free }
+      let(:buffers) { 2_088 * 1024 }
+      let(:cached) { 445_204 * 1024 }
+      let(:s_reclaimable) { 71_384 * 1024 }
+      let(:used) { total - free - buffers - cached - s_reclaimable }
       let(:fixture_name) { 'meminfo2' }
 
       it 'returns total memory' do

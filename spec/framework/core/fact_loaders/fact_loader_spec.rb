@@ -2,17 +2,21 @@
 
 describe Facter::FactLoader do
   describe '#load' do
-    let(:internal_fact_loader_double) { double(Facter::InternalFactLoader) }
-    let(:external_fact_loader_double) { double(Facter::ExternalFactLoader) }
+    let(:internal_fact_loader_double) { instance_spy(Facter::InternalFactLoader) }
+    let(:external_fact_loader_double) { instance_spy(Facter::ExternalFactLoader) }
 
-    let(:ubuntu_os_name) { double(Facts::Linux::Os::Name) }
-    let(:networking_class) { double(Facts::Windows::NetworkInterfaces) }
+    let(:ubuntu_os_name) { instance_spy(Facts::Linux::Os::Name) }
+    let(:networking_class) { instance_spy(Facts::Windows::NetworkInterfaces) }
 
-    let(:loaded_fact_os_name) { double(Facter::LoadedFact, name: 'os.name', klass: ubuntu_os_name, type: :core) }
-    let(:loaded_fact_networking) do
-      double(Facter::LoadedFact, name: 'network_.*', klass: networking_class, type: :legacy)
+    let(:loaded_fact_os_name) { instance_spy(Facter::LoadedFact, name: 'os.name', klass: ubuntu_os_name, type: :core) }
+    let(:loaded_fact_os_name_legacy) do
+      instance_spy(Facter::LoadedFact, name: 'operatingsystem', klass: ubuntu_os_name,
+                                       type: :legacy)
     end
-    let(:loaded_fact_custom_fact) { double(Facter::LoadedFact, name: 'custom_fact', klass: nil, type: :custom) }
+    let(:loaded_fact_networking) do
+      instance_spy(Facter::LoadedFact, name: 'network_.*', klass: networking_class, type: :legacy)
+    end
+    let(:loaded_fact_custom_fact) { instance_spy(Facter::LoadedFact, name: 'custom_fact', klass: nil, type: :custom) }
 
     before do
       Singleton.__init__(Facter::FactLoader)
@@ -50,7 +54,7 @@ describe Facter::FactLoader do
     it 'blocks one internal fact' do
       options = { blocked_facts: ['os.name'] }
 
-      facts_to_load = [loaded_fact_os_name]
+      facts_to_load = [loaded_fact_os_name, loaded_fact_os_name_legacy]
 
       allow(internal_fact_loader_double).to receive(:core_facts).and_return(facts_to_load)
       allow(external_fact_loader_double).to receive(:custom_facts).and_return([])
@@ -60,17 +64,34 @@ describe Facter::FactLoader do
       expect(loaded_facts.size).to eq(0)
     end
 
-    it 'does not blocks external facts' do
-      options = { custom_facts: true, blocked_facts: ['custom_fact'] }
+    it 'blocks one legacy fact' do
+      options = { blocked_facts: ['operatingsystem'] }
 
-      facts_to_load = [loaded_fact_custom_fact]
+      facts_to_load = [loaded_fact_os_name, loaded_fact_os_name_legacy]
 
-      allow(internal_fact_loader_double).to receive(:core_facts).and_return([])
-      allow(external_fact_loader_double).to receive(:custom_facts).and_return(facts_to_load)
+      allow(internal_fact_loader_double).to receive(:core_facts).and_return(facts_to_load)
+      allow(external_fact_loader_double).to receive(:custom_facts).and_return([])
       allow(external_fact_loader_double).to receive(:external_facts).and_return([])
 
       loaded_facts = Facter::FactLoader.instance.load(options)
-      expect(loaded_facts).to eq(facts_to_load)
+      expect(loaded_facts.size).to eq(1)
+    end
+
+    context 'when blocking custom facts' do
+      before do
+        facts_to_load = [loaded_fact_custom_fact]
+
+        allow(internal_fact_loader_double).to receive(:core_facts).and_return([])
+        allow(external_fact_loader_double).to receive(:custom_facts).and_return(facts_to_load)
+        allow(external_fact_loader_double).to receive(:external_facts).and_return([])
+      end
+
+      it 'blocks one custom fact' do
+        options = { custom_facts: true, blocked_facts: ['custom_fact'] }
+        loaded_facts = Facter::FactLoader.instance.load(options)
+
+        expect(loaded_facts.size).to eq(0)
+      end
     end
 
     it 'loads the same amount of core facts everytime' do

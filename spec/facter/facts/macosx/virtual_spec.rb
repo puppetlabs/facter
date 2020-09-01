@@ -40,7 +40,7 @@ describe Facts::Macosx::Virtual do
       it 'returns resolved fact with true value' do
         expect(fact.call_the_resolver)
           .to be_an_instance_of(Facter::ResolvedFact)
-          .and have_attributes(name: 'virtual', value: nil)
+          .and have_attributes(name: 'virtual', value: 'physical')
 
         fact.call_the_resolver
       end

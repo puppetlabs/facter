@@ -1,0 +1,6 @@
+{"__version": "1", "processes": {"runnable":2,"waiting":14,"swapped-out":0}
+, "memory": {"available-memory":62672436,"free-memory":2633264,"total-page-faults":1972}
+, "paging-rates": {"page-reactivated":0,"paged-in":1,"paged-out":0,"freed":1831,"scanned":841}
+, "device": [{"name":"ad0","transfers":"0"}, {"name":"pa0","transfers":"0"}], "fault-rates": {"interrupts":3495,"system-calls":17391,"context-switches":11777}
+, "cpu-statistics": {"user":" 5","system":" 3","idle":"92"}
+}

@@ -7,12 +7,12 @@ describe Facts::Bsd::LoadAverages do
     let(:value) { { '1m' => 0.01, '5m' => 0.02, '15m' => 0.03 } }
 
     before do
-      allow(Facter::Resolvers::Bsd::LoadAverages).to receive(:resolve).with(:load_averages).and_return(value)
+      allow(Facter::Resolvers::LoadAverages).to receive(:resolve).with(:load_averages).and_return(value)
     end
 
     it 'calls Facter::Resolvers::Bsd::LoadAverages' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Bsd::LoadAverages).to have_received(:resolve).with(:load_averages)
+      expect(Facter::Resolvers::LoadAverages).to have_received(:resolve).with(:load_averages)
     end
 
     it 'returns load_averages fact' do

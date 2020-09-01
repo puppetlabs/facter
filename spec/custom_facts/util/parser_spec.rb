@@ -162,6 +162,21 @@ describe LegacyFacter::Util::Parser do
       expects_script_to_return(cmd, yaml_data, data)
     end
 
+    it 'handles Symbol correctly' do
+      yaml_data = "---\n:one: :two\nthree: four\n"
+      exptected_data = { :one => :two, 'three' => 'four' }
+      expects_script_to_return(cmd, yaml_data, exptected_data)
+    end
+
+    it 'handles Time correctly' do
+      yaml_data = "---\nfirst: 2020-07-15 05:38:12.427678398 +00:00\n"
+      allow(Facter::Core::Execution).to receive(:exec).with(cmd).and_return(yaml_data)
+      allow(File).to receive(:executable?).with(cmd).and_return(true)
+      allow(FileTest).to receive(:file?).with(cmd).and_return(true)
+
+      expect(LegacyFacter::Util::Parser.parser_for(cmd).results['first']).to be_a(Time)
+    end
+
     it 'returns an empty hash when the script returns nil' do
       expects_script_to_return(cmd, nil, {})
     end

@@ -8,13 +8,12 @@ describe Facts::Linux::IsVirtual do
     let(:value) { true }
 
     before do
-      allow(Facter::Resolvers::DockerLxc).to \
-        receive(:resolve).with(:vm).and_return(vm)
+      allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(vm)
     end
 
-    it 'calls Facter::Resolvers::DockerLxc' do
+    it 'calls Facter::Resolvers::Containers' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::DockerLxc).to have_received(:resolve).with(:vm)
+      expect(Facter::Resolvers::Containers).to have_received(:resolve).with(:vm)
     end
 
     it 'returns virtual fact' do
@@ -153,6 +152,22 @@ describe Facts::Linux::IsVirtual do
       end
 
       it 'returns virtual fact as nil' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+          have_attributes(name: 'is_virtual', value: vm)
+      end
+    end
+
+    context 'when product name is not found in the HYPERVISORS_HASH' do
+      let(:vm) { false }
+
+      before do
+        allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Lspci).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return('unknown')
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('unknown')
+      end
+
+      it 'returns virtual fact as physical' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
           have_attributes(name: 'is_virtual', value: vm)
       end

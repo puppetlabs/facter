@@ -50,12 +50,12 @@ describe Facts::Macosx::Networking::Interfaces do
     end
 
     before do
-      allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
+      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
     end
 
-    it 'calls Facter::Resolvers::Macosx::Networking with interfaces' do
+    it 'calls Facter::Resolvers::Networking with interfaces' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:interfaces)
+      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:interfaces)
     end
 
     it 'returns networking.interfaces fact' do

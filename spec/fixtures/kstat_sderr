@@ -1,0 +1,39 @@
+module: sderr                           instance: 0
+name:   sd0,err                         class:    device_error
+        Device Not Ready                0
+        Hard Errors                     0
+        Illegal Request                 1
+        Media Error                     0
+        No Device                       0
+        Non-Aligned Writes              0
+        Predictive Failure Analysis     0
+        Product                         VMware IDE CDR00Revision
+        Recoverable                     0
+        Revision                        1.00
+        Serial No
+        Size                            0
+        Soft Errors                     0
+        Transport Errors                0
+        Vendor                          NECVMWar
+        crtime                          36.863598884
+        snaptime                        10853.889452697
+
+module: sderr                           instance: 1
+name:   sd1,err                         class:    device_error
+        Device Not Ready                0
+        Hard Errors                     0
+        Illegal Request                 8
+        Media Error                     0
+        No Device                       0
+        Non-Aligned Writes              0
+        Predictive Failure Analysis     0
+        Product                         Virtual disk    Revision
+        Recoverable                     0
+        Revision                        1.0
+        Serial No
+        Size                            21474836480
+        Soft Errors                     0
+        Transport Errors                0
+        Vendor                          VMware
+        crtime                          36.668316603
+        snaptime                        10853.889846855

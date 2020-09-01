@@ -3,10 +3,9 @@
 require 'pathname'
 require_relative 'util/api_debugger' if ENV['API_DEBUG']
 
-ROOT_DIR = Pathname.new(File.expand_path('..', __dir__)) unless defined?(ROOT_DIR)
-
-require "#{ROOT_DIR}/lib/framework/core/file_loader"
-require "#{ROOT_DIR}/lib/framework/core/options/options_validator"
+require 'facter/version'
+require 'facter/framework/core/file_loader'
+require 'facter/framework/core/options/options_validator'
 
 module Facter
   class ResolveCustomFactError < StandardError; end
@@ -14,7 +13,6 @@ module Facter
   Options.init
   Log.output(STDOUT)
   @already_searched = {}
-  @trace = false
 
   class << self
     def clear_messages
@@ -197,7 +195,7 @@ module Facter
     #
     # @api public
     def trace?
-      @trace
+      Options[:trace]
     end
 
     # Enable or disable trace
@@ -207,7 +205,7 @@ module Facter
     #
     # @api public
     def trace(bool)
-      @trace = bool
+      Options[:trace] = bool
     end
 
     # Gets the value for a fact. Returns `nil` if no such fact exists.
@@ -228,8 +226,7 @@ module Facter
     #
     # @api public
     def version
-      version_file = ::File.join(ROOT_DIR, 'VERSION')
-      ::File.read(version_file).strip
+      Facter::VERSION
     end
 
     # Gets a hash mapping fact names to their values
@@ -257,7 +254,7 @@ module Facter
       elsif message
         arr << message
       end
-      if @trace
+      if Options[:trace]
         arr << 'backtrace:'
         arr.concat(exception.backtrace)
       end

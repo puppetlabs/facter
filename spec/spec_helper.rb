@@ -14,20 +14,26 @@ require 'open3'
 require 'thor'
 require 'fileutils'
 
-require_relative '../lib/resolvers/base_resolver'
+require_relative '../lib/facter/resolvers/base_resolver'
 
 Dir[ROOT_DIR.join('spec/mocks/*.rb')].sort.each { |file| require file }
 
-require "#{ROOT_DIR}/lib/facter"
-require "#{ROOT_DIR}/lib/framework/cli/cli"
+require 'facter'
+require 'facter/framework/cli/cli'
 
-Dir.glob(File.join('./lib/facts', '/**/*/', '*.rb'), &method(:require))
-Dir.glob(File.join('./lib/resolvers', '/**/*/', '*.rb'), &method(:require))
+Dir.glob(File.join('./lib/facter/facts', '/**/*/', '*.rb'), &method(:require))
+Dir.glob(File.join('./lib/facter/resolvers', '/**/*/', '*.rb'), &method(:require))
 
 # Configure SimpleCov
 SimpleCov.start do
   track_files 'lib/**/*.rb'
   add_filter 'spec'
+end
+
+def colorize(str, color)
+  return str if OsDetector.instance.identifier.eql?(:windows)
+
+  "#{color}#{str}#{Facter::RESET}"
 end
 
 default_coverage = 90

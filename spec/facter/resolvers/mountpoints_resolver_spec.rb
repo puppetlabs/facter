@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::Resolvers::Linux::Mountpoints do
+describe Facter::Resolvers::Mountpoints do
   let(:mount) do
     double(Sys::Filesystem::Mount,
            mount_point: '/', mount_time: nil,
@@ -46,11 +46,11 @@ describe Facter::Resolvers::Linux::Mountpoints do
     allow(stat).to receive(:bytes_available).and_return(stat.blocks_available * stat.fragment_size)
     allow(stat).to receive(:bytes_free).and_return(stat.blocks_free * stat.fragment_size)
     allow(stat).to receive(:bytes_used).and_return(stat.bytes_total - stat.bytes_free)
-    Facter::Resolvers::Linux::Mountpoints.invalidate_cache
+    Facter::Resolvers::Mountpoints.invalidate_cache
   end
 
   it 'correctly builds the mountpoints fact' do
-    result = Facter::Resolvers::Linux::Mountpoints.resolve(:mountpoints)
+    result = Facter::Resolvers::Mountpoints.resolve(:mountpoints)
 
     expect(result).to eq(fact)
   end
@@ -58,7 +58,7 @@ describe Facter::Resolvers::Linux::Mountpoints do
   it 'drops automounts and non-tmpfs mounts under /proc or /sys' do
     allow(Facter::FilesystemHelper).to receive(:read_mountpoints).and_return(ignored_mounts)
 
-    result = Facter::Resolvers::Linux::Mountpoints.resolve(:mountpoints)
+    result = Facter::Resolvers::Mountpoints.resolve(:mountpoints)
     expect(result).to be_empty
   end
 
@@ -68,7 +68,7 @@ describe Facter::Resolvers::Linux::Mountpoints do
     end
 
     it 'looks up the actual device if /dev/root' do
-      result = Facter::Resolvers::Linux::Mountpoints.resolve(:mountpoints)
+      result = Facter::Resolvers::Mountpoints.resolve(:mountpoints)
       expect(result.first[:device]).to eq('/dev/mmcblk0p2')
     end
 
@@ -80,7 +80,7 @@ describe Facter::Resolvers::Linux::Mountpoints do
       end
 
       it 'returns device as nil' do
-        result = Facter::Resolvers::Linux::Mountpoints.resolve(:mountpoints)
+        result = Facter::Resolvers::Mountpoints.resolve(:mountpoints)
         expect(result.first[:device]).to be(nil)
       end
     end

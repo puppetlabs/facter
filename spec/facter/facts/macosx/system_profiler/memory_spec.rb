@@ -19,7 +19,7 @@ describe Facts::Macosx::SystemProfiler::Memory do
     it 'returns a resolved fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'system_profiler.memory', value: value),
-                        an_object_having_attributes(name: 'sp_memory', value: value, type: :legacy))
+                        an_object_having_attributes(name: 'sp_physical_memory', value: value, type: :legacy))
     end
   end
 end

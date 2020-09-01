@@ -7,12 +7,12 @@ describe Facts::Macosx::Networking::Mac do
     let(:value) { '64:5a:ed:ea:c3:25' }
 
     before do
-      allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:mac).and_return(value)
+      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:mac).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Macosx::Networking with :mac' do
+    it 'calls Facter::Resolvers::Networking with :mac' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:mac)
+      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:mac)
     end
 
     it 'returns macaddress fact' do

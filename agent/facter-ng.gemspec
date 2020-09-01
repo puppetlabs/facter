@@ -2,37 +2,28 @@
 
 lib = File.expand_path('../lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require_relative '../config/config'
 
 Gem::Specification.new do |spec|
   spec.name          = 'facter-ng'
-  spec.version       = FACTER_VERSION
+  spec.version       = '4.0.35'
   spec.authors       = ['Puppet']
   spec.email         = ['team-nw@puppet.com']
 
   spec.summary       = 'New version of Facter'
   spec.description   = 'New version of Facter'
 
-  # Specify which files should be added to the gem when it is released.
-  # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
-  spec.files = if system('git --help > /dev/null')
-                 `git ls-files -z`.split("\x0")
-               else
-                 Dir.glob('**/*')
-               end
+  spec.files = Dir['bin/facter-ng'] +
+               Dir['lib/**/*.rb'] +
+               Dir['lib/**/*.json'] +
+               Dir['lib/**/*.conf'] +
+               Dir['agent/**/*'] +
+               Dir['lib/**/*.erb']
 
   spec.required_ruby_version = '~> 2.3'
-  spec.files.reject! do |f|
-    f.match(%r{^(test|spec|features)/})
-  end
-
-  spec.files.reject! do |f|
-    f == 'bin/facter'
-  end
 
   spec.bindir = 'bin'
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
-  spec.require_paths = ['agent/lib']
+  spec.require_paths = ['agent/lib', 'lib']
 
   spec.add_development_dependency 'bundler', '~> 2.0'
   spec.add_development_dependency 'coveralls', '~> 0.8.23'

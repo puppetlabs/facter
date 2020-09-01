@@ -29,15 +29,15 @@ describe Facts::Linux::Partitions do
 
     context 'when resolver returns hash' do
       before do
-        allow(Facter::Resolvers::Linux::Mountpoints).to receive(:resolve).with(:mountpoints)
-                                                                         .and_return(mountpoints_resolver_output)
+        allow(Facter::Resolvers::Mountpoints).to receive(:resolve).with(:mountpoints)
+                                                                  .and_return(mountpoints_resolver_output)
         allow(Facter::Resolvers::Partitions).to receive(:resolve).with(:partitions)
                                                                  .and_return(partitions_resolver_output)
       end
 
-      it 'calls Facter::Resolvers::Linux::Mountpoints' do
+      it 'calls Facter::Resolvers::Mountpoints' do
         fact.call_the_resolver
-        expect(Facter::Resolvers::Linux::Mountpoints).to have_received(:resolve).with(:mountpoints)
+        expect(Facter::Resolvers::Mountpoints).to have_received(:resolve).with(:mountpoints)
       end
 
       it 'calls Facter::Resolvers::Partitions' do
@@ -53,7 +53,7 @@ describe Facts::Linux::Partitions do
 
     context 'when mountpoints resolver returns nil' do
       before do
-        allow(Facter::Resolvers::Linux::Mountpoints).to receive(:resolve).with(:mountpoints).and_return(nil)
+        allow(Facter::Resolvers::Mountpoints).to receive(:resolve).with(:mountpoints).and_return(nil)
         allow(Facter::Resolvers::Partitions).to receive(:resolve).with(:partitions)
                                                                  .and_return(partitions_resolver_output)
       end
@@ -66,8 +66,8 @@ describe Facts::Linux::Partitions do
 
     context 'when partitions resolver returns empty hash' do
       before do
-        allow(Facter::Resolvers::Linux::Mountpoints).to receive(:resolve).with(:mountpoints)
-                                                                         .and_return(mountpoints_resolver_output)
+        allow(Facter::Resolvers::Mountpoints).to receive(:resolve).with(:mountpoints)
+                                                                  .and_return(mountpoints_resolver_output)
         allow(Facter::Resolvers::Partitions).to receive(:resolve).with(:partitions).and_return({})
       end
 

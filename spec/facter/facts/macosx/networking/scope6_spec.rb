@@ -7,18 +7,19 @@ describe Facts::Macosx::Networking::Scope6 do
     let(:value) { 'link' }
 
     before do
-      allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:scope6).and_return(value)
+      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:scope6).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Macosx::Networking with scope6' do
+    it 'calls Facter::Resolvers::Networking with scope6' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:scope6)
+      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:scope6)
     end
 
     it 'returns scope6 fact' do
       expect(fact.call_the_resolver)
-        .to be_an_instance_of(Facter::ResolvedFact)
-        .and have_attributes(name: 'networking.scope6', value: value)
+        .to be_an_instance_of(Array)
+        .and contain_exactly(an_object_having_attributes(name: 'networking.scope6', value: value),
+                             an_object_having_attributes(name: 'scope6', value: value))
     end
 
     context 'when scope6 can not be resolved' do
@@ -26,8 +27,9 @@ describe Facts::Macosx::Networking::Scope6 do
 
       it 'returns nil' do
         expect(fact.call_the_resolver)
-          .to be_an_instance_of(Facter::ResolvedFact)
-          .and have_attributes(name: 'networking.scope6', value: value)
+          .to be_an_instance_of(Array)
+          .and contain_exactly(an_object_having_attributes(name: 'networking.scope6', value: value),
+                               an_object_having_attributes(name: 'scope6', value: value))
       end
     end
   end

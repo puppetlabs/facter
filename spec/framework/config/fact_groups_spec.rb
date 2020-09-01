@@ -23,7 +23,8 @@ describe Facter::FactGroups do
     it 'sets @groups_file_path to default path' do
       blk_list = fact_groups.new
 
-      expect(blk_list.instance_variable_get(:@groups_file_path)).to eq(File.join(ROOT_DIR, 'fact_groups.conf'))
+      expect(blk_list.instance_variable_get(:@groups_file_path))
+        .to eq(File.join(ROOT_DIR, 'lib', 'facter', 'framework', 'config', '..', '..', 'fact_groups.conf'))
     end
 
     it 'merges groups from facter.conf' do
@@ -33,9 +34,20 @@ describe Facter::FactGroups do
       expect(fct_grp.instance_variable_get(:@groups)).to include('foo' => 'bar')
     end
 
+    it 'merges external facts' do
+      external_path = '/path/to/external'
+      allow(Facter::Options).to receive(:external_dir).and_return([external_path])
+      allow(Dir).to receive(:exist?).with(external_path).and_return true
+      allow(Dir).to receive(:entries).with(external_path).and_return(['.', '..', 'external.sh'])
+      fct_grp = fact_groups.new
+
+      expect(fct_grp.instance_variable_get(:@groups)).to include('external.sh' => nil)
+    end
+
     it 'merges groups from facter.conf with default group override' do
-      allow(Hocon).to receive(:load).with(File.join(ROOT_DIR, 'fact_groups.conf'))
-                                    .and_return('kernel' => %w[kernel kernelversion])
+      allow(Hocon).to receive(:load)
+        .with(File.join(ROOT_DIR, 'lib', 'facter', 'framework', 'config', '..', '..', 'fact_groups.conf'))
+        .and_return('kernel' => %w[kernel kernelversion])
       allow(config_reader).to receive(:fact_groups).and_return('kernel' => 'foo')
       fct_grp = fact_groups.new
 
@@ -48,7 +60,7 @@ describe Facter::FactGroups do
       before do
         allow(File).to receive(:readable?).and_return(true)
         allow(Hocon).to receive(:load)
-          .with(File.join(ROOT_DIR, 'fact_groups.conf'))
+          .with(File.join(ROOT_DIR, 'lib', 'facter', 'framework', 'config', '..', '..', 'fact_groups.conf'))
           .and_return('blocked_group' => %w[fact1 fact2])
         allow(config_reader).to receive(:block_list).and_return(%w[blocked_group blocked_fact])
       end
@@ -81,7 +93,7 @@ describe Facter::FactGroups do
       before do
         allow(File).to receive(:readable?).and_return(true)
         allow(Hocon).to receive(:load)
-          .with(File.join(ROOT_DIR, 'fact_groups.conf'))
+          .with(File.join(ROOT_DIR, 'lib', 'facter', 'framework', 'config', '..', '..', 'fact_groups.conf'))
           .and_return('operating system' => %w[os os.name])
 
         allow(config_reader).to receive(:ttls).and_return(['operating system' => '30 minutes'])
@@ -113,7 +125,7 @@ describe Facter::FactGroups do
       before do
         allow(File).to receive(:readable?).and_return(true)
         allow(Hocon).to receive(:load)
-          .with(File.join(ROOT_DIR, 'fact_groups.conf'))
+          .with(File.join(ROOT_DIR, 'lib', 'facter', 'framework', 'config', '..', '..', 'fact_groups.conf'))
           .and_return('operating system' => %w[os os.name])
 
         allow(config_reader).to receive(:ttls).and_return(['operating system' => '30 minutes'])

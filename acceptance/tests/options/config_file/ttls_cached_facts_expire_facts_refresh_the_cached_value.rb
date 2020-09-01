@@ -33,28 +33,27 @@ EOM
       cached_fact_file = File.join(cached_facts_dir, cached_factname)
 
       # Setup facter conf
-      on(agent, "mkdir -p '#{config_dir}'")
+      agent.mkdir_p(config_dir)
       create_remote_file(agent, config_file, config)
 
       teardown do
-        on(agent, "rm -rf '#{config_dir}'", :acceptable_exit_codes => [0, 1])
-        on(agent, "rm -rf '#{cached_facts_dir}'", :acceptable_exit_codes => [0, 1])
+        agent.rm_rf(config_dir)
+        agent.rm_rf(cached_facts_dir)
       end
 
       step "should refresh an expired cached fact" do
         # Setup a known cached fact
-        on(agent, "rm -rf '#{cached_facts_dir}'", :acceptable_exit_codes => [0, 1])
+        agent.rm_rf(cached_facts_dir)
         on(agent, facter(""))
         create_remote_file(agent, cached_fact_file, cached_fact_content)
         # Change the modified date to sometime in the far distant past
-        on(agent, "touch -mt 198001010000 '#{cached_fact_file}'")
+        agent.modified_at(cached_fact_file, '198001010000')
         # Force facter to recache
         on(agent, facter("#{cached_factname}"))
 
         # Read cached fact file content
-        on(agent, "cat #{cached_fact_file}", :acceptable_exit_codes => [0]) do |cat_output|
-          assert_no_match(/#{cached_fact_value}/, cat_output.stdout, "Expected cached fact file to be refreshed")
-        end
+        cat_output = agent.cat(cached_fact_file)
+        assert_no_match(/#{cached_fact_value}/, cat_output.strip, "Expected cached fact file to be refreshed")
       end
     end
   end

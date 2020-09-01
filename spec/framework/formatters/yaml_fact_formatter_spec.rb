@@ -15,6 +15,12 @@ describe Facter::YamlFactFormatter do
     instance_spy(Facter::ResolvedFact, name: 'os.architecture', value: 'x86_64',
                                        user_query: user_query3, filter_tokens: [], type: :core)
   end
+
+  let(:float_fact) do
+    instance_spy(Facter::ResolvedFact, name: 'memory', value: 1024.0,
+                                       user_query: '', filter_tokens: [], type: :core)
+  end
+
   let(:user_query1) { '' }
   let(:user_query2) { '' }
   let(:user_query3) { '' }
@@ -59,6 +65,15 @@ describe Facter::YamlFactFormatter do
     let(:resolved_fact_list) { [win_path] }
 
     it 'formats quoted path with double escaped backslashes' do
+      expect(yaml_formatter.format(resolved_fact_list)).to eq(expected_output)
+    end
+  end
+
+  context 'when resolving float numbers' do
+    let(:resolved_fact_list) { [float_fact] }
+    let(:expected_output) { "memory: 1024.0\n" }
+
+    it 'does not use quotes' do
       expect(yaml_formatter.format(resolved_fact_list)).to eq(expected_output)
     end
   end

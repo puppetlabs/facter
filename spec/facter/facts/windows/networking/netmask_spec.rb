@@ -7,12 +7,12 @@ describe Facts::Windows::Networking::Netmask do
     let(:value) { '255.255.240.0' }
 
     before do
-      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:netmask).and_return(value)
+      allow(Facter::Resolvers::Windows::Networking).to receive(:resolve).with(:netmask).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Networking' do
+    it 'calls Facter::Resolvers::Windows::Networking' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:netmask)
+      expect(Facter::Resolvers::Windows::Networking).to have_received(:resolve).with(:netmask)
     end
 
     it 'returns netmask for ipv4 ip address fact' do

@@ -22,7 +22,7 @@ describe Facts::Linux::MtuInterfaces do
     end
   end
 
-  describe '#call_the_resolver when resolver reeturns nil' do
+  describe '#call_the_resolver when resolver returns nil' do
     let(:interfaces) { nil }
 
     it 'returns nil' do

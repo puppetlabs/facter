@@ -79,5 +79,15 @@ describe Facter::Resolvers::SshResolver do
         expect(Facter::Resolvers::SshResolver.resolve(:ssh)).to eq([rsa_result, ed25519_result])
       end
     end
+
+    context 'when ssh fails to be retrieved' do
+      before do
+        paths.each { |path| allow(File).to receive(:directory?).with(path).and_return(false) }
+      end
+
+      it 'returns empty array' do
+        expect(Facter::Resolvers::SshResolver.resolve(:ssh)).to eq([])
+      end
+    end
   end
 end

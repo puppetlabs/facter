@@ -7,12 +7,12 @@ describe Facts::Macosx::Networking::Netmask do
     let(:value) { '255.255.255.0' }
 
     before do
-      allow(Facter::Resolvers::Macosx::Networking).to receive(:resolve).with(:netmask).and_return(value)
+      allow(Facter::Resolvers::Networking).to receive(:resolve).with(:netmask).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Macosx::Networking with :netmask' do
+    it 'calls Facter::Resolvers::Networking with :netmask' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::Networking).to have_received(:resolve).with(:netmask)
+      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:netmask)
     end
 
     it 'returns the netmask fact' do

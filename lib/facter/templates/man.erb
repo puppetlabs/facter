@@ -1,0 +1,122 @@
+<%# encoding: UTF-8%>
+SYNOPSIS
+--------
+  facter [options] [query] [query] [...]
+
+DESCRIPTION
+-----------
+Collect and display facts about the current system. The library behind Facter is easy to extend, making Facter an easy way to collect information about a system.
+
+If no queries are given, then all facts will be returned.
+
+Many of the command line options can also be set via the HOCON config file. This file can also be used to block or cache certain fact groups.
+
+OPTIONS
+-------
+<% @Facter::Cli.class_options.each do |name, option| -%><% next if option.hide%>
+  * `<%= option.aliases[0] + '`, `' if option.aliases.any? %>--<%= 'no-' if negate_options.include?(name.to_s)%><%= name.to_s.gsub('_','-') %>`:
+
+    <%= option.description %>
+
+<% end -%>
+
+FILES
+-----
+<em>/etc/puppetlabs/facter/facter.conf</em>
+
+A HOCON config file that can be used to specify directories for custom and external facts, set various command line options, and specify facts to block. See example below for details, or visit the GitHub README.
+
+EXAMPLES
+--------
+Display all facts:
+
+```
+$ facter
+disks => {
+  sda => {
+    model => "Virtual disk",
+    size => "8.00 GiB",
+    size_bytes => 8589934592,
+    vendor => "ExampleVendor"
+  }
+}
+dmi => {
+  bios => {
+    release_date => "06/23/2013",
+    vendor => "Example Vendor",
+    version => "6.00"
+  }
+}
+[\.\.\.]
+```
+
+Display a single structured fact:
+
+```
+$ facter processors
+{
+  count => 2,
+  isa => "x86_64",
+  models => [
+    "Intel(R) Xeon(R) CPU E5-2680 v2 @ 2.80GHz",
+    "Intel(R) Xeon(R) CPU E5-2680 v2 @ 2.80GHz"
+  ],
+  physicalcount => 2
+}
+```
+
+Display a single fact nested within a structured fact:
+
+```
+$ facter processors.isa
+x86_64
+```
+
+Display a single legacy fact. Note that non-structured facts existing in previous versions of Facter are still available,
+but are not displayed by default due to redundancy with newer structured facts:
+
+```
+$ facter processorcount
+2
+```
+
+Format facts as JSON:
+
+```
+$ facter \-\-json os.name os.release.major processors.isa
+{
+  "os.name": "Ubuntu",
+  "os.release.major": "14.04",
+  "processors.isa": "x86_64"
+}
+```
+
+An example config file.
+
+```
+# always loaded (CLI and as Ruby module)
+global : {
+    external-dir : "~/external/facts",
+    custom-dir   :  [
+       "~/custom/facts",
+       "~/custom/facts/more-facts"
+    ],
+    no-external-facts : false,
+    no-custom-facts   : false,
+    no-ruby           : false
+}
+# loaded when running from the command line
+cli : {
+    debug     : false,
+    trace     : true,
+    verbose   : false,
+    log-level : "info"
+}
+# always loaded, fact-sepcific configuration
+facts : {
+    # for valid blocklist entries, use --list-block-groups
+    blocklist : [ "file system", "EC2" ],
+    # for valid time-to-live entries, use --list-cache-groups
+    ttls : [ { "timezone" : 30 days } ]
+}
+```
