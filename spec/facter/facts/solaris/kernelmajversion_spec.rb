@@ -22,9 +22,16 @@ describe Facts::Solaris::Kernelmajversion do
   end
 
   describe '#call_the_resolver' do
-    context 'when full version is separated by . delimeter' do
+    context 'when on Solaris 11.4' do
       let(:resolver_value) { '11.4.0.15.0' }
       let(:fact_value) { '11.4' }
+
+      include_examples 'kernelmajversion fact expectation'
+    end
+
+    context 'when on Solaris 11.3' do
+      let(:resolver_value) { '11.3' }
+      let(:fact_value) { '11' }
 
       include_examples 'kernelmajversion fact expectation'
     end
