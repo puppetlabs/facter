@@ -14,6 +14,7 @@
 - (FACT-2728) Added hypervisors fact for Solaris [#2045](https://github.com/puppetlabs/facter/pull/2045) ([sebastian-miclea](https://github.com/sebastian-miclea))
 - (FACT-2752) Added serialnumber fact for AIX [#2052](https://github.com/puppetlabs/facter/pull/2052) ([sebastian-miclea](https://github.com/sebastian-miclea))
 - (FACT-2729) Add Solaris is_virtual fact [#2056](https://github.com/puppetlabs/facter/pull/2056) ([oanatmaria](https://github.com/oanatmaria))
+- (FACT-2773) Added board_asset_tag fact for linux [#2059](https://github.com/puppetlabs/facter/pull/2059) ([sebastian-miclea](https://github.com/sebastian-miclea))
 
 ### Fixed
 
