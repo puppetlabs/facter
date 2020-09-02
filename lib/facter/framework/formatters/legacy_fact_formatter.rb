@@ -26,7 +26,8 @@ module Facter
       pretty_json = hash_to_facter_format(fact_collection)
 
       pretty_json = remove_enclosing_accolades(pretty_json)
-      remove_comma_and_quotation(pretty_json)
+      pretty_json = remove_comma_and_quotation(pretty_json)
+      handle_newlines(pretty_json)
     end
 
     def format_for_multiple_user_queries(user_queries, resolved_facts)
@@ -38,6 +39,7 @@ module Facter
       pretty_json = hash_to_facter_format(facts_to_display)
       pretty_json = remove_enclosing_accolades(pretty_json)
       pretty_json = remove_comma_and_quotation(pretty_json)
+      pretty_json = handle_newlines(pretty_json)
 
       @log.debug('Remove quotes from value if value is a string')
       pretty_json.gsub(/^(\S*) => \"(.*)\"/, '\1 => \2')
@@ -82,6 +84,11 @@ module Facter
 
       @log.debug('remove comas from query results')
       pretty_fact_json.gsub(/^},/, '}')
+    end
+
+    def handle_newlines(pretty_fact_json)
+      @log.debug('Convert newline characters to actual newlines')
+      pretty_fact_json.gsub('\n', "\n")
     end
 
     def remove_comma_and_quotation(output)

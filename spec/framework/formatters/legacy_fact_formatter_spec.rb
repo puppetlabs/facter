@@ -248,4 +248,16 @@ describe Facter::LegacyFactFormatter do
         .to eq('C:\\Program Files\\App => bin_dir')
     end
   end
+
+  context 'when fact value contains newline' do
+    let(:resolved_fact) do
+      instance_spy(Facter::ResolvedFact, name: 'custom_fact', value: 'value1 \n value2',
+                                         user_query: '', filter_tokens: [], type: :core)
+    end
+
+    it 'formats the fact correctly' do
+      expect(legacy_formatter.format([resolved_fact]))
+        .to eq("custom_fact => value1 \n value2")
+    end
+  end
 end
