@@ -84,7 +84,9 @@ module LegacyFacter
           parser = LegacyFacter::Util::Parser.parser_for(fact.file)
           next if parser.nil?
 
-          data = parser.results
+          data = nil
+          fact_name = File.basename(fact.file)
+          Facter::Framework::Benchmarking::Timer.measure(fact_name) { data = parser.results }
 
           if data == false
             LegacyFacter.warn "Could not interpret fact file #{fact.file}"

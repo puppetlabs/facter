@@ -37,7 +37,7 @@ module Facter
         begin
           fact = CoreFact.new(searched_fact)
           fact_value = nil
-          Facter::Framework::Benchmarking::Timer.measure_for_fact(searched_fact.name) { fact_value = fact.create }
+          Facter::Framework::Benchmarking::Timer.measure(searched_fact.name) { fact_value = fact.create }
           resolved_facts << fact_value unless fact_value.nil?
         rescue StandardError => e
           @@log.log_exception(e)
