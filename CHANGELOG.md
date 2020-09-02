@@ -1,3 +1,34 @@
+## [4.0.36](https://github.com/puppetlabs/facter/tree/4.0.36) (2020-09-02)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.35...4.0.36)
+
+### Added
+
+- (FACT-2747) Add missing legacy facts on all platforms [#2034](https://github.com/puppetlabs/facter/pull/2034) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (FACT-2721) Added Solaris virtual fact [#2033](https://github.com/puppetlabs/facter/pull/2033) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- (FACT-2745) Add Linux xen fact [#2040](https://github.com/puppetlabs/facter/pull/2040) ([oanatmaria](https://github.com/oanatmaria))
+- (FACT-2740) Add Gce fact [#2035](https://github.com/puppetlabs/facter/pull/2035) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- (FACT-2743) Added LDom fact for solaris [#2041](https://github.com/puppetlabs/facter/pull/2041) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- (FACT-2296) Added fact group for legacy facts [#2047](https://github.com/puppetlabs/facter/pull/2047) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- (FACT-2753) Resolve facts sequentially. [#2050](https://github.com/puppetlabs/facter/pull/2050) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (FACT-2728) Added hypervisors fact for Solaris [#2045](https://github.com/puppetlabs/facter/pull/2045) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- (FACT-2752) Added serialnumber fact for AIX [#2052](https://github.com/puppetlabs/facter/pull/2052) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- (FACT-2729) Add Solaris is_virtual fact [#2056](https://github.com/puppetlabs/facter/pull/2056) ([oanatmaria](https://github.com/oanatmaria))
+
+### Fixed
+
+- (FACT-2454) fix how used memory is calculated [#2038](https://github.com/puppetlabs/facter/pull/2038) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- (FACT-2747-scope6) Allow scope6 to be blocked on all platforms [#2037](https://github.com/puppetlabs/facter/pull/2037) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (maint) Add nil check for ec2 facts. [#2042](https://github.com/puppetlabs/facter/pull/2042) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (maint) Correctly initialise logger. [#2043](https://github.com/puppetlabs/facter/pull/2043) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (FACT-2747) Add ssh legacy facts. [#2044](https://github.com/puppetlabs/facter/pull/2044) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (FACT-2561) Fix blocking mechanism [#2046](https://github.com/puppetlabs/facter/pull/2046) ([oanatmaria](https://github.com/oanatmaria))
+- (FACT-2741) Fix double quotes for numbers in yaml formatter [#2053](https://github.com/puppetlabs/facter/pull/2053) ([florindragos](https://github.com/florindragos))
+- (FACT-2754) Add os.distro release legacy facts [#2055](https://github.com/puppetlabs/facter/pull/2055) ([oanatmaria](https://github.com/oanatmaria))
+- (FACT-2771) Fix Solaris kernelmajversion fact [#2057](https://github.com/puppetlabs/facter/pull/2057) ([oanatmaria](https://github.com/oanatmaria))
+- (FACT-2457) Display newlines in values [#2058](https://github.com/puppetlabs/facter/pull/2058) ([florindragos](https://github.com/florindragos))
+
+
 ## [4.0.35](https://github.com/puppetlabs/facter/tree/4.0.35) (2020-08-19)
 
 [Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.34...4.0.35)
