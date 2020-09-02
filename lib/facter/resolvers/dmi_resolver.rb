@@ -12,6 +12,7 @@ module Facter
           # :bios_vendor
           # :bios_date
           # :bios_version
+          # :board_asset_tag
           # :board_vendor
           # :board_serial
           # :board_name
@@ -29,9 +30,9 @@ module Facter
           end
 
           def read_facts(fact_name)
-            files = %w[bios_date bios_vendor bios_version board_vendor board_name board_serial
-                       chassis_asset_tag chassis_type sys_vendor product_name product_serial
-                       product_uuid]
+            files = %w[bios_date bios_vendor bios_version board_asset_tag board_vendor board_name
+                       board_serial chassis_asset_tag chassis_type sys_vendor product_name
+                       product_serial product_uuid]
             return unless File.directory?('/sys/class/dmi')
 
             file_content = Util::FileHelper.safe_read("/sys/class/dmi/id/#{fact_name}", nil)
