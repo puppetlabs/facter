@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 require 'benchmark'
 
 module Facter
@@ -20,5 +21,3 @@ module Facter
     end
   end
 end
-
-
