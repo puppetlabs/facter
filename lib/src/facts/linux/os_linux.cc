@@ -55,8 +55,12 @@ namespace facter { namespace facts { namespace linux {
         }
 
         if (is_regular_file(release_file::debian, ec)) {
-            if (distro_id == os::ubuntu || distro_id == os::linux_mint) {
-                return distro_id;
+            if (distro_id == os::ubuntu) {
+                return os::ubuntu;
+            }
+            // LinuxMint 20 shows distro_id to be Linuxmint instead of LinuxMint
+            if (boost::iequals(distro_id, string(os::linux_mint))) {
+                return os::linux_mint;
             }
             return os::debian;
         }
