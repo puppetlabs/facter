@@ -14,14 +14,14 @@ module Facter
           end
 
           def query_cudv(fact_name)
-            @fact_list[:partitions] = {}
-
             odmquery = Facter::ODMQuery.new
             odmquery.equals('PdDvLn', 'logical_volume/lvsubclass/lvtype')
 
             result = odmquery.execute
 
             return unless result
+
+            @fact_list[:partitions] = {}
 
             result.each_line do |line|
               next unless line.include?('name')

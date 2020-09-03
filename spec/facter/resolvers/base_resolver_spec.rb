@@ -38,7 +38,7 @@ describe Facter::Resolvers::BaseResolver do
 
       resolver.invalidate_cache
 
-      expect(resolver.resolve('fact2')).to eq('fact2' => 'value')
+      expect(resolver.resolve('fact2')).to eq('value')
     end
   end
 
@@ -89,6 +89,24 @@ describe Facter::Resolvers::BaseResolver do
       it 'sets the fact to nil' do
         expect(resolver.resolve(fact)).to eq(nil)
       end
+    end
+  end
+
+  describe '#validate_resolution' do
+    before do
+      allow(resolver).to receive(:validate_resolution)
+    end
+
+    it 'sets the fact to nil if undefined' do
+      resolver.validate_resolution('unresolved_fact')
+      expect(resolver.resolve('unresolved_fact')).to be_nil
+    end
+
+    it 'does not overwrite values' do
+      resolver.resolve('my_fact')
+      resolver.validate_resolution('my_fact')
+
+      expect(resolver.post_resolve('my_fact')).to eq({ 'my_fact' => 'value' })
     end
   end
 
