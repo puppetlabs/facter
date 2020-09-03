@@ -108,6 +108,11 @@ module Facter
                  aliases: '-p',
                  desc: 'Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.'
 
+    class_option :timing,
+                 type: :boolean,
+                 aliases: '-t',
+                 desc: 'Show how much time it took to resolve each fact'
+
     desc '--man', 'Manual', hide: true
     map ['--man'] => :man
     def man(*args)
