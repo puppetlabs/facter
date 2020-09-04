@@ -1,0 +1,7 @@
+Usage
+=====
+
+  puppet facts show [options] [query] [query] [...]
+
+Options
+=======

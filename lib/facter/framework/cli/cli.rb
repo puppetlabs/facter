@@ -62,23 +62,23 @@ module Facter
                  type: :string,
                  desc: 'Set logging level. Supported levels are: none, trace, debug, info, warn, error, and fatal.'
 
-    class_option :block,
+    class_option :no_block,
                  type: :boolean,
                  desc: 'Disable fact blocking.'
 
-    class_option :cache,
+    class_option :no_cache,
                  type: :boolean,
                  desc: 'Disable loading and refreshing facts from the cache'
 
-    class_option :custom_facts,
+    class_option :no_custom_facts,
                  type: :boolean,
                  desc: 'Disable custom facts.'
 
-    class_option :external_facts,
+    class_option :'no-external_facts',
                  type: :boolean,
                  desc: 'Disable external facts.'
 
-    class_option :ruby,
+    class_option :no_ruby,
                  type: :boolean,
                  desc: 'Disable loading Ruby, facts requiring Ruby, and custom facts.'
 
@@ -90,9 +90,19 @@ module Facter
                  type: :boolean,
                  desc: 'Enable verbose (info) output.'
 
+    class_option :puppet,
+                 type: :boolean,
+                 aliases: '-p',
+                 desc: 'Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.'
+
     class_option :show_legacy,
                  type: :boolean,
                  desc: 'Show legacy facts when querying all facts.'
+
+    class_option :version,
+                 type: :string,
+                 aliases: '-v',
+                 desc: 'Print the version and exit.'
 
     class_option :yaml,
                  aliases: '-y',
@@ -102,11 +112,6 @@ module Facter
     class_option :strict,
                  type: :boolean,
                  desc: 'Enable more aggressive error reporting.'
-
-    class_option :puppet,
-                 type: :boolean,
-                 aliases: '-p',
-                 desc: 'Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.'
 
     desc '--man', 'Manual', hide: true
     map ['--man'] => :man
@@ -133,7 +138,7 @@ module Facter
     desc 'arg_parser', 'Parse arguments', hide: true
     def arg_parser(*args)
       # ignore unknown options
-      args.reject!{|arg| arg.start_with?('-') }
+      args.reject! { |arg| arg.start_with?('-') }
 
       output, _status = Facter.to_user_output(@options, *args)
 
@@ -172,45 +177,45 @@ module Facter
 
     desc 'help', 'Help for all arguments'
     def help(*args)
-      # super
-      class_options = Cli.class_options
+      help_string = +''
+      help_string << help_header(args)
+      help_string << help_options
+    end
 
-      s = StringIO.new
+    no_commands do
+      def help_header(args)
+        path = File.join(File.dirname(__FILE__), '../../')
 
-      if args.include?(:puppet)
-        s << 'Usage
-=====
-
-  puppet facts ps [options] [query] [query] [...]
-
-Options
-======='
-      else
-        s << 'Synopsis
-========
-
-Collect and display facts about the system.
-
-Usage
-=====
-
-  facter [options] [query] [query] [...]
-
-Options
-======='
+        if args.include?(:puppet)
+          Util::FileHelper.safe_read("#{path}fixtures/puppet_help_header")
+        else
+          Util::FileHelper.safe_read("#{path}fixtures/facter_help_header")
+        end
       end
 
-      s << "\n"
+      def help_options
+        help_options = +''
+        class_options = Cli.class_options
+        class_options.each do |class_option|
+          option = class_option[1]
+          next if option.hide
 
-      class_options.each do |class_option|
-        s << class_option[1].aliases.join(',').rjust(10)
-        s << ' '
-        s << "[--#{ class_option[1].name }]".ljust(30)
-        s << " #{class_option[1].description}"
-        s << "\n"
+          help_options << build_option(option)
+        end
+
+        help_options
       end
 
-      s.string
+      def build_option(option)
+        help_option = +''
+        help_option << option.aliases.join(',').rjust(10)
+        help_option << ' '
+        help_option << "[--#{option.name}]".ljust(30)
+        help_option << " #{option.description}"
+        help_option << "\n"
+
+        help_option
+      end
     end
 
     def self.exit_on_failure?

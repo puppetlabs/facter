@@ -44,14 +44,22 @@ module Facter
         options
       end
 
-      def ruby=(bool)
-        if bool == true
+      def no_ruby=(bool)
+        if bool == false
           @ruby = true
         else
           @ruby = false
           @custom_facts = false
           @blocked_facts << 'ruby'
         end
+      end
+
+      def no_block=(bool)
+        @block = !bool
+      end
+
+      def no_cache=(bool)
+        @cache = !bool
       end
 
       def external_dir
@@ -98,8 +106,8 @@ module Facter
         end
       end
 
-      def custom_facts=(bool)
-        if bool == true
+      def no_custom_facts=(bool)
+        if bool == false
           @custom_facts = true
           @ruby = true
         else
