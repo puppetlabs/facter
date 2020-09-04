@@ -24,7 +24,12 @@ module Facter
       processed_arguments = CliLauncher.prepare_arguments(args, nil)
 
       cli = Facter::Cli.new([], processed_arguments)
-      cli.invoke(:arg_parser)
+
+      if cli.options[:help]
+        cli.invoke(:help, [:puppet])
+      else
+        cli.invoke(:arg_parser)
+      end
     end
 
     def clear_messages

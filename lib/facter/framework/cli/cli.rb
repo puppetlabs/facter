@@ -5,8 +5,6 @@ require 'thor'
 
 module Facter
   class Cli < Thor
-    check_unknown_options!
-
     class_option :color,
                  type: :boolean,
                  desc: 'Enable color output.'
@@ -134,6 +132,9 @@ module Facter
 
     desc 'arg_parser', 'Parse arguments', hide: true
     def arg_parser(*args)
+      # ignore unknown options
+      args.reject!{|arg| arg.start_with?('-') }
+
       output, _status = Facter.to_user_output(@options, *args)
 
       output
@@ -167,6 +168,49 @@ module Facter
       cache_groups.gsub!(/:\s*\n/, "\n")
 
       puts cache_groups
+    end
+
+    desc 'help', 'Help for all arguments'
+    def help(*args)
+      # super
+      class_options = Cli.class_options
+
+      s = StringIO.new
+
+      if args.include?(:puppet)
+        s << 'Usage
+=====
+
+  puppet facts ps [options] [query] [query] [...]
+
+Options
+======='
+      else
+        s << 'Synopsis
+========
+
+Collect and display facts about the system.
+
+Usage
+=====
+
+  facter [options] [query] [query] [...]
+
+Options
+======='
+      end
+
+      s << "\n"
+
+      class_options.each do |class_option|
+        s << class_option[1].aliases.join(',').rjust(10)
+        s << ' '
+        s << "[--#{ class_option[1].name }]".ljust(30)
+        s << " #{class_option[1].description}"
+        s << "\n"
+      end
+
+      s.string
     end
 
     def self.exit_on_failure?

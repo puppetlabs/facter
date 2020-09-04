@@ -18,6 +18,8 @@ class CliLauncher
     end
 
     def start(args)
+      # stop parsing arguments if we don't recognize them
+      Thor.check_unknown_options!
       Facter::Cli.start(args, debug: true)
     rescue Thor::UnknownArgumentError => e
       Facter::OptionsValidator.write_error_and_exit("unrecognised option '#{e.unknown.first}'")
