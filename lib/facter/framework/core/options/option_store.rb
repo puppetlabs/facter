@@ -26,13 +26,13 @@ module Facter
     @timing = false
 
     class << self
-      attr_reader :debug, :verbose, :log_level, :show_legacy, :ruby,
+      attr_reader :debug, :verbose, :log_level, :show_legacy,
                   :custom_facts, :blocked_facts
 
       attr_accessor :config, :user_query, :strict, :json, :haml, :external_facts,
                     :cache, :yaml, :puppet, :ttls, :block, :cli, :config_file_custom_dir,
                     :config_file_external_dir, :default_external_dir, :fact_groups,
-                    :block_list, :color, :trace, :timing
+                    :block_list, :color, :trace, :timing, :ruby
 
       attr_writer :external_dir
 
@@ -45,14 +45,18 @@ module Facter
         options
       end
 
-      def no_ruby=(bool)
-        if bool == false
+      def ruby=(bool)
+        if bool == true
           @ruby = true
         else
           @ruby = false
           @custom_facts = false
           @blocked_facts << 'ruby'
         end
+      end
+
+      def no_ruby=(bool)
+        ruby(!bool)
       end
 
       def no_block=(bool)
