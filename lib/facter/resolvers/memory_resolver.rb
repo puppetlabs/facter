@@ -27,7 +27,7 @@ module Facter
           def read_system(output)
             @fact_list[:total] = kilobytes_to_bytes(output.match(/MemTotal:\s+(\d+)\s/)[1])
             @fact_list[:memfree] = kilobytes_to_bytes(output.match(/MemFree:\s+(\d+)\s/)[1])
-            @fact_list[:used_bytes] = compute_used(@fact_list[:total], @fact_list[:memfree])
+            @fact_list[:used_bytes] = compute_used(@fact_list[:total], reclaimable_memory(output))
             @fact_list[:capacity] = compute_capacity(@fact_list[:used_bytes], @fact_list[:total])
           end
 
@@ -43,6 +43,13 @@ module Facter
 
           def kilobytes_to_bytes(quantity)
             quantity.to_i * 1024
+          end
+
+          def reclaimable_memory(output)
+            buffers = kilobytes_to_bytes(output.match(/Buffers:\s+(\d+)\s/)[1])
+            cached = kilobytes_to_bytes(output.match(/Cached:\s+(\d+)\s/)[1])
+            s_reclaimable = kilobytes_to_bytes(output.match(/SReclaimable:\s+(\d+)\s/)[1])
+            @fact_list[:memfree] + buffers + cached + s_reclaimable
           end
 
           def compute_capacity(used, total)

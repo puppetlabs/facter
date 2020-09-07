@@ -39,6 +39,8 @@ load_dir(['resolvers'])
 load_dir(['facts_utils'])
 load_dir(%w[framework core])
 load_dir(['models'])
+load_dir(%w[framework benchmarking])
+
 load_dir(%w[framework core fact_loaders])
 load_dir(%w[framework core fact internal])
 load_dir(%w[framework core fact external])

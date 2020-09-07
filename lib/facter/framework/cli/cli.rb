@@ -113,6 +113,11 @@ module Facter
                  type: :boolean,
                  desc: 'Enable more aggressive error reporting.'
 
+    class_option :timing,
+                 type: :boolean,
+                 aliases: '-t',
+                 desc: 'Show how much time it took to resolve each fact'
+
     desc '--man', 'Manual', hide: true
     map ['--man'] => :man
     def man(*args)
