@@ -188,7 +188,11 @@ module Facter
     def help(*args)
       help_string = +''
       help_string << help_header(args)
-      help_string << help_options
+      help_string << help_options(args)
+
+      puts help_string unless args.include?(:puppet)
+
+      help_string
     end
 
     no_commands do
@@ -202,12 +206,16 @@ module Facter
         end
       end
 
-      def help_options
+      IGNORE_OPTIONS = %w[log_level color no_color].freeze
+
+      def help_options(args)
         help_options = +''
         class_options = Cli.class_options
         class_options.each do |class_option|
           option = class_option[1]
           next if option.hide
+
+          next if args.include?(:puppet) && IGNORE_OPTIONS.include?(option.name)
 
           help_options << build_option(option)
         end
