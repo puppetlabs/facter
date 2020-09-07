@@ -9,6 +9,10 @@ module Facter
                  type: :boolean,
                  desc: 'Enable color output.'
 
+    class_option :no_color,
+                 type: :boolean,
+                 desc: 'Disable color output.'
+
     class_option :config,
                  aliases: '-c',
                  type: :string,

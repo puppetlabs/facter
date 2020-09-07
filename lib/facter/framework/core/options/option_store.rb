@@ -63,6 +63,10 @@ module Facter
         @cache = !bool
       end
 
+      def no_color=(bool)
+        @color = !bool
+      end
+
       def external_dir
         return fallback_external_dir if @external_dir.empty? && @external_facts
 

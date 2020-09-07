@@ -115,6 +115,28 @@ describe Facter::OptionStore do
     end
   end
 
+  describe '#no_color' do
+    context 'when true' do
+      before do
+        option_store.no_color = true
+      end
+
+      it 'sets color to false' do
+        expect(option_store.color).to be false
+      end
+    end
+
+    context 'when false' do
+      before do
+        option_store.no_color = false
+      end
+
+      it 'sets color to true' do
+        expect(option_store.color).to be true
+      end
+    end
+  end
+
   describe '#external_dir' do
     context 'with external_dir with values' do
       before do
