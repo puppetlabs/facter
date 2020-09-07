@@ -8,11 +8,11 @@ describe Facter::Resolvers::Macosx::Filesystems do
   before do
     filesystems_resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute).with('mount', logger: log_spy)
-                                                       .and_return(load_fixture('macosx_filesystems'))
+                                                       .and_return(load_fixture('macosx_filesystems').read)
   end
 
   describe '#call_the_resolver' do
-    let(:filesystems) { 'apfs,autofs,devfs' }
+    let(:filesystems) { 'apfs,autofs,devfs,vmhgfs' }
 
     it 'returns systems' do
       expect(filesystems_resolver.resolve(:macosx_filesystems)).to eq(filesystems)

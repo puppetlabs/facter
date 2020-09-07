@@ -50,37 +50,33 @@ def install_puppet_agent
 end
 
 def puppet_bin_dir
-  linux_puppet_bin_dir = '/opt/puppetlabs/puppet/bin'
-  windows_puppet_bin_dir = 'C:\\Program Files\\Puppet Labs\\Puppet\\bin'
+  return '/opt/puppetlabs/puppet/bin' unless HOST_PLATFORM.include? 'windows'
 
-  HOST_PLATFORM.include?('windows') ? windows_puppet_bin_dir : linux_puppet_bin_dir
+  'C:\\Program Files\\Puppet Labs\\Puppet\\bin'
 end
 
-def puppet_command
-  return '/opt/puppetlabs/puppet/bin/puppet' unless HOST_PLATFORM.include? 'windows'
+def puppet_ruby
+  return '/opt/puppetlabs/puppet/bin/ruby' unless HOST_PLATFORM.include? 'windows'
 
-  '"C:\\Program Files\\Puppet Labs\\Puppet\\bin\\puppet"'
+  'C:\\Program Files\\Puppet Labs\\Puppet\\puppet\\bin\\ruby.exe'
 end
 
-def gem_command
-  return '/opt/puppetlabs/puppet/bin/gem' unless HOST_PLATFORM.include? 'windows'
+def facter_lib_path
+  return '/opt/puppetlabs/puppet/lib/ruby/vendor_ruby/facter' unless HOST_PLATFORM.include? 'windows'
 
-  '"C:\\Program Files\\Puppet Labs\\Puppet\\puppet\\bin\\gem"'
+  'C:\\Program Files\\Puppet Labs\\Puppet\\puppet\\lib\\ruby\\vendor_ruby\\facter'
 end
 
 def env_path_var
   HOST_PLATFORM.include?('windows') ? { 'PATH' => "#{puppet_bin_dir};#{ENV['PATH']}" } : {}
 end
 
-def update_facter_lib
-  facter_lib_windows_path = 'C:/Program Files/Puppet Labs/Puppet/puppet/lib/ruby/vendor_ruby/facter'
-  facter_lib_linux_path = '/opt/puppetlabs/puppet/lib/ruby/vendor_ruby/facter'
+def install_facter
+  message('OVERWRITE FACTER FROM PUPPET AGENT')
 
-  facter_lib_path = HOST_PLATFORM.include?('windows') ? facter_lib_windows_path : facter_lib_linux_path
-
-  message('OVERWRITE FACTER FILES')
-  FileUtils.rm_r([facter_lib_path, facter_lib_path + '.rb'], force: true)
-  run("#{'powershell' if HOST_PLATFORM.include? 'windows'} mv ../lib/* \'#{facter_lib_path.sub('facter', '')}\'")
+  Dir.chdir('../') do
+    run("\'#{puppet_ruby}\' install.rb --bindir=#{puppet_bin_dir} --sitelibdir=#{facter_lib_path.gsub('facter', '')}")
+  end
 end
 
 def run_acceptance_tests
@@ -121,7 +117,7 @@ Dir.chdir(ACCEPTANCE_PATH) do
   install_facter_acceptance_dependencies
   initialize_beaker
   install_puppet_agent
-  update_facter_lib
+  install_facter
 
   _, status = run_acceptance_tests
   exit(status.exitstatus)
