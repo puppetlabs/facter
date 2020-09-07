@@ -67,7 +67,7 @@ module Facter
       def augment_ruby(global_conf)
         return unless global_conf
 
-        @options[:ruby] = global_conf['no-ruby'].nil? ? true : !global_conf['no-ruby']
+        @options[:no_ruby] = global_conf['no-ruby'].nil? ? false : global_conf['no-ruby']
       end
 
       def augment_show_legacy(global_conf)
