@@ -16,6 +16,7 @@ module Facter
 
           def read_mounts
             mounts = {}
+
             FilesystemHelper.read_mountpoints.each do |fs|
               device = fs.name
               filesystem = fs.mount_type
@@ -36,8 +37,8 @@ module Facter
             begin
               stats = FilesystemHelper.read_mountpoint_stats(path)
               size_bytes = stats.bytes_total
-              used_bytes = stats.bytes_used
-              available_bytes = size_bytes - used_bytes
+              available_bytes = stats.bytes_available
+              used_bytes = size_bytes - available_bytes
             rescue Sys::Filesystem::Error
               size_bytes = used_bytes = available_bytes = 0
             end
