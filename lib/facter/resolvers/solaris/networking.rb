@@ -8,7 +8,6 @@ module Facter
     module Solaris
       class Networking < BaseResolver
         @log = Facter::Log.new(self)
-        @semaphore = Mutex.new
         @fact_list ||= {}
         @interfaces = {}
 

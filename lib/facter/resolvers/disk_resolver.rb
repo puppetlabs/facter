@@ -5,7 +5,6 @@ module Facter
     module Linux
       class Disk < BaseResolver
         @log = Facter::Log.new(self)
-        @semaphore = Mutex.new
         @fact_list ||= {}
         DIR = '/sys/block'
         FILE_PATHS = { model: 'device/model', size: 'size', vendor: 'device/vendor' }.freeze

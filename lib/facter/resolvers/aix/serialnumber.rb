@@ -4,7 +4,6 @@ module Facter
   module Resolvers
     module Aix
       class Serialnumber < BaseResolver
-        @semaphore = Mutex.new
         @fact_list ||= {}
 
         class << self

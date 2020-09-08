@@ -4,7 +4,6 @@ module Facter
   module Resolvers
     module Aix
       class Partitions < BaseResolver
-        @semaphore = Mutex.new
         @fact_list ||= {}
         class << self
           private
