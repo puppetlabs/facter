@@ -1,6 +1,10 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::Linux::Processors do
+  after do
+    Facter::Resolvers::Linux::Processors.invalidate_cache
+  end
+
   context 'when on x86 architecture' do
     let(:processors) { 4 }
     let(:models) do
@@ -17,10 +21,6 @@ describe Facter::Resolvers::Linux::Processors do
       end
 
       let(:speed) { 2_294_000_000 }
-
-      after do
-        Facter::Resolvers::Linux::Processors.invalidate_cache
-      end
 
       it 'returns number of processors' do
         result = Facter::Resolvers::Linux::Processors.resolve(:processors)

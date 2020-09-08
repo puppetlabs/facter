@@ -14,11 +14,11 @@ module Facter
           end
 
           def execute_lspv(fact_name)
-            @fact_list[:disks] = {}
-
             result = Facter::Core::Execution.execute('lspv', logger: log)
 
             return if result.empty?
+
+            @fact_list[:disks] = {}
 
             result.each_line do |line|
               disk_name = line.split(' ')[0].strip
