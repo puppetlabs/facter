@@ -82,6 +82,7 @@ Metrics/CyclomaticComplexity:
 
 Metrics/ClassLength:
   Exclude:
+    - 'lib/facter/resolvers/partitions.rb'
     - 'lib/facter/custom_facts/util/fact.rb'
     - 'lib/facter/resolvers/windows/networking_resolver.rb'
     - 'lib/facter/custom_facts/util/collection.rb'
