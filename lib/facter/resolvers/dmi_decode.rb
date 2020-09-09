@@ -3,7 +3,6 @@
 module Facter
   module Resolvers
     class DmiDecode < BaseResolver
-      @semaphore = Mutex.new
       @fact_list ||= {}
 
       ADDRESS_TO_VERSION = {

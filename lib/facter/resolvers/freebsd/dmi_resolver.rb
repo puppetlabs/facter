@@ -4,7 +4,6 @@ module Facter
   module Resolvers
     module Freebsd
       class DmiBios < BaseResolver
-        @semaphore = Mutex.new
         @fact_list ||= {}
 
         class << self

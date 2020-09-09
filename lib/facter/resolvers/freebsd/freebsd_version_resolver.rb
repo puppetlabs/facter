@@ -4,7 +4,6 @@ module Facter
   module Resolvers
     module Freebsd
       class FreebsdVersion < BaseResolver
-        @semaphore = Mutex.new
         @fact_list ||= {}
 
         class << self

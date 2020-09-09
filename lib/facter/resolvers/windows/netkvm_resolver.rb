@@ -5,7 +5,6 @@ require 'win32/registry'
 module Facter
   module Resolvers
     class NetKVM < BaseResolver
-      @semaphore = Mutex.new
       @fact_list ||= {}
       class << self
         private

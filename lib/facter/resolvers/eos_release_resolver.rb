@@ -7,7 +7,6 @@ module Facter
       # :version
       # :codename
 
-      @semaphore = Mutex.new
       @fact_list ||= {}
 
       class << self

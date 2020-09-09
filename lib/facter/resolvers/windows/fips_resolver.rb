@@ -7,7 +7,6 @@ module Facter
     module Windows
       class Fips < BaseResolver
         # :fips_enabled
-        @semaphore = Mutex.new
         @fact_list ||= {}
         class << self
           private

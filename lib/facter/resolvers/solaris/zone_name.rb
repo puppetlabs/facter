@@ -4,7 +4,6 @@ module Facter
   module Resolvers
     module Solaris
       class ZoneName < BaseResolver
-        @semaphore = Mutex.new
         @fact_list ||= {}
 
         class << self
