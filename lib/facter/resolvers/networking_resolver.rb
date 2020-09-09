@@ -3,7 +3,6 @@
 module Facter
   module Resolvers
     class Networking < BaseResolver
-      @semaphore = Mutex.new
       @fact_list ||= {}
 
       class << self

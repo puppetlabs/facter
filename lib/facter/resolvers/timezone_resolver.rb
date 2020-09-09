@@ -3,7 +3,6 @@
 module Facter
   module Resolvers
     class Timezone < BaseResolver
-      @semaphore = Mutex.new
       @fact_list ||= {}
 
       class << self

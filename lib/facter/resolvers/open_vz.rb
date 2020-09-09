@@ -5,7 +5,6 @@ module Facter
     class OpenVz < BaseResolver
       # build
 
-      @semaphore = Mutex.new
       @fact_list ||= {}
 
       class << self

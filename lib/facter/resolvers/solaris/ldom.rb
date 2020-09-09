@@ -14,7 +14,6 @@ module Facter
         # :role_service
         # :role_impl
 
-        @semaphore = Mutex.new
         @fact_list ||= {}
 
         VIRTINFO_MAPPING = {

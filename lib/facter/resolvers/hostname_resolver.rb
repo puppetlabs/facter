@@ -3,7 +3,6 @@
 module Facter
   module Resolvers
     class Hostname < BaseResolver
-      @semaphore = Mutex.new
       @fact_list ||= {}
       class << self
         private
