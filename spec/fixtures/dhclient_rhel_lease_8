@@ -1,0 +1,39 @@
+default-duid "\000\004N&+>\315WL\311\2756\\\036P\3448\017";
+lease {
+  interface "eth0";
+  fixed-address 10.0.0.5;
+  server-name "AMS072031502021";
+  option subnet-mask 255.255.255.0;
+  option routers 10.0.0.1;
+  option dhcp-lease-time 4294967295;
+  option dhcp-message-type 5;
+  option domain-name-servers 168.63.129.16;
+  option dhcp-server-identifier 168.63.129.16;
+  option dhcp-renewal-time 4294967295;
+  option dhcp-rebinding-time 4294967295;
+  option unknown-245 a8:3f:81:10;
+  option rfc3442-classless-static-routes 0,10,0,0,1,32,168,63,129,16,10,0,0,1,32,169,254,169,254,10,0,0,1;
+  option domain-name "peq1diqrkypunc0cz32ezmxjye.ax.internal.cloudapp.net";
+  renew never;
+  rebind never;
+  expire never;
+}
+lease {
+  interface "eth0";
+  fixed-address 10.0.0.5;
+  server-name "AMS072031502021";
+  option subnet-mask 255.255.255.0;
+  option dhcp-lease-time 4294967295;
+  option routers 10.0.0.1;
+  option dhcp-message-type 5;
+  option dhcp-server-identifier 168.63.129.16;
+  option domain-name-servers 168.63.129.16;
+  option dhcp-renewal-time 4294967295;
+  option rfc3442-classless-static-routes 0,10,0,0,1,32,168,63,129,16,10,0,0,1,32,169,254,169,254,10,0,0,1;
+  option unknown-245 a8:3f:81:10;
+  option dhcp-rebinding-time 4294967295;
+  option domain-name "peq1diqrkypunc0cz32ezmxjye.ax.internal.cloudapp.net";
+  renew 0 2156/10/17 20:41:21;
+  rebind 0 2156/10/17 20:41:21;
+  expire 0 2156/10/17 20:41:21;
+}
