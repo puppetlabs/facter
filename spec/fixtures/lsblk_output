@@ -1,0 +1,7 @@
+NAME                      FSTYPE      LABEL UUID                                   MOUNTPOINT
+/dev/sda
+|-/dev/sda1               xfs               5ba36204-050f-4ab6   /boot
+`-/dev/sda2               LVM2_member       edi7s0-2WVa-ZBan
+  |-/dev/mapper/rhel-root xfs               cb455c09-da6b-44e6   /
+  `-/dev/mapper/rhel-swap swap              0fd5997d-eb82-493d   [SWAP]
+/dev/sr0

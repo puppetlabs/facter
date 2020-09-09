@@ -66,8 +66,16 @@ module Facter
           info_hash = { size_bytes: size_bytes,
                         size: Facter::FactsUtils::UnitConverter.bytes_to_human_readable(size_bytes),
                         backing_file: backing_file }
-          info_hash.merge!(populate_from_blkid(partition_name))
+          info_hash.merge!(populate_from_syscalls(partition_name))
           @fact_list[:partitions][partition_name] = info_hash.reject { |_key, value| value.nil? }
+        end
+
+        def populate_from_syscalls(partition_name)
+          part_info = populate_from_blkid(partition_name)
+
+          return pupulate_from_lsblk(partition_name) if part_info.empty?
+
+          part_info
         end
 
         def populate_from_blkid(partition_name)
@@ -90,6 +98,34 @@ module Facter
           output = Facter::Core::Execution.execute('which blkid', logger: log)
 
           @blkid_exists = !output.empty?
+        end
+
+        def pupulate_from_lsblk(partition_name)
+          return {} unless lsblk_command?
+
+          @lsblk_content ||= Facter::Core::Execution.execute('lsblk -fp', logger: log)
+
+          part_info = @lsblk_content.match(/#{partition_name}.*/).to_s.split(' ')
+          return {} if part_info.empty?
+
+          result = { filesystem: part_info[1] }
+
+          if part_info.count.eql?(5)
+            result[:label] = part_info[2]
+            result[:uuid] = part_info[3]
+          else
+            result[:uuid] = part_info[2]
+          end
+
+          result
+        end
+
+        def lsblk_command?
+          return @lsblk_exists unless @lsblk_exists.nil?
+
+          output = Facter::Core::Execution.execute('which lsblk', logger: log)
+
+          @lsblk_exists = !output.empty?
         end
 
         def execute_and_extract_blkid_info

@@ -48,6 +48,10 @@ describe Facter::Resolvers::Partitions do
                                           .and_return('/usr/bin/blkid')
         allow(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'blkid')
                                           .and_return(load_fixture('blkid_output').read)
+        allow(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'which lsblk')
+                                          .and_return('/usr/bin/lsblk')
+        allow(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'lsblk -fp')
+                                          .and_return(load_fixture('lsblk_output').read)
       end
 
       context 'when device size files are readable' do
@@ -55,7 +59,8 @@ describe Facter::Resolvers::Partitions do
           { '/dev/sda1' => { filesystem: 'ext3', label: '/boot', size: '117.00 KiB',
                              size_bytes: 119_808, uuid: '88077904-4fd4-476f-9af2-0f7a806ca25e',
                              partuuid: '00061fe0-01' },
-            '/dev/sda2' => { size: '98.25 MiB', size_bytes: 103_021_056 } }
+            '/dev/sda2' => { filesystem: 'LVM2_member', size: '98.25 MiB', size_bytes: 103_021_056,
+                             uuid: 'edi7s0-2WVa-ZBan' } }
         end
 
         it 'return partitions fact' do
@@ -67,7 +72,7 @@ describe Facter::Resolvers::Partitions do
         let(:partitions_with_no_sizes) do
           { '/dev/sda1' => { filesystem: 'ext3', label: '/boot', size: '0 bytes',
                              size_bytes: 0, uuid: '88077904-4fd4-476f-9af2-0f7a806ca25e', partuuid: '00061fe0-01' },
-            '/dev/sda2' => { size: '0 bytes', size_bytes: 0 } }
+            '/dev/sda2' => { filesystem: 'LVM2_member', size: '0 bytes', size_bytes: 0, uuid: 'edi7s0-2WVa-ZBan' } }
         end
 
         it 'return partitions fact with 0 sizes' do
