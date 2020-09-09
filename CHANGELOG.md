@@ -1,6 +1,23 @@
+## [4.0.37](https://github.com/puppetlabs/facter/tree/4.0.37) (2020-09-09)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.36-fixed...4.0.37)
+
+### Added
+
+- (FACT-1380) Restore --timing option to native facter [#2061](https://github.com/puppetlabs/facter/pull/2061) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+### Fixed
+
+- (FACT-2781) Fix filesystems on osx [#2065](https://github.com/puppetlabs/facter/pull/2065) ([florindragos](https://github.com/florindragos))
+- (FACT-2777) Fix lsbdist facts on ubuntu [#2063](https://github.com/puppetlabs/facter/pull/2063) ([florindragos](https://github.com/florindragos))
+- (FACT-2783) Updated how osx mountpoints are calculated [#2072](https://github.com/puppetlabs/facter/pull/2072) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- (FACT-2776) Fix Linux partitions fact [#2076](https://github.com/puppetlabs/facter/pull/2076) ([oanatmaria](https://github.com/oanatmaria))
+- (FACT-2785) partitions.<partition_name>.mount has wrong value on sles15-64 [#2077](https://github.com/puppetlabs/facter/pull/2077) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+
 ## [4.0.36](https://github.com/puppetlabs/facter/tree/4.0.36) (2020-09-02)
 
-[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.35...4.0.36)
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.35...4.0.36-fixed)
 
 ### Added
 
