@@ -25,8 +25,8 @@ module Facter
 
       cli = Facter::Cli.new([], processed_arguments)
 
-      if cli.options[:help]
-        cli.invoke(:help, [:puppet])
+      if version
+        cli.invoke(:version, [])
       elsif cli.args.any?('--list-cache-groups')
         cli.invoke(:list_cache_groups, [])
       elsif cli.args.any?('--list-block-groups')

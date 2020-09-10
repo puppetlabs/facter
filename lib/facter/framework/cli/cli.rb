@@ -33,12 +33,6 @@ module Facter
                  repeatable: true,
                  desc: 'A directory to use for external facts.'
 
-    class_option :help,
-                 hide: true,
-                 aliases: '-h',
-                 type: :boolean,
-                 desc: 'Print this help message.'
-
     class_option :hocon,
                  type: :boolean,
                  desc: 'Output in Hocon format.'
@@ -90,11 +84,6 @@ module Facter
                  type: :boolean,
                  desc: 'Show legacy facts when querying all facts.'
 
-    class_option :version,
-                 type: :string,
-                 aliases: '-v',
-                 desc: 'Print the version and exit.'
-
     class_option :yaml,
                  aliases: '-y',
                  type: :boolean,
@@ -142,7 +131,7 @@ module Facter
 
     desc '--version, -v', 'Print the version', hide: true
     map ['--version', '-v'] => :version
-    def version
+    def version(*_args)
       puts Facter::VERSION
     end
 
@@ -177,20 +166,14 @@ module Facter
       help_string << add_class_options_to_help
       help_string << add_commands_to_help
 
-      puts help_string unless args.include?(:puppet)
-
-      help_string
+      puts help_string
     end
 
     no_commands do
-      def help_header(args)
+      def help_header(_args)
         path = File.join(File.dirname(__FILE__), '../../')
 
-        if args.include?(:puppet)
-          Util::FileHelper.safe_read("#{path}fixtures/puppet_help_header")
-        else
-          Util::FileHelper.safe_read("#{path}fixtures/facter_help_header")
-        end
+        Util::FileHelper.safe_read("#{path}fixtures/facter_help_header")
       end
 
       IGNORE_OPTIONS = %w[log_level color no_color].freeze
@@ -201,8 +184,6 @@ module Facter
         class_options.each do |class_option|
           option = class_option[1]
           next if option.hide
-
-          next if args.include?(:puppet) && IGNORE_OPTIONS.include?(option.name)
 
           help_class_options << build_option(option.name, option.aliases, option.description)
         end
