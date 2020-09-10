@@ -27,6 +27,10 @@ module Facter
 
       if cli.options[:help]
         cli.invoke(:help, [:puppet])
+      elsif cli.args.any?('--list-cache-groups')
+        cli.invoke(:list_cache_groups, [])
+      elsif cli.args.any?('--list-block-groups')
+        cli.invoke(:list_block_groups, [])
       else
         cli.invoke(:arg_parser)
       end

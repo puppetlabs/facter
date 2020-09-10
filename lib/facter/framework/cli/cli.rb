@@ -39,11 +39,6 @@ module Facter
                  type: :boolean,
                  desc: 'Print this help message.'
 
-    class_option :man,
-                 hide: true,
-                 type: :boolean,
-                 desc: 'Display manual.'
-
     class_option :hocon,
                  type: :boolean,
                  desc: 'Output in Hocon format.'
@@ -52,14 +47,6 @@ module Facter
                  aliases: '-j',
                  type: :boolean,
                  desc: 'Output in JSON format.'
-
-    class_option :list_block_groups,
-                 type: :boolean,
-                 desc: 'List the names of all blockable fact groups.'
-
-    class_option :list_cache_groups,
-                 type: :boolean,
-                 desc: 'List the names of all cacheable fact groups.'
 
     class_option :log_level,
                  aliases: '-l',
@@ -122,7 +109,7 @@ module Facter
                  aliases: '-t',
                  desc: 'Show how much time it took to resolve each fact'
 
-    desc '--man', 'Manual', hide: true
+    desc '--man', 'Display manual.', hide: true
     map ['--man'] => :man
     def man(*args)
       require 'erb'
@@ -135,7 +122,6 @@ module Facter
     end
 
     desc 'query', 'Default method', hide: true
-    desc '[options] [query] [query] [...]', ''
     def query(*args)
       output, status = Facter.to_user_output(@options, *args)
       puts output
@@ -160,7 +146,7 @@ module Facter
       puts Facter::VERSION
     end
 
-    desc '--list-block-groups', 'List block groups', hide: true
+    desc '--list-block-groups', 'List block groups'
     map ['--list-block-groups'] => :list_block_groups
     def list_block_groups(*args)
       options = @options.map { |(k, v)| [k.to_sym, v] }.to_h
@@ -172,7 +158,7 @@ module Facter
       puts block_groups
     end
 
-    desc '--list-cache-groups', 'List cache groups', hide: true
+    desc '--list-cache-groups', 'List cache groups'
     map ['--list-cache-groups'] => :list_cache_groups
     def list_cache_groups(*args)
       options = @options.map { |(k, v)| [k.to_sym, v] }.to_h
@@ -188,7 +174,8 @@ module Facter
     def help(*args)
       help_string = +''
       help_string << help_header(args)
-      help_string << help_options(args)
+      help_string << add_class_options_to_help
+      help_string << add_commands_to_help
 
       puts help_string unless args.include?(:puppet)
 
@@ -208,8 +195,8 @@ module Facter
 
       IGNORE_OPTIONS = %w[log_level color no_color].freeze
 
-      def help_options(args)
-        help_options = +''
+      def add_class_options_to_help
+        help_class_options = +''
         class_options = Cli.class_options
         class_options.each do |class_option|
           option = class_option[1]
@@ -217,18 +204,29 @@ module Facter
 
           next if args.include?(:puppet) && IGNORE_OPTIONS.include?(option.name)
 
-          help_options << build_option(option)
+          help_class_options << build_option(option.name, option.aliases, option.description)
         end
 
-        help_options
+        help_class_options
       end
 
-      def build_option(option)
+      def add_commands_to_help
+        help_command_options = +''
+        Cli.commands
+           .select { |_k, command_class| command_class.instance_of?(Thor::Command) }
+           .each do |_k, command|
+          help_command_options << build_option(command['name'], [], command['description'])
+        end
+
+        help_command_options
+      end
+
+      def build_option(name, aliases, description)
         help_option = +''
-        help_option << option.aliases.join(',').rjust(10)
+        help_option << aliases.join(',').rjust(10)
         help_option << ' '
-        help_option << "[--#{option.name}]".ljust(30)
-        help_option << " #{option.description}"
+        help_option << "[--#{name}]".ljust(30)
+        help_option << " #{description}"
         help_option << "\n"
 
         help_option
