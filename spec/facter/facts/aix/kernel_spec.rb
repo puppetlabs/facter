@@ -7,12 +7,12 @@ describe Facts::Aix::Kernel do
     let(:value) { 'AIX' }
 
     before do
-      allow(Facter::Resolvers::OsLevel).to receive(:resolve).with(:kernel).and_return(value)
+      allow(Facter::Resolvers::Aix::OsLevel).to receive(:resolve).with(:kernel).and_return(value)
     end
 
     it 'calls Facter::Resolvers::OsLevel' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::OsLevel).to have_received(:resolve).with(:kernel)
+      expect(Facter::Resolvers::Aix::OsLevel).to have_received(:resolve).with(:kernel)
     end
 
     it 'returns kernel fact' do
