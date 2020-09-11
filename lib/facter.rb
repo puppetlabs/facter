@@ -281,6 +281,15 @@ module Facter
       logger.error(arr.flatten.join("\n"))
     end
 
+    # Returns a list with the names of all solved facts
+    #
+    # @return [Array] the list with all the fact names
+    #
+    # @api public
+    def list
+      to_hash.keys.sort
+    end
+
     private
 
     def logger
