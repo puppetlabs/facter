@@ -29,18 +29,6 @@ describe Logger do
       end
     end
 
-    it 'logs a warn if message is nil' do
-      log.debug(nil)
-
-      expect(multi_logger_double).to have_received(:warn).with(/debug invoked with invalid message/)
-    end
-
-    it 'logs a warn if message is empty' do
-      log.debug('')
-
-      expect(multi_logger_double).to have_received(:warn).with(/debug invoked with invalid message/)
-    end
-
     shared_examples 'writes debug message' do
       it 'calls debug on multi_logger' do
         log.debug('debug_message')

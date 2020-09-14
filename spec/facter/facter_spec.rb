@@ -380,4 +380,64 @@ describe Facter do
       end
     end
   end
+
+  describe '#debugonce' do
+    context 'when debugging is active' do
+      before do
+        allow(logger).to receive(:debug)
+        Facter.debugging(true)
+      end
+
+      after do
+        Facter.debugging(false)
+      end
+
+      it 'calls logger with the debug message' do
+        message = 'Some error message'
+
+        Facter.debugonce(message)
+
+        expect(logger).to have_received(:debug).with(message)
+      end
+
+      it 'writes the same debug message only once' do
+        message = 'Some error message'
+
+        Facter.debugonce(message)
+        Facter.debugonce(message)
+
+        expect(logger).to have_received(:debug).once.with(message)
+      end
+
+      it 'writes empty message when message is nil' do
+        Facter.debugonce(nil)
+
+        expect(logger).to have_received(:debug).with('')
+      end
+
+      it 'when message is a hash' do
+        Facter.debugonce({ warn: 'message' })
+
+        expect(logger).to have_received(:debug).with('{:warn=>"message"}')
+      end
+
+      it 'returns nil' do
+        result = Facter.debugonce({ warn: 'message' })
+
+        expect(result).to be_nil
+      end
+    end
+  end
+
+  context 'when debugging is inactive' do
+    before do
+      allow(logger).to receive(:debug)
+    end
+
+    it 'does not call the logger' do
+      Facter.debugonce('message')
+
+      expect(logger).not_to have_received(:debug)
+    end
+  end
 end
