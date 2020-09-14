@@ -14,6 +14,7 @@ module Facter
   Log.output(STDOUT)
   @already_searched = {}
   @debug_once = []
+  @warn_once = []
 
   class << self
     def clear_messages
@@ -56,6 +57,7 @@ module Facter
     def clear
       @already_searched = {}
       @debug_once = []
+      @warn_once = []
       LegacyFacter.clear
       Options[:custom_dir] = []
       LegacyFacter.collection.invalidate_custom_facts
@@ -288,6 +290,22 @@ module Facter
     # @api public
     def list
       to_hash.keys.sort
+    end
+
+    # Logs only once the same warning message.
+    #
+    # @param message [Object] the warning message object
+    #
+    # @return [nil]
+    #
+    # @api public
+    def warnonce(message)
+      message_string = message.to_s
+      return if @warn_once.include? message_string
+
+      @warn_once << message_string
+      logger.warn(message_string)
+      nil
     end
 
     private

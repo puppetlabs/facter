@@ -80,9 +80,7 @@ module Facter
     end
 
     def warn(msg)
-      if msg.nil? || msg.empty?
-        empty_message_error(msg)
-      elsif @@message_callback
+      if @@message_callback
         @@message_callback.call(:warn, msg)
       else
         msg = colorize(msg, YELLOW) if Options[:color]
