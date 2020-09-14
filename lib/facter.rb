@@ -13,6 +13,7 @@ module Facter
   Options.init
   Log.output(STDOUT)
   @already_searched = {}
+  @debug_once = []
 
   class << self
     def clear_messages
@@ -54,6 +55,7 @@ module Facter
     # @api public
     def clear
       @already_searched = {}
+      @debug_once = []
       LegacyFacter.clear
       Options[:custom_dir] = []
       LegacyFacter.collection.invalidate_custom_facts
@@ -68,16 +70,33 @@ module Facter
       fact_collection.dig(*splitted_user_query)
     end
 
-    # Prints out a debug message when debug option is set to true
-    # @param msg [String] Message to be printed out
+    # Logs debug message when debug option is set to true
+    # @param message [Object] Message object to be logged
     #
     # @return [nil]
     #
     # @api public
-    def debug(msg)
+    def debug(message)
       return unless debugging?
 
-      logger.debug(msg)
+      logger.debug(message.to_s)
+      nil
+    end
+
+    # Logs the same debug message only once when debug option is set to true
+    # @param message [Object] Message object to be logged
+    #
+    # @return [nil]
+    #
+    # @api public
+    def debugonce(message)
+      return unless debugging?
+
+      message_string = message.to_s
+      return if @debug_once.include? message_string
+
+      @debug_once << message_string
+      logger.debug(message_string)
       nil
     end
 
