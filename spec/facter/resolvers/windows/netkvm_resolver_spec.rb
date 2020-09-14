@@ -2,7 +2,7 @@
 
 describe Facter::Resolvers::NetKVM do
   describe '#resolve' do
-    let(:reg) { instance_double('Win32::Registry::HKEY_LOCAL_MACHINE') }
+    let(:reg) { instance_spy('Win32::Registry') }
 
     before do
       allow(reg).to receive(:keys).and_return(reg_value)
