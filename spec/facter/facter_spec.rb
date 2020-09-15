@@ -440,4 +440,16 @@ describe Facter do
       expect(logger).not_to have_received(:debug)
     end
   end
+
+  describe '#list' do
+    before do
+      allow(Facter).to receive(:to_hash).and_return({ 'up_time' => 235, 'timezone' => 'EEST', 'virtual' => 'physical' })
+    end
+
+    it 'returns the resolved fact names' do
+      result = Facter.list
+
+      expect(result).to eq(%w[timezone up_time virtual])
+    end
+  end
 end
