@@ -452,4 +452,45 @@ describe Facter do
       expect(result).to eq(%w[timezone up_time virtual])
     end
   end
+
+  describe '#warnonce' do
+    before do
+      allow(logger).to receive(:warn)
+    end
+
+    it 'calls logger with the warning message' do
+      message = 'Some error message'
+
+      Facter.warnonce(message)
+
+      expect(logger).to have_received(:warn).with(message)
+    end
+
+    it 'writes the same warning message only once' do
+      message = 'Some error message'
+
+      Facter.warnonce(message)
+      Facter.warnonce(message)
+
+      expect(logger).to have_received(:warn).once.with(message)
+    end
+
+    it 'writes empty message when message is nil' do
+      Facter.warnonce(nil)
+
+      expect(logger).to have_received(:warn).with('')
+    end
+
+    it 'when message is a hash' do
+      Facter.warnonce({ warn: 'message' })
+
+      expect(logger).to have_received(:warn).with('{:warn=>"message"}')
+    end
+
+    it 'returns nil' do
+      result = Facter.warnonce({ warn: 'message' })
+
+      expect(result).to be_nil
+    end
+  end
 end
