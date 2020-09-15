@@ -59,7 +59,7 @@ module LegacyFacter
           basename = File.basename(file)
           next if file_blocked?(basename)
 
-          if facts.find { |f| f.name == basename } && cm.group_cached?(basename)
+          if facts.find { |f| f.name == basename } && cm.fact_cache_enabled?(basename)
             Facter.log_exception(Exception.new("Caching is enabled for group \"#{basename}\" while "\
               'there are at least two external facts files with the same filename'))
           else
