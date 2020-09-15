@@ -19,7 +19,7 @@ module Facter
           login_info = Etc.getpwuid
           @fact_list[:gid] = login_info.gid
           @fact_list[:group] = Etc.getgrgid(login_info.gid).name
-          @fact_list[:privileged] = login_info.uid.zero?
+          @fact_list[:privileged] = login_info.uid.zero?.to_s
           @fact_list[:uid] = login_info.uid
           @fact_list[:user] = login_info.name
           @fact_list[fact_name]

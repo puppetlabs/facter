@@ -9,7 +9,7 @@ module Facter
 
           value_in_bytes = value_in_bytes.to_i
 
-          (value_in_bytes / (1024.0 * 1024.0)).round(2)
+          (value_in_bytes / (1024.0 * 1024.0)).round(2).to_s
         end
 
         def hertz_to_human_readable(speed)

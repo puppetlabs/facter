@@ -5,7 +5,7 @@ describe Facter::FactsUtils::UnitConverter do
 
   describe '#bytes_to_mb' do
     it 'converts bytes to mega bytes' do
-      expect(converter.bytes_to_mb(256_586_343)).to eq(244.7)
+      expect(converter.bytes_to_mb(256_586_343)).to eq('244.7')
     end
 
     it 'returns nil if value is nil' do
@@ -13,11 +13,11 @@ describe Facter::FactsUtils::UnitConverter do
     end
 
     it 'converts bytes if value is string' do
-      expect(converter.bytes_to_mb('2343455')).to eq(2.23)
+      expect(converter.bytes_to_mb('2343455')).to eq('2.23')
     end
 
     it 'returns 0 if value is 0' do
-      expect(converter.bytes_to_mb(0)).to eq(0.0)
+      expect(converter.bytes_to_mb(0)).to eq('0.0')
     end
   end
 

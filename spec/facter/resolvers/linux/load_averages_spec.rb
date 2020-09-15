@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::Linux::LoadAverages do
-  let(:load_averages) { { '1m' => 0.00, '5m' => 0.03, '15m' => 0.03 } }
+  let(:load_averages) { { '1m' => '0.00', '5m' => '0.03', '15m' => '0.03' } }
   let(:no_load_averages) { { '1m' => nil, '5m' => nil, '15m' => nil } }
 
   after do

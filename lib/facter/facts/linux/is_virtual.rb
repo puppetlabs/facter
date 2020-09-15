@@ -57,7 +57,7 @@ module Facts
       end
 
       def check_if_virtual(found_vm)
-        Facter::FactsUtils::PHYSICAL_HYPERVISORS.count(found_vm).zero?
+        Facter::FactsUtils::PHYSICAL_HYPERVISORS.count(found_vm).zero?.to_s
       end
     end
   end
