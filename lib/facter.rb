@@ -106,7 +106,7 @@ module Facter
       Facter::Log.on_message(&block)
     end
 
-    # Check whether debuging is enabled
+    # Check whether debugging is enabled
     #
     # @return [bool]
     #
@@ -129,7 +129,7 @@ module Facter
     # call {Facter::Util::Fact#value `value`} on it to retrieve the actual
     # value.
     #
-    # @param name [String] the name of the fact
+    # @param user_query [String] the name of the fact
     #
     # @return [Facter::Util::Fact, nil] The fact object, or nil if no fact
     #   is found.
@@ -220,7 +220,7 @@ module Facter
     end
 
     # Enable or disable trace
-    # @param debug_bool [bool] Set trace on debug state
+    # @param bool [bool] Set trace on debug state
     #
     # @return [type] [description]
     #
@@ -231,7 +231,7 @@ module Facter
 
     # Gets the value for a fact. Returns `nil` if no such fact exists.
     #
-    # @param name [String] the fact name
+    # @param user_query [String] the fact name
     # @return [String] the value of the fact, or nil if no fact is found
     #
     # @api public
@@ -292,6 +292,18 @@ module Facter
       to_hash.keys.sort
     end
 
+    # Logs the message parameter as a warning.
+    #
+    # @param message [Object] the warning object to be displayed
+    #
+    # @return [nil]
+    #
+    # @api public
+    def warn(message)
+      logger.warn(message.to_s)
+      nil
+    end
+
     # Logs only once the same warning message.
     #
     # @param message [Object] the warning message object
@@ -349,10 +361,9 @@ module Facter
     # Returns exit status when user query contains facts that do
     #   not exist
     #
-    # @param dirs [Array] Arguments sent to CLI
-    # @param dirs [Array] List of resolved facts
+    # @param resolved_facts [Array] List of resolved facts
     #
-    # @return [Integer, nil] Will return status 1 if user query contains
+    # @return [1/nil] Will return status 1 if user query contains
     #  facts that are not found or resolved, otherwise it will return nil
     #
     # @api private
