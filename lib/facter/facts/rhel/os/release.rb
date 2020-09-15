@@ -18,8 +18,8 @@ module Facts
         end
 
         def determine_release_version
-          version = Facter::Resolvers::OsRelease.resolve(:version_id)
-          version ||= Facter::Resolvers::RedHatRelease.resolve(:version)
+          version = Facter::Resolvers::RedHatRelease.resolve(:version)
+          version ||= Facter::Resolvers::OsRelease.resolve(:version_id)
 
           return unless version
 
