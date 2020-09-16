@@ -493,4 +493,47 @@ describe Facter do
       expect(result).to be_nil
     end
   end
+
+  describe '#warn' do
+    before do
+      allow(logger).to receive(:warn)
+    end
+
+    it 'calls logger' do
+      message = 'Some error message'
+
+      Facter.warn(message)
+
+      expect(logger).to have_received(:warn).with(message)
+    end
+
+    it 'when message is nil' do
+      Facter.warn(nil)
+
+      expect(logger).to have_received(:warn).with('')
+    end
+
+    it 'when message is empty string' do
+      Facter.warn('')
+      expect(logger).to have_received(:warn).with('')
+    end
+
+    it 'when message is a hash' do
+      Facter.warn({ warn: 'message' })
+
+      expect(logger).to have_received(:warn).with('{:warn=>"message"}')
+    end
+
+    it 'when message is an array' do
+      Facter.warn([1, 2, 3])
+
+      expect(logger).to have_received(:warn).with('[1, 2, 3]')
+    end
+
+    it 'returns nil' do
+      result = Facter.warn('message')
+
+      expect(result).to be_nil
+    end
+  end
 end
