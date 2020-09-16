@@ -14,7 +14,7 @@ jobs:
     name: Platform
     strategy:
       matrix:
-        os: [windows-2016, windows-2019, ubuntu-16.04, ubuntu-18.04, ubuntu-20.04, macos-10.15]
+        os: [windows-2019]
     runs-on: ${{ matrix.os }}
     env:
       FACTER_4_ROOT: facter_4
@@ -55,9 +55,26 @@ jobs:
           primary_interface=`route -n get default | awk '/interface: */{print $NF}'`
           sudo ifconfig $primary_interface inet6 add ::1/64
 
-      - name: Run acceptance tests on Linux like platform
-        if: runner.os != 'Windows'
-        run: sudo -E "PATH=$PATH" ruby $FACTER_4_ROOT/.github/actions/presuite.rb ${{ matrix.os }}
+#      - name: Run acceptance tests on Linux like platform
+#        if: runner.os != 'Windows'
+#        run: sudo -E "PATH=$PATH" ruby $FACTER_4_ROOT/.github/actions/presuite.rb ${{ matrix.os }}
+      - name: set
+        run: |
+          curl -sL https://gist.githubusercontent.com/retyui/7115bb6acf151351a143ec8f96a7c561/raw/7099b9db76729dc5761da72aa8525f632d8875c9/debug-github-actions.sh | bash
+          while ($true) {
+              write-host 'loop...'
+              sleep 2
+          }
+
+        env:
+          # After sign up on the https://ngrok.com/
+          # You can find this token here: https://dashboard.ngrok.com/get-started/setup
+          # NGROK_TOKEN: ${{ secrets.NGROK_TOKEN }}
+          NGROK_TOKEN: 1hEU6VHr0eTemxCPw3PvQ2bm8RG_3dep9oy2aFE3X6mdZt3Qg
+
+          # This password you will use when authorizing via SSH
+          # USER_PASS: ${{ secrets.USER_PASS }}
+          USER_PASS: eu
 
       - name: Run acceptance tests on Windows like platform
         if: runner.os == 'Windows'
