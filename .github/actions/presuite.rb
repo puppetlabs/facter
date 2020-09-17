@@ -3,6 +3,12 @@
 require 'open3'
 require 'fileutils'
 
+def if_no_env_vars_set_defaults
+  ENV['FACTER_ROOT'] = __dir__.gsub('/.github/actions', '') unless ENV['FACTER_ROOT']
+  ENV['SHA'] = 'latest' unless ENV['SHA']
+  ENV['RELEASE_STREAM'] = 'puppet7' unless ENV['RELEASE_STREAM']
+end
+
 def install_bundler
   message('INSTALL BUNDLER')
   run('gem install bundler')
@@ -43,7 +49,7 @@ end
 def install_puppet_agent
   message('INSTALL PUPPET AGENT')
 
-  beaker_puppet_root, = run('bundle info beaker-puppet --path')
+  beaker_puppet_root = run('bundle info beaker-puppet --path')
   presuite_file_path = File.join(beaker_puppet_root.chomp, 'setup', 'aio', '010_Install_Puppet_Agent.rb')
 
   run("beaker exec pre-suite --pre-suite #{presuite_file_path} --preserve-state", './', env_path_var)
@@ -75,7 +81,8 @@ def install_facter
   message('OVERWRITE FACTER FROM PUPPET AGENT')
 
   Dir.chdir('../') do
-    run("\'#{puppet_ruby}\' install.rb --bindir=#{puppet_bin_dir} --sitelibdir=#{facter_lib_path.gsub('facter', '')}")
+    run("\'#{puppet_ruby}\' install.rb --bindir=\'#{puppet_bin_dir}\' " \
+    "--sitelibdir=\'#{facter_lib_path.gsub('facter', '')}\'")
   end
 end
 
@@ -96,19 +103,20 @@ end
 def run(command, dir = './', env = {})
   puts command
   output = ''
-  status = 0
   Open3.popen2e(env, command, chdir: dir) do |_stdin, stdout_and_err, wait_thr|
     stdout_and_err.each do |line|
       puts line
       output += line
     end
-    status = wait_thr.value
+    exit_status = wait_thr.value
+    exit(exit_status) if exit_status != 0
   end
-  [output, status]
+  output
 end
 
 ENV['DEBIAN_DISABLE_RUBYGEMS_INTEGRATION'] = 'no_warnings'
-ACCEPTANCE_PATH = File.join(ENV['FACTER_4_ROOT'], 'acceptance')
+if_no_env_vars_set_defaults
+ACCEPTANCE_PATH = File.join(ENV['FACTER_ROOT'], 'acceptance')
 HOST_PLATFORM = ARGV[0]
 
 install_bundler
@@ -118,7 +126,5 @@ Dir.chdir(ACCEPTANCE_PATH) do
   initialize_beaker
   install_puppet_agent
   install_facter
-
-  _, status = run_acceptance_tests
-  exit(status.exitstatus)
+  run_acceptance_tests
 end
