@@ -17,7 +17,7 @@ jobs:
         os: [windows-2016, windows-2019, ubuntu-16.04, ubuntu-18.04, ubuntu-20.04, macos-10.15]
     runs-on: ${{ matrix.os }}
     env:
-      FACTER_4_ROOT: facter_4
+      FACTER_ROOT: facter
       SHA: latest
       RELEASE_STREAM: puppet7
 
@@ -25,7 +25,7 @@ jobs:
       - name: Checkout current PR
         uses: actions/checkout@v2
         with:
-          path: facter_4
+          path: facter
 
       - name: Install Ruby 2.6
         uses: ruby/setup-ruby@v1
@@ -57,8 +57,8 @@ jobs:
 
       - name: Run acceptance tests on Linux like platform
         if: runner.os != 'Windows'
-        run: sudo -E "PATH=$PATH" ruby $FACTER_4_ROOT/.github/actions/presuite.rb ${{ matrix.os }}
+        run: sudo -E "PATH=$PATH" ruby $FACTER_ROOT/.github/actions/presuite.rb ${{ matrix.os }}
 
       - name: Run acceptance tests on Windows like platform
         if: runner.os == 'Windows'
-        run: ruby $Env:FACTER_4_ROOT/.github/actions/presuite.rb ${{ matrix.os }}
+        run: ruby $Env:FACTER_ROOT/.github/actions/presuite.rb ${{ matrix.os }}
