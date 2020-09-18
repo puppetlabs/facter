@@ -25,7 +25,7 @@ module Facter
 
       cli = Facter::Cli.new([], processed_arguments)
 
-      if version
+      if cli.args.any?(:version)
         cli.invoke(:version, [])
       elsif cli.args.any?('--list-cache-groups')
         cli.invoke(:list_cache_groups, [])
@@ -239,6 +239,18 @@ module Facter
       user_query = user_query.to_s
       resolve_fact(user_query)
       @already_searched[user_query]&.value
+    end
+
+    def values(options, user_queries)
+      init_cli_options(options, user_queries)
+      resolved_facts = Facter::FactManager.instance.resolve_facts(user_queries)
+      Facter::SessionCache.invalidate_all_caches
+
+      if user_queries.count.zero?
+        Facter::FactCollection.new.build_fact_collection!(resolved_facts)
+      else
+        FormatterHelper.retrieve_facts_to_display_for_user_query(user_queries, resolved_facts)
+      end
     end
 
     # Returns Facter version

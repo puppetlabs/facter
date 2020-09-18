@@ -124,9 +124,7 @@ module Facter
       # ignore unknown options
       args.reject! { |arg| arg.start_with?('-') }
 
-      output, _status = Facter.to_user_output(@options, *args)
-
-      output
+      Facter.values(@options, args)
     end
 
     desc '--version, -v', 'Print the version', hide: true
