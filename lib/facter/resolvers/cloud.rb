@@ -17,7 +17,7 @@ module Facter
         def detect_azure(fact_name)
           search_dirs = %w[/var/lib/dhcp /var/lib/NetworkManager]
           search_dirs.each do |path|
-            next unless File.directory?(path)
+            next if !File.readable?(path) || !File.directory?(path)
 
             files = Dir.entries(path)
             files.select! { |filename| filename =~ /^dhclient.*lease.*$/ }
