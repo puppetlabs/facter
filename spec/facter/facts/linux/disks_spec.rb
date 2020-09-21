@@ -42,7 +42,7 @@ describe Facts::Linux::Disks do
           an_object_having_attributes(name: 'disks', value: expecte_response),
           an_object_having_attributes(name: 'blockdevices', value: 'sda'),
           an_object_having_attributes(name: 'blockdevice_sda_model', value: 'Virtual disk', type: :legacy),
-          an_object_having_attributes(name: 'blockdevice_sda_size', value: '21474836480', type: :legacy),
+          an_object_having_attributes(name: 'blockdevice_sda_size', value: 21_474_836_480, type: :legacy),
           an_object_having_attributes(name: 'blockdevice_sda_vendor', value: 'VMware', type: :legacy)
         )
     end
