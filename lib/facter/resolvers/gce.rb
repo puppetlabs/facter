@@ -3,7 +3,6 @@
 module Facter
   module Resolvers
     class Gce < BaseResolver
-      @semaphore = Mutex.new
       @fact_list ||= {}
       METADATA_URL = 'http://metadata.google.internal/computeMetadata/v1/?recursive=true&alt=json'
       HEADERS = { "Metadata-Flavor": 'Google', "Accept": 'application/json' }.freeze

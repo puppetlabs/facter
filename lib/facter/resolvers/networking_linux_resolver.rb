@@ -3,7 +3,6 @@
 module Facter
   module Resolvers
     class NetworkingLinux < BaseResolver
-      @semaphore = Mutex.new
       @fact_list = {}
       DIRS = ['/var/lib/dhclient/', '/var/lib/dhcp/', '/var/lib/dhcp3/', '/var/lib/NetworkManager/', '/var/db/'].freeze
 

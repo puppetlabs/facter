@@ -4,7 +4,6 @@ module Facter
   module Resolvers
     module Solaris
       class OsRelease < BaseResolver
-        @semaphore = Mutex.new
         @fact_list ||= {}
         @os_version_regex_patterns = ['Solaris \d+ \d+/\d+ s(\d+)[sx]?_u(\d+)wos_',
                                       'Solaris (\d+)[.](\d+)', 'Solaris (\d+)']

@@ -20,16 +20,16 @@ describe Facter::Resolvers::Macosx::Mountpoints do
   end
 
   let(:fact) do
-    { '/proc/a' => { available: '85.44 GiB',
-                     available_bytes: 91_745_386_496,
-                     capacity: '80.33%',
+    { '/proc/a' => { available: '63.31 GiB',
+                     available_bytes: 67_979_685_888,
+                     capacity: '85.43%',
                      device: '/dev/nvme0n1p2',
                      filesystem: 'ext4',
                      options: ['rw'],
                      size: '434.42 GiB',
                      size_bytes: 466_449_743_872,
-                     used: '348.97 GiB',
-                     used_bytes: 374_704_357_376 } }
+                     used: '371.10 GiB',
+                     used_bytes: 398_470_057_984 } }
   end
 
   before do

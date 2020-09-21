@@ -5,7 +5,6 @@ module Facter
     module Aix
       class Memory < BaseResolver
         # :hardware
-        @semaphore = Mutex.new
         @fact_list ||= {}
         class << self
           private
@@ -18,10 +17,10 @@ module Facter
             result = Facter::Core::Execution.execute('svmon', logger: log)
             return if result.empty?
 
-            @fact_list[:system] = @fact_list[:swap] = {}
-
             pagesize = call_pagesize.to_i
             return if pagesize.zero?
+
+            @fact_list[:system] = @fact_list[:swap] = {}
 
             result.each_line do |line|
               @fact_list[:system] = populate_system(line, pagesize) if line.include?('memory')

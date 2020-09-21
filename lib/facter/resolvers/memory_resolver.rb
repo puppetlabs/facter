@@ -4,7 +4,6 @@ module Facter
   module Resolvers
     module Linux
       class Memory < BaseResolver
-        @semaphore = Mutex.new
         @fact_list ||= {}
         @log = Facter::Log.new(self)
         class << self
@@ -48,7 +47,12 @@ module Facter
           def reclaimable_memory(output)
             buffers = kilobytes_to_bytes(output.match(/Buffers:\s+(\d+)\s/)[1])
             cached = kilobytes_to_bytes(output.match(/Cached:\s+(\d+)\s/)[1])
-            s_reclaimable = kilobytes_to_bytes(output.match(/SReclaimable:\s+(\d+)\s/)[1])
+            s_reclaimable = output.match(/SReclaimable:\s+(\d+)\s/)
+            s_reclaimable = if s_reclaimable
+                              kilobytes_to_bytes(s_reclaimable[1])
+                            else
+                              0
+                            end
             @fact_list[:memfree] + buffers + cached + s_reclaimable
           end
 

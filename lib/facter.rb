@@ -13,6 +13,8 @@ module Facter
   Options.init
   Log.output(STDOUT)
   @already_searched = {}
+  @debug_once = []
+  @warn_once = []
 
   class << self
     def resolve(args_as_string)
@@ -75,6 +77,8 @@ module Facter
     # @api public
     def clear
       @already_searched = {}
+      @debug_once = []
+      @warn_once = []
       LegacyFacter.clear
       Options[:custom_dir] = []
       LegacyFacter.collection.invalidate_custom_facts
@@ -89,16 +93,33 @@ module Facter
       fact_collection.dig(*splitted_user_query)
     end
 
-    # Prints out a debug message when debug option is set to true
-    # @param msg [String] Message to be printed out
+    # Logs debug message when debug option is set to true
+    # @param message [Object] Message object to be logged
     #
     # @return [nil]
     #
     # @api public
-    def debug(msg)
+    def debug(message)
       return unless debugging?
 
-      logger.debug(msg)
+      logger.debug(message.to_s)
+      nil
+    end
+
+    # Logs the same debug message only once when debug option is set to true
+    # @param message [Object] Message object to be logged
+    #
+    # @return [nil]
+    #
+    # @api public
+    def debugonce(message)
+      return unless debugging?
+
+      message_string = message.to_s
+      return if @debug_once.include? message_string
+
+      @debug_once << message_string
+      logger.debug(message_string)
       nil
     end
 
@@ -106,7 +127,7 @@ module Facter
       Facter::Log.on_message(&block)
     end
 
-    # Check whether debuging is enabled
+    # Check whether debugging is enabled
     #
     # @return [bool]
     #
@@ -129,7 +150,7 @@ module Facter
     # call {Facter::Util::Fact#value `value`} on it to retrieve the actual
     # value.
     #
-    # @param name [String] the name of the fact
+    # @param user_query [String] the name of the fact
     #
     # @return [Facter::Util::Fact, nil] The fact object, or nil if no fact
     #   is found.
@@ -220,7 +241,7 @@ module Facter
     end
 
     # Enable or disable trace
-    # @param debug_bool [bool] Set trace on debug state
+    # @param bool [bool] Set trace on debug state
     #
     # @return [type] [description]
     #
@@ -231,7 +252,7 @@ module Facter
 
     # Gets the value for a fact. Returns `nil` if no such fact exists.
     #
-    # @param name [String] the fact name
+    # @param user_query [String] the fact name
     # @return [String] the value of the fact, or nil if no fact is found
     #
     # @api public
@@ -295,6 +316,43 @@ module Facter
       logger.error(arr.flatten.join("\n"))
     end
 
+    # Returns a list with the names of all solved facts
+    #
+    # @return [Array] the list with all the fact names
+    #
+    # @api public
+    def list
+      to_hash.keys.sort
+    end
+
+    # Logs the message parameter as a warning.
+    #
+    # @param message [Object] the warning object to be displayed
+    #
+    # @return [nil]
+    #
+    # @api public
+    def warn(message)
+      logger.warn(message.to_s)
+      nil
+    end
+
+    # Logs only once the same warning message.
+    #
+    # @param message [Object] the warning message object
+    #
+    # @return [nil]
+    #
+    # @api public
+    def warnonce(message)
+      message_string = message.to_s
+      return if @warn_once.include? message_string
+
+      @warn_once << message_string
+      logger.warn(message_string)
+      nil
+    end
+
     private
 
     def logger
@@ -336,10 +394,9 @@ module Facter
     # Returns exit status when user query contains facts that do
     #   not exist
     #
-    # @param dirs [Array] Arguments sent to CLI
-    # @param dirs [Array] List of resolved facts
+    # @param resolved_facts [Array] List of resolved facts
     #
-    # @return [Integer, nil] Will return status 1 if user query contains
+    # @return [1/nil] Will return status 1 if user query contains
     #  facts that are not found or resolved, otherwise it will return nil
     #
     # @api private

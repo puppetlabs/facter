@@ -4,7 +4,6 @@ module Facter
   module Resolvers
     module Linux
       class LoadAverages < BaseResolver
-        @semaphore = Mutex.new
         @fact_list ||= {}
         class << self
           private

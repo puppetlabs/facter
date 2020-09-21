@@ -380,4 +380,160 @@ describe Facter do
       end
     end
   end
+
+  describe '#debugonce' do
+    context 'when debugging is active' do
+      before do
+        allow(logger).to receive(:debug)
+        Facter.debugging(true)
+      end
+
+      after do
+        Facter.debugging(false)
+      end
+
+      it 'calls logger with the debug message' do
+        message = 'Some error message'
+
+        Facter.debugonce(message)
+
+        expect(logger).to have_received(:debug).with(message)
+      end
+
+      it 'writes the same debug message only once' do
+        message = 'Some error message'
+
+        Facter.debugonce(message)
+        Facter.debugonce(message)
+
+        expect(logger).to have_received(:debug).once.with(message)
+      end
+
+      it 'writes empty message when message is nil' do
+        Facter.debugonce(nil)
+
+        expect(logger).to have_received(:debug).with('')
+      end
+
+      it 'when message is a hash' do
+        Facter.debugonce({ warn: 'message' })
+
+        expect(logger).to have_received(:debug).with('{:warn=>"message"}')
+      end
+
+      it 'returns nil' do
+        result = Facter.debugonce({ warn: 'message' })
+
+        expect(result).to be_nil
+      end
+    end
+  end
+
+  context 'when debugging is inactive' do
+    before do
+      allow(logger).to receive(:debug)
+    end
+
+    it 'does not call the logger' do
+      Facter.debugonce('message')
+
+      expect(logger).not_to have_received(:debug)
+    end
+  end
+
+  describe '#list' do
+    before do
+      allow(Facter).to receive(:to_hash).and_return({ 'up_time' => 235, 'timezone' => 'EEST', 'virtual' => 'physical' })
+    end
+
+    it 'returns the resolved fact names' do
+      result = Facter.list
+
+      expect(result).to eq(%w[timezone up_time virtual])
+    end
+  end
+
+  describe '#warnonce' do
+    before do
+      allow(logger).to receive(:warn)
+    end
+
+    it 'calls logger with the warning message' do
+      message = 'Some error message'
+
+      Facter.warnonce(message)
+
+      expect(logger).to have_received(:warn).with(message)
+    end
+
+    it 'writes the same warning message only once' do
+      message = 'Some error message'
+
+      Facter.warnonce(message)
+      Facter.warnonce(message)
+
+      expect(logger).to have_received(:warn).once.with(message)
+    end
+
+    it 'writes empty message when message is nil' do
+      Facter.warnonce(nil)
+
+      expect(logger).to have_received(:warn).with('')
+    end
+
+    it 'when message is a hash' do
+      Facter.warnonce({ warn: 'message' })
+
+      expect(logger).to have_received(:warn).with('{:warn=>"message"}')
+    end
+
+    it 'returns nil' do
+      result = Facter.warnonce({ warn: 'message' })
+
+      expect(result).to be_nil
+    end
+  end
+
+  describe '#warn' do
+    before do
+      allow(logger).to receive(:warn)
+    end
+
+    it 'calls logger' do
+      message = 'Some error message'
+
+      Facter.warn(message)
+
+      expect(logger).to have_received(:warn).with(message)
+    end
+
+    it 'when message is nil' do
+      Facter.warn(nil)
+
+      expect(logger).to have_received(:warn).with('')
+    end
+
+    it 'when message is empty string' do
+      Facter.warn('')
+      expect(logger).to have_received(:warn).with('')
+    end
+
+    it 'when message is a hash' do
+      Facter.warn({ warn: 'message' })
+
+      expect(logger).to have_received(:warn).with('{:warn=>"message"}')
+    end
+
+    it 'when message is an array' do
+      Facter.warn([1, 2, 3])
+
+      expect(logger).to have_received(:warn).with('[1, 2, 3]')
+    end
+
+    it 'returns nil' do
+      result = Facter.warn('message')
+
+      expect(result).to be_nil
+    end
+  end
 end

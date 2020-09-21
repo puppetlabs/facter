@@ -15,7 +15,6 @@ module Facter
         SP_ETHERNET_DATA_TYPE = %i[type bus vendor_id device_id subsystem_vendor_id
                                    subsystem_id revision_id bsd_name kext_name location version].freeze
 
-        @semaphore = Mutex.new
         @fact_list = {}
 
         class << self

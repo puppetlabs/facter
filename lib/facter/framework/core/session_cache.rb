@@ -2,13 +2,10 @@
 
 module Facter
   class SessionCache
-    @semaphore = Mutex.new
     @resolvers = []
 
     def self.subscribe(resolver)
-      @semaphore.synchronize do
-        @resolvers << resolver
-      end
+      @resolvers << resolver
     end
 
     def self.invalidate_all_caches

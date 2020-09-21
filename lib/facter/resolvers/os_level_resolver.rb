@@ -5,7 +5,6 @@ module Facter
     class OsLevel < BaseResolver
       # build
 
-      @semaphore = Mutex.new
       @fact_list ||= {}
 
       class << self

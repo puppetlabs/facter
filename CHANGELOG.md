@@ -1,6 +1,39 @@
+## [4.0.38](https://github.com/puppetlabs/facter/tree/4.0.38) (2020-09-16)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.37...4.0.38)
+
+### Added
+
+- (FACT-2319) Added debugonce method [#2085](https://github.com/puppetlabs/facter/pull/2085) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- (FACT-2327) added list method [#2088](https://github.com/puppetlabs/facter/pull/2088) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- (FACT-2320) Added warnonce method [#2084](https://github.com/puppetlabs/facter/pull/2084) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- (FACT-2315) Added warn method to facter api [#2083](https://github.com/puppetlabs/facter/pull/2083) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+
+### Fixed
+
+- (FACT-2784) Fixed rhel os release fact [#2086](https://github.com/puppetlabs/facter/pull/2086) ([sebastian-miclea](https://github.com/sebastian-miclea))
+
+
+## [4.0.37](https://github.com/puppetlabs/facter/tree/4.0.37) (2020-09-09)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.36-fixed...4.0.37)
+
+### Added
+
+- (FACT-1380) Restore --timing option to native facter [#2061](https://github.com/puppetlabs/facter/pull/2061) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+### Fixed
+
+- (FACT-2781) Fix filesystems on osx [#2065](https://github.com/puppetlabs/facter/pull/2065) ([florindragos](https://github.com/florindragos))
+- (FACT-2777) Fix lsbdist facts on ubuntu [#2063](https://github.com/puppetlabs/facter/pull/2063) ([florindragos](https://github.com/florindragos))
+- (FACT-2783) Updated how osx mountpoints are calculated [#2072](https://github.com/puppetlabs/facter/pull/2072) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- (FACT-2776) Fix Linux partitions fact [#2076](https://github.com/puppetlabs/facter/pull/2076) ([oanatmaria](https://github.com/oanatmaria))
+- (FACT-2785) partitions.<partition_name>.mount has wrong value on sles15-64 [#2077](https://github.com/puppetlabs/facter/pull/2077) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+
 ## [4.0.36](https://github.com/puppetlabs/facter/tree/4.0.36) (2020-09-02)
 
-[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.35...4.0.36)
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.35...4.0.36-fixed)
 
 ### Added
 
