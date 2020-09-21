@@ -5,7 +5,7 @@ describe Facts::Macosx::Memory::System::AvailableBytes do
     subject(:fact) { Facts::Macosx::Memory::System::AvailableBytes.new }
 
     let(:value) { 1024 * 1024 }
-    let(:value_mb) { '1.0' }
+    let(:value_mb) { 1 }
 
     before do
       allow(Facter::Resolvers::Macosx::SystemMemory).to receive(:resolve).with(:available_bytes).and_return(value)

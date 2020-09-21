@@ -7,9 +7,6 @@ describe Facts::Linux::Memory::Swap::AvailableBytes do
     let(:value) { 2_332_425 }
     let(:value_mb) { 2.22 }
 
-    let(:result) { '2332425' }
-    let(:result_mb) { '2.22' }
-
     before do
       allow(Facter::Resolvers::Linux::Memory).to \
         receive(:resolve).with(:swap_free).and_return(value)
@@ -22,16 +19,17 @@ describe Facts::Linux::Memory::Swap::AvailableBytes do
 
     it 'returns swap available bytes fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
-        contain_exactly(an_object_having_attributes(name: 'memory.swap.available_bytes', value: result),
-                        an_object_having_attributes(name: 'swapfree_mb', value: result_mb, type: :legacy))
+        contain_exactly(an_object_having_attributes(name: 'memory.swap.available_bytes', value: value),
+                        an_object_having_attributes(name: 'swapfree_mb', value: value_mb, type: :legacy))
     end
 
     describe '#call_the_resolver when resolver returns nil' do
       let(:value) { nil }
 
       it 'returns swap available memory in bytes fact as nil' do
-        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-          have_attributes(name: 'memory.swap.available_bytes', value: value)
+        expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+          contain_exactly(an_object_having_attributes(name: 'memory.swap.available_bytes', value: value),
+                          an_object_having_attributes(name: 'swapfree_mb', value: value, type: :legacy))
       end
     end
   end

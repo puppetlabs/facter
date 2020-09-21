@@ -39,7 +39,7 @@ describe Facter::Resolvers::PosxIdentity do
   end
 
   describe 'PRIVILEGED' do
-    it_behaves_like 'a resolved fact', :privileged, 'false'
+    it_behaves_like 'a resolved fact', :privileged, false
   end
 
   describe 'UID' do

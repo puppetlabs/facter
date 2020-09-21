@@ -5,7 +5,6 @@ describe Facts::Linux::Memory::Swap::UsedBytes do
     subject(:fact) { Facts::Linux::Memory::Swap::UsedBytes.new }
 
     let(:value) { 1024 }
-    let(:result) { '1024' }
 
     before do
       allow(Facter::Resolvers::Linux::Memory).to \
@@ -19,7 +18,7 @@ describe Facts::Linux::Memory::Swap::UsedBytes do
 
     it 'returns swap used memory in bytes fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-        have_attributes(name: 'memory.swap.used_bytes', value: result)
+        have_attributes(name: 'memory.swap.used_bytes', value: value)
     end
   end
 end

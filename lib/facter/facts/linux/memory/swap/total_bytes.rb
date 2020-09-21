@@ -10,9 +10,7 @@ module Facts
 
           def call_the_resolver
             fact_value = Facter::Resolvers::Linux::Memory.resolve(:swap_total)
-            return Facter::ResolvedFact.new(FACT_NAME, nil) unless fact_value
-
-            [Facter::ResolvedFact.new(FACT_NAME, fact_value.to_s),
+            [Facter::ResolvedFact.new(FACT_NAME, fact_value),
              Facter::ResolvedFact.new(ALIASES, Facter::FactsUtils::UnitConverter.bytes_to_mb(fact_value), :legacy)]
           end
         end

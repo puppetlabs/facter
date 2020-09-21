@@ -6,7 +6,7 @@ describe Facts::Solaris::Memory::System::AvailableBytes do
 
     let(:resolver_output) { { available_bytes: 2_332_425, total_bytes: 2_332_999, used_bytes: 1024 } }
     let(:value) { 2_332_425 }
-    let(:value_mb) { '2.22' }
+    let(:value_mb) { 2.22 }
 
     before do
       allow(Facter::Resolvers::Solaris::Memory).to \
