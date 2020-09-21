@@ -55,6 +55,12 @@ def install_puppet_agent
   run("beaker exec pre-suite --pre-suite #{presuite_file_path} --preserve-state", './', env_path_var)
 end
 
+def puppet_puppet_bin_dir
+  return '/opt/puppetlabs/puppet/bin' unless HOST_PLATFORM.include? 'windows'
+
+  'C:\\Program Files\\Puppet Labs\\Puppet\\puppet\\bin'
+end
+
 def puppet_bin_dir
   return '/opt/puppetlabs/puppet/bin' unless HOST_PLATFORM.include? 'windows'
 
@@ -81,7 +87,7 @@ def install_facter
   message('OVERWRITE FACTER FROM PUPPET AGENT')
 
   Dir.chdir('../') do
-    run("\'#{puppet_ruby}\' install.rb --bindir=\'#{puppet_bin_dir}\' " \
+    run("\'#{puppet_ruby}\' install.rb --bindir=\'#{puppet_puppet_bin_dir}\' " \
     "--sitelibdir=\'#{facter_lib_path.gsub('facter', '')}\'")
   end
 end

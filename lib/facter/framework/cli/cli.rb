@@ -59,7 +59,7 @@ module Facter
                  type: :boolean,
                  desc: 'Disable custom facts.'
 
-    class_option :'no-external_facts',
+    class_option :no_external_facts,
                  type: :boolean,
                  desc: 'Disable external facts.'
 

@@ -27,9 +27,9 @@ module Facter
 
     class << self
       attr_reader :debug, :verbose, :log_level, :show_legacy,
-                  :custom_facts, :blocked_facts, :ruby
+                  :custom_facts, :blocked_facts, :ruby, :external_facts
 
-      attr_accessor :config, :user_query, :strict, :json, :haml, :external_facts,
+      attr_accessor :config, :user_query, :strict, :json, :haml,
                     :cache, :yaml, :puppet, :ttls, :block, :cli, :config_file_custom_dir,
                     :config_file_external_dir, :default_external_dir, :fact_groups,
                     :block_list, :color, :trace, :timing
@@ -118,6 +118,10 @@ module Facter
         else
           @custom_facts = false
         end
+      end
+
+      def no_external_facts=(bool)
+        @external_facts = !bool
       end
 
       def log_level=(level)

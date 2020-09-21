@@ -148,9 +148,9 @@ describe Facter::OptionStore do
       end
     end
 
-    context 'with @external_facts false' do
+    context 'with @no_external_facts true' do
       before do
-        option_store.external_facts = false
+        option_store.no_external_facts = true
       end
 
       it 'returns external dir' do
@@ -158,9 +158,9 @@ describe Facter::OptionStore do
       end
     end
 
-    context 'with @external_facts true and external_dir empty' do
+    context 'with @no_external_facts false and external_dir empty' do
       before do
-        option_store.external_facts = true
+        option_store.no_external_facts = false
         option_store.external_dir = []
       end
 
