@@ -43,7 +43,7 @@ describe Facter::Resolvers::Linux::Memory do
       end
 
       it 'returns swap capacity' do
-        swap_capacity = '0%'
+        swap_capacity = format('%<swap_capacity>.2f', swap_capacity: (swap_used / swap_total.to_f * 100)) + '%'
 
         expect(resolver.resolve(:swap_capacity)).to eq(swap_capacity)
       end
@@ -115,7 +115,7 @@ describe Facter::Resolvers::Linux::Memory do
       let(:s_reclaimable) { 0 }
       let(:used) { total - free - buffers - cached - s_reclaimable }
       let(:swap_total) { 2_097_148 * 1024 }
-      let(:swap_free) { 2_097_100 * 1024 }
+      let(:swap_free) { 2_097_148 * 1024 }
       let(:swap_used) { swap_total - swap_free }
       let(:fixture_name) { 'rhel5_memory' }
 

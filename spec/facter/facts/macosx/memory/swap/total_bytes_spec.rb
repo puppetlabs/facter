@@ -5,7 +5,7 @@ describe Facts::Macosx::Memory::Swap::TotalBytes do
     subject(:fact) { Facts::Macosx::Memory::Swap::TotalBytes.new }
 
     let(:value) { 1024 * 1024 }
-    let(:value_mb) { '1.0' }
+    let(:value_mb) { 1 }
 
     before do
       allow(Facter::Resolvers::Macosx::SwapMemory).to receive(:resolve).with(:total_bytes).and_return(value)

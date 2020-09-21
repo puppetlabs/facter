@@ -5,7 +5,7 @@ describe Facts::Linux::Memory::System::AvailableBytes do
     subject(:fact) { Facts::Linux::Memory::System::AvailableBytes.new }
 
     let(:value) { 2_332_425 }
-    let(:value_mb) { '2.22' }
+    let(:value_mb) { 2.22 }
 
     before do
       allow(Facter::Resolvers::Linux::Memory).to \

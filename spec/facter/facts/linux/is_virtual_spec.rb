@@ -5,7 +5,7 @@ describe Facts::Linux::IsVirtual do
     subject(:fact) { Facts::Linux::IsVirtual.new }
 
     let(:vm) { 'docker' }
-    let(:value) { 'true' }
+    let(:value) { true }
 
     before do
       allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(vm)
@@ -23,7 +23,7 @@ describe Facts::Linux::IsVirtual do
 
     context 'when is gce' do
       let(:vm) { nil }
-      let(:value) { 'true' }
+      let(:value) { true }
 
       before do
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return('Google Engine')
@@ -38,7 +38,7 @@ describe Facts::Linux::IsVirtual do
     context 'when is vmware' do
       let(:vm) { nil }
       let(:vmware_value) { 'vmware_fusion' }
-      let(:value) { 'true' }
+      let(:value) { true }
 
       before do
         allow(Facter::Resolvers::Vmware).to receive(:resolve).with(:vm).and_return(vmware_value)
@@ -53,7 +53,7 @@ describe Facts::Linux::IsVirtual do
     context 'when is xen-hvm' do
       let(:vm) { nil }
       let(:virtwhat_value) { 'xenhvm' }
-      let(:value) { 'true' }
+      let(:value) { true }
 
       before do
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
@@ -69,7 +69,7 @@ describe Facts::Linux::IsVirtual do
     context 'when is openVz' do
       let(:vm) { nil }
       let(:openvz_value) { 'openvzve' }
-      let(:value) { 'true' }
+      let(:value) { true }
 
       before do
         allow(Facter::Resolvers::OpenVz).to receive(:resolve).with(:vm).and_return(openvz_value)
@@ -84,7 +84,7 @@ describe Facts::Linux::IsVirtual do
     context 'when is vserver' do
       let(:vm) { nil }
       let(:virtwhat_value) { 'vserver_host' }
-      let(:value) { 'false' }
+      let(:value) { false }
 
       before do
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return(nil)
@@ -100,7 +100,7 @@ describe Facts::Linux::IsVirtual do
     context 'when is xen priviledged' do
       let(:vm) { nil }
       let(:xen_value) { 'xen0' }
-      let(:value) { 'false' }
+      let(:value) { false }
 
       before do
         allow(Facter::Resolvers::Xen).to receive(:resolve).with(:vm).and_return(xen_value)
@@ -114,7 +114,7 @@ describe Facts::Linux::IsVirtual do
 
     context 'when is bochs discovered with dmi product_name' do
       let(:vm) { nil }
-      let(:value) { 'true' }
+      let(:value) { true }
 
       before do
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
@@ -130,7 +130,7 @@ describe Facts::Linux::IsVirtual do
     context 'when is hyper-v discovered with lspci' do
       let(:vm) { nil }
       let(:lspci_value) { 'hyperv' }
-      let(:value) { 'true' }
+      let(:value) { true }
 
       before do
         allow(Facter::Resolvers::Lspci).to receive(:resolve).with(:vm).and_return(lspci_value)
@@ -143,10 +143,9 @@ describe Facts::Linux::IsVirtual do
     end
 
     context 'when resolvers return nil ' do
-      let(:vm) { 'false' }
+      let(:vm) { false }
 
       before do
-        allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return(nil)
         allow(Facter::Resolvers::Lspci).to receive(:resolve).with(:vm).and_return(nil)
@@ -159,7 +158,7 @@ describe Facts::Linux::IsVirtual do
     end
 
     context 'when product name is not found in the HYPERVISORS_HASH' do
-      let(:vm) { 'false' }
+      let(:vm) { false }
 
       before do
         allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)

@@ -8,7 +8,6 @@ module Facts
 
         def call_the_resolver
           fact_value = Facter::Resolvers::PosxIdentity.resolve(:gid)
-          fact_value = fact_value ? fact_value.to_s : nil
           Facter::ResolvedFact.new(FACT_NAME, fact_value)
         end
       end

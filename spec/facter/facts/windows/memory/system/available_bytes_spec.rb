@@ -9,7 +9,7 @@ describe Facts::Windows::Memory::System::AvailableBytes do
 
   describe '#call_the_resolver' do
     let(:value) { 3_331_551_232 }
-    let(:value_mb) { '3177.21' }
+    let(:value_mb) { 3177.21 }
 
     it 'calls Facter::Resolvers::Memory' do
       expect(Facter::Resolvers::Memory).to receive(:resolve).with(:available_bytes)

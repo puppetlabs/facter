@@ -5,7 +5,7 @@ describe Facts::Freebsd::Memory::System::TotalBytes do
     subject(:fact) { Facts::Freebsd::Memory::System::TotalBytes.new }
 
     let(:value) { 1024 * 1024 }
-    let(:value_mb) { '1.0' }
+    let(:value_mb) { 1 }
 
     before do
       allow(Facter::Resolvers::Freebsd::SystemMemory).to receive(:resolve).with(:total_bytes).and_return(value)
