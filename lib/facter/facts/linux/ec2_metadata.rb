@@ -16,9 +16,11 @@ module Facts
       private
 
       def aws_hypervisors?
-        virtual = check_virt_what || check_xen || check_product_name || check_bios_vendor || check_lspci
+        virtual =~ /kvm|xen|aws/
+      end
 
-        virtual == 'kvm' || virtual =~ /xen/
+      def virtual
+        check_virt_what || check_xen || check_product_name || check_bios_vendor || check_lspci
       end
 
       def check_virt_what
