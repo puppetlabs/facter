@@ -9,7 +9,9 @@ module Facts
 
           def call_the_resolver
             fact_value = Facter::Resolvers::Linux::Memory.resolve(:swap_used_bytes)
-            Facter::ResolvedFact.new(FACT_NAME, fact_value)
+            return Facter::ResolvedFact.new(FACT_NAME, nil) unless fact_value
+
+            Facter::ResolvedFact.new(FACT_NAME, fact_value.to_s)
           end
         end
       end

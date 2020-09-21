@@ -57,7 +57,10 @@ module Facter
           end
 
           def compute_capacity(used, total)
-            format('%<computed_capacity>.2f', computed_capacity: (used / total.to_f * 100)) + '%'
+            capacity = (used / total.to_f * 100)
+            return '0%' if capacity.zero?
+
+            format('%<computed_capacity>.2f', computed_capacity: capacity) + '%'
           end
 
           def compute_used(total, free)

@@ -11,7 +11,7 @@ module Facts
           return Facter::ResolvedFact.new(FACT_NAME, nil) unless lpar_partition_number&.positive?
 
           Facter::ResolvedFact.new(FACT_NAME,
-                                   partition_number: lpar_partition_number,
+                                   partition_number: lpar_partition_number.to_s,
                                    partition_name: Facter::Resolvers::Lpar.resolve(:lpar_partition_name))
         end
       end

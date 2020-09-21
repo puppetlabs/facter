@@ -5,6 +5,7 @@ describe Facts::Aix::Hypervisors::Lpar do
     subject(:fact) { Facts::Aix::Hypervisors::Lpar.new }
 
     let(:value) { { 'partition_number' => 13, 'partition_name' => 'aix6-7' } }
+    let(:result) { { 'partition_number' => '13', 'partition_name' => 'aix6-7' } }
 
     before do
       allow(Facter::Resolvers::Lpar).to receive(:resolve).with(:lpar_partition_number)
@@ -25,7 +26,7 @@ describe Facts::Aix::Hypervisors::Lpar do
 
     it 'returns a hypervisors.lpar fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-        have_attributes(name: 'hypervisors.lpar', value: value)
+        have_attributes(name: 'hypervisors.lpar', value: result)
     end
   end
 end

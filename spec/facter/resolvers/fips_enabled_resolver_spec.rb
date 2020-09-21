@@ -17,7 +17,7 @@ describe Facter::Resolvers::Linux::FipsEnabled do
       it 'returns fips is not enabled' do
         result = Facter::Resolvers::Linux::FipsEnabled.resolve(:fips_enabled)
 
-        expect(result).to eq(false)
+        expect(result).to eq('false')
       end
     end
 
@@ -27,7 +27,7 @@ describe Facter::Resolvers::Linux::FipsEnabled do
       it 'returns fips is not enabled' do
         result = Facter::Resolvers::Linux::FipsEnabled.resolve(:fips_enabled)
 
-        expect(result).to eq(false)
+        expect(result).to eq('false')
       end
     end
 
@@ -37,7 +37,7 @@ describe Facter::Resolvers::Linux::FipsEnabled do
       it 'returns fips is enabled' do
         result = Facter::Resolvers::Linux::FipsEnabled.resolve(:fips_enabled)
 
-        expect(result).to eq(true)
+        expect(result).to eq('true')
       end
     end
   end
