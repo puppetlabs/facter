@@ -168,6 +168,16 @@ module Facter
       nil
     end
 
+    # Loads all facts
+    #
+    # @return [nil]
+    #
+    # @api public
+    def loadfacts
+      LegacyFacter.loadfacts
+      nil
+    end
+
     # Register directories to be searched for custom facts. The registered directories
     # must be absolute paths or they will be ignored.
     #
