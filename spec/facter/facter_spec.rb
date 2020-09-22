@@ -296,6 +296,16 @@ describe Facter do
     end
   end
 
+  describe '#define_fact' do
+    it 'sends call to LegacyFacter' do
+      allow(LegacyFacter).to receive(:define_fact)
+
+      Facter.define_fact('fact_name') {}
+
+      expect(LegacyFacter).to have_received(:define_fact).once.with('fact_name', { fact_type: :custom })
+    end
+  end
+
   describe '#trace?' do
     it 'returns trace variable' do
       expect(Facter).not_to be_trace

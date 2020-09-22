@@ -102,6 +102,19 @@ module Facter
       nil
     end
 
+    # Define a new fact or extend an existing fact.
+    #
+    # @param name [Symbol] The name of the fact to define
+    # @param options [Hash] A hash of options to set on the fact
+    #
+    # @return [Facter::Util::Fact] The fact that was defined
+    #
+    # @api public
+    def define_fact(name, options = {}, &block)
+      options[:fact_type] = :custom
+      LegacyFacter.define_fact(name, options, &block)
+    end
+
     def on_message(&block)
       Facter::Log.on_message(&block)
     end
