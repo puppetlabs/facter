@@ -1,3 +1,22 @@
+## [4.0.39](https://github.com/puppetlabs/facter/tree/4.0.39) (2020-09-23)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.38...4.0.39)
+
+### Added
+
+- (FACT-2746) Added cloud resolver [#2082](https://github.com/puppetlabs/facter/pull/2082) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- (FACT-2317) Add Facter.define_fact method [#2102](https://github.com/puppetlabs/facter/pull/2102) ([oanatmaria](https://github.com/oanatmaria))
+- FACT(2326) Add Facter.each method [#2100](https://github.com/puppetlabs/facter/pull/2100) ([florindragos](https://github.com/florindragos))
+- (FACT-2324) Add loadfacts API method [#2103](https://github.com/puppetlabs/facter/pull/2103) ([sebastian-miclea](https://github.com/sebastian-miclea))
+
+### Fixed
+
+- (FACT-2802) Fix Cloud resolver [#2093](https://github.com/puppetlabs/facter/pull/2093) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- (FACT-2803) Detect hypervisors as amazon if virtwhat detects aws. [#2095](https://github.com/puppetlabs/facter/pull/2095) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (FACT-2748) Fixed type for blockdevice_*_size [#2098](https://github.com/puppetlabs/facter/pull/2098) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- (FACT-2793) Time limit for Facter::Core::Execute [#2080](https://github.com/puppetlabs/facter/pull/2080) ([oanatmaria](https://github.com/oanatmaria))
+
+
 ## [4.0.38](https://github.com/puppetlabs/facter/tree/4.0.38) (2020-09-16)
 
 [Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.37...4.0.38)
