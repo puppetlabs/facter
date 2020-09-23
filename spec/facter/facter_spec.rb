@@ -276,6 +276,49 @@ describe Facter do
     end
   end
 
+  describe '#values' do
+    context 'when one or more user queries' do
+      let(:result) { { 'os.name' => 'Darwin' } }
+
+      before do
+        allow(Facter::FormatterHelper)
+          .to receive(:retrieve_facts_to_display_for_user_query)
+          .with(['os.name'], [os_fact])
+          .and_return(result)
+
+        mock_fact_manager(:resolve_facts, [os_fact])
+      end
+
+      it 'calls FormatterHelper' do
+        Facter.values({}, ['os.name'])
+
+        expect(Facter::FormatterHelper)
+          .to have_received(:retrieve_facts_to_display_for_user_query)
+          .with(['os.name'], [os_fact])
+      end
+
+      it 'returns hash with os.name fact' do
+        expect(Facter.values({}, ['os.name'])).to eq(result)
+      end
+    end
+
+    context 'when no user query' do
+      before do
+        mock_fact_manager(:resolve_facts, [os_fact])
+      end
+
+      it 'calls Facter::FactCollection' do
+        Facter.values({}, [])
+
+        expect(fact_collection_spy).to have_received(:build_fact_collection!).with([os_fact])
+      end
+
+      it 'returns hash with os.name fact' do
+        expect(Facter.values({}, [])).to eq(fact_collection_spy)
+      end
+    end
+  end
+
   describe '#fact' do
     it 'returns a fact' do
       mock_fact_manager(:resolve_facts, [os_fact])

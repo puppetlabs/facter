@@ -27,11 +27,11 @@ module Facter
 
       cli = Facter::Cli.new([], processed_arguments)
 
-      if cli.args.any?(:version)
+      if cli.args.include?(:version)
         cli.invoke(:version, [])
-      elsif cli.args.any?('--list-cache-groups')
+      elsif cli.args.include?('--list-cache-groups')
         cli.invoke(:list_cache_groups, [])
-      elsif cli.args.any?('--list-block-groups')
+      elsif cli.args.include?('--list-block-groups')
         cli.invoke(:list_block_groups, [])
       else
         cli.invoke(:arg_parser)
