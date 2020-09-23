@@ -306,6 +306,22 @@ describe Facter do
     end
   end
 
+  describe '#loadfacts' do
+    it 'sends calls to LegacyFacter' do
+      allow(LegacyFacter).to receive(:loadfacts)
+
+      Facter.loadfacts
+
+      expect(LegacyFacter).to have_received(:loadfacts).once
+    end
+
+    it 'returns nil' do
+      allow(LegacyFacter).to receive(:loadfacts)
+
+      expect(Facter.loadfacts).to be_nil
+    end
+  end
+
   describe '#trace?' do
     it 'returns trace variable' do
       expect(Facter).not_to be_trace
