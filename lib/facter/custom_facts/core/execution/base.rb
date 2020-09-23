@@ -6,6 +6,10 @@ module Facter
       class Base
         STDERR_MESSAGE = 'Command %s resulted with the following stderr message: %s'
 
+        def initialize
+          @log = Log.new(self)
+        end
+
         # This is part of the public API. No race condition can happen
         # here because custom facts are executed sequentially
         def with_env(values)
@@ -36,9 +40,7 @@ module Facter
         end
 
         def execute(command, options = {})
-          on_fail = options.fetch(:on_fail, :raise)
-          expand = options.fetch(:expand, true)
-          logger = options[:logger]
+          on_fail, expand, logger, time_limit = extract_options(options)
 
           expanded_command = if !expand && builtin_command?(command) || logger
                                command
@@ -55,10 +57,20 @@ module Facter
             return on_fail
           end
 
-          execute_command(expanded_command, on_fail, logger)
+          execute_command(expanded_command, on_fail, logger, time_limit)
         end
 
         private
+
+        def extract_options(options)
+          on_fail = options.fetch(:on_fail, :raise)
+          expand = options.fetch(:expand, true)
+          logger = options[:logger]
+          time_limit = options[:limit].to_i
+          time_limit = time_limit.positive? ? time_limit : nil
+
+          [on_fail, expand, logger, time_limit]
+        end
 
         def log_stderr(msg, command, logger)
           return if !msg || msg.empty?
@@ -77,12 +89,30 @@ module Facter
           output.chomp =~ /builtin/ ? true : false
         end
 
-        def execute_command(command, on_fail, logger = nil)
+        def execute_command(command, on_fail, logger = nil, time_limit = nil)
+          time_limit ||= 1.5
           begin
             # Set LC_ALL and LANG to force i18n to C for the duration of this exec;
             # this ensures that any code that parses the
             # output of the command can expect it to be in a consistent / predictable format / locale
-            out, stderr, _status_ = Open3.capture3({ 'LC_ALL' => 'C', 'LANG' => 'C' }, command.to_s)
+            opts = { 'LC_ALL' => 'C', 'LANG' => 'C' }
+            require 'timeout'
+            @log.debug("Executing command: #{command}")
+            out, stderr = Open3.popen3(opts, command.to_s) do |_, stdout, stderr, wait_thr|
+              pid = wait_thr.pid
+              output = +''
+              err = +''
+              begin
+                Timeout.timeout(time_limit) do
+                  output << stdout.read
+                  err << stderr.read
+                end
+              rescue Timeout::Error
+                @log.debug("Timeout encounter after #{time_limit}s, killing process with pid: #{pid}")
+                Process.kill('KILL', pid)
+              end
+              [output, err]
+            end
             log_stderr(stderr, command, logger)
           rescue StandardError => e
             return '' if logger

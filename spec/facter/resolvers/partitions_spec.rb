@@ -44,14 +44,14 @@ describe Facter::Resolvers::Partitions do
           .with("#{sys_block_path}/sda/sda2/size", '0').and_return('201213')
         allow(Facter::Util::FileHelper).to receive(:safe_read)
           .with("#{sys_block_path}/sda/sda1/size", '0').and_return('234')
-        allow(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'which blkid')
-                                          .and_return('/usr/bin/blkid')
-        allow(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'blkid')
-                                          .and_return(load_fixture('blkid_output').read)
-        allow(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'which lsblk')
-                                          .and_return('/usr/bin/lsblk')
-        allow(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'lsblk -fp')
-                                          .and_return(load_fixture('lsblk_output').read)
+        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'which blkid')
+                                        .and_return('/usr/bin/blkid')
+        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'blkid')
+                                        .and_return(load_fixture('blkid_output').read)
+        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'which lsblk')
+                                        .and_return('/usr/bin/lsblk')
+        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'lsblk -fp')
+                                        .and_return(load_fixture('lsblk_output').read)
       end
 
       context 'when device size files are readable' do
@@ -94,10 +94,10 @@ describe Facter::Resolvers::Partitions do
           .with("#{sys_block_path}/sda/dm/name").and_return('VolGroup00-LogVol00')
         allow(Facter::Util::FileHelper).to receive(:safe_read)
           .with("#{sys_block_path}/sda/size", '0').and_return('201213')
-        allow(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'which blkid')
-                                          .and_return('/usr/bin/blkid')
-        allow(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'blkid')
-                                          .and_return(load_fixture('blkid_output').read)
+        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'which blkid')
+                                        .and_return('/usr/bin/blkid')
+        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'blkid')
+                                        .and_return(load_fixture('blkid_output').read)
       end
 
       context 'when device name file is readable' do
@@ -134,10 +134,10 @@ describe Facter::Resolvers::Partitions do
           .with("#{sys_block_path}/sda/loop/backing_file").and_return('some_path')
         allow(Facter::Util::FileHelper).to receive(:safe_read)
           .with("#{sys_block_path}/sda/size", '0').and_return('201213')
-        allow(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'which blkid')
-                                          .and_return('/usr/bin/blkid')
-        allow(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'blkid')
-                                          .and_return(load_fixture('blkid_output').read)
+        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'which blkid')
+                                        .and_return('/usr/bin/blkid')
+        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'blkid')
+                                        .and_return(load_fixture('blkid_output').read)
       end
 
       context 'when backing_file is readable' do

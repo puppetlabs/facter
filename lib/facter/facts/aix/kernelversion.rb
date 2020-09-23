@@ -6,7 +6,7 @@ module Facts
       FACT_NAME = 'kernelversion'
 
       def call_the_resolver
-        fact_value = Facter::Resolvers::OsLevel.resolve(:build)
+        fact_value = Facter::Resolvers::Aix::OsLevel.resolve(:build)
         kernelversion = fact_value.split('-')[0]
 
         Facter::ResolvedFact.new(FACT_NAME, kernelversion)

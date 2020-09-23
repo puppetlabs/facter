@@ -8,12 +8,12 @@ describe Facts::Aix::Kernelmajversion do
     let(:resolver_value) { '6100-09-00-0000' }
 
     before do
-      allow(Facter::Resolvers::OsLevel).to receive(:resolve).with(:build).and_return(resolver_value)
+      allow(Facter::Resolvers::Aix::OsLevel).to receive(:resolve).with(:build).and_return(resolver_value)
     end
 
     it 'calls Facter::Resolvers::OsLevel' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::OsLevel).to have_received(:resolve).with(:build)
+      expect(Facter::Resolvers::Aix::OsLevel).to have_received(:resolve).with(:build)
     end
 
     it 'returns kernelmajversion fact' do

@@ -8,7 +8,7 @@ module Facts
         ALIASES = %w[operatingsystemmajrelease operatingsystemrelease].freeze
 
         def call_the_resolver
-          fact_value = Facter::Resolvers::OsLevel.resolve(:build)
+          fact_value = Facter::Resolvers::Aix::OsLevel.resolve(:build)
           major = fact_value.split('-')[0]
 
           [Facter::ResolvedFact.new(FACT_NAME, full: fact_value.strip, major: major),
