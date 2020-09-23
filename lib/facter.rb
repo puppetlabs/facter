@@ -138,6 +138,26 @@ module Facter
       Facter::Options[:debug] = debug_bool
     end
 
+    # Iterates over fact names and values
+    #
+    # @yieldparam [String] name the fact name
+    # @yieldparam [String] value the current value of the fact
+    #
+    # @return [Facter]
+    #
+    # @api public
+    def each
+      log_blocked_facts
+      resolved_facts = Facter::FactManager.instance.resolve_facts
+      SessionCache.invalidate_all_caches
+
+      resolved_facts.each do |fact|
+        yield(fact.name, fact.value)
+      end
+
+      self
+    end
+
     # Returns a fact object by name.  If you use this, you still have to
     # call {Facter::Util::Fact#value `value`} on it to retrieve the actual
     # value.

@@ -546,4 +546,14 @@ describe Facter do
       expect(result).to be_nil
     end
   end
+
+  describe '#each' do
+    it 'returns one resolved fact' do
+      mock_fact_manager(:resolve_facts, [os_fact])
+
+      result = {}
+      Facter.each { |name, value| result[name] = value }
+      expect(result).to eq({ fact_name => fact_value })
+    end
+  end
 end
