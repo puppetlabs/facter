@@ -101,7 +101,7 @@ test_name 'Facter api works when there is an error inside a custom fact file' do
     step "Agent #{agent}: Verify that an error is outputted when custom fact file has an error" do
       create_api_call_file(test_vars, "Facter.value('custom_fact_1')")
       on(agent, "#{ruby_command(agent)} #{test_vars[:test_script_path]}") do |ruby_result|
-        assert_match(/Facter - error while resolving custom facts in .*file1.rb undefined local variable or method `nill'/,
+        assert_match(/Facter.*error while resolving custom facts in .*file1.rb undefined local variable or method `nill'/,
           ruby_result.stdout)
       end
     end

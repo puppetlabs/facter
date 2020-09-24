@@ -31,8 +31,6 @@ SimpleCov.start do
 end
 
 def colorize(str, color)
-  return str if OsDetector.instance.identifier.eql?(:windows)
-
   "#{color}#{str}#{Facter::RESET}"
 end
 

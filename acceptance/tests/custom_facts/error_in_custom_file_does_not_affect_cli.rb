@@ -82,7 +82,7 @@ test_name 'Facter cli works when there is an error inside a custom fact file' do
 
     step "Agent #{agent}: Verify that an error is outputted when custom fact file has an error" do
       on(agent, facter('custom_fact_4', environment: env), acceptable_exit_codes: [1]) do |facter_output|
-        assert_match(/ERROR Facter - error while resolving custom facts in .*file1.rb undefined local variable or method `nill'/,
+        assert_match(/ERROR Facter.*error while resolving custom facts in .*file1.rb undefined local variable or method `nill'/,
           facter_output.stderr.chomp)
       end
     end
