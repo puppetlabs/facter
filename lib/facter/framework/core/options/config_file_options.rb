@@ -46,7 +46,9 @@ module Facter
         return unless file_global_conf
 
         if Options.cli?
-          @options[:custom_facts] = !file_global_conf['no-custom-facts'] unless file_global_conf['no-custom-facts'].nil?
+          unless file_global_conf['no-custom-facts'].nil?
+            @options[:no_custom_facts] = file_global_conf['no-custom-facts']
+          end
         end
 
         @options[:custom_dir] = file_global_conf['custom-dir'] unless file_global_conf['custom-dir'].nil?
@@ -57,7 +59,7 @@ module Facter
         return unless global_conf
 
         if Options.cli?
-          @options[:external_facts] = !global_conf['no-external-facts'] unless global_conf['no-external-facts'].nil?
+          @options[:no_external_facts] = global_conf['no-external-facts'] unless global_conf['no-external-facts'].nil?
         end
 
         @options[:external_dir] = [global_conf['external-dir']].flatten unless global_conf['external-dir'].nil?
@@ -67,7 +69,7 @@ module Facter
       def augment_ruby(global_conf)
         return unless global_conf
 
-        @options[:ruby] = global_conf['no-ruby'].nil? ? true : !global_conf['no-ruby']
+        @options[:no_ruby] = global_conf['no-ruby'].nil? ? false : global_conf['no-ruby']
       end
 
       def augment_show_legacy(global_conf)

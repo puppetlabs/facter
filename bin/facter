@@ -4,8 +4,7 @@
 require 'pathname'
 require 'facter/framework/cli/cli_launcher.rb'
 
-cli_launcher = CliLauncher.new(ARGV)
+Facter::OptionsValidator.validate(ARGV)
+processed_arguments = CliLauncher.prepare_arguments(ARGV)
 
-cli_launcher.validate_options
-cli_launcher.prepare_arguments
-cli_launcher.start
+CliLauncher.start(processed_arguments)

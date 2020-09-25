@@ -41,17 +41,20 @@ describe Facter::OptionStore do
     end
   end
 
-  describe '#ruby=' do
-    context 'when true' do
+  describe '#no_ruby=' do
+    context 'when false' do
+      before do
+        option_store.no_ruby = false
+      end
+
       it 'sets ruby to true' do
-        option_store.ruby = true
         expect(option_store.ruby).to be true
       end
     end
 
-    context 'when false' do
+    context 'when true' do
       before do
-        option_store.ruby = false
+        option_store.no_ruby = true
       end
 
       it 'sets ruby to false' do
@@ -68,6 +71,72 @@ describe Facter::OptionStore do
     end
   end
 
+  describe '#no_block' do
+    context 'when true' do
+      before do
+        option_store.no_block = true
+      end
+
+      it 'sets block to false' do
+        expect(option_store.block).to be false
+      end
+    end
+
+    context 'when false' do
+      before do
+        option_store.no_block = false
+      end
+
+      it 'sets block to true' do
+        expect(option_store.block).to be true
+      end
+    end
+  end
+
+  describe '#no_cache' do
+    context 'when true' do
+      before do
+        option_store.no_cache = true
+      end
+
+      it 'sets block to false' do
+        expect(option_store.cache).to be false
+      end
+    end
+
+    context 'when false' do
+      before do
+        option_store.no_cache = false
+      end
+
+      it 'sets cache to true' do
+        expect(option_store.cache).to be true
+      end
+    end
+  end
+
+  describe '#no_color' do
+    context 'when true' do
+      before do
+        option_store.no_color = true
+      end
+
+      it 'sets color to false' do
+        expect(option_store.color).to be false
+      end
+    end
+
+    context 'when false' do
+      before do
+        option_store.no_color = false
+      end
+
+      it 'sets color to true' do
+        expect(option_store.color).to be true
+      end
+    end
+  end
+
   describe '#external_dir' do
     context 'with external_dir with values' do
       before do
@@ -79,9 +148,9 @@ describe Facter::OptionStore do
       end
     end
 
-    context 'with @external_facts false' do
+    context 'with @no_external_facts true' do
       before do
-        option_store.external_facts = false
+        option_store.no_external_facts = true
       end
 
       it 'returns external dir' do
@@ -89,9 +158,9 @@ describe Facter::OptionStore do
       end
     end
 
-    context 'with @external_facts true and external_dir empty' do
+    context 'with @no_external_facts false and external_dir empty' do
       before do
-        option_store.external_facts = true
+        option_store.no_external_facts = false
         option_store.external_dir = []
       end
 
@@ -228,13 +297,13 @@ describe Facter::OptionStore do
     end
   end
 
-  describe '#custom_facts=' do
-    context 'when true' do
+  describe '#no_custom_facts=' do
+    context 'when false' do
       it 'sets ruby to true' do
         option_store.instance_variable_set(:@ruby, false)
 
         expect do
-          option_store.custom_facts = true
+          option_store.no_custom_facts = false
         end.to change(option_store, :ruby)
           .from(false).to(true)
       end
@@ -299,11 +368,11 @@ describe Facter::OptionStore do
 
   describe '#send' do
     it 'sets values for attributes' do
-      option_store.instance_variable_set(:@ruby, true)
+      option_store.instance_variable_set(:@strict, true)
 
       expect do
-        option_store.set('ruby', false)
-      end.to change(option_store, :ruby)
+        option_store.set('strict', false)
+      end.to change(option_store, :strict)
         .from(true).to(false)
     end
   end

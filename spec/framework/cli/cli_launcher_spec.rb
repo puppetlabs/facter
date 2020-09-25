@@ -3,18 +3,9 @@
 require 'facter/framework/cli/cli_launcher'
 
 describe CliLauncher do
-  subject(:cli_launcher) { CliLauncher.new(args) }
+  subject(:cli_launcher) { CliLauncher }
 
   let(:args) { [] }
-
-  describe '#validate_options' do
-    it 'calls Facter::OptionsValidator.validate' do
-      allow(Facter::OptionsValidator).to receive(:validate)
-      cli_launcher.validate_options
-
-      expect(Facter::OptionsValidator).to have_received(:validate).with(args)
-    end
-  end
 
   describe '#prepare_arguments' do
     let(:task_list) do
@@ -40,7 +31,7 @@ describe CliLauncher do
       let(:expected_arguments) { %w[--list-cache-groups --list-block-groups --debug] }
 
       it 'reorders arguments' do
-        prepare_arguments = cli_launcher.prepare_arguments
+        prepare_arguments = CliLauncher.prepare_arguments(args)
 
         expect(prepare_arguments).to eq(expected_arguments)
       end
@@ -50,7 +41,7 @@ describe CliLauncher do
       let(:args) { %w[--list-cache-groups --list-block-groups --debug] }
 
       it 'does not reorder arguments' do
-        prepare_arguments = cli_launcher.prepare_arguments
+        prepare_arguments = CliLauncher.prepare_arguments(args)
 
         expect(prepare_arguments).to eq(args)
       end
@@ -61,7 +52,7 @@ describe CliLauncher do
       let(:expected_args) { %w[query fact1 fact2] }
 
       it 'adds default (query) task' do
-        prepare_arguments = cli_launcher.prepare_arguments
+        prepare_arguments = CliLauncher.prepare_arguments(args)
         expect(prepare_arguments).to eq(expected_args)
       end
     end
@@ -74,7 +65,7 @@ describe CliLauncher do
       end
 
       it 'calls Facter::Cli.start' do
-        cli_launcher.start
+        CliLauncher.start(args)
 
         expect(Facter::Cli).to have_received(:start).with(args, debug: true)
       end
@@ -87,7 +78,7 @@ describe CliLauncher do
       end
 
       it 'calls Facter::OptionsValidator.write_error_and_exit' do
-        cli_launcher.start
+        CliLauncher.start(args)
 
         expect(Facter::OptionsValidator).to have_received(:write_error_and_exit)
       end

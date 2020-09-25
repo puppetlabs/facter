@@ -26,10 +26,10 @@ module Facter
     @timing = false
 
     class << self
-      attr_reader :debug, :verbose, :log_level, :show_legacy, :ruby,
-                  :custom_facts, :blocked_facts
+      attr_reader :debug, :verbose, :log_level, :show_legacy,
+                  :custom_facts, :blocked_facts, :ruby, :external_facts
 
-      attr_accessor :config, :user_query, :strict, :json, :haml, :external_facts,
+      attr_accessor :config, :user_query, :strict, :json, :haml,
                     :cache, :yaml, :puppet, :ttls, :block, :cli, :config_file_custom_dir,
                     :config_file_external_dir, :default_external_dir, :fact_groups,
                     :block_list, :color, :trace, :timing
@@ -45,14 +45,26 @@ module Facter
         options
       end
 
-      def ruby=(bool)
-        if bool == true
-          @ruby = true
-        else
+      def no_ruby=(bool)
+        if bool
           @ruby = false
           @custom_facts = false
           @blocked_facts << 'ruby'
+        else
+          @ruby = true
         end
+      end
+
+      def no_block=(bool)
+        @block = !bool
+      end
+
+      def no_cache=(bool)
+        @cache = !bool
+      end
+
+      def no_color=(bool)
+        @color = !bool
       end
 
       def external_dir
@@ -99,13 +111,17 @@ module Facter
         end
       end
 
-      def custom_facts=(bool)
-        if bool == true
+      def no_custom_facts=(bool)
+        if bool == false
           @custom_facts = true
           @ruby = true
         else
           @custom_facts = false
         end
+      end
+
+      def no_external_facts=(bool)
+        @external_facts = !bool
       end
 
       def log_level=(level)
