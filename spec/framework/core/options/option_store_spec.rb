@@ -307,4 +307,18 @@ describe Facter::OptionStore do
         .from(true).to(false)
     end
   end
+
+  describe '#reset' do
+    it 'resets to default' do
+      default = option_store.all
+
+      option_store.cli = true
+      option_store.log_level = :debug
+      option_store.show_legacy = false
+      option_store.external_dir = ['external_dir_path']
+
+      option_store.reset
+      expect(option_store.all).to eq(default)
+    end
+  end
 end
