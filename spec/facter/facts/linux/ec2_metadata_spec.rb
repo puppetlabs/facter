@@ -13,6 +13,25 @@ describe Facts::Linux::Ec2Metadata do
       allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
     end
 
+    context 'when physical machine with no hypervisor' do
+      let(:hypervisor) { nil }
+      let(:value) { nil }
+
+      before do
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('MS-7A71')
+      end
+
+      it 'returns ec2 metadata fact as nil' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+          have_attributes(name: 'ec2_metadata', value: nil)
+      end
+
+      it "doesn't call Ec2 resolver" do
+        fact.call_the_resolver
+        expect(Facter::Resolvers::Ec2).not_to have_received(:resolve).with(:metadata)
+      end
+    end
+
     context 'when hypervisor is not kvm or xen' do
       let(:hypervisor) { nil }
       let(:value) { nil }

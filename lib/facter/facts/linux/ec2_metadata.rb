@@ -35,7 +35,8 @@ module Facts
         product_name = Facter::Resolvers::Linux::DmiBios.resolve(:product_name)
         return unless product_name
 
-        Facter::FactsUtils::HYPERVISORS_HASH.each { |key, value| return value if product_name.include?(key) }
+        _, value = Facter::FactsUtils::HYPERVISORS_HASH.find { |key, _value| product_name.include?(key) }
+        value
       end
 
       def check_bios_vendor
