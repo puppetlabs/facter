@@ -2,7 +2,7 @@
 
 module Facter
   class FactGroups
-    attr_reader :groups, :block_list
+    attr_reader :groups, :block_list, :facts_ttls
 
     @groups_ttls = []
 
@@ -14,6 +14,10 @@ module Facter
       @groups ||= File.readable?(@groups_file_path) ? Hocon.load(@groups_file_path) : {}
       load_groups
       load_groups_from_options
+      load_facts_ttls
+
+      # Reverse sort facts so that children have precedence when caching. eg: os.macosx vs os
+      @facts_ttls = @facts_ttls.sort.reverse.to_h
     end
 
     # Breakes down blocked groups in blocked facts
@@ -31,6 +35,9 @@ module Facter
 
     # Get the group name a fact is part of
     def get_fact_group(fact_name)
+      fact = get_fact(fact_name)
+      return fact[:group] if fact
+
       @groups.detect { |k, v| break k if Array(v).find { |f| fact_name =~ /^#{f}.*/ } }
     end
 
@@ -39,6 +46,15 @@ module Facter
       return unless (ttls = @groups_ttls.find { |g| g[group_name] })
 
       ttls_to_seconds(ttls[group_name])
+    end
+
+    def get_fact(fact_name)
+      return @facts_ttls[fact_name] if @facts_ttls[fact_name]
+
+      result = @facts_ttls.select { |name, fact| break fact if fact_name =~ /^#{name}\..*/ }
+      return nil if result == {}
+
+      result
     end
 
     private
@@ -55,10 +71,28 @@ module Facter
       end
     end
 
+    def load_facts_ttls
+      @facts_ttls ||= {}
+      return if @groups_ttls == []
+
+      @groups_ttls.reduce(:merge).each do |group, ttls|
+        ttls = ttls_to_seconds(ttls)
+        if @groups[group]
+          @groups[group].each do |fact|
+            if (@facts_ttls[fact] && @facts_ttls[fact][:ttls] < ttls) || @facts_ttls[fact].nil?
+              @facts_ttls[fact] = { ttls: ttls, group: group }
+            end
+          end
+        else
+          @facts_ttls[group] = { ttls: ttls, group: group }
+        end
+      end
+    end
+
     def load_groups
       config = ConfigReader.init(Options[:config])
       @block_list = config.block_list || {}
-      @groups_ttls = config.ttls || {}
+      @groups_ttls = config.ttls || []
       @groups.merge!(config.fact_groups) if config.fact_groups
     end
 
