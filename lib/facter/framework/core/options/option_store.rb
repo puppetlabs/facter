@@ -172,6 +172,7 @@ module Facter
         @custom_facts = true
         @external_dir = []
         @default_external_dir = []
+        @config_file_external_dir = []
         @external_facts = true
         @blocked_facts = []
         @fact_groups = {}
