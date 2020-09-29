@@ -20,45 +20,48 @@ module Facter
 
       @facts = []
       @external_facts = []
-      load_internal_facts(options)
-      load_external_facts(options)
 
-      @facts
+      @internal_facts = load_internal_facts(options)
+      @external_facts = load_external_facts(options)
+
+      @facts = @internal_facts + @external_facts
     end
 
     private
 
     def load_internal_facts(options)
       @log.debug('Loading internal facts')
+      internal_facts = []
 
       if options[:user_query] || options[:show_legacy]
         # if we have a user query, then we must search in core facts and legacy facts
         @log.debug('Loading all internal facts')
-        @internal_facts = @internal_loader.facts
+        internal_facts = @internal_loader.facts
       else
         @log.debug('Load only core facts')
-        @internal_facts = @internal_loader.core_facts
+        internal_facts = @internal_loader.core_facts
       end
 
-      @internal_facts = block_facts(@internal_facts, options)
-      @facts.concat(@internal_facts)
+      block_facts(internal_facts, options)
     end
 
     def load_external_facts(options)
       @log.debug('Loading external facts')
+      external_facts = []
+
       if options[:custom_facts]
         @log.debug('Loading custom facts')
-        @external_facts.concat(@external_fact_loader.custom_facts)
+        external_facts += @external_fact_loader.custom_facts
       end
 
-      @external_facts = block_facts(@external_facts, options)
+      external_facts = block_facts(external_facts, options)
 
       if options[:external_facts]
         @log.debug('Loading external facts')
-        @external_facts.concat(@external_fact_loader.external_facts)
+        external_facts += @external_fact_loader.external_facts
       end
 
-      @facts.concat(@external_facts)
+      external_facts
     end
 
     def block_facts(facts, options)
