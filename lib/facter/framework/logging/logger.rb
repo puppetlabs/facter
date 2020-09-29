@@ -91,9 +91,7 @@ module Facter
     def error(msg, colorize = false)
       @@has_errors = true
 
-      if msg.nil? || msg.empty?
-        empty_message_error(msg)
-      elsif @@message_callback
+      if @@message_callback
         @@message_callback.call(:error, msg)
       else
         msg = colorize(msg, RED) if colorize || Options[:color]
@@ -111,8 +109,6 @@ module Facter
     private
 
     def colorize(msg, color)
-      return msg if OsDetector.instance.identifier.eql?(:windows)
-
       "#{color}#{msg}#{RESET}"
     end
 

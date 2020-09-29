@@ -557,6 +557,89 @@ describe Facter do
   end
 
   describe '#log_exception' do
+    shared_examples 'when exception param is an exception' do
+      it 'logs exception message' do
+        exception.set_backtrace(backtrace)
+
+        Facter.log_exception(exception, message)
+
+        expect(logger).to have_received(:error).with(expected_message)
+      end
+    end
+
+    shared_examples 'when exception param is not an exception' do
+      it 'logs exception message' do
+        Facter.log_exception(exception, message)
+
+        expect(logger).to have_received(:error).with(expected_message)
+      end
+    end
+
+    context 'when trace option is false' do
+      let(:backtrace) { 'prog.rb:2:in a' }
+
+      context 'when we have an exception and a message' do
+        let(:message) { 'Some error message' }
+        let(:exception) { FlushFakeError.new }
+        let(:expected_message) { 'Some error message' }
+
+        it_behaves_like 'when exception param is an exception'
+      end
+
+      context 'when we have an exception and an empty message' do
+        let(:message) { '' }
+        let(:exception) { FlushFakeError.new }
+        let(:expected_message) { 'FlushFakeError' }
+
+        it_behaves_like 'when exception param is an exception'
+      end
+
+      context 'when we have an exception and a nil message' do
+        let(:message) { nil }
+        let(:exception) { FlushFakeError.new }
+        let(:expected_message) { 'FlushFakeError' }
+
+        it_behaves_like 'when exception param is an exception'
+      end
+
+      context 'when we have an exception and no message' do
+        let(:exception) { FlushFakeError.new }
+        let(:expected_message) { 'FlushFakeError' }
+
+        it 'logs exception message' do
+          exception.set_backtrace(backtrace)
+
+          Facter.log_exception(exception)
+
+          expect(logger).to have_received(:error).with(expected_message)
+        end
+      end
+
+      context 'when exception and message are strings' do
+        let(:message) { 'message' }
+        let(:exception) { 'exception' }
+        let(:expected_message) { 'message' }
+
+        it_behaves_like 'when exception param is not an exception'
+      end
+
+      context 'when exception and message are nil' do
+        let(:message) { nil }
+        let(:exception) { nil }
+        let(:expected_message) { '' }
+
+        it_behaves_like 'when exception param is not an exception'
+      end
+
+      context 'when exception and message are hashes' do
+        let(:message) { { 'a': 1 } }
+        let(:exception) { { 'b': 2 } }
+        let(:expected_message) { '{:a=>1}' }
+
+        it_behaves_like 'when exception param is not an exception'
+      end
+    end
+
     context 'when trace options is true' do
       before do
         Facter.trace(true)
@@ -566,16 +649,78 @@ describe Facter do
         Facter.trace(false)
       end
 
-      let(:message) { 'Some error message' }
-      let(:exception) { FlushFakeError.new }
-      let(:expected_message) { "Some error message\nbacktrace:\nprog.rb:2:in `a'" }
+      let(:backtrace) { 'prog.rb:2:in a' }
 
-      it 'format exception to display backtrace' do
-        exception.set_backtrace("prog.rb:2:in `a'")
+      context 'when we have an exception and a message' do
+        let(:message) { 'Some error message' }
+        let(:exception) { FlushFakeError.new }
+        let(:expected_message) { "Some error message\nbacktrace:\nprog.rb:2:in a" }
 
-        Facter.log_exception(exception, message)
+        it_behaves_like 'when exception param is an exception'
+      end
 
-        expect(logger).to have_received(:error).with(expected_message)
+      context 'when we have an exception and an empty message' do
+        let(:message) { '' }
+        let(:exception) { FlushFakeError.new }
+        let(:expected_message) { "FlushFakeError\nbacktrace:\nprog.rb:2:in a" }
+
+        it_behaves_like 'when exception param is an exception'
+      end
+
+      context 'when we have an exception and a nil message' do
+        let(:message) { nil }
+        let(:exception) { FlushFakeError.new }
+        let(:expected_message) { "FlushFakeError\nbacktrace:\nprog.rb:2:in a" }
+
+        it_behaves_like 'when exception param is an exception'
+      end
+
+      context 'when we have an exception and no message' do
+        let(:exception) { FlushFakeError.new }
+        let(:expected_message) { "FlushFakeError\nbacktrace:\nprog.rb:2:in a" }
+
+        it 'logs exception message' do
+          exception.set_backtrace(backtrace)
+
+          Facter.log_exception(exception)
+
+          expect(logger).to have_received(:error).with(expected_message)
+        end
+      end
+
+      context 'when we have an exception with no backtrace' do
+        let(:exception) { FlushFakeError.new }
+        let(:expected_message) { 'FlushFakeError' }
+
+        it 'logs exception message' do
+          Facter.log_exception(exception)
+
+          expect(logger).to have_received(:error).with(expected_message)
+        end
+      end
+
+      context 'when exception and message are strings' do
+        let(:message) { 'message' }
+        let(:exception) { 'exception' }
+        let(:expected_message) { 'message' }
+
+        it_behaves_like 'when exception param is not an exception'
+      end
+
+      context 'when exception and message are nil' do
+        let(:message) { nil }
+        let(:exception) { nil }
+        let(:expected_message) { '' }
+
+        it_behaves_like 'when exception param is not an exception'
+      end
+
+      context 'when exception and message are hashes' do
+        let(:message) { { 'a': 1 } }
+        let(:exception) { { 'b': 2 } }
+        let(:expected_message) { '{:a=>1}' }
+
+        it_behaves_like 'when exception param is not an exception'
       end
     end
   end

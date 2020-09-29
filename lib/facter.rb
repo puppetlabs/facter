@@ -344,19 +344,13 @@ module Facter
       [fact_formatter.format(resolved_facts), status || 0]
     end
 
-    def log_exception(exception, message = :default)
-      arr = []
-      if message == :default
-        arr << exception.message
-      elsif message
-        arr << message
-      end
-      if Options[:trace]
-        arr << 'backtrace:'
-        arr.concat(exception.backtrace)
-      end
+    def log_exception(exception, message = nil)
+      error_message = []
 
-      logger.error(arr.flatten.join("\n"))
+      error_message << message.to_s unless message.nil? || (message.is_a?(String) && message.empty?)
+
+      parse_exception(exception, error_message)
+      logger.error(error_message.flatten.join("\n"))
     end
 
     # Returns a list with the names of all solved facts
@@ -397,6 +391,19 @@ module Facter
     end
 
     private
+
+    def parse_exception(exception, error_message)
+      if exception.is_a?(Exception)
+        error_message << exception.message if error_message.empty?
+
+        if Options[:trace] && !exception.backtrace.nil?
+          error_message << 'backtrace:'
+          error_message.concat(exception.backtrace)
+        end
+      elsif error_message.empty?
+        error_message << exception.to_s
+      end
+    end
 
     def logger
       @logger ||= Log.new(self)

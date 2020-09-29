@@ -22,7 +22,7 @@ module Facter
     @user_query = []
     @block_list = {}
     @fact_groups = {}
-    @color = false
+    @color = true
     @timing = false
 
     class << self

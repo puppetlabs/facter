@@ -5,7 +5,9 @@ describe Facter::Util::FileHelper do
 
   let(:path) { '/Users/admin/file.txt' }
   let(:content) { 'file content' }
-  let(:error_message) { 'Facter::Util::FileHelper - File at: /Users/admin/file.txt is not accessible.' }
+  let(:error_message) do
+    "Facter::Util::FileHelper - #{Facter::CYAN}File at: /Users/admin/file.txt is not accessible.#{Facter::RESET}"
+  end
   let(:array_content) { ['line 1', 'line 2', 'line 3'] }
   let(:logger_double) { instance_spy(Logger) }
 
