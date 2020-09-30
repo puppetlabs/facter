@@ -1,3 +1,20 @@
+## [4.0.40](https://github.com/puppetlabs/facter/tree/4.0.40) (2020-09-30)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.39...4.0.40)
+
+### Added
+
+- (FACT-2774) Extend facter API with resolve. [#2054](https://github.com/puppetlabs/facter/pull/2054) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+### Fixed
+
+- (FACT-2798) Set color to true, fix Facter.log_exception [#2105](https://github.com/puppetlabs/facter/pull/2105) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- (FACT-2816) - Fix ec2 fact issues when on non ec2 systems [#2106](https://github.com/puppetlabs/facter/pull/2106) ([logicminds](https://github.com/logicminds))
+- (FACT-2799) Fix fact loading for nested fact calls [#2108](https://github.com/puppetlabs/facter/pull/2108) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (FACT-2786) Fix fact caching if fact is defined in multiple groups [#2089](https://github.com/puppetlabs/facter/pull/2089) ([florindragos](https://github.com/florindragos))
+- (maint) Fix for blockdevice_*_size legacy fact on Aix and Solaris [#2111](https://github.com/puppetlabs/facter/pull/2111) ([sebastian-miclea](https://github.com/sebastian-miclea))
+
+
 ## [4.0.39](https://github.com/puppetlabs/facter/tree/4.0.39) (2020-09-23)
 
 [Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.38...4.0.39)
