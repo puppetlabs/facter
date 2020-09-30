@@ -53,9 +53,9 @@ describe Facts::Solaris::Disks do
         .and contain_exactly(
           an_object_having_attributes(name: 'disks', value: expected_response),
           an_object_having_attributes(name: 'blockdevices', value: 'sd0,sd1'),
-          an_object_having_attributes(name: 'blockdevice_sd0_size', value: '0', type: :legacy),
+          an_object_having_attributes(name: 'blockdevice_sd0_size', value: 0, type: :legacy),
           an_object_having_attributes(name: 'blockdevice_sd0_vendor', value: 'NECVMWar', type: :legacy),
-          an_object_having_attributes(name: 'blockdevice_sd1_size', value: '21474836480', type: :legacy),
+          an_object_having_attributes(name: 'blockdevice_sd1_size', value: 21_474_836_480, type: :legacy),
           an_object_having_attributes(name: 'blockdevice_sd1_vendor', value: 'VMware', type: :legacy)
         )
     end
