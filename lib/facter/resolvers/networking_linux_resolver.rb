@@ -10,7 +10,6 @@ module Facter
         private
 
         def post_resolve(fact_name)
-          log.debug('in networking_linux_resolver')
           @fact_list.fetch(fact_name) { retrieve_network_info(fact_name) }
 
           @fact_list[fact_name]
