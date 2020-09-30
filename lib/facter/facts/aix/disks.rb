@@ -24,7 +24,7 @@ module Facts
 
       def add_legacy_facts(disks, facts)
         disks.each do |disk_name, disk_info|
-          facts.push(Facter::ResolvedFact.new("blockdevice_#{disk_name}_size", disk_info[:size_bytes].to_s, :legacy))
+          facts.push(Facter::ResolvedFact.new("blockdevice_#{disk_name}_size", disk_info[:size_bytes], :legacy))
         end
       end
     end

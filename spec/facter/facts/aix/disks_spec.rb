@@ -37,7 +37,7 @@ describe Facts::Aix::Disks do
         .and contain_exactly(
           an_object_having_attributes(name: 'disks', value: expecte_response),
           an_object_having_attributes(name: 'blockdevices', value: 'hdisk0'),
-          an_object_having_attributes(name: 'blockdevice_hdisk0_size', value: '21474836480', type: :legacy)
+          an_object_having_attributes(name: 'blockdevice_hdisk0_size', value: 21_474_836_480, type: :legacy)
         )
     end
 
