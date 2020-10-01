@@ -4,41 +4,23 @@ describe Facts::Linux::Ec2Userdata do
   describe '#call_the_resolver' do
     subject(:fact) { Facts::Linux::Ec2Userdata.new }
 
+    let(:virtual_detector_double) { instance_spy(Facter::VirtualDetector) }
+
     before do
+      allow(Facter::VirtualDetector).to receive(:new).and_return(virtual_detector_double)
       allow(Facter::Resolvers::Ec2).to receive(:resolve).with(:userdata).and_return(value)
-      allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return(hypervisor)
-      allow(Facter::Resolvers::Xen).to receive(:resolve).with(:vm).and_return(nil)
-      allow(Facter::Resolvers::Lspci).to receive(:resolve).with(:vm).and_return(nil)
-      allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return(nil)
-      allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
     end
 
     context 'when physical machine with no hypervisor' do
-      let(:hypervisor) { nil }
       let(:value) { nil }
 
       before do
-        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('MS-7A71')
+        allow(virtual_detector_double).to receive(:platform).and_return(nil)
       end
-
-      it 'returns ec2 metadata fact as nil' do
-        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-          have_attributes(name: 'ec2_userdata', value: nil)
-      end
-
-      it "doesn't call Ec2 resolver" do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Ec2).not_to have_received(:resolve).with(:userdata)
-      end
-    end
-
-    context 'when hypervisor is not kvm or xen' do
-      let(:hypervisor) { nil }
-      let(:value) { nil }
 
       it 'returns ec2 userdata fact as nil' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-          have_attributes(name: 'ec2_userdata', value: nil)
+          have_attributes(name: 'ec2_userdata', value: value)
       end
 
       it "doesn't call Ec2 resolver" do
@@ -47,40 +29,52 @@ describe Facts::Linux::Ec2Userdata do
       end
     end
 
-    context 'when hypervisor is xen' do
-      let(:hypervisor) { 'xenhvm' }
+    shared_examples 'check ec2 resolver called with userdata' do
+      it 'calls ec2 resolver' do
+        fact.call_the_resolver
 
-      context 'when resolver returns a value' do
-        let(:value) { 'some custom value' }
+        expect(Facter::Resolvers::Ec2).to have_received(:resolve).with(:userdata)
+      end
+    end
 
-        it 'calls Facter::Resolvers::Ec2' do
-          fact.call_the_resolver
-          expect(Facter::Resolvers::Ec2).to have_received(:resolve).with(:userdata)
-        end
+    shared_examples 'check resolved fact value' do
+      it 'returns ec2 userdata fact' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+          have_attributes(name: 'ec2_userdata', value: value)
+      end
+    end
 
-        it 'returns ec2 userdata fact' do
-          expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-            have_attributes(name: 'ec2_userdata', value: value)
-        end
+    context 'when platform is kvm' do
+      let(:value) { { 'info' => 'value' } }
+
+      before do
+        allow(virtual_detector_double).to receive(:platform).and_return('kvm')
       end
 
-      context 'when resolver returns empty string' do
-        let(:value) { '' }
+      it_behaves_like 'check ec2 resolver called with userdata'
+      it_behaves_like 'check resolved fact value'
+    end
 
-        it 'returns ec2 userdata fact as nil' do
-          expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-            have_attributes(name: 'ec2_userdata', value: nil)
-        end
+    context 'when platform is xen' do
+      let(:value) { { 'info' => 'value' } }
+
+      before do
+        allow(virtual_detector_double).to receive(:platform).and_return('xen')
       end
 
-      context 'when resolver returns nil' do
-        let(:value) { nil }
+      it_behaves_like 'check ec2 resolver called with userdata'
+      it_behaves_like 'check resolved fact value'
+    end
 
-        it 'returns ec2 userdata fact as nil' do
-          expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-            have_attributes(name: 'ec2_userdata', value: nil)
-        end
+    context 'when platform is aws' do
+      let(:value) { { 'info' => 'value' } }
+
+      before do
+        allow(virtual_detector_double).to receive(:platform).and_return('aws')
       end
+
+      it_behaves_like 'check ec2 resolver called with userdata'
+      it_behaves_like 'check resolved fact value'
     end
   end
 end

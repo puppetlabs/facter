@@ -5,6 +5,10 @@ module Facts
     class Ec2Userdata
       FACT_NAME = 'ec2_userdata'
 
+      def initialize
+        @virtual = Facter::VirtualDetector.new
+      end
+
       def call_the_resolver
         return Facter::ResolvedFact.new(FACT_NAME, nil) unless aws_hypervisors?
 
@@ -16,34 +20,7 @@ module Facts
       private
 
       def aws_hypervisors?
-        virtual = check_virt_what || check_xen || check_product_name || check_bios_vendor || check_lspci
-
-        virtual == 'kvm' || virtual =~ /xen/
-      end
-
-      def check_virt_what
-        Facter::Resolvers::VirtWhat.resolve(:vm)
-      end
-
-      def check_xen
-        Facter::Resolvers::Xen.resolve(:vm)
-      end
-
-      def check_product_name
-        product_name = Facter::Resolvers::Linux::DmiBios.resolve(:product_name)
-        return unless product_name
-
-        _, value = Facter::FactsUtils::HYPERVISORS_HASH.find { |key, _value| product_name.include?(key) }
-        value
-      end
-
-      def check_bios_vendor
-        bios_vendor = Facter::Resolvers::Linux::DmiBios.resolve(:bios_vendor)
-        return 'kvm' if bios_vendor&.include?('Amazon EC2')
-      end
-
-      def check_lspci
-        Facter::Resolvers::Lspci.resolve(:vm)
+        @virtual.platform =~ /kvm|xen|aws/
       end
     end
   end
