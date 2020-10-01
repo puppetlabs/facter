@@ -66,7 +66,7 @@ module Facter
 
             @log.debug("Error! #{::FFI::LastError.error}") if ioctl == -1
 
-            @interfaces[lifreq.name][:mtu] = lifreq[:lifr_lifru][:lifru_metric]
+            @interfaces[lifreq.name][:mtu] ||= lifreq[:lifr_lifru][:lifru_metric]
           end
 
           def load_netmask(lifreq)
