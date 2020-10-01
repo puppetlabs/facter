@@ -6,7 +6,6 @@ module Facts
       FACT_NAME = 'ec2_metadata'
 
       def initialize
-        @log = Facter::Log.new(self)
         @virtual = Facter::VirtualDetector.new
       end
 

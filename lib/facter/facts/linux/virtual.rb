@@ -12,9 +12,7 @@ module Facts
 
       def call_the_resolver
         @log.debug('Linux Virtual Resolver')
-
         fact_value = @virtual.platform
-
         @log.debug("Fact value is: #{fact_value}")
 
         Facter::ResolvedFact.new(FACT_NAME, fact_value)

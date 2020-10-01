@@ -29,13 +29,15 @@ describe Facts::Linux::Ec2Metadata do
       end
     end
 
-    shared_examples 'call ec2 and check resolved fact' do
+    shared_examples 'check ec2 resolver called with metadata' do
       it 'calls ec2 resolver' do
         fact.call_the_resolver
 
         expect(Facter::Resolvers::Ec2).to have_received(:resolve).with(:metadata)
       end
+    end
 
+    shared_examples 'check resolved fact value' do
       it 'returns ec2 metadata fact' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
           have_attributes(name: 'ec2_metadata', value: value)
@@ -49,7 +51,8 @@ describe Facts::Linux::Ec2Metadata do
         allow(virtual_detector_double).to receive(:platform).and_return('kvm')
       end
 
-      it_behaves_like 'call ec2 and check resolved fact'
+      it_behaves_like 'check ec2 resolver called with metadata'
+      it_behaves_like 'check resolved fact value'
     end
 
     context 'when platform is xen' do
@@ -59,7 +62,8 @@ describe Facts::Linux::Ec2Metadata do
         allow(virtual_detector_double).to receive(:platform).and_return('xen')
       end
 
-      it_behaves_like 'call ec2 and check resolved fact'
+      it_behaves_like 'check ec2 resolver called with metadata'
+      it_behaves_like 'check resolved fact value'
     end
 
     context 'when platform is aws' do
@@ -69,7 +73,8 @@ describe Facts::Linux::Ec2Metadata do
         allow(virtual_detector_double).to receive(:platform).and_return('aws')
       end
 
-      it_behaves_like 'call ec2 and check resolved fact'
+      it_behaves_like 'check ec2 resolver called with metadata'
+      it_behaves_like 'check resolved fact value'
     end
   end
 end
