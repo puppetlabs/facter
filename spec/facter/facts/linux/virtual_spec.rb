@@ -10,7 +10,6 @@ describe Facts::Linux::Virtual do
     before do
       allow(Facter::Log).to receive(:new).and_return(log_spy)
       allow(Facter::VirtualDetector).to receive(:new).and_return(virtual_detector_double)
-      allow(Facter::Resolvers::Ec2).to receive(:resolve).with(:metadata).and_return(value)
       allow(virtual_detector_double).to receive(:platform).and_return(value)
     end
 
@@ -23,7 +22,7 @@ describe Facts::Linux::Virtual do
     end
 
     context 'when not in a virtual environment' do
-      let(:value) { nil }
+      let(:value) { 'physical' }
 
       it_behaves_like 'check resolved fact value'
     end
