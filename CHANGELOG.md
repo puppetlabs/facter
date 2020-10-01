@@ -1,3 +1,12 @@
+## [4.0.41](https://github.com/puppetlabs/facter/tree/4.0.41) (2020-10-01)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.40...4.0.41)
+
+### Fixed
+
+- (FACT-2824) Facter make ec2 metadata requests when on gce [#2113](https://github.com/puppetlabs/facter/pull/2113) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+
 ## [4.0.40](https://github.com/puppetlabs/facter/tree/4.0.40) (2020-09-30)
 
 [Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.39...4.0.40)
