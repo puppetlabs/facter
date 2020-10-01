@@ -90,7 +90,7 @@ module Facter
         end
 
         def execute_command(command, on_fail, logger = nil, time_limit = nil)
-          time_limit ||= 1.5
+          time_limit ||= 300
           begin
             # Set LC_ALL and LANG to force i18n to C for the duration of this exec;
             # this ensures that any code that parses the
@@ -100,18 +100,24 @@ module Facter
             @log.debug("Executing command: #{command}")
             out, stderr = Open3.popen3(opts, command.to_s) do |_, stdout, stderr, wait_thr|
               pid = wait_thr.pid
-              output = +''
-              err = +''
+              stdout_messages = +''
+              stderr_messages = +''
+              out_reader = Thread.new { stdout.read }
+              err_reader = Thread.new { stderr.read }
               begin
                 Timeout.timeout(time_limit) do
-                  output << stdout.read
-                  err << stderr.read
+                  stdout_messages << out_reader.value
+                  stderr_messages << err_reader.value
                 end
               rescue Timeout::Error
-                @log.debug("Timeout encounter after #{time_limit}s, killing process with pid: #{pid}")
+                message = "Timeout encounter after #{time_limit}s, killing process with pid: #{pid}"
                 Process.kill('KILL', pid)
+                on_fail == :raise ? (raise StandardError, message) : @log.debug(message)
+              ensure
+                out_reader.kill
+                err_reader.kill
               end
-              [output, err]
+              [stdout_messages, stderr_messages]
             end
             log_stderr(stderr, command, logger)
           rescue StandardError => e
