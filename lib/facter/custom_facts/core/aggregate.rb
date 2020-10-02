@@ -14,6 +14,36 @@
 module Facter
   module Core
     class Aggregate
+      def initialize(name, fact)
+        @inner_resolution = AggregateInner.new(name, fact)
+      end
+
+      def aggregate(&block)
+        @inner_resolution.aggregate(&block)
+      end
+
+      def chunk(name, opts = {}, &block)
+        @inner_resolution.chunk(name, opts, &block)
+      end
+
+      def confine(confines = nil, &block)
+        @inner_resolution.confine(confines, &block)
+      end
+
+      def name
+        @inner_resolution.name
+      end
+
+      def has_weight(weight)
+        @inner_resolution.has_weight(weight)
+      end
+
+      def on_flush(&block)
+        @inner_resolution.on_flush(&block)
+      end
+    end
+
+    class AggregateInner
       include LegacyFacter::Core::Suitable
       include LegacyFacter::Core::Resolvable
 
@@ -33,7 +63,7 @@ module Facter
       attr_reader :confines
 
       # @!attribute [r] fact
-      # @return [Facter::Util::Fact]
+      # @return [Facter::Util::FactInner]
       # @api private
       attr_reader :fact
 

@@ -45,7 +45,7 @@ module Facter
     # Alias method for Facter.fact()
     # @param name [string] fact name
     #
-    # @return [Facter::Util::Fact, nil] The fact object, or nil if no fact
+    # @return [Facter::ResolvedFact] The fact object, or nil if no fact
     #   is found.
     #
     # @api public
@@ -60,7 +60,7 @@ module Facter
     #   supplied here
     # @param block [Proc] a block defining a fact resolution
     #
-    # @return [Facter::Util::Fact] the fact object, which includes any previously
+    # @return [Facter::Util::FactInner] the fact object, which includes any previously
     #   defined resolutions
     #
     # @api public
@@ -128,12 +128,13 @@ module Facter
     # @param name [Symbol] The name of the fact to define
     # @param options [Hash] A hash of options to set on the fact
     #
-    # @return [Facter::Util::Fact] The fact that was defined
+    # @return [Facter::Util::FactInner] The fact that was defined
     #
     # @api public
     def define_fact(name, options = {}, &block)
       options[:fact_type] = :custom
-      LegacyFacter.define_fact(name, options, &block)
+      fact = Facter::Util::Fact.new(nil).instance_variable_set(:@inner_fact, LegacyFacter.define_fact(name, options, &block))
+      fact
     end
 
     def on_message(&block)

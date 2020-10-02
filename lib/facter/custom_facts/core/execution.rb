@@ -3,14 +3,30 @@
 module Facter
   module Core
     module Execution
+      def which(bin)
+        ExecutionInner.which(bin)
+      end
+      #maybe this shouldn't be available because it's deprecated?
+      def exec(command)
+        ExecutionInner.exec(command)
+      end
+
+      def execute(command, options = {})
+        ExecutionInner.execute(command, options)
+      end
+
+      class ExecutionFailure < StandardError; end
+    end
+
+    module ExecutionInner
       # require_relative 'execution/base'
       # require_relative 'execution/windows'
       # require_relative 'execution/posix'
 
       @@impl = if LegacyFacter::Util::Config.windows?
-                 Facter::Core::Execution::Windows.new
+                 Facter::Core::ExecutionInner::Windows.new
                else
-                 Facter::Core::Execution::Posix.new
+                 Facter::Core::ExecutionInner::Posix.new
                end
 
       def self.impl
@@ -53,9 +69,9 @@ module Facter
       def absolute_path?(path, platform = nil)
         case platform
         when :posix
-          Facter::Core::Execution::Posix.new.absolute_path?(path)
+          Facter::Core::ExecutionInner::Posix.new.absolute_path?(path)
         when :windows
-          Facter::Core::Execution::Windows.new.absolute_path?(path)
+          Facter::Core::ExecutionInner::Windows.new.absolute_path?(path)
         else
           @@impl.absolute_path?(path)
         end
@@ -122,8 +138,6 @@ module Facter
       def execute(command, options = {})
         @@impl.execute(command, options)
       end
-
-      class ExecutionFailure < StandardError; end
     end
   end
 end

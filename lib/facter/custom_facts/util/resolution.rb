@@ -12,20 +12,45 @@
 module Facter
   module Util
     class Resolution
+      def initialize(name, fact)
+        @inner_resolution = ResolutionInner.new(name, fact)
+      end
+
+      def confine(confines = nil, &block)
+        @inner_resolution.confine(confines, &block)
+      end
+
+      def setcode(string = nil, &block)
+        @inner_resolution.setcode(string, &block)
+      end
+
+      def name
+        @inner_resolution.name
+      end
+
+      def exec(command)
+        @inner_resolution.exec(command)
+      end
+
+      def has_weight(weight)
+        @inner_resolution.has_weight(weight)
+      end
+
+      def on_flush(&block)
+        @inner_resolution.on_flush(&block)
+      end
+
+      def which(bin)
+        @inner_resolution.which(bin)
+      end
+    end
+
+    class ResolutionInner
       # @api private
       attr_accessor :code, :fact_type
       attr_writer :value
 
-      extend Facter::Core::Execution
-
-      class << self
-        # Expose command execution methods that were extracted into
-        # Facter::Core::Execution from Facter::Util::Resolution in Facter 2.0.0 for
-        # compatibility.
-        #
-        # @deprecated
-        public :search_paths, :which, :absolute_path?, :expand_command, :with_env, :exec
-      end
+      extend Facter::Core::ExecutionInner
 
       include LegacyFacter::Core::Resolvable
       include LegacyFacter::Core::Suitable
@@ -38,7 +63,7 @@ module Facter
       attr_accessor :name
 
       # @!attribute [r] fact
-      # @return [Facter::Util::Fact]
+      # @return [Facter::Util::FactInner]
       # @api private
       attr_reader :fact
 
@@ -82,7 +107,7 @@ module Facter
                             block.source_location.join(':')
                           else
                             true
-                          end
+        end
       end
 
       def options(options)
@@ -115,7 +140,7 @@ module Facter
       def setcode(string = nil, &block)
         if string
           @code = proc do
-            output = Facter::Core::Execution.execute(string, on_fail: nil)
+            output = Facter::Core::ExecutionInner.execute(string, on_fail: nil)
             if output.nil? || output.empty?
               nil
             else

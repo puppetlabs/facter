@@ -9,6 +9,46 @@
 module Facter
   module Util
     class Fact
+      def initialize(name)
+        @inner_fact = FactInner.new(name)
+      end
+
+      def name
+        @inner_fact.name
+      end
+
+      def value
+        @inner_fact.value
+      end
+
+      def resolution(name)
+        found_resolution = @inner_fact.resolution(name)
+
+        unless found_resolution.nil?
+          resolution = Resolution.new(name, nil)
+          resolution.instance_variable_set(instance, found_resolution)
+          return resolution
+        end
+        nil
+      end
+
+      def flush
+        @inner_fact.flush
+      end
+
+      def define_resolution(resolution_name, options = {}, &block)
+        new_inner_resolution = @inner_fact.define_resolution(resolution_name, options, &block)
+        if new_inner_resolution.resolution_type == :simple
+          resolution = Resolution.new(resolution_name, nil)
+        else
+          resolution = Aggregate.new(resolution_name, nil)
+        end
+        resolution.instance_variable_set(:inner_resolution, new_inner_resolution)
+        resolution
+      end
+    end
+
+    class FactInner
       # The name of the fact
       # @return [String]
       attr_reader :name
@@ -51,7 +91,7 @@ module Facter
       #
       # @param options [Hash] A hash of options to set on the resolution
       #
-      # @return [Facter::Util::Resolution]
+      # @return [Facter::Util::ResolutionInner]
       #
       # @api private
       def add(options = {}, &block)
@@ -64,7 +104,7 @@ module Facter
       #
       # @param resolution_name [String] The name of the resolve to define or look up
       # @param options [Hash] A hash of options to set on the resolution
-      # @return [Facter::Util::Resolution]
+      # @return [Facter::Util::ResolutionInner]
       #
       # @api public
       def define_resolution(resolution_name, options = {}, &block)
@@ -85,7 +125,7 @@ module Facter
       #
       # @param name [String]
       #
-      # @return [Facter::Util::Resolution, nil] The resolution if exists, nil if
+      # @return [Facter::Util::ResolutionInner, nil] The resolution if exists, nil if
       #   it doesn't exist or name is nil
       def resolution(name)
         return nil if name.nil?
@@ -211,9 +251,9 @@ module Facter
         else
           case resolution_type
           when :simple
-            resolve = Facter::Util::Resolution.new(resolution_name, self)
+            resolve = Facter::Util::ResolutionInner.new(resolution_name, self)
           when :aggregate
-            resolve = Facter::Core::Aggregate.new(resolution_name, self)
+            resolve = Facter::Core::AggregateInner.new(resolution_name, self)
           else
             raise ArgumentError,
                   "Expected resolution type to be one of (:simple, :aggregate) but was #{resolution_type}"
