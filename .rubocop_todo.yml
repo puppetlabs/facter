@@ -30,6 +30,7 @@ RSpec/FilePath:
     - 'spec/custom_facts/util/resolution_spec.rb'
     - 'spec/facter/facts_utils/uptime_parser_spec.rb'
     - 'spec/facter/facts_utils/windows_release_finder_spec.rb'
+    - 'spec/facter/facts_utils/virtual_detector_spec.rb'
     - 'spec/facter/model/fact_collection_spec.rb'
     - 'spec/facter/model/resolved_fact_spec.rb'
     - 'spec/facter/resolvers/aix/architecture_resolver_spec.rb'
