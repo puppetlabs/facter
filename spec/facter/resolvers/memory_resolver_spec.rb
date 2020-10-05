@@ -16,11 +16,8 @@ describe Facter::Resolvers::Linux::Memory do
 
     context 'when there is swap memory' do
       let(:total) { 4_036_680 * 1024 }
-      let(:free) { 3_547_792 * 1024 }
-      let(:buffers) { 4_288 * 1024 }
-      let(:cached) { 298_624 * 1024 }
-      let(:s_reclaimable) { 29_072 * 1024 }
-      let(:used) { total - free - buffers - cached - s_reclaimable }
+      let(:available) { 3_659_324 * 1024 }
+      let(:used) { total - available }
       let(:swap_total) { 2_097_148 * 1024 }
       let(:swap_free) { 2_097_148 * 1024 }
       let(:swap_used) { swap_total - swap_free }
@@ -31,7 +28,7 @@ describe Facter::Resolvers::Linux::Memory do
       end
 
       it 'returns memfree' do
-        expect(resolver.resolve(:memfree)).to eq(free)
+        expect(resolver.resolve(:memfree)).to eq(available)
       end
 
       it 'returns swap total' do
@@ -65,11 +62,8 @@ describe Facter::Resolvers::Linux::Memory do
 
     context 'when there is not swap memory' do
       let(:total) { 4_134_510_592 }
-      let(:free) { 3_465_723_904 }
-      let(:buffers) { 2_088 * 1024 }
-      let(:cached) { 445_204 * 1024 }
-      let(:s_reclaimable) { 71_384 * 1024 }
-      let(:used) { total - free - buffers - cached - s_reclaimable }
+      let(:available) { 3_665_024 * 1024 }
+      let(:used) { total - available }
       let(:fixture_name) { 'meminfo2' }
 
       it 'returns total memory' do
@@ -77,7 +71,7 @@ describe Facter::Resolvers::Linux::Memory do
       end
 
       it 'returns memfree' do
-        expect(resolver.resolve(:memfree)).to eq(free)
+        expect(resolver.resolve(:memfree)).to eq(available)
       end
 
       it 'returns swap total as nil' do
@@ -109,11 +103,8 @@ describe Facter::Resolvers::Linux::Memory do
 
     context 'when on Rhel 5' do
       let(:total) { 4_036_680 * 1024 }
-      let(:free) { 3_547_792 * 1024 }
-      let(:buffers) { 4_288 * 1024 }
-      let(:cached) { 298_624 * 1024 }
-      let(:s_reclaimable) { 0 }
-      let(:used) { total - free - buffers - cached - s_reclaimable }
+      let(:available) { 3_659_324 * 1024 }
+      let(:used) { total - available }
       let(:swap_total) { 2_097_148 * 1024 }
       let(:swap_free) { 2_097_148 * 1024 }
       let(:swap_used) { swap_total - swap_free }
@@ -124,7 +115,56 @@ describe Facter::Resolvers::Linux::Memory do
       end
 
       it 'returns memfree' do
-        expect(resolver.resolve(:memfree)).to eq(free)
+        expect(resolver.resolve(:memfree)).to eq(available)
+      end
+
+      it 'returns swap total' do
+        expect(resolver.resolve(:swap_total)).to eq(swap_total)
+      end
+
+      it 'returns swap available' do
+        expect(resolver.resolve(:swap_free)).to eq(swap_free)
+      end
+
+      it 'returns swap capacity' do
+        swap_capacity = format('%<swap_capacity>.2f', swap_capacity: (swap_used / swap_total.to_f * 100)) + '%'
+
+        expect(resolver.resolve(:swap_capacity)).to eq(swap_capacity)
+      end
+
+      it 'returns swap usage' do
+        expect(resolver.resolve(:swap_used_bytes)).to eq(swap_used)
+      end
+
+      it 'returns system capacity' do
+        system_capacity = format('%<capacity>.2f', capacity: (used / total.to_f * 100)) + '%'
+
+        expect(resolver.resolve(:capacity)).to eq(system_capacity)
+      end
+
+      it 'returns system usage' do
+        expect(resolver.resolve(:used_bytes)).to eq(used)
+      end
+    end
+
+    context 'when there is no available memory' do
+      let(:total) { 4_036_680 * 1024 }
+      let(:buffers) { 4_288 * 1024 }
+      let(:cached) { 298_624 * 1024 }
+      let(:free) { 3_547_792 * 1024 }
+      let(:available) { free + buffers + cached }
+      let(:used) { total - available }
+      let(:swap_total) { 2_097_148 * 1024 }
+      let(:swap_free) { 2_097_148 * 1024 }
+      let(:swap_used) { swap_total - swap_free }
+      let(:fixture_name) { 'meminfo_missing_available' }
+
+      it 'returns total memory' do
+        expect(resolver.resolve(:total)).to eq(total)
+      end
+
+      it 'returns memfree' do
+        expect(resolver.resolve(:memfree)).to eq(available)
       end
 
       it 'returns swap total' do
