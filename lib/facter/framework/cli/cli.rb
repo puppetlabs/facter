@@ -75,11 +75,6 @@ module Facter
                  type: :boolean,
                  desc: 'Enable verbose (info) output.'
 
-    class_option :puppet,
-                 type: :boolean,
-                 aliases: '-p',
-                 desc: 'Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.'
-
     class_option :show_legacy,
                  type: :boolean,
                  desc: 'Show legacy facts when querying all facts.'
@@ -155,6 +150,12 @@ module Facter
       cache_groups.gsub!(/:\s*\n/, "\n")
 
       puts cache_groups
+    end
+
+    desc '--puppet, -p', '(NOT SUPPORTED)Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.'
+    map ['--puppet', '-p'] => :puppet
+    def puppet(*_args)
+      puts '`facter --puppet` and `facter -p` are no longer supported, use `puppet facts show` instead'
     end
 
     desc 'help', 'Help for all arguments'
