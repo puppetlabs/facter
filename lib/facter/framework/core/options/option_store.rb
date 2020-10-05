@@ -24,6 +24,7 @@ module Facter
     @fact_groups = {}
     @color = true
     @timing = false
+    @allow_external_loggers = true
 
     class << self
       attr_reader :debug, :verbose, :log_level, :show_legacy,
@@ -32,7 +33,7 @@ module Facter
       attr_accessor :config, :user_query, :strict, :json, :haml,
                     :cache, :yaml, :puppet, :ttls, :block, :cli, :config_file_custom_dir,
                     :config_file_external_dir, :default_external_dir, :fact_groups,
-                    :block_list, :color, :trace, :timing
+                    :block_list, :color, :trace, :timing, :allow_external_loggers
 
       attr_writer :external_dir
 
@@ -178,6 +179,7 @@ module Facter
         @fact_groups = {}
         @block_list = {}
         @timing = false
+        @allow_external_loggers = true
       end
 
       def fallback_external_dir
