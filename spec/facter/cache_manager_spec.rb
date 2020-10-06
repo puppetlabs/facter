@@ -13,7 +13,7 @@ describe Facter::CacheManager do
                                        user_query: '', type: :custom, file: nil)
   end
   let(:searched_external_fact) do
-    instance_spy(Facter::SearchedFact, name: 'ext_file.txt', fact_class: nil, filter_tokens: [],
+    instance_spy(Facter::SearchedFact, name: 'my_external_fact', fact_class: nil, filter_tokens: [],
                                        user_query: '', type: :file, file: '/tmp/ext_file.txt')
   end
   let(:searched_facts) { [searched_core_fact, searched_custom_fact, searched_external_fact] }
@@ -103,7 +103,7 @@ describe Facter::CacheManager do
         sf, _cf = cache_manager.resolve_facts(searched_facts)
         expect(sf).to be_an_instance_of(Array).and contain_exactly(
           an_object_having_attributes(name: 'my_custom_fact', type: :custom),
-          an_object_having_attributes(name: 'ext_file.txt', type: :file)
+          an_object_having_attributes(name: 'my_external_fact', type: :file)
         )
       end
 
