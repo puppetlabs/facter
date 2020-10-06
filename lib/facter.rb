@@ -83,6 +83,7 @@ module Facter
       Options[:custom_dir] = []
       LegacyFacter.collection.invalidate_custom_facts
       LegacyFacter.collection.reload_custom_facts
+      SessionCache.invalidate_all_caches
     end
 
     def core_value(user_query)
@@ -170,7 +171,6 @@ module Facter
     def each
       log_blocked_facts
       resolved_facts = Facter::FactManager.instance.resolve_facts
-      SessionCache.invalidate_all_caches
 
       resolved_facts.each do |fact|
         yield(fact.name, fact.value)
@@ -206,6 +206,7 @@ module Facter
       LegacyFacter.reset
       Options[:custom_dir] = []
       Options[:external_dir] = []
+      SessionCache.invalidate_all_caches
       nil
     end
 
@@ -270,7 +271,6 @@ module Facter
       log_blocked_facts
 
       resolved_facts = Facter::FactManager.instance.resolve_facts
-      Facter::SessionCache.invalidate_all_caches
       Facter::FactCollection.new.build_fact_collection!(resolved_facts)
     end
 
@@ -308,7 +308,6 @@ module Facter
     def values(options, user_queries)
       init_cli_options(options, user_queries)
       resolved_facts = Facter::FactManager.instance.resolve_facts(user_queries)
-      Facter::SessionCache.invalidate_all_caches
 
       if user_queries.count.zero?
         Facter::FactCollection.new.build_fact_collection!(resolved_facts)
@@ -336,7 +335,6 @@ module Facter
       logger.info("executed with command line: #{ARGV.drop(1).join(' ')}")
       log_blocked_facts
       resolved_facts = Facter::FactManager.instance.resolve_facts(args)
-      SessionCache.invalidate_all_caches
       fact_formatter = Facter::FormatterFactory.build(Facter::Options.get)
 
       status = error_check(resolved_facts)
@@ -426,7 +424,6 @@ module Facter
     def resolve_fact(user_query)
       user_query = user_query.to_s
       resolved_facts = Facter::FactManager.instance.resolve_facts([user_query])
-      SessionCache.invalidate_all_caches
       # we must make a distinction between custom facts that return nil and nil facts
       # Nil facts should not be packaged as ResolvedFacts! (add_fact_to_searched_facts packages facts)
       resolved_facts = resolved_facts.reject { |fact| fact.type == :nil }
