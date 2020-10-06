@@ -14,7 +14,7 @@ module Facter
           end
 
           def read_oslevel(fact_name)
-            output = Facter::Core::Execution.execute('/usr/bin/oslevel -s', { limit: 2, logger: log })
+            output = Facter::Core::Execution.execute('/usr/bin/oslevel -s', logger: log)
             @fact_list[:build] = output unless output.empty?
             @fact_list[:kernel] = 'AIX'
 

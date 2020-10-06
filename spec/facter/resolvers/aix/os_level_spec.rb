@@ -8,7 +8,7 @@ describe Facter::Resolvers::Aix::OsLevel do
   before do
     os_level.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('/usr/bin/oslevel -s', { limit: 2, logger: log_spy })
+      .with('/usr/bin/oslevel -s', { logger: log_spy })
       .and_return(output)
   end
 
