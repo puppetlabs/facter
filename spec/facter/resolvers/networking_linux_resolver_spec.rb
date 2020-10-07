@@ -172,7 +172,6 @@ describe Facter::Resolvers::NetworkingLinux do
             bindings6: [
               { address: '::1', netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff', network: '::1' }
             ],
-            dhcp: nil,
             ip: '127.0.0.1',
             ip6: '::1',
             mtu: 65_536,
@@ -190,7 +189,6 @@ describe Facter::Resolvers::NetworkingLinux do
             bindings6: [
               { address: 'fe80::250:56ff:fe9a:8481', netmask: 'ffff:ffff:ffff:ffff::', network: 'fe80::' }
             ],
-            dhcp: nil,
             ip: '10.16.119.155',
             ip6: 'fe80::250:56ff:fe9a:8481',
             mac: '00:50:56:9a:61:46',

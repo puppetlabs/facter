@@ -61,6 +61,15 @@ describe Facter::Resolvers::Linux::DmiBios do
       end
     end
 
+    context 'when board_asset_tag file exists but is empty' do
+      let(:file_content) { "\n" }
+      let(:file) { 'board_asset_tag' }
+
+      it 'returns board_manufacturer' do
+        expect(resolver.resolve(:board_asset_tag)).to be(nil)
+      end
+    end
+
     context 'when board_name file exists' do
       let(:file_content) { '440BX Desktop Reference Platform' }
       let(:file) { 'board_name' }
