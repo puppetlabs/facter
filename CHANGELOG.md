@@ -1,3 +1,18 @@
+## [4.0.42](https://github.com/puppetlabs/facter/tree/4.0.42) (2020-10-07)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.41...4.0.42)
+
+### Added
+
+- (FACT-2792) Show not supported message for facter -p [#2119](https://github.com/puppetlabs/facter/pull/2119) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+### Fixed
+
+- (FACT-2805) Read available memory from MemAvailable [#2109](https://github.com/puppetlabs/facter/pull/2109) ([florindragos](https://github.com/florindragos))
+- (maint) Avoid deadlock of Facter::Core::Execution.execute [#2114](https://github.com/puppetlabs/facter/pull/2114) ([oanatmaria](https://github.com/oanatmaria))
+- (maint) Fix external fact cache [#2123](https://github.com/puppetlabs/facter/pull/2123) ([florindragos](https://github.com/florindragos))
+
+
 ## [4.0.41](https://github.com/puppetlabs/facter/tree/4.0.41) (2020-10-01)
 
 [Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.40...4.0.41)
