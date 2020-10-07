@@ -56,13 +56,15 @@ module Facter
     private
 
     def resolve_fact(searched_fact)
-      return unless fact_cache_enabled?(searched_fact.name)
+      fact_name = if searched_fact.file
+                    File.basename(searched_fact.file)
+                  else
+                    searched_fact.name
+                  end
 
-      fact = if searched_fact.file
-               @fact_groups.get_fact(File.basename(searched_fact.file))
-             else
-               @fact_groups.get_fact(searched_fact.name)
-             end
+      return unless fact_cache_enabled?(fact_name)
+
+      fact = @fact_groups.get_fact(fact_name)
 
       return unless fact
 
@@ -97,14 +99,17 @@ module Facter
     end
 
     def cache_fact(fact)
-      group_name = if fact.file
-                     File.basename(fact.file)
-                   else
-                     @fact_groups.get_fact_group(fact.name)
-                   end
+      fact_name = if fact.file
+                    File.basename(fact.file)
+                  else
+                    fact.name
+                  end
+
+      group_name = @fact_groups.get_fact_group(fact_name)
+
       return if !group_name || fact.value.nil?
 
-      return unless fact_cache_enabled?(fact.name)
+      return unless fact_cache_enabled?(fact_name)
 
       @groups[group_name] ||= {}
       @groups[group_name][fact.name] = fact.value
