@@ -17,6 +17,12 @@ module Facter
   @warn_once = []
 
   class << self
+    # Method used by puppet-agent to retrieve facts
+    # @param args_as_string [string] facter cli arguments
+    #
+    # @return nil
+    #
+    # @api private
     def resolve(args_as_string)
       require 'facter/framework/cli/cli_launcher'
 
@@ -36,10 +42,7 @@ module Facter
       else
         cli.invoke(:arg_parser)
       end
-    end
-
-    def clear_messages
-      logger.debug('clear_messages is not implemented')
+      nil
     end
 
     # Alias method for Facter.fact()
@@ -84,8 +87,15 @@ module Facter
       LegacyFacter.collection.invalidate_custom_facts
       LegacyFacter.collection.reload_custom_facts
       SessionCache.invalidate_all_caches
+      nil
     end
 
+    # Gets the value for a core fact, external or custom facts are
+    #   not returned with this call. Returns `nil` if no such fact exists.
+    #
+    # @return [FactCollection] hash with fact names and values
+    #
+    # @api private
     def core_value(user_query)
       user_query = user_query.to_s
       resolved_facts = Facter::FactManager.instance.resolve_core([user_query])
@@ -137,8 +147,16 @@ module Facter
       LegacyFacter.define_fact(name, options, &block)
     end
 
+    # Stores a proc that will be used to output custom messages.
+    #   The proc must receive one parameter that will be the message to log.
+    # @param block [Proc] a block defining messages handler
+    #
+    # @return [nil]
+    #
+    # @api public
     def on_message(&block)
       Facter::Log.on_message(&block)
+      nil
     end
 
     # Check whether debugging is enabled
@@ -221,26 +239,26 @@ module Facter
     end
 
     # Register directories to be searched for custom facts. The registered directories
-    # must be absolute paths or they will be ignored.
-    #
+    #   must be absolute paths or they will be ignored.
     # @param dirs [Array<String>] An array of searched directories
     #
-    # @return [void]
+    # @return [nil]
     #
     # @api public
     def search(*dirs)
       Options[:custom_dir] += dirs
+      nil
     end
 
     # Registers directories to be searched for external facts.
-    #
     # @param dirs [Array<String>] An array of searched directories
     #
-    # @return [void]
+    # @return [nil]
     #
     # @api public
     def search_external(dirs)
       Options[:external_dir] += dirs
+      nil
     end
 
     # Returns the registered search directories.for external facts.
@@ -264,7 +282,7 @@ module Facter
     # Gets a hash mapping fact names to their values
     # The hash contains core facts, legacy facts, custom facts and external facts (all facts that can be resolved).
     #
-    # @return [FactCollection] the hash of fact names and values
+    # @return [FactCollection] hash with fact names and values
     #
     # @api public
     def to_hash
@@ -286,7 +304,7 @@ module Facter
     # Enable or disable trace
     # @param bool [bool] Set trace on debug state
     #
-    # @return [type] [description]
+    # @return [bool] Value of trace debug state
     #
     # @api public
     def trace(bool)
@@ -305,6 +323,16 @@ module Facter
       @already_searched[user_query]&.value
     end
 
+    # Gets the values for multiple facts.
+    #
+    # @param options [Hash] parameters for the fact - attributes
+    #   of {Facter::Util::Fact} and {Facter::Util::Resolution} can be
+    #   supplied here
+    # @param user_queries [String] the fact names
+    #
+    # @return [FactCollection] hash with fact names and values
+    #
+    # @api public
     def values(options, user_queries)
       init_cli_options(options, user_queries)
       resolved_facts = Facter::FactManager.instance.resolve_facts(user_queries)
@@ -342,6 +370,11 @@ module Facter
       [fact_formatter.format(resolved_facts), status || 0]
     end
 
+    # Logs an exception and an optional message
+    #
+    # @return [nil]
+    #
+    # @api public
     def log_exception(exception, message = nil)
       error_message = []
 
@@ -349,10 +382,10 @@ module Facter
 
       parse_exception(exception, error_message)
       logger.error(error_message.flatten.join("\n"))
+      nil
     end
 
     # Returns a list with the names of all solved facts
-    #
     # @return [Array] the list with all the fact names
     #
     # @api public
@@ -361,7 +394,6 @@ module Facter
     end
 
     # Logs the message parameter as a warning.
-    #
     # @param message [Object] the warning object to be displayed
     #
     # @return [nil]
@@ -373,7 +405,6 @@ module Facter
     end
 
     # Logs only once the same warning message.
-    #
     # @param message [Object] the warning message object
     #
     # @return [nil]
