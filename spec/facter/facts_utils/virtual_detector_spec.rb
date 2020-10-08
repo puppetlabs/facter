@@ -46,7 +46,7 @@ describe Facter::VirtualDetector do
         end
 
         it 'returns vendor' do
-          expect(detector.platform).to eq('aws')
+          expect(detector.platform).to eq('kvm')
         end
       end
 
