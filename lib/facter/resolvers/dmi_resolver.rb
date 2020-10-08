@@ -36,9 +36,9 @@ module Facter
 
             file_content = Util::FileHelper.safe_read("/sys/class/dmi/id/#{fact_name}", nil)
             if files.include?(fact_name.to_s) && file_content
-              @fact_list[fact_name] = file_content.strip
+              file_content = file_content.strip
+              @fact_list[fact_name] = file_content unless file_content.empty?
               chassis_to_name(@fact_list[fact_name]) if fact_name == :chassis_type
-
             end
             @fact_list[fact_name]
           end
