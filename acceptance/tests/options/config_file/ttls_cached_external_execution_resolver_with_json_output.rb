@@ -1,7 +1,7 @@
 # This test verifies that a ttls configured cached facts when initially called
 # create a json cache file
 test_name "ttls configured cached external execution resolver with json output creates and read json cache files" do
-  tag 'risk:medium'
+  tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
@@ -19,22 +19,12 @@ test_name "ttls configured cached external execution resolver with json output c
       ext = get_external_fact_script_extension(agent['platform'])
       external_fact = File.join(external_dir, "#{external_cachegroup}#{ext}")
       if agent['platform'] =~ /windows/
-        if agent.is_cygwin?
         external_fact_content = <<EOM
-cat << EOF
-{
-  "#{cached_fact_name}": "#{initial_fact_value}"
-}
-EOF
-EOM
-        else
-          external_fact_content = <<EOM
 @echo off
 SetLocal EnableDelayedExpansion
 echo {"#{cached_fact_name}": "#{initial_fact_value}"}
 
 EOM
-        end
       else
         external_fact_content = <<EOM
 #!/bin/sh

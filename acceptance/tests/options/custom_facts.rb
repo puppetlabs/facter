@@ -1,7 +1,7 @@
 # This test checks that we can call facter with a --custom-dir and get a custom fact
 # from that directory
 test_name "C14905: custom fact command line option --custom-dir loads custom fact" do
-  tag 'risk:low'
+  tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils

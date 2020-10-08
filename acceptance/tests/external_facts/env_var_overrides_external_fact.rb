@@ -1,5 +1,5 @@
 test_name 'C100537: FACTER_ env var should override external fact' do
-  tag 'risk:medium'
+  tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils

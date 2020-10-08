@@ -1,7 +1,7 @@
 # This test verifies that a configured external-dir conflicts with the command
 # line option --no-external-facts
 test_name "configured external-dir conflicts with command line --no-external-facts" do
-  tag 'risk:low'
+  tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils

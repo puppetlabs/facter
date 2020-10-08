@@ -1,7 +1,7 @@
 # facter should be able to load facts from multiple external-dir's specified
 # in the configuration file
 test_name "C99995: config file supports external-dir for multiple fact directories" do
-  tag 'risk:medium'
+  tag 'risk:high'
 
   require 'json'
   require 'facter/acceptance/user_fact_utils'

@@ -51,7 +51,7 @@ module Facter
       #
       def get_etc_factsd_dir(platform)
         if platform =~ /windows/
-          raise "get_etc_factsd_dir: not a supported directory on Windows"
+          File.join('C:', 'ProgramData', 'PuppetLabs', 'facter', 'facts.d')
         else
           File.join('/', 'etc', 'facter', 'facts.d')
         end

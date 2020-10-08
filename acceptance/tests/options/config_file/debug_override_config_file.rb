@@ -1,7 +1,7 @@
 # This test verified that having debug set to false in the config file can be
 # overridden by the command line option --debug
 test_name "C100044: flags set on the command line override config file settings" do
-  tag 'risk:medium'
+  tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils

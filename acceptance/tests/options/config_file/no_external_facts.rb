@@ -1,7 +1,7 @@
 # This test verifies that no-external-facts : true set in the configuration file
 # does not load external facts
 test_name "C99962: config no-external-facts : true does not load external facts" do
-  tag 'risk:medium'
+  tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils

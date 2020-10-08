@@ -1,7 +1,7 @@
 # This test verifies that facter can load facts from a single external-dir specified
 # in the configuration file
 test_name "C98142: config external-dir allows single external fact directory" do
-  tag 'risk:low'
+  tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils

@@ -1,7 +1,7 @@
 # This test verifies that calling facter with both --no-custom-facts and --custom-dir results
 # in an options conflict error
 test_name "C100001: custom fact commandline options --no-custom-facts together with --custom-dir should produce an error" do
-  tag 'risk:low'
+  tag 'risk:high'
 
   agents.each do |agent|
     custom_dir = agent.tmpdir('custom_dir')
