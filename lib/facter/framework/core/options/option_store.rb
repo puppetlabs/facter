@@ -25,6 +25,7 @@ module Facter
     @ttls = []
     @color = true
     @timing = false
+    @strict = false
 
     class << self
       attr_reader :debug, :verbose, :log_level, :show_legacy,
@@ -165,6 +166,7 @@ module Facter
         @cli = nil
         @cache = true
         @trace = false
+        @color = true
         reset_config
       end
 
@@ -173,6 +175,7 @@ module Facter
         @custom_facts = true
         @external_dir = []
         @default_external_dir = []
+        @config_file_custom_dir = []
         @config_file_external_dir = []
         @external_facts = true
         @blocked_facts = []

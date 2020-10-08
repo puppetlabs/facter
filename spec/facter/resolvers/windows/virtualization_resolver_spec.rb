@@ -11,13 +11,10 @@ describe Facter::Resolvers::Virtualization do
     allow(win).to receive(:exec_query).with('SELECT Manufacturer,Model,OEMStringArray FROM Win32_ComputerSystem')
                                       .and_return(query_result)
     Facter::Resolvers::Virtualization.instance_variable_set(:@log, logger)
+    Facter::Resolvers::Virtualization.invalidate_cache
   end
 
   describe '#resolve VirtualBox' do
-    after do
-      Facter::Resolvers::Virtualization.invalidate_cache
-    end
-
     before do
       allow(win32ole).to receive(:Model).and_return(model)
       allow(win32ole).to receive(:Manufacturer).and_return(manufacturer)
@@ -47,10 +44,6 @@ describe Facter::Resolvers::Virtualization do
   end
 
   describe '#resolve Vmware' do
-    after do
-      Facter::Resolvers::Virtualization.invalidate_cache
-    end
-
     before do
       allow(win32ole).to receive(:Model).and_return(model)
       allow(win32ole).to receive(:Manufacturer).and_return(manufacturer)
@@ -71,10 +64,6 @@ describe Facter::Resolvers::Virtualization do
   end
 
   describe '#resolve KVM' do
-    after do
-      Facter::Resolvers::Virtualization.invalidate_cache
-    end
-
     before do
       allow(win32ole).to receive(:Model).and_return(model)
       allow(win32ole).to receive(:Manufacturer).and_return(manufacturer)
@@ -95,10 +84,6 @@ describe Facter::Resolvers::Virtualization do
   end
 
   describe '#resolve Openstack VM' do
-    after do
-      Facter::Resolvers::Virtualization.invalidate_cache
-    end
-
     before do
       allow(win32ole).to receive(:Model).and_return(model)
       allow(win32ole).to receive(:Manufacturer).and_return(manufacturer)
@@ -119,10 +104,6 @@ describe Facter::Resolvers::Virtualization do
   end
 
   describe '#resolve Microsoft VM' do
-    after do
-      Facter::Resolvers::Virtualization.invalidate_cache
-    end
-
     before do
       allow(win32ole).to receive(:Model).and_return(model)
       allow(win32ole).to receive(:Manufacturer).and_return(manufacturer)
@@ -143,10 +124,6 @@ describe Facter::Resolvers::Virtualization do
   end
 
   describe '#resolve Xen VM' do
-    after do
-      Facter::Resolvers::Virtualization.invalidate_cache
-    end
-
     before do
       allow(win32ole).to receive(:Model).and_return(model)
       allow(win32ole).to receive(:Manufacturer).and_return(manufacturer)
@@ -167,10 +144,6 @@ describe Facter::Resolvers::Virtualization do
   end
 
   describe '#resolve Amazon EC2 VM' do
-    after do
-      Facter::Resolvers::Virtualization.invalidate_cache
-    end
-
     before do
       allow(win32ole).to receive(:Model).and_return(model)
       allow(win32ole).to receive(:Manufacturer).and_return(manufacturer)
@@ -214,19 +187,19 @@ describe Facter::Resolvers::Virtualization do
     let(:query_result) { nil }
 
     it 'detects virtual machine model' do
+      Facter::Resolvers::Virtualization.instance_variable_set(:@fact_list, { virtual: 'physical' })
+
       expect(Facter::Resolvers::Virtualization.resolve(:virtual)).to eql('physical')
     end
 
     it 'detects that is virtual' do
+      Facter::Resolvers::Virtualization.instance_variable_set(:@fact_list, { is_virtual: false })
+
       expect(Facter::Resolvers::Virtualization.resolve(:is_virtual)).to be(false)
     end
   end
 
   describe '#resolve  when WMI query returns nil' do
-    before do
-      Facter::Resolvers::Virtualization.invalidate_cache
-    end
-
     let(:query_result) { nil }
 
     it 'logs that query failed and virtual nil' do
@@ -243,7 +216,6 @@ describe Facter::Resolvers::Virtualization do
 
   describe '#resolve when WMI query returns nil for Model and Manufacturer' do
     before do
-      Facter::Resolvers::Virtualization.invalidate_cache
       allow(win32ole).to receive(:Model).and_return(nil)
       allow(win32ole).to receive(:Manufacturer).and_return(nil)
       allow(win32ole).to receive(:OEMStringArray).and_return('')

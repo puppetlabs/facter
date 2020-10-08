@@ -5,12 +5,17 @@ require 'rbconfig'
 describe OsDetector do
   let(:os_hierarchy) { instance_spy(Facter::OsHierarchy) }
   let(:logger) { instance_spy(Facter::Log) }
+  let(:initial_os) { RbConfig::CONFIG['host_os'] }
 
   before do
+    RbConfig::CONFIG['host_os'] = initial_os
     Singleton.__init__(OsDetector)
-
     allow(Facter::Log).to receive(:new).and_return(logger)
     allow(Facter::OsHierarchy).to receive(:new).and_return(os_hierarchy)
+  end
+
+  after do
+    RbConfig::CONFIG['host_os'] = initial_os
   end
 
   describe 'initialize' do

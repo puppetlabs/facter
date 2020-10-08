@@ -6,7 +6,7 @@ describe Facter::Resolvers::Partitions do
   let(:sys_block_path) { '/sys/block' }
   let(:sys_block_subdirs) { ['.', '..', 'sda'] }
 
-  after do
+  before do
     Facter::Resolvers::Partitions.invalidate_cache
   end
 
@@ -145,7 +145,7 @@ describe Facter::Resolvers::Partitions do
           { '/dev/sys/block/sda' => { backing_file: 'some_path', size: '98.25 MiB', size_bytes: 103_021_056 } }
         end
 
-        it 'return partitions fact' do
+        it 'returns partitions fact' do
           expect(resolver.resolve(:partitions)).to eq(partitions)
         end
       end
@@ -155,7 +155,7 @@ describe Facter::Resolvers::Partitions do
           { '/dev/sys/block/sda' => { size: '98.25 MiB', size_bytes: 103_021_056 } }
         end
 
-        it 'return partitions fact' do
+        it 'returns partitions fact' do
           allow(Facter::Util::FileHelper).to receive(:safe_read)
             .with("#{sys_block_path}/sda/loop/backing_file").and_return('')
 
