@@ -14,6 +14,8 @@ module Facter
     class Resolution
       # @api private
       attr_accessor :code, :fact_type
+
+      # @api private
       attr_writer :value
 
       extend Facter::Core::Execution
@@ -24,7 +26,12 @@ module Facter
         # compatibility.
         #
         # @deprecated
-        public :search_paths, :which, :absolute_path?, :expand_command, :with_env, :exec
+        #
+        # @api public
+        public :which, :exec
+
+        # @api private
+        public :with_env
       end
 
       include LegacyFacter::Core::Resolvable
@@ -32,22 +39,27 @@ module Facter
 
       # @!attribute [rw] name
       # The name of this resolution. The resolution name should be unique with
-      # respect to the given fact.
+      #   respect to the given fact.
+      #
       # @return [String]
+      #
       # @api public
       attr_accessor :name
 
       # @!attribute [r] fact
-      # @return [Facter::Util::Fact]
+      #
+      # @return [Facter::Util::Fact] Associated fact with this resolution.
+      #
       # @api private
       attr_reader :fact
 
       # Create a new resolution mechanism.
       #
       # @param name [String] The name of the resolution.
-      # @return [void]
       #
-      # @api private
+      # @return [Facter::Util::Resolution] The created resolution
+      #
+      # @api public
       def initialize(name, fact)
         @name = name
         @fact = fact
@@ -57,6 +69,11 @@ module Facter
         @weight = nil
       end
 
+      # Returns the fact's resolution type
+      #
+      # @return [Symbol] The fact's type
+      #
+      # @api private
       def resolution_type
         :simple
       end
@@ -64,7 +81,9 @@ module Facter
       # Evaluate the given block in the context of this resolution. If a block has
       # already been evaluated emit a warning to that effect.
       #
-      # @return [void]
+      # @return [String] Result of the block's evaluation
+      #
+      # @api private
       def evaluate(&block)
         if @last_evaluated
           msg = "Already evaluated #{@name}"
@@ -85,6 +104,11 @@ module Facter
                           end
       end
 
+      # Sets options for the aggregate fact
+      #
+      # @return [nil]
+      #
+      # @api private
       def options(options)
         accepted_options = %i[name value timeout weight fact_type file]
 
@@ -98,8 +122,6 @@ module Facter
       # Sets the code block or external program that will be evaluated to
       # get the value of the fact.
       #
-      # @return [void]
-      #
       # @overload setcode(string)
       #   Sets an external program to call to get the value of the resolution
       #   @param [String] string the external program to run to get the
@@ -110,6 +132,8 @@ module Facter
       #   @param [Proc] block The block to determine the resolution's value.
       #     This block is run when the fact is evaluated. Errors raised from
       #     inside the block are rescued and printed to stderr.
+      #
+      # @return [Facter::Util::Resolution] Returns itself
       #
       # @api public
       def setcode(string = nil, &block)
@@ -127,11 +151,16 @@ module Facter
         else
           raise ArgumentError, 'You must pass either code or a block'
         end
+        self
       end
 
-      # Comparation is done based on weight and fact type.
-      # The greatter the weight, the higher the priority.
-      # If weights are equal, we consider external facts greater than custom facts
+      # Comparison is done based on weight and fact type.
+      #   The greater the weight, the higher the priority.
+      #   If weights are equal, we consider external facts greater than custom facts.
+      #
+      # @return [bool] Weight comparison result
+      #
+      # @api private
       def <=>(other)
         return compare_equal_weights(other) if weight == other.weight
         return 1 if weight > other.weight

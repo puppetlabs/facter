@@ -18,22 +18,31 @@ module Facter
       include LegacyFacter::Core::Resolvable
 
       # @!attribute [r] name
-      #   @return [Symbol] The name of the aggregate resolution
+      #
+      # @return [Symbol] The name of the aggregate resolution
+      #
+      # @api public
       attr_reader :name
 
       # @!attribute [r] deps
-      #   @api private
-      #   @return [LegacyFacter::Core::DirectedGraph]
+      #
+      # @return [LegacyFacter::Core::DirectedGraph]
+      #
+      # @api private
       attr_reader :deps
 
       # @!attribute [r] confines
-      #   @return [Array<LegacyFacter::Core::Confine>] An array of confines restricting
-      #     this to a specific platform
-      #   @see Facter::Core::Suitable
+      #
+      # @return [Array<LegacyFacter::Core::Confine>] An array of confines restricting
+      #  this to a specific platform
+      #
+      # @api private
       attr_reader :confines
 
       # @!attribute [r] fact
+      #
       # @return [Facter::Util::Fact]
+      #
       # @api private
       attr_reader :fact
 
@@ -48,10 +57,20 @@ module Facter
         @deps = LegacyFacter::Core::DirectedGraph.new
       end
 
+      # Compares the weight of two aggregate facts
+      #
+      # @return [bool] Weight comparison result
+      #
+      # @api private
       def <=>(other)
         weight <=> other.weight
       end
 
+      # Sets options for the aggregate fact
+      #
+      # @return [nil]
+      #
+      # @api private
       def options(options)
         accepted_options = %i[name timeout weight fact_type]
         accepted_options.each do |option_name|
@@ -60,13 +79,16 @@ module Facter
         raise ArgumentError, "Invalid aggregate options #{options.keys.inspect}" unless options.keys.empty?
       end
 
+      # Evaluates the given block
+      #
+      # @return [String] Result of the block's evaluation
+      #
+      # @api private
       def evaluate(&block)
         instance_eval(&block)
       end
 
       # Define a new chunk for the given aggregate
-      #
-      # @api public
       #
       # @example Defining a chunk with no dependencies
       #   aggregate.chunk(:mountpoints) do
@@ -80,14 +102,14 @@ module Facter
       #   end
       #
       # @param name [Symbol] A name unique to this aggregate describing the chunk
-      # @param opts [Hash]
-      # @options opts [Array<Symbol>, Symbol] :require One or more chunks
-      #   to evaluate and pass to this block.
-      # @yield [*Object] Zero or more chunk results
       #
-      # @return [void]
+      # @param opts [Hash] Hash with options for the aggregate fact
+      #
+      # @return [Facter::Core::Aggregate] The aggregate object
+      #
+      # @api public
       def chunk(name, opts = {}, &block)
-        raise ArgumentError, "#{self.class.name}#chunk requires a block" unless block_given?
+        evaluate_params(name, &block)
 
         deps = Array(opts.delete(:require))
 
@@ -97,11 +119,10 @@ module Facter
 
         @deps[name] = deps
         @chunks[name] = block
+        self
       end
 
       # Define how all chunks should be combined
-      #
-      # @api public
       #
       # @example Merge all chunks
       #   aggregate.aggregate do |chunks|
@@ -124,18 +145,31 @@ module Facter
       # @yield [Hash<Symbol, Object>] A hash containing chunk names and
       #   chunk values
       #
-      # @return [void]
+      # @return [Facter::Core::Aggregate] The aggregate fact
+      #
+      # @api public
       def aggregate(&block)
         raise ArgumentError, "#{self.class.name}#aggregate requires a block" unless block_given?
 
         @aggregate = block
+        self
       end
 
+      # Returns the fact's resolution type
+      #
+      # @return [Symbol] The fact's type
+      #
+      # @api private
       def resolution_type
         :aggregate
       end
 
       private
+
+      def evaluate_params(name)
+        raise ArgumentError, "#{self.class.name}#chunk requires a block" unless block_given?
+        raise ArgumentError, "#{self.class.name}#expected chunk name to be a Symbol" unless name.is_a? Symbol
+      end
 
       # Evaluate the results of this aggregate.
       #
