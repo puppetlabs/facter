@@ -22,7 +22,7 @@ module Facter
       @log.debug('Checking DMI')
       vendor = Facter::Resolvers::DmiDecode.resolve(:vendor)
       @log.debug("dmi detected vendor: #{vendor}")
-      return 'aws' if vendor =~ /Amazon/
+      return 'kvm' if vendor =~ /Amazon/
 
       'xen' if vendor =~ /Xen/
     end
