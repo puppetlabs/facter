@@ -85,4 +85,10 @@ describe Facter::Resolvers::Mountpoints do
       end
     end
   end
+
+  describe 'resolver key not found' do
+    it 'returns nil when resolver cannot find key' do
+      expect(Facter::Resolvers::Mountpoints.resolve(:inexistent_key)).to be_nil
+    end
+  end
 end

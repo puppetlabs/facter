@@ -10,7 +10,7 @@ module Facter
         private
 
         def post_resolve(fact_name)
-          @fact_list.fetch(fact_name) { read_mounts }
+          @fact_list.fetch(fact_name) { read_mounts(fact_name) }
         end
 
         def root_device
@@ -26,7 +26,8 @@ module Facter
           device
         end
 
-        def read_mounts # rubocop:disable Metrics/AbcSize
+        # rubocop:disable Metrics/MethodLength, Metrics/AbcSize
+        def read_mounts(fact_name)
           mounts = []
           FilesystemHelper.read_mountpoints.each do |fs|
             device = compute_device(fs.name)
@@ -52,7 +53,9 @@ module Facter
               .map { |v| binding.local_variable_get(v) })]
           end
           @fact_list[:mountpoints] = mounts
+          @fact_list[fact_name]
         end
+        # rubocop:enable Metrics/MethodLength, Metrics/AbcSize
       end
     end
   end
