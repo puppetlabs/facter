@@ -60,7 +60,11 @@ module Facter
           def physical_devices_count
             Dir.entries('/sys/devices/system/cpu')
                .select { |dir| dir =~ /cpu[0-9]+$/ }
-               .count { |dir| File.exist?("/sys/devices/system/cpu/#{dir}/topology/physical_package_id") }
+               .select { |dir| File.exist?("/sys/devices/system/cpu/#{dir}/topology/physical_package_id") }
+               .map do |dir|
+              Util::FileHelper.safe_read("/sys/devices/system/cpu/#{dir}/topology/physical_package_id").strip
+            end
+               .uniq.count
           end
 
           def build_speed(tokens)
