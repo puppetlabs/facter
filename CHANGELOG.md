@@ -1,3 +1,16 @@
+## [4.0.43](https://github.com/puppetlabs/facter/tree/4.0.43) (2020-10-12)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.42...4.0.43)
+
+### Fixed
+
+- (FACT-2810) Fix dmi.board_asset_tag and dhcp [#2125](https://github.com/puppetlabs/facter/pull/2125) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- (FACT-2817) Only invalidate session cache on clear and reset. [#2121](https://github.com/puppetlabs/facter/pull/2121) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (maint) Fix virtual_detector [#2128](https://github.com/puppetlabs/facter/pull/2128) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (FACT-2806) Fix physicalprocessorcount [#2127](https://github.com/puppetlabs/facter/pull/2127) ([florindragos](https://github.com/florindragos))
+- (FACT-2809) Fixed output differences on solaris [#2116](https://github.com/puppetlabs/facter/pull/2116) ([sebastian-miclea](https://github.com/sebastian-miclea))
+
+
 ## [4.0.42](https://github.com/puppetlabs/facter/tree/4.0.42) (2020-10-07)
 
 [Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.41...4.0.42)
