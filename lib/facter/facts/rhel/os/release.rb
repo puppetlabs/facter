@@ -27,7 +27,7 @@ module Facts
           fact_value = {}
           fact_value['full'] = version
           fact_value['major'] = versions[0]
-          fact_value['minor'] = versions[1].gsub(/^0([1-9])/, '\1') if versions[1]
+          fact_value['minor'] = versions[1] if versions[1]
           fact_value
         end
       end
