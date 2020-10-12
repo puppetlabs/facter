@@ -20,7 +20,7 @@ module Facter
     # Method used by puppet-agent to retrieve facts
     # @param args_as_string [string] facter cli arguments
     #
-    # @return nil
+    # @return query result
     #
     # @api private
     def resolve(args_as_string)
@@ -42,7 +42,6 @@ module Facter
       else
         cli.invoke(:arg_parser)
       end
-      nil
     end
 
     # Alias method for Facter.fact()
