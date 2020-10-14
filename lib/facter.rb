@@ -228,6 +228,18 @@ module Facter
       nil
     end
 
+    # Flushes cached values for all facts. This does not cause code to be
+    # reloaded; it only clears the cached results.
+    #
+    # @return [void]
+    #
+    # @api public
+    def flush
+      LegacyFacter.flush
+      SessionCache.invalidate_all_caches
+      nil
+    end
+
     # Loads all facts
     #
     # @return [nil]
