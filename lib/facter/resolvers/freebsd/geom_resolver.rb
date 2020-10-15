@@ -5,6 +5,8 @@ module Facter
     module Freebsd
       class Geom < BaseResolver
         @fact_list ||= {}
+        DISKS_ATTRIBUTES = %i[read_model read_serial_number read_size].freeze
+        PARTITIONS_ATTRIBUTES = %i[read_partlabel read_partuuid read_size].freeze
 
         class << self
           private
@@ -17,37 +19,27 @@ module Facter
             require_relative 'ffi/ffi_helper'
             require 'rexml/document'
 
-            read_disks
-            read_partitions
+            topology = geom_topology
+            read_data('DISK', topology, DISKS_ATTRIBUTES)
+            read_data('PART', topology, PARTITIONS_ATTRIBUTES)
 
             @fact_list[fact_name]
           end
 
-          def read_disks
-            @fact_list[:disks] = {}
+          def read_data(fact_name, geom_topology, data_to_read)
+            fact_list_key = fact_name == 'DISK' ? :disks : :partitions
+            @fact_list[fact_list_key] = {}
 
-            each_geom_class_provider('DISK') do |provider|
+            each_geom_class_provider(fact_name, geom_topology) do |provider|
               name = provider.get_text('./name').value
 
-              @fact_list[:disks][name] = %i[read_model read_serial_number read_size].map do |x|
+              @fact_list[fact_list_key][name] = data_to_read.map do |x|
                 send(x, provider)
               end.inject(:merge)
             end
           end
 
-          def read_partitions
-            @fact_list[:partitions] = {}
-
-            each_geom_class_provider('PART') do |provider|
-              name = provider.get_text('./name').value
-
-              @fact_list[:partitions][name] = %i[read_partlabel read_partuuid read_size].map do |x|
-                send(x, provider)
-              end.inject(:merge)
-            end
-          end
-
-          def each_geom_class_provider(geom_class_name, &block)
+          def each_geom_class_provider(geom_class_name, geom_topology, &block)
             REXML::XPath.each(geom_topology, "/mesh/class[name/text() = '#{geom_class_name}']/geom/provider", &block)
           end
 
@@ -95,7 +87,7 @@ module Facter
           end
 
           def geom_topology
-            @geom_topology ||= REXML::Document.new(geom_confxml)
+            REXML::Document.new(geom_confxml)
           end
 
           def geom_confxml

@@ -5,8 +5,8 @@ module Facter
     class SshResolver < BaseResolver
       @log = Facter::Log.new(self)
       @fact_list ||= {}
-      @file_names = %w[ssh_host_rsa_key.pub ssh_host_dsa_key.pub ssh_host_ecdsa_key.pub ssh_host_ed25519_key.pub]
-      @file_paths = %w[/etc/ssh /usr/local/etc/ssh /etc /usr/local/etc /etc/opt/ssh]
+      FILE_NAMES = %w[ssh_host_rsa_key.pub ssh_host_dsa_key.pub ssh_host_ecdsa_key.pub ssh_host_ed25519_key.pub].freeze
+      FILE_PATHS = %w[/etc/ssh /usr/local/etc/ssh /etc /usr/local/etc /etc/opt/ssh].freeze
       class << self
         private
 
@@ -16,10 +16,10 @@ module Facter
 
         def retrieve_info(fact_name)
           ssh_list = []
-          @file_paths.each do |file_path|
+          FILE_PATHS.each do |file_path|
             next unless File.directory?(file_path)
 
-            @file_names.each do |file_name|
+            FILE_NAMES.each do |file_name|
               file_content = Util::FileHelper.safe_read(File.join(file_path, file_name), nil)
               next unless file_content
 

@@ -5,9 +5,11 @@ describe Facter::Resolvers::Partitions do
 
   let(:sys_block_path) { '/sys/block' }
   let(:sys_block_subdirs) { ['.', '..', 'sda'] }
+  let(:logger) { instance_spy(Facter::Log) }
 
   before do
     Facter::Resolvers::Partitions.invalidate_cache
+    Facter::Resolvers::Partitions.instance_variable_set(:@log, logger)
   end
 
   context 'when /sys/block is not readable' do
@@ -16,7 +18,18 @@ describe Facter::Resolvers::Partitions do
     end
 
     it 'returns empty hash' do
-      expect(resolver.resolve(:partitions)).to eq({})
+      expect(resolver.resolve(:partitions)).to be(nil)
+    end
+  end
+
+  context 'when /sys/block has no entries' do
+    before do
+      allow(File).to receive(:readable?).with(sys_block_path).and_return(true)
+      allow(Dir).to receive(:entries).with(sys_block_path).and_return(['.', '..'])
+    end
+
+    it 'returns empty hash' do
+      expect(resolver.resolve(:partitions)).to be(nil)
     end
   end
 
@@ -24,6 +37,14 @@ describe Facter::Resolvers::Partitions do
     before do
       allow(File).to receive(:readable?).with(sys_block_path).and_return(true)
       allow(Dir).to receive(:entries).with(sys_block_path).and_return(sys_block_subdirs)
+      allow(Facter::Core::Execution).to receive(:execute)
+        .with('which blkid', logger: logger).and_return('/usr/bin/blkid')
+      allow(Facter::Core::Execution).to receive(:execute)
+        .with('blkid', logger: logger).and_return(load_fixture('blkid_output').read)
+      allow(Facter::Core::Execution).to receive(:execute)
+        .with('which lsblk', logger: logger).and_return('/usr/bin/lsblk')
+      allow(Facter::Core::Execution).to receive(:execute)
+        .with('lsblk -fp', logger: logger).and_return(load_fixture('lsblk_output').read)
     end
 
     context 'when block has a device subdir' do
@@ -44,14 +65,6 @@ describe Facter::Resolvers::Partitions do
           .with("#{sys_block_path}/sda/sda2/size", '0').and_return('201213')
         allow(Facter::Util::FileHelper).to receive(:safe_read)
           .with("#{sys_block_path}/sda/sda1/size", '0').and_return('234')
-        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'which blkid')
-                                        .and_return('/usr/bin/blkid')
-        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'blkid')
-                                        .and_return(load_fixture('blkid_output').read)
-        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'which lsblk')
-                                        .and_return('/usr/bin/lsblk')
-        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'lsblk -fp')
-                                        .and_return(load_fixture('lsblk_output').read)
       end
 
       context 'when device size files are readable' do
@@ -75,13 +88,17 @@ describe Facter::Resolvers::Partitions do
             '/dev/sda2' => { filesystem: 'LVM2_member', size: '0 bytes', size_bytes: 0, uuid: 'edi7s0-2WVa-ZBan' } }
         end
 
-        it 'return partitions fact with 0 sizes' do
+        before do
           allow(Facter::Util::FileHelper).to receive(:safe_read)
             .with("#{sys_block_path}/sda/sda2/size", '0').and_return('')
           allow(Facter::Util::FileHelper).to receive(:safe_read)
             .with("#{sys_block_path}/sda/sda1/size", '0').and_return('')
+        end
 
-          expect(resolver.resolve(:partitions)).to eq(partitions_with_no_sizes)
+        it 'return partitions fact with 0 sizes' do
+          result = resolver.resolve(:partitions)
+
+          expect(result).to eq(partitions_with_no_sizes)
         end
       end
     end
@@ -94,10 +111,6 @@ describe Facter::Resolvers::Partitions do
           .with("#{sys_block_path}/sda/dm/name").and_return('VolGroup00-LogVol00')
         allow(Facter::Util::FileHelper).to receive(:safe_read)
           .with("#{sys_block_path}/sda/size", '0').and_return('201213')
-        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'which blkid')
-                                        .and_return('/usr/bin/blkid')
-        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'blkid')
-                                        .and_return(load_fixture('blkid_output').read)
       end
 
       context 'when device name file is readable' do
@@ -116,11 +129,14 @@ describe Facter::Resolvers::Partitions do
           { '/dev/sys/block/sda' => { size: '98.25 MiB', size_bytes: 103_021_056 } }
         end
 
-        it 'return partitions fact with no device name' do
-          allow(Facter::Util::FileHelper).to receive(:safe_read)
-            .with("#{sys_block_path}/sda/dm/name").and_return('')
+        before do
+          allow(Facter::Util::FileHelper).to receive(:safe_read).with("#{sys_block_path}/sda/dm/name").and_return('')
+        end
 
-          expect(resolver.resolve(:partitions)).to eq(partitions)
+        it 'return partitions fact with no device name' do
+          result = resolver.resolve(:partitions)
+
+          expect(result).to eq(partitions)
         end
       end
     end
@@ -134,10 +150,6 @@ describe Facter::Resolvers::Partitions do
           .with("#{sys_block_path}/sda/loop/backing_file").and_return('some_path')
         allow(Facter::Util::FileHelper).to receive(:safe_read)
           .with("#{sys_block_path}/sda/size", '0').and_return('201213')
-        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'which blkid')
-                                        .and_return('/usr/bin/blkid')
-        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'blkid')
-                                        .and_return(load_fixture('blkid_output').read)
       end
 
       context 'when backing_file is readable' do
@@ -155,11 +167,15 @@ describe Facter::Resolvers::Partitions do
           { '/dev/sys/block/sda' => { size: '98.25 MiB', size_bytes: 103_021_056 } }
         end
 
-        it 'returns partitions fact' do
+        before do
           allow(Facter::Util::FileHelper).to receive(:safe_read)
             .with("#{sys_block_path}/sda/loop/backing_file").and_return('')
+        end
 
-          expect(resolver.resolve(:partitions)).to eq(partitions)
+        it 'returns partitions fact' do
+          result = resolver.resolve(:partitions)
+
+          expect(result).to eq(partitions)
         end
       end
     end

@@ -91,7 +91,7 @@ module Facter
 
     def load_groups
       config = ConfigReader.init(Options[:config])
-      @block_list = config.block_list || {}
+      @block_list = config.block_list || []
       @groups_ttls = config.ttls || []
       @groups.merge!(config.fact_groups) if config.fact_groups
     end

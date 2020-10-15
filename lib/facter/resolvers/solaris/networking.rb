@@ -9,7 +9,6 @@ module Facter
       class Networking < BaseResolver
         @log = Facter::Log.new(self)
         @fact_list ||= {}
-        @interfaces = {}
 
         class << self
           private

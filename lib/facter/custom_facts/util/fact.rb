@@ -155,7 +155,7 @@ module Facter
         @searching
       end
 
-      # Lock our searching process, so we never ge stuck in recursion.
+      # Lock our searching process, so we never get stuck in recursion.
       def searching
         raise "Caught recursion on #{@name}" if searching?
 

@@ -3,7 +3,7 @@
 set -e
 
 # run unit tests
-rspec
+rspec --order random
 
 # run linting
 rubocop --parallel
