@@ -37,6 +37,7 @@ Metrics/ModuleLength:
   Exclude:
     - 'lib/facter.rb'
     - 'agent/lib/facter-ng.rb'
+    - 'lib/facter/config.rb'
 
 Metrics/BlockLength:
   Exclude:

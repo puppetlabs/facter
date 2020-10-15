@@ -4,30 +4,11 @@ describe Facter::OsHierarchy do
   subject(:os_hierarchy) { Facter::OsHierarchy.new }
 
   before do
-    allow(Facter::Util::FileHelper)
-      .to receive(:safe_read)
-      .with(File.join(ROOT_DIR, 'lib', 'facter', 'framework', 'detector', '..', '..', 'os_hierarchy.json'))
-      .and_return(load_fixture('os_hierarchy').read)
+    stub_const('Facter::Config::OS_HIERARCHY', JSON.parse(load_fixture('os_hierarchy').read))
     allow(Facter::Log).to receive(:new).and_return(log)
   end
 
   let(:log) { instance_spy(Facter::Log) }
-
-  describe '#initialize' do
-    context 'when os_hierarchy is invalid' do
-      before do
-        allow(Facter::Util::FileHelper)
-          .to receive(:safe_read)
-          .with(File.join(ROOT_DIR, 'lib', 'facter', 'framework', 'detector', '..', '..', 'os_hierarchy.json'))
-          .and_return(load_fixture('broken_os_hierarchy').read)
-      end
-
-      it 'log error message' do
-        Facter::OsHierarchy.new
-        expect(log).to have_received(:error).with('Could not parse os_hierarchy json')
-      end
-    end
-  end
 
   describe '#construct_hierarchy' do
     context 'when searched_os is ubuntu' do
@@ -58,7 +39,7 @@ describe Facter::OsHierarchy do
       let(:my_os_name) { 'Myos' }
 
       before do
-        allow(JSON).to receive(:parse).and_return(nil)
+        stub_const('Facter::Config::OS_HIERARCHY', nil)
       end
 
       it 'returns the searched os as the hierarchy' do
