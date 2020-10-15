@@ -36,7 +36,8 @@ describe Facter::OptionStore do
         cache: true,
         color: true,
         trace: false,
-        timing: false
+        timing: false,
+        ttls: []
       )
     end
   end

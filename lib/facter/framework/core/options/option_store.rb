@@ -22,6 +22,7 @@ module Facter
     @user_query = []
     @block_list = {}
     @fact_groups = {}
+    @ttls = []
     @color = true
     @timing = false
 
@@ -177,6 +178,7 @@ module Facter
         @blocked_facts = []
         @fact_groups = {}
         @block_list = {}
+        @ttls = []
         @timing = false
       end
 
