@@ -126,7 +126,7 @@ describe Facter::Resolvers::Partitions do
 
       context 'when device name file is not readable' do
         let(:partitions) do
-          { '/dev/sys/block/sda' => { size: '98.25 MiB', size_bytes: 103_021_056 } }
+          { '/dev/sda' => { size: '98.25 MiB', size_bytes: 103_021_056 } }
         end
 
         before do
@@ -154,7 +154,7 @@ describe Facter::Resolvers::Partitions do
 
       context 'when backing_file is readable' do
         let(:partitions) do
-          { '/dev/sys/block/sda' => { backing_file: 'some_path', size: '98.25 MiB', size_bytes: 103_021_056 } }
+          { '/dev/sda' => { backing_file: 'some_path', size: '98.25 MiB', size_bytes: 103_021_056 } }
         end
 
         it 'returns partitions fact' do
@@ -164,7 +164,7 @@ describe Facter::Resolvers::Partitions do
 
       context 'when backing_file is not readable' do
         let(:partitions) do
-          { '/dev/sys/block/sda' => { size: '98.25 MiB', size_bytes: 103_021_056 } }
+          { '/dev/sda' => { size: '98.25 MiB', size_bytes: 103_021_056 } }
         end
 
         before do
