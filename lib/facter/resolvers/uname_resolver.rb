@@ -3,6 +3,7 @@
 module Facter
   module Resolvers
     class Uname < BaseResolver
+      @semaphore = Mutex.new
       @fact_list ||= {}
 
       class << self

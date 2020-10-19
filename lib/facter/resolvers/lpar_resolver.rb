@@ -3,6 +3,7 @@
 module Facter
   module Resolvers
     class Lpar < BaseResolver
+      @semaphore = Mutex.new
       @fact_list ||= {}
 
       class << self

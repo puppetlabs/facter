@@ -4,6 +4,7 @@ module Facter
   module Resolvers
     module Solaris
       class Memory < BaseResolver
+        @semaphore = Mutex.new
         BLOCKSIZE = 512
         # :system
         # :swap

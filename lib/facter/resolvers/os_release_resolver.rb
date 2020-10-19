@@ -14,6 +14,7 @@ module Facter
       # :support_url
       # :bug_report_url
 
+      @semaphore = Mutex.new
       @fact_list ||= {}
 
       class << self

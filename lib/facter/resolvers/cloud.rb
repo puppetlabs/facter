@@ -5,6 +5,7 @@ module Facter
     class Cloud < BaseResolver
       # cloud_provider
 
+      @semaphore = Mutex.new
       @fact_list ||= {}
 
       class << self

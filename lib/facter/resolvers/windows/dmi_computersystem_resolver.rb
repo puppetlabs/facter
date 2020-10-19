@@ -4,6 +4,7 @@ module Facter
   module Resolvers
     class DMIComputerSystem < BaseResolver
       @log = Facter::Log.new(self)
+      @semaphore = Mutex.new
       @fact_list ||= {}
 
       class << self

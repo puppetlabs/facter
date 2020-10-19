@@ -4,6 +4,7 @@ module Facter
   module Resolvers
     module Bsd
       class Processors < BaseResolver
+        @semaphore = Mutex.new
         @log = Facter::Log.new(self)
         @fact_list ||= {}
         class << self

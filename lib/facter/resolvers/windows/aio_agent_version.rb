@@ -5,6 +5,7 @@ module Facter
     module Windows
       class AioAgentVersion < BaseResolver
         REGISTRY_PATH = 'SOFTWARE\\Puppet Labs\\Puppet'
+        @semaphore = Mutex.new
         @fact_list ||= {}
 
         class << self

@@ -4,6 +4,7 @@ module Facter
   module Resolvers
     module Macosx
       class SwapMemory < BaseResolver
+        @semaphore = Mutex.new
         @fact_list ||= {}
         class << self
           private

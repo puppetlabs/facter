@@ -4,7 +4,10 @@ module Facter
   module Resolvers
     class System32 < BaseResolver
       @log = Facter::Log.new(self)
+
+      @semaphore = Mutex.new
       @fact_list ||= {}
+
       class << self
         private
 

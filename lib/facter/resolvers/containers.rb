@@ -6,6 +6,7 @@ module Facter
       # :virtual
       # :hypervisor
 
+      @semaphore = Mutex.new
       @fact_list ||= {}
       INFO = { 'docker' => 'id', 'lxc' => 'name' }.freeze
 

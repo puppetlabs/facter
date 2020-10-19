@@ -7,6 +7,8 @@ module Facter
     module Windows
       class Uptime < BaseResolver
         @log = Facter::Log.new(self)
+
+        @semaphore = Mutex.new
         @fact_list ||= {}
 
         class << self

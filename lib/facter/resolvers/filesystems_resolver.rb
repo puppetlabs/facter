@@ -5,8 +5,12 @@ module Facter
     module Linux
       class Filesystems < BaseResolver
         # :systems
+
+        @semaphore = Mutex.new
         @fact_list ||= {}
+
         @log = Facter::Log.new(self)
+
         class << self
           private
 

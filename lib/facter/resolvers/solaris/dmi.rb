@@ -4,6 +4,7 @@ module Facter
   module Resolvers
     module Solaris
       class Dmi < BaseResolver
+        @semaphore = Mutex.new
         @fact_list ||= {}
 
         class << self

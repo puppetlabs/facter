@@ -5,8 +5,12 @@ module Facter
     module Linux
       class Processors < BaseResolver
         @log = Facter::Log.new(self)
+
+        @semaphore = Mutex.new
         @fact_list ||= {}
+
         MHZ_TO_HZ = 1_000_000
+
         class << self
           # :count
           # :models
