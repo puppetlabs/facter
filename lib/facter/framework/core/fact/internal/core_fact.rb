@@ -9,7 +9,9 @@ module Facter
     def create
       fact_class = @searched_fact.fact_class
 
-      fact_class&.new&.call_the_resolver
+      return unless fact_class
+
+      fact_class.new.call_the_resolver
     end
   end
 end

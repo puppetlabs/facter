@@ -1,7 +1,7 @@
 # This test verifies that --no-custom-facts keeps facter from loading facts from the environment
 # variable FACTERLIB
 test_name "C100000: custom fact commandline options --no-custom-facts does not load from FACTERLIB" do
-  tag 'risk:low'
+  tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils

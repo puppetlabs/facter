@@ -5,13 +5,13 @@ module Facter
     module Linux
       class DmiBios < BaseResolver
         @log = Facter::Log.new(self)
-        @semaphore = Mutex.new
         @fact_list ||= {}
 
         class << self
           # :bios_vendor
           # :bios_date
           # :bios_version
+          # :board_asset_tag
           # :board_vendor
           # :board_serial
           # :board_name
@@ -29,16 +29,16 @@ module Facter
           end
 
           def read_facts(fact_name)
-            files = %w[bios_date bios_vendor bios_version board_vendor board_name board_serial
-                       chassis_asset_tag chassis_type sys_vendor product_name product_serial
-                       product_uuid]
+            files = %w[bios_date bios_vendor bios_version board_asset_tag board_vendor board_name
+                       board_serial chassis_asset_tag chassis_type sys_vendor product_name
+                       product_serial product_uuid]
             return unless File.directory?('/sys/class/dmi')
 
             file_content = Util::FileHelper.safe_read("/sys/class/dmi/id/#{fact_name}", nil)
             if files.include?(fact_name.to_s) && file_content
-              @fact_list[fact_name] = file_content.strip
+              file_content = file_content.strip
+              @fact_list[fact_name] = file_content unless file_content.empty?
               chassis_to_name(@fact_list[fact_name]) if fact_name == :chassis_type
-
             end
             @fact_list[fact_name]
           end

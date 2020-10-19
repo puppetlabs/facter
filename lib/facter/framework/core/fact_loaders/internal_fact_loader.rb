@@ -30,18 +30,18 @@ module Facter
     def load_for_os(operating_system)
       # select only classes
       classes = ClassDiscoverer.instance.discover_classes(operating_system)
-
       classes.each do |class_name|
         fact_name = class_name::FACT_NAME
-
         # if fact is already loaded, skip it
-        next if @facts.any? { |fact| fact.name == fact_name }
-
-        type = class_name.const_defined?('TYPE') ? class_name::TYPE : :core
-        load_fact(fact_name, class_name, type)
+        unless @facts.any? { |fact| fact.name == fact_name }
+          type = class_name.const_defined?('TYPE') ? class_name::TYPE : :core
+          load_fact(fact_name, class_name, type)
+        end
         next unless class_name.const_defined?('ALIASES')
 
-        [*class_name::ALIASES].each { |fact_alias| load_fact(fact_alias, class_name, :legacy) }
+        [*class_name::ALIASES].each do |fact_alias|
+          load_fact(fact_alias, class_name, :legacy) unless @facts.any? { |fact| fact.name == fact_alias }
+        end
       end
     end
 

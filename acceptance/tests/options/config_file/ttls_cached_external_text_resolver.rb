@@ -1,7 +1,7 @@
 # This test verifies that a ttls configured cached facts when initially called
 # create a json cache file
 test_name "ttls configured cached external text resolver creates and read json cache files" do
-  tag 'risk:medium'
+  tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils

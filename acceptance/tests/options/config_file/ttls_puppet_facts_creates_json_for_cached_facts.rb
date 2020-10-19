@@ -1,7 +1,7 @@
 # Verify that setting a ttls, creates a json file for the cached fact when run
 # from puppet facts
 test_name "C100038: with ttls configured create cached facts when run from puppet facts" do
-  tag 'risk:medium'
+  tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils

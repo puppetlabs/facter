@@ -29,19 +29,7 @@ describe Logger do
       end
     end
 
-    it 'logs a warn if message is nil' do
-      log.debug(nil)
-
-      expect(multi_logger_double).to have_received(:warn).with(/debug invoked with invalid message/)
-    end
-
-    it 'logs a warn if message is empty' do
-      log.debug('')
-
-      expect(multi_logger_double).to have_received(:warn).with(/debug invoked with invalid message/)
-    end
-
-    shared_examples 'writes debug message' do
+    shared_examples 'writes debug message with no color' do
       it 'calls debug on multi_logger' do
         log.debug('debug_message')
 
@@ -49,7 +37,16 @@ describe Logger do
       end
     end
 
-    it_behaves_like 'writes debug message'
+    shared_examples 'writes debug message with color' do
+      it 'calls debug on multi_logger' do
+        log.debug('debug_message')
+
+        expect(multi_logger_double).to have_received(:debug)
+          .with("Class - #{Facter::CYAN}debug_message#{Facter::RESET}")
+      end
+    end
+
+    it_behaves_like 'writes debug message with no color'
 
     context 'when message callback is provided' do
       after do
@@ -73,7 +70,7 @@ describe Logger do
         allow(Facter).to receive(:respond_to?).with(:debugging?).and_return(false)
       end
 
-      it_behaves_like 'writes debug message'
+      it_behaves_like 'writes debug message with no color'
 
       it 'does not call Facter.debugging?' do
         log.debug('debug_message')
@@ -92,13 +89,7 @@ describe Logger do
           Facter::Options[:color] = true
         end
 
-        it 'print CYAN (36) debug message' do
-          log.debug('debug_message')
-
-          expect(multi_logger_double)
-            .to have_received(:debug)
-            .with("Class - #{Facter::CYAN}debug_message#{Facter::RESET}")
-        end
+        it_behaves_like 'writes debug message with color'
       end
     end
 
@@ -112,11 +103,7 @@ describe Logger do
           Facter::Options[:color] = true
         end
 
-        it 'print debug message' do
-          log.debug('debug_message')
-
-          expect(multi_logger_double).to have_received(:debug).with('Class - debug_message')
-        end
+        it_behaves_like 'writes debug message with color'
       end
     end
   end
@@ -161,7 +148,8 @@ describe Logger do
         it 'print info message' do
           log.info('info_message')
 
-          expect(multi_logger_double).to have_received(:info).with('Class - info_message')
+          expect(multi_logger_double).to have_received(:info)
+            .with("Class - #{Facter::GREEN}info_message#{Facter::RESET}")
         end
       end
     end
@@ -207,7 +195,8 @@ describe Logger do
         it 'print warn message' do
           log.warn('warn_message')
 
-          expect(multi_logger_double).to have_received(:warn).with('Class - warn_message')
+          expect(multi_logger_double).to have_received(:warn)
+            .with("Class - #{Facter::YELLOW}warn_message#{Facter::RESET}")
         end
       end
     end
@@ -222,12 +211,12 @@ describe Logger do
       expect(multi_logger_double).to have_received(:error).with("Class - #{Facter::RED}error_message#{Facter::RESET}")
     end
 
-    it 'writes error message not colorized on Windows' do
+    it 'writes error message colorized on Windows' do
       allow(OsDetector.instance).to receive(:identifier).and_return(:windows)
 
       log.error('error_message', true)
 
-      expect(multi_logger_double).to have_received(:error).with('Class - error_message')
+      expect(multi_logger_double).to have_received(:error).with("Class - #{Facter::RED}error_message#{Facter::RESET}")
     end
 
     it 'writes error message' do

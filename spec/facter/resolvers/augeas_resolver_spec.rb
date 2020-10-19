@@ -4,9 +4,11 @@ describe Facter::Resolvers::Augeas do
   subject(:augeas) { Facter::Resolvers::Augeas }
 
   let(:log_spy) { instance_spy(Facter::Log) }
+  let(:readable) { false }
 
   before do
     augeas.instance_variable_set(:@log, log_spy)
+    allow(File).to receive(:readable?).with('/opt/puppetlabs/puppet/bin/augparse').and_return(readable)
   end
 
   after do
@@ -17,6 +19,20 @@ describe Facter::Resolvers::Augeas do
     before do
       allow(Facter::Core::Execution).to receive(:execute)
         .with('augparse --version 2>&1', logger: log_spy)
+        .and_return('augparse 1.12.0 <http://augeas.net/>')
+    end
+
+    it 'returns build' do
+      expect(augeas.resolve(:augeas_version)).to eq('1.12.0')
+    end
+  end
+
+  context 'when augparse is installed with puppet-agent package on unix based systems' do
+    let(:readable) { true }
+
+    before do
+      allow(Facter::Core::Execution).to receive(:execute)
+        .with('/opt/puppetlabs/puppet/bin/augparse --version 2>&1', logger: log_spy)
         .and_return('augparse 1.12.0 <http://augeas.net/>')
     end
 

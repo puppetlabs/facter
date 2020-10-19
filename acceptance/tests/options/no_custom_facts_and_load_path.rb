@@ -5,7 +5,7 @@
 # named ‘facter’, and loads all Ruby files in those directories.
 test_name "C100003: custom fact commandline options --no-custom-facts does not load $LOAD_PATH facter directories" do
   confine :except, :platform => 'cisco_nexus' # see BKR-749
-  tag 'risk:low'
+  tag 'risk:high'
 
   require 'puppet/acceptance/common_utils'
   extend Puppet::Acceptance::CommandUtils

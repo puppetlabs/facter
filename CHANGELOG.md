@@ -1,3 +1,141 @@
+## [4.0.43](https://github.com/puppetlabs/facter/tree/4.0.43) (2020-10-12)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.42...4.0.43)
+
+### Fixed
+
+- (FACT-2810) Fix dmi.board_asset_tag and dhcp [#2125](https://github.com/puppetlabs/facter/pull/2125) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- (FACT-2817) Only invalidate session cache on clear and reset. [#2121](https://github.com/puppetlabs/facter/pull/2121) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (maint) Fix virtual_detector [#2128](https://github.com/puppetlabs/facter/pull/2128) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (FACT-2806) Fix physicalprocessorcount [#2127](https://github.com/puppetlabs/facter/pull/2127) ([florindragos](https://github.com/florindragos))
+- (FACT-2809) Fixed output differences on solaris [#2116](https://github.com/puppetlabs/facter/pull/2116) ([sebastian-miclea](https://github.com/sebastian-miclea))
+
+
+## [4.0.42](https://github.com/puppetlabs/facter/tree/4.0.42) (2020-10-07)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.41...4.0.42)
+
+### Added
+
+- (FACT-2792) Show not supported message for facter -p [#2119](https://github.com/puppetlabs/facter/pull/2119) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+### Fixed
+
+- (FACT-2805) Read available memory from MemAvailable [#2109](https://github.com/puppetlabs/facter/pull/2109) ([florindragos](https://github.com/florindragos))
+- (maint) Avoid deadlock of Facter::Core::Execution.execute [#2114](https://github.com/puppetlabs/facter/pull/2114) ([oanatmaria](https://github.com/oanatmaria))
+- (maint) Fix external fact cache [#2123](https://github.com/puppetlabs/facter/pull/2123) ([florindragos](https://github.com/florindragos))
+
+
+## [4.0.41](https://github.com/puppetlabs/facter/tree/4.0.41) (2020-10-01)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.40...4.0.41)
+
+### Fixed
+
+- (FACT-2824) Facter make ec2 metadata requests when on gce [#2113](https://github.com/puppetlabs/facter/pull/2113) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+
+## [4.0.40](https://github.com/puppetlabs/facter/tree/4.0.40) (2020-09-30)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.39...4.0.40)
+
+### Added
+
+- (FACT-2774) Extend facter API with resolve. [#2054](https://github.com/puppetlabs/facter/pull/2054) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+### Fixed
+
+- (FACT-2798) Set color to true, fix Facter.log_exception [#2105](https://github.com/puppetlabs/facter/pull/2105) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- (FACT-2816) - Fix ec2 fact issues when on non ec2 systems [#2106](https://github.com/puppetlabs/facter/pull/2106) ([logicminds](https://github.com/logicminds))
+- (FACT-2799) Fix fact loading for nested fact calls [#2108](https://github.com/puppetlabs/facter/pull/2108) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (FACT-2786) Fix fact caching if fact is defined in multiple groups [#2089](https://github.com/puppetlabs/facter/pull/2089) ([florindragos](https://github.com/florindragos))
+- (maint) Fix for blockdevice_*_size legacy fact on Aix and Solaris [#2111](https://github.com/puppetlabs/facter/pull/2111) ([sebastian-miclea](https://github.com/sebastian-miclea))
+
+
+## [4.0.39](https://github.com/puppetlabs/facter/tree/4.0.39) (2020-09-23)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.38...4.0.39)
+
+### Added
+
+- (FACT-2746) Added cloud resolver [#2082](https://github.com/puppetlabs/facter/pull/2082) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- (FACT-2317) Add Facter.define_fact method [#2102](https://github.com/puppetlabs/facter/pull/2102) ([oanatmaria](https://github.com/oanatmaria))
+- FACT(2326) Add Facter.each method [#2100](https://github.com/puppetlabs/facter/pull/2100) ([florindragos](https://github.com/florindragos))
+- (FACT-2324) Add loadfacts API method [#2103](https://github.com/puppetlabs/facter/pull/2103) ([sebastian-miclea](https://github.com/sebastian-miclea))
+
+### Fixed
+
+- (FACT-2802) Fix Cloud resolver [#2093](https://github.com/puppetlabs/facter/pull/2093) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- (FACT-2803) Detect hypervisors as amazon if virtwhat detects aws. [#2095](https://github.com/puppetlabs/facter/pull/2095) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (FACT-2748) Fixed type for blockdevice_*_size [#2098](https://github.com/puppetlabs/facter/pull/2098) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- (FACT-2793) Time limit for Facter::Core::Execute [#2080](https://github.com/puppetlabs/facter/pull/2080) ([oanatmaria](https://github.com/oanatmaria))
+
+
+## [4.0.38](https://github.com/puppetlabs/facter/tree/4.0.38) (2020-09-16)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.37...4.0.38)
+
+### Added
+
+- (FACT-2319) Added debugonce method [#2085](https://github.com/puppetlabs/facter/pull/2085) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- (FACT-2327) added list method [#2088](https://github.com/puppetlabs/facter/pull/2088) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- (FACT-2320) Added warnonce method [#2084](https://github.com/puppetlabs/facter/pull/2084) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- (FACT-2315) Added warn method to facter api [#2083](https://github.com/puppetlabs/facter/pull/2083) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+
+### Fixed
+
+- (FACT-2784) Fixed rhel os release fact [#2086](https://github.com/puppetlabs/facter/pull/2086) ([sebastian-miclea](https://github.com/sebastian-miclea))
+
+
+## [4.0.37](https://github.com/puppetlabs/facter/tree/4.0.37) (2020-09-09)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.36-fixed...4.0.37)
+
+### Added
+
+- (FACT-1380) Restore --timing option to native facter [#2061](https://github.com/puppetlabs/facter/pull/2061) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+### Fixed
+
+- (FACT-2781) Fix filesystems on osx [#2065](https://github.com/puppetlabs/facter/pull/2065) ([florindragos](https://github.com/florindragos))
+- (FACT-2777) Fix lsbdist facts on ubuntu [#2063](https://github.com/puppetlabs/facter/pull/2063) ([florindragos](https://github.com/florindragos))
+- (FACT-2783) Updated how osx mountpoints are calculated [#2072](https://github.com/puppetlabs/facter/pull/2072) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- (FACT-2776) Fix Linux partitions fact [#2076](https://github.com/puppetlabs/facter/pull/2076) ([oanatmaria](https://github.com/oanatmaria))
+- (FACT-2785) partitions.<partition_name>.mount has wrong value on sles15-64 [#2077](https://github.com/puppetlabs/facter/pull/2077) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+
+## [4.0.36](https://github.com/puppetlabs/facter/tree/4.0.36) (2020-09-02)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.35...4.0.36-fixed)
+
+### Added
+
+- (FACT-2747) Add missing legacy facts on all platforms [#2034](https://github.com/puppetlabs/facter/pull/2034) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (FACT-2721) Added Solaris virtual fact [#2033](https://github.com/puppetlabs/facter/pull/2033) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- (FACT-2745) Add Linux xen fact [#2040](https://github.com/puppetlabs/facter/pull/2040) ([oanatmaria](https://github.com/oanatmaria))
+- (FACT-2740) Add Gce fact [#2035](https://github.com/puppetlabs/facter/pull/2035) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- (FACT-2743) Added LDom fact for solaris [#2041](https://github.com/puppetlabs/facter/pull/2041) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- (FACT-2296) Added fact group for legacy facts [#2047](https://github.com/puppetlabs/facter/pull/2047) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- (FACT-2753) Resolve facts sequentially. [#2050](https://github.com/puppetlabs/facter/pull/2050) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (FACT-2728) Added hypervisors fact for Solaris [#2045](https://github.com/puppetlabs/facter/pull/2045) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- (FACT-2752) Added serialnumber fact for AIX [#2052](https://github.com/puppetlabs/facter/pull/2052) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- (FACT-2729) Add Solaris is_virtual fact [#2056](https://github.com/puppetlabs/facter/pull/2056) ([oanatmaria](https://github.com/oanatmaria))
+- (FACT-2773) Added board_asset_tag fact for linux [#2059](https://github.com/puppetlabs/facter/pull/2059) ([sebastian-miclea](https://github.com/sebastian-miclea))
+
+### Fixed
+
+- (FACT-2454) fix how used memory is calculated [#2038](https://github.com/puppetlabs/facter/pull/2038) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- (FACT-2747-scope6) Allow scope6 to be blocked on all platforms [#2037](https://github.com/puppetlabs/facter/pull/2037) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (maint) Add nil check for ec2 facts. [#2042](https://github.com/puppetlabs/facter/pull/2042) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (maint) Correctly initialise logger. [#2043](https://github.com/puppetlabs/facter/pull/2043) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (FACT-2747) Add ssh legacy facts. [#2044](https://github.com/puppetlabs/facter/pull/2044) ([IrimieBogdan](https://github.com/IrimieBogdan))
+- (FACT-2561) Fix blocking mechanism [#2046](https://github.com/puppetlabs/facter/pull/2046) ([oanatmaria](https://github.com/oanatmaria))
+- (FACT-2741) Fix double quotes for numbers in yaml formatter [#2053](https://github.com/puppetlabs/facter/pull/2053) ([florindragos](https://github.com/florindragos))
+- (FACT-2754) Add os.distro release legacy facts [#2055](https://github.com/puppetlabs/facter/pull/2055) ([oanatmaria](https://github.com/oanatmaria))
+- (FACT-2771) Fix Solaris kernelmajversion fact [#2057](https://github.com/puppetlabs/facter/pull/2057) ([oanatmaria](https://github.com/oanatmaria))
+- (FACT-2457) Display newlines in values [#2058](https://github.com/puppetlabs/facter/pull/2058) ([florindragos](https://github.com/florindragos))
+
+
 ## [4.0.35](https://github.com/puppetlabs/facter/tree/4.0.35) (2020-08-19)
 
 [Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.34...4.0.35)

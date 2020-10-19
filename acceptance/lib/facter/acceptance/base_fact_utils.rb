@@ -350,7 +350,7 @@ module Facter
             'os.family'                => 'Darwin',
             'os.hardware'              => 'x86_64',
             'os.name'                  => 'Darwin',
-            'os.macosx.build'          => /\d+[A-Z]\d{2,4}\w?/,
+            'os.macosx.build'          => /\d+[A-Z]\d{1,4}\w?/,
             'os.macosx.product'        => 'Mac OS X',
             'os.macosx.version.full'   => /#{os_version}\.\d+/,
             'os.macosx.version.major'  => os_version,

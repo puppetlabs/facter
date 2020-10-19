@@ -1,7 +1,7 @@
 # This test verifies that the external-dir specified in the configuration file can be overridden by using
 # --external-dir on the command line
 test_name "C100016: config external-dir overridden by command line --external-dir" do
-  tag 'risk:medium'
+  tag 'risk:high'
 
   require 'json'
   require 'facter/acceptance/user_fact_utils'

@@ -40,31 +40,44 @@ module Facter
       end
     end
 
-    def group_cached?(group_name)
-      cached = @fact_groups.get_group_ttls(group_name) ? true : false
-      delete_cache(group_name) unless cached
+    def fact_cache_enabled?(fact_name)
+      fact = @fact_groups.get_fact(fact_name)
+      cached = if fact
+                 !fact[:ttls].nil?
+               else
+                 false
+               end
+
+      fact_group = @fact_groups.get_fact_group(fact_name)
+      delete_cache(fact_group) if fact_group && !cached
       cached
     end
 
     private
 
     def resolve_fact(searched_fact)
-      group_name =  if searched_fact.file
-                      searched_fact.name
-                    else
-                      @fact_groups.get_fact_group(searched_fact.name)
-                    end
+      fact_name = if searched_fact.file
+                    File.basename(searched_fact.file)
+                  else
+                    searched_fact.name
+                  end
 
-      return unless group_name
+      return unless fact_cache_enabled?(fact_name)
 
-      return unless group_cached?(group_name)
+      fact = @fact_groups.get_fact(fact_name)
 
-      return unless check_ttls?(group_name)
+      return unless fact
 
-      data = read_group_json(group_name)
+      return unless check_ttls?(fact[:group], fact[:ttls])
+
+      read_fact(searched_fact, fact[:group])
+    end
+
+    def read_fact(searched_fact, fact_group)
+      data = read_group_json(fact_group)
       return unless data
 
-      @log.debug("loading cached values for #{group_name} facts")
+      @log.debug("loading cached values for #{searched_fact.name} facts")
 
       create_facts(searched_fact, data)
     end
@@ -86,14 +99,17 @@ module Facter
     end
 
     def cache_fact(fact)
-      group_name = if fact.file
-                     File.basename(fact.file)
-                   else
-                     @fact_groups.get_fact_group(fact.name)
-                   end
+      fact_name = if fact.file
+                    File.basename(fact.file)
+                  else
+                    fact.name
+                  end
+
+      group_name = @fact_groups.get_fact_group(fact_name)
+
       return if !group_name || fact.value.nil?
 
-      return unless group_cached?(group_name)
+      return unless fact_cache_enabled?(fact_name)
 
       @groups[group_name] ||= {}
       @groups[group_name][fact.name] = fact.value
@@ -106,10 +122,12 @@ module Facter
       end
 
       @groups.each do |group_name, data|
-        next unless check_ttls?(group_name)
+        next unless check_ttls?(group_name, @fact_groups.get_group_ttls(group_name))
+
+        cache_file_name = File.join(@cache_dir, group_name)
+        next if File.readable?(cache_file_name)
 
         @log.debug("caching values for #{group_name} facts")
-        cache_file_name = File.join(@cache_dir, group_name)
         File.write(cache_file_name, JSON.pretty_generate(data))
       end
     end
@@ -128,8 +146,7 @@ module Facter
       @groups[group_name] = data
     end
 
-    def check_ttls?(group_name)
-      ttls = @fact_groups.get_group_ttls(group_name)
+    def check_ttls?(group_name, ttls)
       return false unless ttls
 
       cache_file_name = File.join(@cache_dir, group_name)

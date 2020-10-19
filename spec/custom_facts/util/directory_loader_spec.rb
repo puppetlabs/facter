@@ -23,6 +23,12 @@ describe LegacyFacter::Util::DirectoryLoader do
   end
 
   describe 'when loading facts from disk' do
+    let(:log_spy) { instance_spy(Facter::Log) }
+
+    before do
+      allow(Facter::Log).to receive(:new).and_return(log_spy)
+    end
+
     it 'is able to load files from disk and set facts' do
       data = { 'f1' => 'one', 'f2' => 'two' }
       write_to_file('data.yaml', YAML.dump(data))
@@ -54,7 +60,7 @@ describe LegacyFacter::Util::DirectoryLoader do
 
     %w[bak orig].each do |ext|
       it "ignores files with an extension of '#{ext}'" do
-        expect(LegacyFacter).to receive(:warn).with(/#{ext}/)
+        expect(log_spy).to receive(:debug).with(/#{ext}/)
         write_to_file('data' + ".#{ext}", 'foo=bar')
 
         dir_loader.load(collection)
@@ -63,7 +69,7 @@ describe LegacyFacter::Util::DirectoryLoader do
 
     it 'warns when trying to parse unknown file types' do
       write_to_file('file.unknownfiletype', 'stuff=bar')
-      expect(LegacyFacter).to receive(:warn).with(/file.unknownfiletype/)
+      expect(log_spy).to receive(:debug).with(/file.unknownfiletype/)
 
       dir_loader.load(collection)
     end

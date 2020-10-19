@@ -1,5 +1,5 @@
 test_name "C15286: verify facterversion fact" do
-  tag 'risk:low'
+  tag 'risk:high'
 
   agents.each do |agent|
     step("verify that fact facterversion is a version string") do

@@ -3,10 +3,6 @@
 module Facter
   module Core
     module Execution
-      # require_relative 'execution/base'
-      # require_relative 'execution/windows'
-      # require_relative 'execution/posix'
-
       @@impl = if LegacyFacter::Util::Config.windows?
                  Facter::Core::Execution::Windows.new
                else
@@ -20,24 +16,22 @@ module Facter
       module_function
 
       # Returns the locations to be searched when looking for a binary. This
-      # is currently determined by the +PATH+ environment variable plus
-      # `/sbin` and `/usr/sbin` when run on unix
+      #   is currently determined by the +PATH+ environment variable plus
+      #   `/sbin` and `/usr/sbin` when run on unix
       #
-      # @return [Array<String>] the paths to be searched for binaries
+      # @return [Array<String>] The paths to be searched for binaries
+      #
       # @api private
       def search_paths
         @@impl.search_paths
       end
 
       # Determines the full path to a binary. If the supplied filename does not
-      # already describe an absolute path then different locations (determined
-      # by {search_paths}) will be searched for a match.
+      #   already describe an absolute path then different locations (determined
+      #   by {search_paths}) will be searched for a match.
+      # @param bin [String] The executable to locate
       #
-      # Returns nil if no matching executable can be found otherwise returns
-      # the expanded pathname.
-      #
-      # @param bin [String] the executable to locate
-      # @return [String,nil] the full path to the executable or nil if not
+      # @return [String/nil] The full path to the executable or nil if not
       #   found
       #
       # @api public
@@ -46,10 +40,12 @@ module Facter
       end
 
       # Determine in a platform-specific way whether a path is absolute. This
-      # defaults to the local platform if none is specified.
+      #   defaults to the local platform if none is specified.
+      # @param path [String] The path to check
+
+      # @param platform [:posix/:windows/nil] The platform logic to use
       #
-      # @param path [String] the path to check
-      # @param platform [:posix,:windows,nil] the platform logic to use
+      # @api private
       def absolute_path?(path, platform = nil)
         case platform
         when :posix
@@ -62,38 +58,35 @@ module Facter
       end
 
       # Given a command line, this returns the command line with the
-      # executable written as an absolute path. If the executable contains
-      # spaces, it has be put in double quotes to be properly recognized.
-      #
+      #   executable written as an absolute path. If the executable contains
+      #   spaces, it has to be put in double quotes to be properly recognized.
       # @param command [String] the command line
       #
-      # @return [String, nil] the command line with the executable's path
-      # expanded, or nil if the executable cannot be found.
+      # @return [String/nil] The command line with the executable's path
+      #   expanded, or nil if the executable cannot be found.
+      #
+      # @api private
       def expand_command(command)
         @@impl.expand_command(command)
       end
 
       # Overrides environment variables within a block of code.  The
-      # specified values will be set for the duration of the block, after
-      # which the original values (if any) will be restored.
-      #
-      # @overload with_env(values, { || ... })
-      #
+      #   specified values will be set for the duration of the block, after
+      #   which the original values (if any) will be restored.
       # @param values [Hash<String=>String>] A hash of the environment
       #   variables to override
       #
-      # @return [void]
+      # @return [String] The block's return string
       #
-      # @api public
+      # @api private
       def with_env(values, &block)
         @@impl.with_env(values, &block)
       end
 
       # Try to execute a command and return the output.
+      # @param command [String] Command to run
       #
-      # @param code [String] the program to run
-      #
-      # @return [String] the output of the program, or nil if the command does
+      # @return [String/nil] Output of the program, or nil if the command does
       #   not exist or could not be executed.
       #
       # @deprecated Use #{execute} instead
@@ -103,9 +96,9 @@ module Facter
       end
 
       # Execute a command and return the output of that program.
+      # @param command [String] Command to run
       #
-      # @param code [String] the program to run
-      # @param options [Hash]
+      # @param options [Hash] Hash with options for the aggregate fact
       #
       # @option options [Object] :on_fail How to behave when the command could
       #   not be run. Specifying :raise will raise an error, anything else will
@@ -118,7 +111,6 @@ module Facter
       #   command execution failed and :on_fail was specified.
       #
       # @api public
-      # @since 2.0.1
       def execute(command, options = {})
         @@impl.execute(command, options)
       end

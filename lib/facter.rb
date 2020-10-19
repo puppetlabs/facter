@@ -13,10 +13,35 @@ module Facter
   Options.init
   Log.output(STDOUT)
   @already_searched = {}
+  @debug_once = []
+  @warn_once = []
 
   class << self
-    def clear_messages
-      logger.debug('clear_messages is not implemented')
+    # Method used by puppet-agent to retrieve facts
+    # @param args_as_string [string] facter cli arguments
+    #
+    # @return query result
+    #
+    # @api private
+    def resolve(args_as_string)
+      require 'facter/framework/cli/cli_launcher'
+
+      args = args_as_string.split(' ')
+
+      Facter::OptionsValidator.validate(args)
+      processed_arguments = CliLauncher.prepare_arguments(args, nil)
+
+      cli = Facter::Cli.new([], processed_arguments)
+
+      if cli.args.include?(:version)
+        cli.invoke(:version, [])
+      elsif cli.args.include?('--list-cache-groups')
+        cli.invoke(:list_cache_groups, [])
+      elsif cli.args.include?('--list-block-groups')
+        cli.invoke(:list_block_groups, [])
+      else
+        cli.invoke(:arg_parser)
+      end
     end
 
     # Alias method for Facter.fact()
@@ -54,12 +79,22 @@ module Facter
     # @api public
     def clear
       @already_searched = {}
+      @debug_once = []
+      @warn_once = []
       LegacyFacter.clear
       Options[:custom_dir] = []
       LegacyFacter.collection.invalidate_custom_facts
       LegacyFacter.collection.reload_custom_facts
+      SessionCache.invalidate_all_caches
+      nil
     end
 
+    # Gets the value for a core fact, external or custom facts are
+    #   not returned with this call. Returns `nil` if no such fact exists.
+    #
+    # @return [FactCollection] hash with fact names and values
+    #
+    # @api private
     def core_value(user_query)
       user_query = user_query.to_s
       resolved_facts = Facter::FactManager.instance.resolve_core([user_query])
@@ -68,24 +103,62 @@ module Facter
       fact_collection.dig(*splitted_user_query)
     end
 
-    # Prints out a debug message when debug option is set to true
-    # @param msg [String] Message to be printed out
+    # Logs debug message when debug option is set to true
+    # @param message [Object] Message object to be logged
     #
     # @return [nil]
     #
     # @api public
-    def debug(msg)
+    def debug(message)
       return unless debugging?
 
-      logger.debug(msg)
+      logger.debug(message.to_s)
       nil
     end
 
-    def on_message(&block)
-      Facter::Log.on_message(&block)
+    # Logs the same debug message only once when debug option is set to true
+    # @param message [Object] Message object to be logged
+    #
+    # @return [nil]
+    #
+    # @api public
+    def debugonce(message)
+      return unless debugging?
+
+      message_string = message.to_s
+      return if @debug_once.include? message_string
+
+      @debug_once << message_string
+      logger.debug(message_string)
+      nil
     end
 
-    # Check whether debuging is enabled
+    # Define a new fact or extend an existing fact.
+    #
+    # @param name [Symbol] The name of the fact to define
+    # @param options [Hash] A hash of options to set on the fact
+    #
+    # @return [Facter::Util::Fact] The fact that was defined
+    #
+    # @api public
+    def define_fact(name, options = {}, &block)
+      options[:fact_type] = :custom
+      LegacyFacter.define_fact(name, options, &block)
+    end
+
+    # Stores a proc that will be used to output custom messages.
+    #   The proc must receive one parameter that will be the message to log.
+    # @param block [Proc] a block defining messages handler
+    #
+    # @return [nil]
+    #
+    # @api public
+    def on_message(&block)
+      Facter::Log.on_message(&block)
+      nil
+    end
+
+    # Check whether debugging is enabled
     #
     # @return [bool]
     #
@@ -116,11 +189,30 @@ module Facter
       Facter::Options[:parallel]
     end
 
+    # Iterates over fact names and values
+    #
+    # @yieldparam [String] name the fact name
+    # @yieldparam [String] value the current value of the fact
+    #
+    # @return [Facter]
+    #
+    # @api public
+    def each
+      log_blocked_facts
+      resolved_facts = Facter::FactManager.instance.resolve_facts
+
+      resolved_facts.each do |fact|
+        yield(fact.name, fact.value)
+      end
+
+      self
+    end
+
     # Returns a fact object by name.  If you use this, you still have to
     # call {Facter::Util::Fact#value `value`} on it to retrieve the actual
     # value.
     #
-    # @param name [String] the name of the fact
+    # @param user_query [String] the name of the fact
     #
     # @return [Facter::Util::Fact, nil] The fact object, or nil if no fact
     #   is found.
@@ -143,30 +235,41 @@ module Facter
       LegacyFacter.reset
       Options[:custom_dir] = []
       Options[:external_dir] = []
+      SessionCache.invalidate_all_caches
+      nil
+    end
+
+    # Loads all facts
+    #
+    # @return [nil]
+    #
+    # @api public
+    def loadfacts
+      LegacyFacter.loadfacts
       nil
     end
 
     # Register directories to be searched for custom facts. The registered directories
-    # must be absolute paths or they will be ignored.
-    #
+    #   must be absolute paths or they will be ignored.
     # @param dirs [Array<String>] An array of searched directories
     #
-    # @return [void]
+    # @return [nil]
     #
     # @api public
     def search(*dirs)
       Options[:custom_dir] += dirs
+      nil
     end
 
     # Registers directories to be searched for external facts.
-    #
     # @param dirs [Array<String>] An array of searched directories
     #
-    # @return [void]
+    # @return [nil]
     #
     # @api public
     def search_external(dirs)
       Options[:external_dir] += dirs
+      nil
     end
 
     # Returns the registered search directories.for external facts.
@@ -190,14 +293,13 @@ module Facter
     # Gets a hash mapping fact names to their values
     # The hash contains core facts, legacy facts, custom facts and external facts (all facts that can be resolved).
     #
-    # @return [FactCollection] the hash of fact names and values
+    # @return [FactCollection] hash with fact names and values
     #
     # @api public
     def to_hash
       log_blocked_facts
 
       resolved_facts = Facter::FactManager.instance.resolve_facts
-      Facter::SessionCache.invalidate_all_caches
       Facter::FactCollection.new.build_fact_collection!(resolved_facts)
     end
 
@@ -211,9 +313,9 @@ module Facter
     end
 
     # Enable or disable trace
-    # @param debug_bool [bool] Set trace on debug state
+    # @param bool [bool] Set trace on debug state
     #
-    # @return [type] [description]
+    # @return [bool] Value of trace debug state
     #
     # @api public
     def trace(bool)
@@ -222,7 +324,7 @@ module Facter
 
     # Gets the value for a fact. Returns `nil` if no such fact exists.
     #
-    # @param name [String] the fact name
+    # @param user_query [String] the fact name
     # @return [String] the value of the fact, or nil if no fact is found
     #
     # @api public
@@ -230,6 +332,27 @@ module Facter
       user_query = user_query.to_s
       resolve_fact(user_query)
       @already_searched[user_query]&.value
+    end
+
+    # Gets the values for multiple facts.
+    #
+    # @param options [Hash] parameters for the fact - attributes
+    #   of {Facter::Util::Fact} and {Facter::Util::Resolution} can be
+    #   supplied here
+    # @param user_queries [String] the fact names
+    #
+    # @return [FactCollection] hash with fact names and values
+    #
+    # @api public
+    def values(options, user_queries)
+      init_cli_options(options, user_queries)
+      resolved_facts = Facter::FactManager.instance.resolve_facts(user_queries)
+
+      if user_queries.count.zero?
+        Facter::FactCollection.new.build_fact_collection!(resolved_facts)
+      else
+        FormatterHelper.retrieve_facts_to_display_for_user_query(user_queries, resolved_facts)
+      end
     end
 
     # Returns Facter version
@@ -251,7 +374,6 @@ module Facter
       logger.info("executed with command line: #{ARGV.drop(1).join(' ')}")
       log_blocked_facts
       resolved_facts = Facter::FactManager.instance.resolve_facts(args)
-      SessionCache.invalidate_all_caches
       fact_formatter = Facter::FormatterFactory.build(Facter::Options.get)
 
       status = error_check(resolved_facts)
@@ -259,22 +381,69 @@ module Facter
       [fact_formatter.format(resolved_facts), status || 0]
     end
 
-    def log_exception(exception, message = :default)
-      arr = []
-      if message == :default
-        arr << exception.message
-      elsif message
-        arr << message
-      end
-      if Options[:trace]
-        arr << 'backtrace:'
-        arr.concat(exception.backtrace)
-      end
+    # Logs an exception and an optional message
+    #
+    # @return [nil]
+    #
+    # @api public
+    def log_exception(exception, message = nil)
+      error_message = []
 
-      logger.error(arr.flatten.join("\n"))
+      error_message << message.to_s unless message.nil? || (message.is_a?(String) && message.empty?)
+
+      parse_exception(exception, error_message)
+      logger.error(error_message.flatten.join("\n"))
+      nil
+    end
+
+    # Returns a list with the names of all solved facts
+    # @return [Array] the list with all the fact names
+    #
+    # @api public
+    def list
+      to_hash.keys.sort
+    end
+
+    # Logs the message parameter as a warning.
+    # @param message [Object] the warning object to be displayed
+    #
+    # @return [nil]
+    #
+    # @api public
+    def warn(message)
+      logger.warn(message.to_s)
+      nil
+    end
+
+    # Logs only once the same warning message.
+    # @param message [Object] the warning message object
+    #
+    # @return [nil]
+    #
+    # @api public
+    def warnonce(message)
+      message_string = message.to_s
+      return if @warn_once.include? message_string
+
+      @warn_once << message_string
+      logger.warn(message_string)
+      nil
     end
 
     private
+
+    def parse_exception(exception, error_message)
+      if exception.is_a?(Exception)
+        error_message << exception.message if error_message.empty?
+
+        if Options[:trace] && !exception.backtrace.nil?
+          error_message << 'backtrace:'
+          error_message.concat(exception.backtrace)
+        end
+      elsif error_message.empty?
+        error_message << exception.to_s
+      end
+    end
 
     def logger
       @logger ||= Log.new(self)
@@ -297,7 +466,6 @@ module Facter
     def resolve_fact(user_query)
       user_query = user_query.to_s
       resolved_facts = Facter::FactManager.instance.resolve_facts([user_query])
-      SessionCache.invalidate_all_caches
       # we must make a distinction between custom facts that return nil and nil facts
       # Nil facts should not be packaged as ResolvedFacts! (add_fact_to_searched_facts packages facts)
       resolved_facts = resolved_facts.reject { |fact| fact.type == :nil }
@@ -315,10 +483,9 @@ module Facter
     # Returns exit status when user query contains facts that do
     #   not exist
     #
-    # @param dirs [Array] Arguments sent to CLI
-    # @param dirs [Array] List of resolved facts
+    # @param resolved_facts [Array] List of resolved facts
     #
-    # @return [Integer, nil] Will return status 1 if user query contains
+    # @return [1/nil] Will return status 1 if user query contains
     #  facts that are not found or resolved, otherwise it will return nil
     #
     # @api private

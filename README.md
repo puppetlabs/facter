@@ -3,11 +3,11 @@
 [![Gem Version](https://badge.fury.io/rb/facter.svg)](https://badge.fury.io/rb/facter)
 [<img src="https://img.shields.io/badge/slack-puppet--dev-brightgreen?logo=slack">](https://puppetcommunity.slack.com/messages/C0W1X7ZAL)
 
-[![Modules Status](https://github.com/puppetlabs/facter/workflows/Acceptance%20tests/badge.svg?branch=4.x)](https://github.com/puppetlabs/facter/actions)
-[![Modules Status](https://github.com/puppetlabs/facter/workflows/Unit%20tests/badge.svg?branch=4.x)](https://github.com/puppetlabs/facter/actions)
-[![Modules Status](https://github.com/puppetlabs/facter/workflows/Checks/badge.svg?branch=4.x)](https://github.com/puppetlabs/facter/actions)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/bf43445f767f2d64170a/test_coverage)](https://codeclimate.com/github/puppetlabs/facter/test_coverage)
-[![Maintainability](https://api.codeclimate.com/v1/badges/bf43445f767f2d64170a/maintainability)](https://codeclimate.com/github/puppetlabs/facter/maintainability)
+[![Modules Status](https://github.com/puppetlabs/facter/workflows/Acceptance%20tests/badge.svg?branch=main)](https://github.com/puppetlabs/facter/actions)
+[![Modules Status](https://github.com/puppetlabs/facter/workflows/Unit%20tests/badge.svg?branch=main)](https://github.com/puppetlabs/facter/actions)
+[![Modules Status](https://github.com/puppetlabs/facter/workflows/Checks/badge.svg?branch=main)](https://github.com/puppetlabs/facter/actions)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/3bd4be86f4b0b49bc0ca/test_coverage)](https://codeclimate.com/github/puppetlabs/facter/test_coverage)
+[![Maintainability](https://api.codeclimate.com/v1/badges/3bd4be86f4b0b49bc0ca/maintainability)](https://codeclimate.com/github/puppetlabs/facter/maintainability)
 
 
 Facter is a command-line tool that gathers basic facts about nodes (systems) such as hardware details, network settings, OS type and version, and more. These facts are made available as variables in your Puppet manifests and can be used to inform conditional expressions in Puppet.

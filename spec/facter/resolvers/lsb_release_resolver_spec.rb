@@ -7,11 +7,11 @@ describe Facter::Resolvers::LsbRelease do
 
   context 'when system is ubuntu' do
     before do
-      allow(Open3).to receive(:capture3)
-        .with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'which lsb_release')
+      allow(Open3).to receive(:popen3)
+        .with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'which lsb_release')
         .and_return(['/usr/bin/lsb_release', '', 0])
-      allow(Open3).to receive(:capture3)
-        .with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'lsb_release -a')
+      allow(Open3).to receive(:popen3)
+        .with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'lsb_release -a')
         .and_return(["Distributor ID:\tUbuntu\nDescription:\tUbuntu 18.04.1 LTS\nRelease:\t18.04\nCodename:\tbionic\n",
                      '', 0])
     end
@@ -43,11 +43,11 @@ describe Facter::Resolvers::LsbRelease do
 
   context 'when system is centos' do
     before do
-      allow(Open3).to receive(:capture3)
-        .with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'which lsb_release')
+      allow(Open3).to receive(:popen3)
+        .with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'which lsb_release')
         .and_return(['/usr/bin/lsb_release', '', 0])
-      allow(Open3).to receive(:capture3)
-        .with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'lsb_release -a')
+      allow(Open3).to receive(:popen3)
+        .with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'lsb_release -a')
         .and_return([load_fixture('centos_lsb_release').read, '', 0])
     end
 
@@ -84,8 +84,8 @@ describe Facter::Resolvers::LsbRelease do
 
   context 'when lsb_release is not installed on system' do
     before do
-      allow(Open3).to receive(:capture3)
-        .with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'which lsb_release')
+      allow(Open3).to receive(:popen3)
+        .with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'which lsb_release')
         .and_return(['', 'no lsb_release in (PATH:usr/sbin)', 1])
     end
 

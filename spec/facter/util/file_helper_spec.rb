@@ -5,17 +5,16 @@ describe Facter::Util::FileHelper do
 
   let(:path) { '/Users/admin/file.txt' }
   let(:content) { 'file content' }
-  let(:error_message) { 'Facter::Util::FileHelper - File at: /Users/admin/file.txt is not accessible.' }
+  let(:error_message) do
+    "Facter::Util::FileHelper - #{Facter::CYAN}File at: /Users/admin/file.txt is not accessible.#{Facter::RESET}"
+  end
   let(:array_content) { ['line 1', 'line 2', 'line 3'] }
-  let(:logger_double) { instance_spy(Logger) }
+  let(:logger_double) { instance_spy(Facter::Log) }
 
   before do
     Facter::Log.class_variable_set(:@@logger, logger_double)
     allow(Facter).to receive(:debugging?).and_return(true)
-  end
-
-  after do
-    Facter::Log.class_variable_set(:@@logger, Logger.new(STDOUT))
+    allow(Facter::OptionStore).to receive(:color).and_return(true)
   end
 
   shared_context 'when file is readable' do

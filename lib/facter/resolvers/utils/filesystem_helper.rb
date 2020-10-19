@@ -7,7 +7,9 @@ module Facter
                     size_bytes used used_bytes capacity].freeze
     class << self
       def read_mountpoints
-        require 'sys/filesystem'
+        # TODO: this require must be replaced with "require 'sys/filesystem'" when a new release of
+        # djberg96/sys-filesystem gem is available
+        require_relative '../../patches/sysfilesystem/sys/statvfs.rb'
         force_utf(Sys::Filesystem.mounts)
       end
 

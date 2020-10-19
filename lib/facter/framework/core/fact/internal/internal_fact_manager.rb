@@ -45,7 +45,8 @@ module Facter
         .each do |searched_fact|
         begin
           fact = CoreFact.new(searched_fact)
-          fact_value = fact.create
+          fact_value = nil
+          Facter::Framework::Benchmarking::Timer.measure(searched_fact.name) { fact_value = fact.create }
           resolved_facts << fact_value unless fact_value.nil?
         rescue StandardError => e
           @@log.log_exception(e)

@@ -5,7 +5,6 @@ module Facter
     module Macosx
       class Filesystems < BaseResolver
         # :macosx_filesystems
-        @semaphore = Mutex.new
         @fact_list ||= {}
 
         class << self
@@ -17,11 +16,7 @@ module Facter
 
           def read_filesystems(fact_name)
             output = Facter::Core::Execution.execute('mount', logger: log)
-            filesystems = []
-            output.each_line do |line|
-              filesystem = line.match(/\(([a-z]+)\,*/).to_s
-              filesystems << filesystem[1..-2]
-            end
+            filesystems = output.scan(/\(([a-z]+)\,*/).flatten
             @fact_list[:macosx_filesystems] = filesystems.uniq.sort.join(',')
             @fact_list[fact_name]
           end

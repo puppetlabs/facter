@@ -20,6 +20,7 @@ Dir[ROOT_DIR.join('spec/mocks/*.rb')].sort.each { |file| require file }
 
 require 'facter'
 require 'facter/framework/cli/cli'
+require 'facter/framework/cli/cli_launcher'
 
 Dir.glob(File.join('./lib/facter/facts', '/**/*/', '*.rb'), &method(:require))
 Dir.glob(File.join('./lib/facter/resolvers', '/**/*/', '*.rb'), &method(:require))
@@ -31,8 +32,6 @@ SimpleCov.start do
 end
 
 def colorize(str, color)
-  return str if OsDetector.instance.identifier.eql?(:windows)
-
   "#{color}#{str}#{Facter::RESET}"
 end
 

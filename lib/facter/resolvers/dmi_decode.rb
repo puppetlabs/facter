@@ -3,7 +3,6 @@
 module Facter
   module Resolvers
     class DmiDecode < BaseResolver
-      @semaphore = Mutex.new
       @fact_list ||= {}
 
       ADDRESS_TO_VERSION = {
@@ -38,6 +37,7 @@ module Facter
           @fact_list[:virtualbox_version] = output.match(/vboxVer_(\S+)/)&.captures&.first
           @fact_list[:virtualbox_revision] = output.match(/vboxRev_(\S+)/)&.captures&.first
           @fact_list[:vmware_version] = extract_vmware_version(output)
+          @fact_list[:vendor] = output.match(/Vendor: (\S+)/)&.captures&.first
 
           @fact_list[fact_name]
         end

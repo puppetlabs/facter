@@ -14,7 +14,7 @@ module Facts
         mountpoints = Facter::Resolvers::Mountpoints.resolve(:mountpoints)
         return parts unless mountpoints
 
-        mountpoints.each do |mnt|
+        mountpoints.reverse_each do |mnt|
           next unless parts[mnt[:device]]
 
           parts[mnt[:device]].merge!(mount: mnt[:path])

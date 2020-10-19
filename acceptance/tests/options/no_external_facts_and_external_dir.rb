@@ -1,7 +1,7 @@
 # This test verifies that calling facter with both --no-external-facts and --external-dir results
 # in an options conflict error
 test_name "C100002: external fact commandline options --no-external-facts together with --external-dir should produce an error" do
-  tag 'risk:low'
+  tag 'risk:high'
 
   agents.each do |agent|
     external_dir = agent.tmpdir('external_dir')

@@ -6,7 +6,7 @@ describe Facter::Resolvers::Partitions do
   let(:sys_block_path) { '/sys/block' }
   let(:sys_block_subdirs) { ['.', '..', 'sda'] }
 
-  after do
+  before do
     Facter::Resolvers::Partitions.invalidate_cache
   end
 
@@ -44,10 +44,14 @@ describe Facter::Resolvers::Partitions do
           .with("#{sys_block_path}/sda/sda2/size", '0').and_return('201213')
         allow(Facter::Util::FileHelper).to receive(:safe_read)
           .with("#{sys_block_path}/sda/sda1/size", '0').and_return('234')
-        allow(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'which blkid')
-                                          .and_return('/usr/bin/blkid')
-        allow(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'blkid')
-                                          .and_return(load_fixture('blkid_output').read)
+        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'which blkid')
+                                        .and_return('/usr/bin/blkid')
+        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'blkid')
+                                        .and_return(load_fixture('blkid_output').read)
+        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'which lsblk')
+                                        .and_return('/usr/bin/lsblk')
+        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'lsblk -fp')
+                                        .and_return(load_fixture('lsblk_output').read)
       end
 
       context 'when device size files are readable' do
@@ -55,7 +59,8 @@ describe Facter::Resolvers::Partitions do
           { '/dev/sda1' => { filesystem: 'ext3', label: '/boot', size: '117.00 KiB',
                              size_bytes: 119_808, uuid: '88077904-4fd4-476f-9af2-0f7a806ca25e',
                              partuuid: '00061fe0-01' },
-            '/dev/sda2' => { size: '98.25 MiB', size_bytes: 103_021_056 } }
+            '/dev/sda2' => { filesystem: 'LVM2_member', size: '98.25 MiB', size_bytes: 103_021_056,
+                             uuid: 'edi7s0-2WVa-ZBan' } }
         end
 
         it 'return partitions fact' do
@@ -67,7 +72,7 @@ describe Facter::Resolvers::Partitions do
         let(:partitions_with_no_sizes) do
           { '/dev/sda1' => { filesystem: 'ext3', label: '/boot', size: '0 bytes',
                              size_bytes: 0, uuid: '88077904-4fd4-476f-9af2-0f7a806ca25e', partuuid: '00061fe0-01' },
-            '/dev/sda2' => { size: '0 bytes', size_bytes: 0 } }
+            '/dev/sda2' => { filesystem: 'LVM2_member', size: '0 bytes', size_bytes: 0, uuid: 'edi7s0-2WVa-ZBan' } }
         end
 
         it 'return partitions fact with 0 sizes' do
@@ -89,10 +94,10 @@ describe Facter::Resolvers::Partitions do
           .with("#{sys_block_path}/sda/dm/name").and_return('VolGroup00-LogVol00')
         allow(Facter::Util::FileHelper).to receive(:safe_read)
           .with("#{sys_block_path}/sda/size", '0').and_return('201213')
-        allow(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'which blkid')
-                                          .and_return('/usr/bin/blkid')
-        allow(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'blkid')
-                                          .and_return(load_fixture('blkid_output').read)
+        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'which blkid')
+                                        .and_return('/usr/bin/blkid')
+        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'blkid')
+                                        .and_return(load_fixture('blkid_output').read)
       end
 
       context 'when device name file is readable' do
@@ -129,10 +134,10 @@ describe Facter::Resolvers::Partitions do
           .with("#{sys_block_path}/sda/loop/backing_file").and_return('some_path')
         allow(Facter::Util::FileHelper).to receive(:safe_read)
           .with("#{sys_block_path}/sda/size", '0').and_return('201213')
-        allow(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'which blkid')
-                                          .and_return('/usr/bin/blkid')
-        allow(Open3).to receive(:capture3).with({ 'LC_ALL' => 'C', 'LANG' => 'C' }, 'blkid')
-                                          .and_return(load_fixture('blkid_output').read)
+        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'which blkid')
+                                        .and_return('/usr/bin/blkid')
+        allow(Open3).to receive(:popen3).with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'blkid')
+                                        .and_return(load_fixture('blkid_output').read)
       end
 
       context 'when backing_file is readable' do
@@ -140,7 +145,7 @@ describe Facter::Resolvers::Partitions do
           { '/dev/sys/block/sda' => { backing_file: 'some_path', size: '98.25 MiB', size_bytes: 103_021_056 } }
         end
 
-        it 'return partitions fact' do
+        it 'returns partitions fact' do
           expect(resolver.resolve(:partitions)).to eq(partitions)
         end
       end
@@ -150,7 +155,7 @@ describe Facter::Resolvers::Partitions do
           { '/dev/sys/block/sda' => { size: '98.25 MiB', size_bytes: 103_021_056 } }
         end
 
-        it 'return partitions fact' do
+        it 'returns partitions fact' do
           allow(Facter::Util::FileHelper).to receive(:safe_read)
             .with("#{sys_block_path}/sda/loop/backing_file").and_return('')
 

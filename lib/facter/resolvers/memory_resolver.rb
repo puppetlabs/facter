@@ -4,7 +4,6 @@ module Facter
   module Resolvers
     module Linux
       class Memory < BaseResolver
-        @semaphore = Mutex.new
         @fact_list ||= {}
         @log = Facter::Log.new(self)
         class << self
@@ -26,9 +25,19 @@ module Facter
 
           def read_system(output)
             @fact_list[:total] = kilobytes_to_bytes(output.match(/MemTotal:\s+(\d+)\s/)[1])
-            @fact_list[:memfree] = kilobytes_to_bytes(output.match(/MemFree:\s+(\d+)\s/)[1])
+            @fact_list[:memfree] = memfree(output)
             @fact_list[:used_bytes] = compute_used(@fact_list[:total], @fact_list[:memfree])
             @fact_list[:capacity] = compute_capacity(@fact_list[:used_bytes], @fact_list[:total])
+          end
+
+          def memfree(output)
+            available = output.match(/MemAvailable:\s+(\d+)\s/)
+            return kilobytes_to_bytes(available[1]) if available
+
+            buffers = kilobytes_to_bytes(output.match(/Buffers:\s+(\d+)\s/)[1])
+            cached = kilobytes_to_bytes(output.match(/Cached:\s+(\d+)\s/)[1])
+            memfree = kilobytes_to_bytes(output.match(/MemFree:\s+(\d+)\s/)[1])
+            memfree + buffers + cached
           end
 
           def read_swap(output)

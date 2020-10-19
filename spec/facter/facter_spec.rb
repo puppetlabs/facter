@@ -58,6 +58,136 @@ describe Facter do
     end
   end
 
+  describe '#resolve' do
+    let(:cli_double) { instance_spy(Facter::Cli) }
+
+    before do
+      allow(Facter::Cli).to receive(:new).and_return(cli_double)
+      allow(Facter::OptionsValidator).to receive(:validate)
+      allow(CliLauncher).to receive(:prepare_arguments)
+    end
+
+    context 'when --version argument' do
+      before do
+        allow(cli_double).to receive(:args).and_return([:version])
+      end
+
+      it 'invokes version' do
+        Facter.resolve('--version')
+
+        expect(cli_double).to have_received(:invoke).with(:version, [])
+      end
+
+      it 'does not invoke list_block_groups' do
+        Facter.resolve('--version')
+
+        expect(cli_double).not_to have_received(:invoke).with(:list_block_groups, [])
+      end
+
+      it 'does not invoke list_cache_groups' do
+        Facter.resolve('--version')
+
+        expect(cli_double).not_to have_received(:invoke).with(:list_cache_groups)
+      end
+
+      it 'does not invoke arg_parser' do
+        Facter.resolve('--version')
+
+        expect(cli_double).not_to have_received(:invoke).with(:arg_parser)
+      end
+    end
+
+    context 'when --list-cache-groups argument' do
+      before do
+        allow(cli_double).to receive(:args).and_return(['--list-cache-groups'])
+      end
+
+      it 'noes not invokes version' do
+        Facter.resolve('--version')
+
+        expect(cli_double).not_to have_received(:invoke).with(:version, [])
+      end
+
+      it 'invokes list_cache_groups' do
+        Facter.resolve('--list-cache-groups')
+
+        expect(cli_double).to have_received(:invoke).with(:list_cache_groups, [])
+      end
+
+      it 'does not invoke list_block_groups' do
+        Facter.resolve('--version')
+
+        expect(cli_double).not_to have_received(:invoke).with(:list_block_groups, [])
+      end
+
+      it 'does not invoke arg_parser' do
+        Facter.resolve('--version')
+
+        expect(cli_double).not_to have_received(:invoke).with(:arg_parser)
+      end
+    end
+
+    context 'when list_block_groups argument' do
+      before do
+        allow(cli_double).to receive(:args).and_return(['--list-block-groups'])
+      end
+
+      it 'noes not invokes version' do
+        Facter.resolve('--version')
+
+        expect(cli_double).not_to have_received(:invoke).with(:version, [])
+      end
+
+      it 'does not invokes list_cache_groups' do
+        Facter.resolve('--list-cache-groups')
+
+        expect(cli_double).not_to have_received(:invoke).with(:list_cache_groups, [])
+      end
+
+      it 'invoke list_block_groups' do
+        Facter.resolve('--version')
+
+        expect(cli_double).to have_received(:invoke).with(:list_block_groups, [])
+      end
+
+      it 'does not invoke arg_parser' do
+        Facter.resolve('--version')
+
+        expect(cli_double).not_to have_received(:invoke).with(:arg_parser)
+      end
+    end
+
+    context 'when only user query and options in arguments' do
+      before do
+        allow(cli_double).to receive(:args).and_return([:arg_parser])
+      end
+
+      it 'noes not invokes version' do
+        Facter.resolve('--version')
+
+        expect(cli_double).not_to have_received(:invoke).with(:version, [])
+      end
+
+      it 'does not invokes list_cache_groups' do
+        Facter.resolve('--list-cache-groups')
+
+        expect(cli_double).not_to have_received(:invoke).with(:list_cache_groups, [])
+      end
+
+      it 'does not invoke list_block_groups' do
+        Facter.resolve('--version')
+
+        expect(cli_double).not_to have_received(:invoke).with(:list_block_groups, [])
+      end
+
+      it 'invoke arg_parser' do
+        Facter.resolve('--version')
+
+        expect(cli_double).to have_received(:invoke).with(:arg_parser)
+      end
+    end
+  end
+
   describe '#to_hash' do
     it 'returns one resolved fact' do
       mock_fact_manager(:resolve_facts, [os_fact])
@@ -143,6 +273,49 @@ describe Facter do
       mock_collection(:value, nil)
 
       expect(Facter.value('os.name')).to be nil
+    end
+  end
+
+  describe '#values' do
+    context 'when one or more user queries' do
+      let(:result) { { 'os.name' => 'Darwin' } }
+
+      before do
+        allow(Facter::FormatterHelper)
+          .to receive(:retrieve_facts_to_display_for_user_query)
+          .with(['os.name'], [os_fact])
+          .and_return(result)
+
+        mock_fact_manager(:resolve_facts, [os_fact])
+      end
+
+      it 'calls FormatterHelper' do
+        Facter.values({}, ['os.name'])
+
+        expect(Facter::FormatterHelper)
+          .to have_received(:retrieve_facts_to_display_for_user_query)
+          .with(['os.name'], [os_fact])
+      end
+
+      it 'returns hash with os.name fact' do
+        expect(Facter.values({}, ['os.name'])).to eq(result)
+      end
+    end
+
+    context 'when no user query' do
+      before do
+        mock_fact_manager(:resolve_facts, [os_fact])
+      end
+
+      it 'calls Facter::FactCollection' do
+        Facter.values({}, [])
+
+        expect(fact_collection_spy).to have_received(:build_fact_collection!).with([os_fact])
+      end
+
+      it 'returns hash with os.name fact' do
+        expect(Facter.values({}, [])).to eq(fact_collection_spy)
+      end
     end
   end
 
@@ -296,6 +469,32 @@ describe Facter do
     end
   end
 
+  describe '#define_fact' do
+    it 'sends call to LegacyFacter' do
+      allow(LegacyFacter).to receive(:define_fact)
+
+      Facter.define_fact('fact_name') {}
+
+      expect(LegacyFacter).to have_received(:define_fact).once.with('fact_name', { fact_type: :custom })
+    end
+  end
+
+  describe '#loadfacts' do
+    it 'sends calls to LegacyFacter' do
+      allow(LegacyFacter).to receive(:loadfacts)
+
+      Facter.loadfacts
+
+      expect(LegacyFacter).to have_received(:loadfacts).once
+    end
+
+    it 'returns nil' do
+      allow(LegacyFacter).to receive(:loadfacts)
+
+      expect(Facter.loadfacts).to be_nil
+    end
+  end
+
   describe '#trace?' do
     it 'returns trace variable' do
       expect(Facter).not_to be_trace
@@ -358,6 +557,89 @@ describe Facter do
   end
 
   describe '#log_exception' do
+    shared_examples 'when exception param is an exception' do
+      it 'logs exception message' do
+        exception.set_backtrace(backtrace)
+
+        Facter.log_exception(exception, message)
+
+        expect(logger).to have_received(:error).with(expected_message)
+      end
+    end
+
+    shared_examples 'when exception param is not an exception' do
+      it 'logs exception message' do
+        Facter.log_exception(exception, message)
+
+        expect(logger).to have_received(:error).with(expected_message)
+      end
+    end
+
+    context 'when trace option is false' do
+      let(:backtrace) { 'prog.rb:2:in a' }
+
+      context 'when we have an exception and a message' do
+        let(:message) { 'Some error message' }
+        let(:exception) { FlushFakeError.new }
+        let(:expected_message) { 'Some error message' }
+
+        it_behaves_like 'when exception param is an exception'
+      end
+
+      context 'when we have an exception and an empty message' do
+        let(:message) { '' }
+        let(:exception) { FlushFakeError.new }
+        let(:expected_message) { 'FlushFakeError' }
+
+        it_behaves_like 'when exception param is an exception'
+      end
+
+      context 'when we have an exception and a nil message' do
+        let(:message) { nil }
+        let(:exception) { FlushFakeError.new }
+        let(:expected_message) { 'FlushFakeError' }
+
+        it_behaves_like 'when exception param is an exception'
+      end
+
+      context 'when we have an exception and no message' do
+        let(:exception) { FlushFakeError.new }
+        let(:expected_message) { 'FlushFakeError' }
+
+        it 'logs exception message' do
+          exception.set_backtrace(backtrace)
+
+          Facter.log_exception(exception)
+
+          expect(logger).to have_received(:error).with(expected_message)
+        end
+      end
+
+      context 'when exception and message are strings' do
+        let(:message) { 'message' }
+        let(:exception) { 'exception' }
+        let(:expected_message) { 'message' }
+
+        it_behaves_like 'when exception param is not an exception'
+      end
+
+      context 'when exception and message are nil' do
+        let(:message) { nil }
+        let(:exception) { nil }
+        let(:expected_message) { '' }
+
+        it_behaves_like 'when exception param is not an exception'
+      end
+
+      context 'when exception and message are hashes' do
+        let(:message) { { 'a': 1 } }
+        let(:exception) { { 'b': 2 } }
+        let(:expected_message) { '{:a=>1}' }
+
+        it_behaves_like 'when exception param is not an exception'
+      end
+    end
+
     context 'when trace options is true' do
       before do
         Facter.trace(true)
@@ -367,17 +649,245 @@ describe Facter do
         Facter.trace(false)
       end
 
-      let(:message) { 'Some error message' }
-      let(:exception) { FlushFakeError.new }
-      let(:expected_message) { "Some error message\nbacktrace:\nprog.rb:2:in `a'" }
+      let(:backtrace) { 'prog.rb:2:in a' }
 
-      it 'format exception to display backtrace' do
-        exception.set_backtrace("prog.rb:2:in `a'")
+      context 'when we have an exception and a message' do
+        let(:message) { 'Some error message' }
+        let(:exception) { FlushFakeError.new }
+        let(:expected_message) { "Some error message\nbacktrace:\nprog.rb:2:in a" }
 
-        Facter.log_exception(exception, message)
-
-        expect(logger).to have_received(:error).with(expected_message)
+        it_behaves_like 'when exception param is an exception'
       end
+
+      context 'when we have an exception and an empty message' do
+        let(:message) { '' }
+        let(:exception) { FlushFakeError.new }
+        let(:expected_message) { "FlushFakeError\nbacktrace:\nprog.rb:2:in a" }
+
+        it_behaves_like 'when exception param is an exception'
+      end
+
+      context 'when we have an exception and a nil message' do
+        let(:message) { nil }
+        let(:exception) { FlushFakeError.new }
+        let(:expected_message) { "FlushFakeError\nbacktrace:\nprog.rb:2:in a" }
+
+        it_behaves_like 'when exception param is an exception'
+      end
+
+      context 'when we have an exception and no message' do
+        let(:exception) { FlushFakeError.new }
+        let(:expected_message) { "FlushFakeError\nbacktrace:\nprog.rb:2:in a" }
+
+        it 'logs exception message' do
+          exception.set_backtrace(backtrace)
+
+          Facter.log_exception(exception)
+
+          expect(logger).to have_received(:error).with(expected_message)
+        end
+      end
+
+      context 'when we have an exception with no backtrace' do
+        let(:exception) { FlushFakeError.new }
+        let(:expected_message) { 'FlushFakeError' }
+
+        it 'logs exception message' do
+          Facter.log_exception(exception)
+
+          expect(logger).to have_received(:error).with(expected_message)
+        end
+      end
+
+      context 'when exception and message are strings' do
+        let(:message) { 'message' }
+        let(:exception) { 'exception' }
+        let(:expected_message) { 'message' }
+
+        it_behaves_like 'when exception param is not an exception'
+      end
+
+      context 'when exception and message are nil' do
+        let(:message) { nil }
+        let(:exception) { nil }
+        let(:expected_message) { '' }
+
+        it_behaves_like 'when exception param is not an exception'
+      end
+
+      context 'when exception and message are hashes' do
+        let(:message) { { 'a': 1 } }
+        let(:exception) { { 'b': 2 } }
+        let(:expected_message) { '{:a=>1}' }
+
+        it_behaves_like 'when exception param is not an exception'
+      end
+    end
+  end
+
+  describe '#debugonce' do
+    context 'when debugging is active' do
+      before do
+        allow(logger).to receive(:debug)
+        Facter.debugging(true)
+      end
+
+      after do
+        Facter.debugging(false)
+      end
+
+      it 'calls logger with the debug message' do
+        message = 'Some error message'
+
+        Facter.debugonce(message)
+
+        expect(logger).to have_received(:debug).with(message)
+      end
+
+      it 'writes the same debug message only once' do
+        message = 'Some error message'
+
+        Facter.debugonce(message)
+        Facter.debugonce(message)
+
+        expect(logger).to have_received(:debug).once.with(message)
+      end
+
+      it 'writes empty message when message is nil' do
+        Facter.debugonce(nil)
+
+        expect(logger).to have_received(:debug).with('')
+      end
+
+      it 'when message is a hash' do
+        Facter.debugonce({ warn: 'message' })
+
+        expect(logger).to have_received(:debug).with('{:warn=>"message"}')
+      end
+
+      it 'returns nil' do
+        result = Facter.debugonce({ warn: 'message' })
+
+        expect(result).to be_nil
+      end
+    end
+  end
+
+  context 'when debugging is inactive' do
+    before do
+      allow(logger).to receive(:debug)
+    end
+
+    it 'does not call the logger' do
+      Facter.debugonce('message')
+
+      expect(logger).not_to have_received(:debug)
+    end
+  end
+
+  describe '#list' do
+    before do
+      allow(Facter).to receive(:to_hash).and_return({ 'up_time' => 235, 'timezone' => 'EEST', 'virtual' => 'physical' })
+    end
+
+    it 'returns the resolved fact names' do
+      result = Facter.list
+
+      expect(result).to eq(%w[timezone up_time virtual])
+    end
+  end
+
+  describe '#warnonce' do
+    before do
+      allow(logger).to receive(:warn)
+    end
+
+    it 'calls logger with the warning message' do
+      message = 'Some error message'
+
+      Facter.warnonce(message)
+
+      expect(logger).to have_received(:warn).with(message)
+    end
+
+    it 'writes the same warning message only once' do
+      message = 'Some error message'
+
+      Facter.warnonce(message)
+      Facter.warnonce(message)
+
+      expect(logger).to have_received(:warn).once.with(message)
+    end
+
+    it 'writes empty message when message is nil' do
+      Facter.warnonce(nil)
+
+      expect(logger).to have_received(:warn).with('')
+    end
+
+    it 'when message is a hash' do
+      Facter.warnonce({ warn: 'message' })
+
+      expect(logger).to have_received(:warn).with('{:warn=>"message"}')
+    end
+
+    it 'returns nil' do
+      result = Facter.warnonce({ warn: 'message' })
+
+      expect(result).to be_nil
+    end
+  end
+
+  describe '#warn' do
+    before do
+      allow(logger).to receive(:warn)
+    end
+
+    it 'calls logger' do
+      message = 'Some error message'
+
+      Facter.warn(message)
+
+      expect(logger).to have_received(:warn).with(message)
+    end
+
+    it 'when message is nil' do
+      Facter.warn(nil)
+
+      expect(logger).to have_received(:warn).with('')
+    end
+
+    it 'when message is empty string' do
+      Facter.warn('')
+      expect(logger).to have_received(:warn).with('')
+    end
+
+    it 'when message is a hash' do
+      Facter.warn({ warn: 'message' })
+
+      expect(logger).to have_received(:warn).with('{:warn=>"message"}')
+    end
+
+    it 'when message is an array' do
+      Facter.warn([1, 2, 3])
+
+      expect(logger).to have_received(:warn).with('[1, 2, 3]')
+    end
+
+    it 'returns nil' do
+      result = Facter.warn('message')
+
+      expect(result).to be_nil
+    end
+  end
+
+  describe '#each' do
+    it 'returns one resolved fact' do
+      mock_fact_manager(:resolve_facts, [os_fact])
+
+      result = {}
+      Facter.each { |name, value| result[name] = value }
+      expect(result).to eq({ fact_name => fact_value })
     end
   end
 end

@@ -3,6 +3,12 @@
 require 'open3'
 require 'fileutils'
 
+def if_no_env_vars_set_defaults
+  ENV['FACTER_ROOT'] = __dir__.gsub('/.github/actions', '') unless ENV['FACTER_ROOT']
+  ENV['SHA'] = 'latest' unless ENV['SHA']
+  ENV['RELEASE_STREAM'] = 'puppet7' unless ENV['RELEASE_STREAM']
+end
+
 def install_bundler
   message('INSTALL BUNDLER')
   run('gem install bundler')
@@ -43,44 +49,47 @@ end
 def install_puppet_agent
   message('INSTALL PUPPET AGENT')
 
-  beaker_puppet_root, = run('bundle info beaker-puppet --path')
+  beaker_puppet_root = run('bundle info beaker-puppet --path')
   presuite_file_path = File.join(beaker_puppet_root.chomp, 'setup', 'aio', '010_Install_Puppet_Agent.rb')
 
   run("beaker exec pre-suite --pre-suite #{presuite_file_path} --preserve-state", './', env_path_var)
 end
 
+def puppet_puppet_bin_dir
+  return '/opt/puppetlabs/puppet/bin' unless HOST_PLATFORM.include? 'windows'
+
+  'C:\\Program Files\\Puppet Labs\\Puppet\\puppet\\bin'
+end
+
 def puppet_bin_dir
-  linux_puppet_bin_dir = '/opt/puppetlabs/puppet/bin'
-  windows_puppet_bin_dir = 'C:\\Program Files\\Puppet Labs\\Puppet\\bin'
+  return '/opt/puppetlabs/puppet/bin' unless HOST_PLATFORM.include? 'windows'
 
-  HOST_PLATFORM.include?('windows') ? windows_puppet_bin_dir : linux_puppet_bin_dir
+  'C:\\Program Files\\Puppet Labs\\Puppet\\bin'
 end
 
-def puppet_command
-  return '/opt/puppetlabs/puppet/bin/puppet' unless HOST_PLATFORM.include? 'windows'
+def puppet_ruby
+  return '/opt/puppetlabs/puppet/bin/ruby' unless HOST_PLATFORM.include? 'windows'
 
-  '"C:\\Program Files\\Puppet Labs\\Puppet\\bin\\puppet"'
+  'C:\\Program Files\\Puppet Labs\\Puppet\\puppet\\bin\\ruby.exe'
 end
 
-def gem_command
-  return '/opt/puppetlabs/puppet/bin/gem' unless HOST_PLATFORM.include? 'windows'
+def facter_lib_path
+  return '/opt/puppetlabs/puppet/lib/ruby/vendor_ruby/facter' unless HOST_PLATFORM.include? 'windows'
 
-  '"C:\\Program Files\\Puppet Labs\\Puppet\\puppet\\bin\\gem"'
+  'C:\\Program Files\\Puppet Labs\\Puppet\\puppet\\lib\\ruby\\vendor_ruby\\facter'
 end
 
 def env_path_var
   HOST_PLATFORM.include?('windows') ? { 'PATH' => "#{puppet_bin_dir};#{ENV['PATH']}" } : {}
 end
 
-def update_facter_lib
-  facter_lib_windows_path = 'C:/Program Files/Puppet Labs/Puppet/puppet/lib/ruby/vendor_ruby/facter'
-  facter_lib_linux_path = '/opt/puppetlabs/puppet/lib/ruby/vendor_ruby/facter'
+def install_facter
+  message('OVERWRITE FACTER FROM PUPPET AGENT')
 
-  facter_lib_path = HOST_PLATFORM.include?('windows') ? facter_lib_windows_path : facter_lib_linux_path
-
-  message('OVERWRITE FACTER FILES')
-  FileUtils.rm_r([facter_lib_path, facter_lib_path + '.rb'], force: true)
-  run("#{'powershell' if HOST_PLATFORM.include? 'windows'} mv ../lib/* \'#{facter_lib_path.sub('facter', '')}\'")
+  Dir.chdir('../') do
+    run("\'#{puppet_ruby}\' install.rb --bindir=\'#{puppet_puppet_bin_dir}\' " \
+    "--sitelibdir=\'#{facter_lib_path.gsub('facter', '')}\'")
+  end
 end
 
 def run_acceptance_tests
@@ -100,19 +109,20 @@ end
 def run(command, dir = './', env = {})
   puts command
   output = ''
-  status = 0
   Open3.popen2e(env, command, chdir: dir) do |_stdin, stdout_and_err, wait_thr|
     stdout_and_err.each do |line|
       puts line
       output += line
     end
-    status = wait_thr.value
+    exit_status = wait_thr.value
+    exit(exit_status) if exit_status != 0
   end
-  [output, status]
+  output
 end
 
 ENV['DEBIAN_DISABLE_RUBYGEMS_INTEGRATION'] = 'no_warnings'
-ACCEPTANCE_PATH = File.join(ENV['FACTER_4_ROOT'], 'acceptance')
+if_no_env_vars_set_defaults
+ACCEPTANCE_PATH = File.join(ENV['FACTER_ROOT'], 'acceptance')
 HOST_PLATFORM = ARGV[0]
 
 install_bundler
@@ -121,8 +131,6 @@ Dir.chdir(ACCEPTANCE_PATH) do
   install_facter_acceptance_dependencies
   initialize_beaker
   install_puppet_agent
-  update_facter_lib
-
-  _, status = run_acceptance_tests
-  exit(status.exitstatus)
+  install_facter
+  run_acceptance_tests
 end

@@ -277,8 +277,9 @@ class Installer
     cd File.dirname(__FILE__) do
       # Set these values to what you want installed.
       bins  = glob(%w[bin/facter])
-      libs  = glob(%w[lib/**/*.rb lib/facter/os_hierarchy.json lib/facter/fact_groups.conf lib/facter/templates/*])
-      man   = glob(%w{man/man[0-9]/*})
+      libs  = glob(%w[lib/**/*.rb lib/facter/fixtures/* lib/facter/os_hierarchy.json
+                      lib/facter/fact_groups.conf lib/facter/templates/*])
+      man = glob(%w{man/man[0-9]/*})
 
       prepare_installation
 

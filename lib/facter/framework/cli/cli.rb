@@ -1,13 +1,17 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+require 'thor'
+
 module Facter
   class Cli < Thor
-    check_unknown_options!
-
     class_option :color,
                  type: :boolean,
                  desc: 'Enable color output.'
+
+    class_option :no_color,
+                 type: :boolean,
+                 desc: 'Disable color output.'
 
     class_option :config,
                  aliases: '-c',
@@ -29,17 +33,6 @@ module Facter
                  repeatable: true,
                  desc: 'A directory to use for external facts.'
 
-    class_option :help,
-                 hide: true,
-                 aliases: '-h',
-                 type: :boolean,
-                 desc: 'Print this help message.'
-
-    class_option :man,
-                 hide: true,
-                 type: :boolean,
-                 desc: 'Display manual.'
-
     class_option :hocon,
                  type: :boolean,
                  desc: 'Output in Hocon format.'
@@ -49,36 +42,28 @@ module Facter
                  type: :boolean,
                  desc: 'Output in JSON format.'
 
-    class_option :list_block_groups,
-                 type: :boolean,
-                 desc: 'List the names of all blockable fact groups.'
-
-    class_option :list_cache_groups,
-                 type: :boolean,
-                 desc: 'List the names of all cacheable fact groups.'
-
     class_option :log_level,
                  aliases: '-l',
                  type: :string,
                  desc: 'Set logging level. Supported levels are: none, trace, debug, info, warn, error, and fatal.'
 
-    class_option :block,
+    class_option :no_block,
                  type: :boolean,
                  desc: 'Disable fact blocking.'
 
-    class_option :cache,
+    class_option :no_cache,
                  type: :boolean,
                  desc: 'Disable loading and refreshing facts from the cache'
 
-    class_option :custom_facts,
+    class_option :no_custom_facts,
                  type: :boolean,
                  desc: 'Disable custom facts.'
 
-    class_option :external_facts,
+    class_option :no_external_facts,
                  type: :boolean,
                  desc: 'Disable external facts.'
 
-    class_option :ruby,
+    class_option :no_ruby,
                  type: :boolean,
                  desc: 'Disable loading Ruby, facts requiring Ruby, and custom facts.'
 
@@ -94,6 +79,11 @@ module Facter
                  type: :boolean,
                  desc: 'Show legacy facts when querying all facts.'
 
+    class_option :puppet,
+                 type: :boolean,
+                 aliases: '-p',
+                 desc: 'Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.'
+
     class_option :yaml,
                  aliases: '-y',
                  type: :boolean,
@@ -103,16 +93,16 @@ module Facter
                  type: :boolean,
                  desc: 'Enable more aggressive error reporting.'
 
-    class_option :puppet,
+    class_option :timing,
                  type: :boolean,
-                 aliases: '-p',
-                 desc: 'Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.'
+                 aliases: '-t',
+                 desc: 'Show how much time it took to resolve each fact'
 
     class_option :parallel,
                  type: :boolean,
                  desc: 'Resolve facts in parallel'
 
-    desc '--man', 'Manual', hide: true
+    desc '--man', 'Display manual.', hide: true
     map ['--man'] => :man
     def man(*args)
       require 'erb'
@@ -125,7 +115,6 @@ module Facter
     end
 
     desc 'query', 'Default method', hide: true
-    desc '[options] [query] [query] [...]', ''
     def query(*args)
       output, status = Facter.to_user_output(@options, *args)
       puts output
@@ -134,13 +123,21 @@ module Facter
       exit status
     end
 
+    desc 'arg_parser', 'Parse arguments', hide: true
+    def arg_parser(*args)
+      # ignore unknown options
+      args.reject! { |arg| arg.start_with?('-') }
+
+      Facter.values(@options, args)
+    end
+
     desc '--version, -v', 'Print the version', hide: true
     map ['--version', '-v'] => :version
-    def version
+    def version(*_args)
       puts Facter::VERSION
     end
 
-    desc '--list-block-groups', 'List block groups', hide: true
+    desc '--list-block-groups', 'List block groups'
     map ['--list-block-groups'] => :list_block_groups
     def list_block_groups(*args)
       options = @options.map { |(k, v)| [k.to_sym, v] }.to_h
@@ -152,7 +149,7 @@ module Facter
       puts block_groups
     end
 
-    desc '--list-cache-groups', 'List cache groups', hide: true
+    desc '--list-cache-groups', 'List cache groups'
     map ['--list-cache-groups'] => :list_cache_groups
     def list_cache_groups(*args)
       options = @options.map { |(k, v)| [k.to_sym, v] }.to_h
@@ -162,6 +159,61 @@ module Facter
       cache_groups.gsub!(/:\s*\n/, "\n")
 
       puts cache_groups
+    end
+
+    desc 'help', 'Help for all arguments'
+    def help(*args)
+      help_string = +''
+      help_string << help_header(args)
+      help_string << add_class_options_to_help
+      help_string << add_commands_to_help
+
+      puts help_string
+    end
+
+    no_commands do
+      def help_header(_args)
+        path = File.join(File.dirname(__FILE__), '../../')
+
+        Util::FileHelper.safe_read("#{path}fixtures/facter_help_header")
+      end
+
+      IGNORE_OPTIONS = %w[log_level color no_color].freeze
+
+      def add_class_options_to_help
+        help_class_options = +''
+        class_options = Cli.class_options
+        class_options.each do |class_option|
+          option = class_option[1]
+          next if option.hide
+
+          help_class_options << build_option(option.name, option.aliases, option.description)
+        end
+
+        help_class_options
+      end
+
+      def add_commands_to_help
+        help_command_options = +''
+        Cli.commands
+           .select { |_k, command_class| command_class.instance_of?(Thor::Command) }
+           .each do |_k, command|
+          help_command_options << build_option(command['name'], [], command['description'])
+        end
+
+        help_command_options
+      end
+
+      def build_option(name, aliases, description)
+        help_option = +''
+        help_option << aliases.join(',').rjust(10)
+        help_option << ' '
+        help_option << "[--#{name}]".ljust(30)
+        help_option << " #{description}"
+        help_option << "\n"
+
+        help_option
+      end
     end
 
     def self.exit_on_failure?

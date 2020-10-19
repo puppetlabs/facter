@@ -35,6 +35,7 @@ module LegacyFacter
       def initialize(dir = LegacyFacter::Util::Config.external_facts_dirs, weight = EXTERNAL_FACT_WEIGHT)
         @directories = [dir].flatten
         @weight = weight
+        @log ||= Facter::Log.new(self)
       end
 
       # Load facts from files in fact directory using the relevant parser classes to
@@ -58,7 +59,7 @@ module LegacyFacter
           basename = File.basename(file)
           next if file_blocked?(basename)
 
-          if facts.find { |f| f.name == basename } && cm.group_cached?(basename)
+          if facts.find { |f| f.name == basename } && cm.fact_cache_enabled?(basename)
             Facter.log_exception(Exception.new("Caching is enabled for group \"#{basename}\" while "\
               'there are at least two external facts files with the same filename'))
           else
@@ -83,11 +84,12 @@ module LegacyFacter
           parser = LegacyFacter::Util::Parser.parser_for(fact.file)
           next if parser.nil?
 
-          data = parser.results
+          data = resolve_fact(fact, parser)
+
           if data == false
             LegacyFacter.warn "Could not interpret fact file #{fact.file}"
           elsif (data == {}) || data.nil?
-            LegacyFacter.warn "Fact file #{fact.file} was parsed but returned an empty data set"
+            @log.debug("Fact file #{fact.file} was parsed but no key=>value data was returned")
           else
             data.each do |p, v|
               collection.add(p, value: v, fact_type: :external,
@@ -95,6 +97,14 @@ module LegacyFacter
             end
           end
         end
+      end
+
+      def resolve_fact(fact, parser)
+        data = nil
+        fact_name = File.basename(fact.file)
+        Facter::Framework::Benchmarking::Timer.measure(fact_name) { data = parser.results }
+
+        data
       end
 
       def entries

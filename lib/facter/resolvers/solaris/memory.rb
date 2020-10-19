@@ -7,7 +7,6 @@ module Facter
         BLOCKSIZE = 512
         # :system
         # :swap
-        @semaphore = Mutex.new
         @fact_list ||= {}
         class << self
           private

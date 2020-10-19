@@ -3,7 +3,6 @@
 module Facter
   module Resolvers
     class NetworkingLinux < BaseResolver
-      @semaphore = Mutex.new
       @fact_list = {}
       DIRS = ['/var/lib/dhclient/', '/var/lib/dhcp/', '/var/lib/dhcp3/', '/var/lib/NetworkManager/', '/var/db/'].freeze
 
@@ -11,7 +10,6 @@ module Facter
         private
 
         def post_resolve(fact_name)
-          log.debug('in networking_linux_resolver')
           @fact_list.fetch(fact_name) { retrieve_network_info(fact_name) }
 
           @fact_list[fact_name]
@@ -61,9 +59,14 @@ module Facter
           return if !network_info[interface_name] || network_info[interface_name][:dhcp]
 
           index = tokens[0].delete(':')
-          dhcp = Util::FileHelper.safe_read("/run/systemd/netif/leases/#{index}", nil)
-          network_info[interface_name][:dhcp] = dhcp.match(/SERVER_ADDRESS=(.*)/)[1] if dhcp
-          network_info[interface_name][:dhcp] ||= retrieve_from_other_directories(interface_name)
+          file_content = Util::FileHelper.safe_read("/run/systemd/netif/leases/#{index}", nil)
+          dhcp = file_content.match(/SERVER_ADDRESS=(.*)/) if file_content
+          if dhcp
+            network_info[interface_name][:dhcp] = dhcp[1]
+          else
+            alternate_dhcp = retrieve_from_other_directories(interface_name)
+            network_info[interface_name][:dhcp] = alternate_dhcp if alternate_dhcp
+          end
         end
 
         def retrieve_from_other_directories(interface_name)
@@ -77,7 +80,8 @@ module Facter
               content = Util::FileHelper.safe_read("#{dir}#{file}", nil)
               next unless content =~ /interface.*#{interface_name}/
 
-              return content.match(/dhcp-server-identifier ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/)[1]
+              dhcp = content.match(/dhcp-server-identifier ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/)
+              return dhcp[1] if dhcp
             end
           end
           return unless File.readable?('/var/lib/NetworkManager/')

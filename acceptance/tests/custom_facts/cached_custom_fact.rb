@@ -73,7 +73,7 @@ test_name 'ttls configured custom facts files creates cache file and reads cache
 
     step 'should read from the cached file for a custom fact that has been cached' do
       on(agent, facter("#{custom_fact_name} --debug", environment: env)) do |facter_result|
-        assert_match(/Loading cached custom facts from file ".+"|loading cached values for cached-custom-facts facts/, facter_result.stderr,
+        assert_match(/Loading cached custom facts from file ".+"|loading cached values for random_custom_fact facts/, facter_result.stderr,
                      'Expected debug message to state that cached custom facts are read from file')
       end
     end

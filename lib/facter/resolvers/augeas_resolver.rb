@@ -3,7 +3,6 @@
 module Facter
   module Resolvers
     class Augeas < BaseResolver
-      @semaphore = Mutex.new
       @fact_list ||= {}
 
       class << self
@@ -21,7 +20,13 @@ module Facter
         end
 
         def read_augeas_from_cli
-          output = Facter::Core::Execution.execute('augparse --version 2>&1', logger: log)
+          command = if File.readable?('/opt/puppetlabs/puppet/bin/augparse')
+                      '/opt/puppetlabs/puppet/bin/augparse'
+                    else
+                      'augparse'
+                    end
+
+          output = Facter::Core::Execution.execute("#{command} --version 2>&1", logger: log)
           Regexp.last_match(1) if output =~ /^augparse (\d+\.\d+\.\d+)/
         end
 

@@ -60,9 +60,7 @@ module Facter
     def debug(msg)
       return unless debugging_active?
 
-      if msg.nil? || msg.empty?
-        empty_message_error(msg)
-      elsif @@message_callback
+      if @@message_callback
         @@message_callback.call(:debug, msg)
       else
         msg = colorize(msg, CYAN) if Options[:color]
@@ -82,9 +80,7 @@ module Facter
     end
 
     def warn(msg)
-      if msg.nil? || msg.empty?
-        empty_message_error(msg)
-      elsif @@message_callback
+      if @@message_callback
         @@message_callback.call(:warn, msg)
       else
         msg = colorize(msg, YELLOW) if Options[:color]
@@ -95,9 +91,7 @@ module Facter
     def error(msg, colorize = false)
       @@has_errors = true
 
-      if msg.nil? || msg.empty?
-        empty_message_error(msg)
-      elsif @@message_callback
+      if @@message_callback
         @@message_callback.call(:error, msg)
       else
         msg = colorize(msg, RED) if colorize || Options[:color]
@@ -115,8 +109,6 @@ module Facter
     private
 
     def colorize(msg, color)
-      return msg if OsDetector.instance.identifier.eql?(:windows)
-
       "#{color}#{msg}#{RESET}"
     end
 

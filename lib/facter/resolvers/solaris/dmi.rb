@@ -4,7 +4,6 @@ module Facter
   module Resolvers
     module Solaris
       class Dmi < BaseResolver
-        @semaphore = Mutex.new
         @fact_list ||= {}
 
         class << self
@@ -38,6 +37,8 @@ module Facter
 
             output = exec_smbios(param[0])
             facts = param[1]
+            return unless output
+
             facts.each do |name, regx|
               @fact_list[name] = output.match(/#{regx}/)&.captures&.first
             end

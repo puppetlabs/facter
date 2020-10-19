@@ -7,11 +7,11 @@ describe Facts::Aix::Os::Release do
     let(:value) { '12.0.1 ' }
 
     before do
-      allow(Facter::Resolvers::OsLevel).to receive(:resolve).with(:build).and_return(value)
+      allow(Facter::Resolvers::Aix::OsLevel).to receive(:resolve).with(:build).and_return(value)
     end
 
     it 'calls Facter::Resolvers::OsLevel' do
-      expect(Facter::Resolvers::OsLevel).to receive(:resolve).with(:build)
+      expect(Facter::Resolvers::Aix::OsLevel).to receive(:resolve).with(:build)
       fact.call_the_resolver
     end
 
