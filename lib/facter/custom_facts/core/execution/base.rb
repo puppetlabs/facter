@@ -4,7 +4,7 @@ module Facter
   module Core
     module Execution
       class Base
-        STDERR_MESSAGE = 'Command %s resulted with the following stderr message: %s'
+        STDERR_MESSAGE = 'Command %s completed with the following stderr message: %s'
 
         def initialize
           @log = Log.new(self)
@@ -57,39 +57,11 @@ module Facter
             return on_fail
           end
 
-          execute_command(expanded_command, on_fail, logger, time_limit)
+          out, = execute_command(expanded_command, on_fail, logger, time_limit)
+          out
         end
 
-        private
-
-        def extract_options(options)
-          on_fail = options.fetch(:on_fail, :raise)
-          expand = options.fetch(:expand, true)
-          logger = options[:logger]
-          time_limit = options[:limit].to_i
-          time_limit = time_limit.positive? ? time_limit : nil
-
-          [on_fail, expand, logger, time_limit]
-        end
-
-        def log_stderr(msg, command, logger)
-          return if !msg || msg.empty?
-
-          if logger
-            logger.debug(format(STDERR_MESSAGE, command, msg.strip))
-          else
-            file_name = command.split('/').last
-            logger = Facter::Log.new(file_name)
-            logger.warn(format(STDERR_MESSAGE, command, msg.strip))
-          end
-        end
-
-        def builtin_command?(command)
-          output, _status = Open3.capture2("type #{command}")
-          output.chomp =~ /builtin/ ? true : false
-        end
-
-        def execute_command(command, on_fail, logger = nil, time_limit = nil)
+        def execute_command(command, on_fail = nil, logger = nil, time_limit = nil)
           time_limit ||= 300
           begin
             # Set LC_ALL and LANG to force i18n to C for the duration of this exec;
@@ -128,7 +100,35 @@ module Facter
                   "Failed while executing '#{command}': #{e.message}"
           end
 
-          out.strip
+          [out.strip, stderr]
+        end
+
+        private
+
+        def extract_options(options)
+          on_fail = options.fetch(:on_fail, :raise)
+          expand = options.fetch(:expand, true)
+          logger = options[:logger]
+          time_limit = options[:limit].to_i
+          time_limit = time_limit.positive? ? time_limit : nil
+
+          [on_fail, expand, logger, time_limit]
+        end
+
+        def log_stderr(msg, command, logger)
+          return if !msg || msg.empty?
+
+          unless logger
+            file_name = command.split('/').last
+            logger = Facter::Log.new(file_name)
+          end
+
+          logger.debug(format(STDERR_MESSAGE, command, msg.strip))
+        end
+
+        def builtin_command?(command)
+          output, _status = Open3.capture2("type #{command}")
+          output.chomp =~ /builtin/ ? true : false
         end
       end
     end
