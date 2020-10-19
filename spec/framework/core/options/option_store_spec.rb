@@ -37,7 +37,8 @@ describe Facter::OptionStore do
         color: true,
         trace: false,
         timing: false,
-        ttls: []
+        ttls: [],
+        strict: false
       )
     end
   end
@@ -255,7 +256,13 @@ describe Facter::OptionStore do
   end
 
   describe '#debug' do
+    before do
+      allow(Facter::Log).to receive(:level=).with(level)
+    end
+
     context 'when true' do
+      let(:level) { :debug }
+
       it 'sets debug to true and log_level to :debug' do
         expect do
           option_store.debug = true
@@ -265,6 +272,8 @@ describe Facter::OptionStore do
     end
 
     context 'when false' do
+      let(:level) { :warn }
+
       it 'sets log_level to default (:warn)' do
         option_store.instance_variable_set(:@log_level, :info)
 
@@ -277,7 +286,13 @@ describe Facter::OptionStore do
   end
 
   describe '#verbose=' do
+    before do
+      allow(Facter::Log).to receive(:level=).with(level)
+    end
+
     context 'when true' do
+      let(:level) { :info }
+
       it 'sets log_level to :info' do
         expect do
           option_store.verbose = true
@@ -287,6 +302,8 @@ describe Facter::OptionStore do
     end
 
     context 'when false' do
+      let(:level) { :warn }
+
       it 'sets log_level to default (:warn)' do
         option_store.instance_variable_set(:@log_level, :debug)
 
@@ -379,6 +396,10 @@ describe Facter::OptionStore do
   end
 
   describe '#reset' do
+    before do
+      allow(Facter::Log).to receive(:level=).with(:debug)
+    end
+
     it 'resets to default' do
       default = option_store.all
 

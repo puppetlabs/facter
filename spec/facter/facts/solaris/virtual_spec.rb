@@ -25,6 +25,7 @@ describe Facts::Solaris::Virtual do
         allow(Facter::Resolvers::Solaris::Dmi).to receive(:resolve).with(:product_name).and_return('unkown')
         allow(Facter::Resolvers::Solaris::Dmi).to receive(:resolve).with(:bios_vendor).and_return('unkown')
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Xen).to receive(:resolve).with(:vm).and_return(nil)
       end
 
       it 'returns virtual fact as physical' do
@@ -33,8 +34,24 @@ describe Facts::Solaris::Virtual do
       end
     end
 
-    context 'when ldom hypervisor is found' do
+    context 'when Ldom role_control is false, ldom hypervisor is found' do
       let(:vm) { 'LDoms' }
+      let(:role_control) { 'false' }
+
+      before do
+        allow(Facter::Resolvers::Solaris::Ldom).to receive(:resolve).with(:role_impl).and_return(vm)
+        allow(Facter::Resolvers::Solaris::Ldom).to receive(:resolve).with(:role_control).and_return(role_control)
+      end
+
+      it 'returns virtual fact as LDoms' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+          have_attributes(name: 'virtual', value: vm)
+      end
+    end
+
+    context 'when Ldom role_control is true' do
+      let(:role_control) { 'true' }
+      let(:vm) { 'physical' }
       let(:current_zone_name) { 'global' }
 
       before do
@@ -44,25 +61,14 @@ describe Facts::Solaris::Virtual do
           .and_return(current_zone_name)
         allow(Facter::Resolvers::Solaris::Ldom).to receive(:resolve).with(:role_impl).and_return(vm)
         allow(Facter::Resolvers::Solaris::Ldom).to receive(:resolve).with(:role_control).and_return(role_control)
+        allow(Facter::Resolvers::Solaris::Dmi).to receive(:resolve).with(:product_name).and_return(nil)
+        allow(Facter::Resolvers::Solaris::Dmi).to receive(:resolve).with(:bios_vendor).and_return(nil)
+        allow(Facter::Resolvers::Xen).to receive(:resolve).with(:vm).and_return(nil)
       end
 
-      context 'when role_control is false' do
-        let(:role_control) { 'false' }
-
-        it 'returns virtual fact as physical' do
-          expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-            have_attributes(name: 'virtual', value: vm)
-        end
-      end
-
-      context 'when role_control is true' do
-        let(:role_control) { 'true' }
-        let(:vm) { 'physical' }
-
-        it 'returns virtual fact as physical' do
-          expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-            have_attributes(name: 'virtual', value: vm)
-        end
+      it 'returns virtual fact as physical' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+          have_attributes(name: 'virtual', value: vm)
       end
     end
 
@@ -111,6 +117,7 @@ describe Facts::Solaris::Virtual do
         allow(Facter::Resolvers::Solaris::ZoneName).to receive(:resolve).with(:current_zone_name).and_return(vm)
         allow(Facter::Resolvers::Solaris::Ldom).to receive(:resolve).with(:role_impl).and_return(nil)
         allow(Facter::Resolvers::Solaris::Ldom).to receive(:resolve).with(:role_control).and_return(nil)
+        allow(Facter::Resolvers::Xen).to receive(:resolve).with(:vm).and_return(nil)
       end
 
       context 'when processor is i386' do
