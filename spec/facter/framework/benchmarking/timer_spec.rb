@@ -14,7 +14,13 @@ describe Facter::Framework::Benchmarking::Timer do
       it 'prints fact name and time it took to resolve it' do
         expect do
           Facter::Framework::Benchmarking::Timer.measure('my_fact') {}
-        end.to output("fact `my_fact`, took: (0.123) seconds\n").to_stdout
+        end.to output("fact 'my_fact', took: (0.123) seconds\n").to_stdout
+      end
+
+      it 'adds prefix to printed message' do
+        expect do
+          Facter::Framework::Benchmarking::Timer.measure('my_fact', 'my_custom_prefix') {}
+        end.to output("my_custom_prefix fact 'my_fact', took: (0.123) seconds\n").to_stdout
       end
     end
 
