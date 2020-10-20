@@ -729,10 +729,12 @@ describe Facter do
     context 'when debugging is active' do
       before do
         allow(logger).to receive(:debug)
+        allow(Facter::Log).to receive(:level=).with(:debug)
         Facter.debugging(true)
       end
 
       after do
+        allow(Facter::Log).to receive(:level=).with(:warn)
         Facter.debugging(false)
       end
 

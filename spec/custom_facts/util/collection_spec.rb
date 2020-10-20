@@ -13,6 +13,10 @@ describe LegacyFacter::Util::Collection do
   end
   let(:collection) { LegacyFacter::Util::Collection.new(internal_loader, external_loader) }
 
+  before do
+    Singleton.__init__(Facter::FactManager)
+  end
+
   it 'delegates its load_all method to its loader' do
     expect(internal_loader).to receive(:load_all)
 
@@ -42,19 +46,22 @@ describe LegacyFacter::Util::Collection do
       it 'uses the block to add a resolution to the fact' do
         fact = double 'fact'
         allow(Facter::Util::Fact).to receive(:new).and_return(fact)
-
-        expect(fact).to receive(:add)
+        allow(fact).to receive(:add)
 
         collection.add(:myname) {}
+
+        expect(fact).to have_received(:add)
       end
 
       it 'discards resolutions that throw an exception when added' do
         allow(LegacyFacter).to receive(:warn).with(/Unable to add resolve .* kaboom!/)
+
         expect do
           collection.add('yay') do
             raise 'kaboom!'
           end
         end.not_to raise_error
+
         collection.value('yay')
       end
     end
