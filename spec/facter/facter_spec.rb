@@ -403,6 +403,24 @@ describe Facter do
       end
     end
 
+    describe '#flush' do
+      it 'sends call to LegacyFacter' do
+        allow(LegacyFacter).to receive(:flush)
+
+        Facter.flush
+
+        expect(LegacyFacter).to have_received(:flush).once
+      end
+
+      it 'invalidates core cache' do
+        allow(Facter::SessionCache).to receive(:invalidate_all_caches)
+
+        Facter.flush
+
+        expect(Facter::SessionCache).to have_received(:invalidate_all_caches)
+      end
+    end
+
     describe '#search' do
       it 'sends call to Facter::Options' do
         allow(Facter::Options).to receive(:[]=)
