@@ -14,9 +14,11 @@ module Facter
 
         def read_architecture(fact_name)
           require_relative 'utils/odm_query'
+
+          proc_number = read_proc
           odmquery = ODMQuery.new
           odmquery
-            .equals('name', 'proc0')
+            .equals('name', proc_number)
             .equals('attribute', 'type')
 
           result = odmquery.execute
@@ -31,6 +33,18 @@ module Facter
           end
 
           @fact_list[fact_name]
+        end
+
+        def read_proc
+          odmquery = ODMQuery.new
+          odmquery
+            .equals('PdDvLn', 'processor/sys/proc_rspc')
+            .equals('status', '1')
+
+          result = odmquery.execute
+          result.each_line do |line|
+            return line.split('=')[1].strip.delete('\"') if line.include?('name')
+          end
         end
       end
     end
