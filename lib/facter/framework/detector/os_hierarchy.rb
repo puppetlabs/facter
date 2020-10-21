@@ -1,29 +1,25 @@
 # frozen_string_literal: true
 
+require 'facter/config'
+
 module Facter
   class OsHierarchy
     def initialize
       @log = Log.new(self)
-      json_file_path = File.join(File.dirname(__FILE__), '../../os_hierarchy.json')
-      json_file = Util::FileHelper.safe_read(json_file_path)
-      begin
-        @json_os_hierarchy = JSON.parse(json_file)
-      rescue JSON::ParserError => _e
-        @log.error('Could not parse os_hierarchy json')
-      end
+      @os_hierarchy = Facter::Config::OS_HIERARCHY
     end
 
     def construct_hierarchy(searched_os)
       return [] if searched_os.nil?
 
       searched_os = searched_os.to_s.capitalize
-      if @json_os_hierarchy.nil?
+      if @os_hierarchy.nil?
         @log.debug("There is no os_hierarchy, will fall back to: #{searched_os}")
         return [searched_os]
       end
 
       @searched_path = []
-      search(@json_os_hierarchy, searched_os, [])
+      search(@os_hierarchy, searched_os, [])
 
       @searched_path.map { |os_name| os_name.to_s.capitalize }
     end
