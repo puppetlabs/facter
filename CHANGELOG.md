@@ -1,3 +1,21 @@
+## [4.0.44](https://github.com/puppetlabs/facter/tree/4.0.44) (2020-10-21)
+
+[Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.43...4.0.44)
+
+### Added
+
+- Added disk_type field to disk fact [#2145](https://github.com/puppetlabs/facter/pull/2145) ([kozl](https://github.com/kozl))
+
+### Fixed
+
+- (FACT-2806) Fix os.release.minor on amazon 6 [#2133](https://github.com/puppetlabs/facter/pull/2133) ([florindragos](https://github.com/florindragos))
+- (FACT-2832) Use full path for augparse command [#2135](https://github.com/puppetlabs/facter/pull/2135) ([oanatmaria](https://github.com/oanatmaria))
+- (FACT-2815) Added timing for cached facts [#2134](https://github.com/puppetlabs/facter/pull/2134) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- (FACT-2834) Dinamically get AIX proc number [#2147](https://github.com/puppetlabs/facter/pull/2147) ([sebastian-miclea](https://github.com/sebastian-miclea))
+- (FACT-2829) Fixed partitions and mount points facts [#2146](https://github.com/puppetlabs/facter/pull/2146) ([Filipovici-Andrei](https://github.com/Filipovici-Andrei))
+- (maint) Use strings instead of symbols for os names. [#2149](https://github.com/puppetlabs/facter/pull/2149) ([IrimieBogdan](https://github.com/IrimieBogdan))
+
+
 ## [4.0.43](https://github.com/puppetlabs/facter/tree/4.0.43) (2020-10-12)
 
 [Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.42...4.0.43)
