@@ -26,9 +26,9 @@ module Facter
             if File.directory?("#{block_path}/device")
               extract_from_device(block_path, blkid_and_lsblk)
             elsif File.directory?("#{block_path}/dm")
-              extract_from_dm(block_path, blkid_and_lsblk)
+              extract_from_dm(block_path, block_device, blkid_and_lsblk)
             elsif File.directory?("#{block_path}/loop")
-              extract_from_loop(block_path, blkid_and_lsblk)
+              extract_from_loop(block_path, block_device, blkid_and_lsblk)
             end
           end
 
@@ -43,21 +43,21 @@ module Facter
           end
         end
 
-        def extract_from_dm(block_path, blkid_and_lsblk)
+        def extract_from_dm(block_path, block_device, blkid_and_lsblk)
           map_name = Util::FileHelper.safe_read("#{block_path}/dm/name").chomp
           if map_name.empty?
-            populate_partitions("/dev#{block_path}", block_path, blkid_and_lsblk)
+            populate_partitions("/dev/#{block_device}", block_path, blkid_and_lsblk)
           else
             populate_partitions("/dev/mapper/#{map_name}", block_path, blkid_and_lsblk)
           end
         end
 
-        def extract_from_loop(block_path, blkid_and_lsblk)
+        def extract_from_loop(block_path, block_device, blkid_and_lsblk)
           backing_file = Util::FileHelper.safe_read("#{block_path}/loop/backing_file").chomp
           if backing_file.empty?
-            populate_partitions("/dev#{block_path}", block_path, blkid_and_lsblk)
+            populate_partitions("/dev/#{block_device}", block_path, blkid_and_lsblk)
           else
-            populate_partitions("/dev#{block_path}", block_path, blkid_and_lsblk, backing_file)
+            populate_partitions("/dev/#{block_device}", block_path, blkid_and_lsblk, backing_file)
           end
         end
 

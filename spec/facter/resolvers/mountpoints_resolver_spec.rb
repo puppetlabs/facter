@@ -59,6 +59,7 @@ describe Facter::Resolvers::Mountpoints do
     allow(Facter::FilesystemHelper).to receive(:read_mountpoints).and_return(ignored_mounts)
 
     result = Facter::Resolvers::Mountpoints.resolve(:mountpoints)
+
     expect(result).to be_empty
   end
 
@@ -69,6 +70,7 @@ describe Facter::Resolvers::Mountpoints do
 
     it 'looks up the actual device if /dev/root' do
       result = Facter::Resolvers::Mountpoints.resolve(:mountpoints)
+
       expect(result.first[:device]).to eq('/dev/mmcblk0p2')
     end
 
@@ -81,7 +83,43 @@ describe Facter::Resolvers::Mountpoints do
 
       it 'returns device as nil' do
         result = Facter::Resolvers::Mountpoints.resolve(:mountpoints)
+
         expect(result.first[:device]).to be(nil)
+      end
+    end
+
+    context 'when root device has partuuid' do
+      let(:log) { instance_spy(Facter::Log) }
+
+      before do
+        allow(Facter::Util::FileHelper).to receive(:safe_read)
+          .with('/proc/cmdline')
+          .and_return(load_fixture('cmdline_root_device_partuuid').read)
+        allow(Facter::Core::Execution).to receive(:execute)
+          .with('blkid', logger: log)
+          .and_return(load_fixture('blkid_output_root_has_partuuid').read)
+        Facter::Resolvers::Mountpoints.instance_variable_set(:@log, log)
+      end
+
+      it 'returns the path instead of the PARTUUID' do
+        result = Facter::Resolvers::Mountpoints.resolve(:mountpoints)
+
+        expect(result.first[:device]).to eq('/dev/xvda1')
+      end
+
+      context 'when blkid command is not available' do
+        before do
+          allow(Facter::Core::Execution).to receive(:execute)
+            .with('blkid', logger: log)
+            .and_return('blkid: command not found')
+          Facter::Resolvers::Mountpoints.instance_variable_set(:@log, log)
+        end
+
+        it 'returns the partition path as PARTUUID' do
+          result = Facter::Resolvers::Mountpoints.resolve(:mountpoints)
+
+          expect(result.first[:device]).to eq('PARTUUID=a2f52878-01')
+        end
       end
     end
   end
