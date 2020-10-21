@@ -3,12 +3,17 @@
 describe Facter::Resolvers::Architecture do
   describe '#resolve' do
     before do
-      odm = double('ODMQuery')
+      odm1 = instance_double(Facter::ODMQuery)
+      odm2 = instance_double(Facter::ODMQuery)
 
-      allow(Facter::ODMQuery).to receive(:new).and_return(odm)
-      allow(odm).to receive(:equals).with('name', 'proc0').and_return(odm)
-      allow(odm).to receive(:equals).with('attribute', 'type')
-      allow(odm).to receive(:execute).and_return(result)
+      allow(Facter::ODMQuery).to receive(:new).and_return(odm1, odm2)
+      allow(odm1).to receive(:equals).with('PdDvLn', 'processor/sys/proc_rspc').and_return(odm1)
+      allow(odm1).to receive(:equals).with('status', '1').and_return(odm1)
+      allow(odm1).to receive(:execute).and_return('proc8')
+
+      allow(odm2).to receive(:equals).with('name', 'proc8').and_return(odm2)
+      allow(odm2).to receive(:equals).with('attribute', 'type').and_return(odm2)
+      allow(odm2).to receive(:execute).and_return(result)
     end
 
     after do
