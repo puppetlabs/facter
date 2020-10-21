@@ -5,16 +5,16 @@ module Facter
     unless defined?(OS_HIERARCHY)
       OS_HIERARCHY = [
         {
-          "Linux": [
+          'Linux' => [
             {
-              "Debian": %w[
+              'Debian' => %w[
                 Elementary
                 Ubuntu
                 Raspbian
               ]
             },
             {
-              "Rhel": %w[
+              'Rhel' => %w[
                 Fedora
                 Amzn
                 Centos
@@ -23,14 +23,14 @@ module Facter
               ]
             },
             {
-              "Sles": [
+              'Sles' => [
                 'Opensuse'
               ]
             }
           ]
         },
         {
-          "Bsd": [
+          'Bsd' => [
             'Freebsd'
           ]
         },
