@@ -98,7 +98,7 @@ module Facter
       # Execute a command and return the output of that program.
       # @param command [String] Command to run
       #
-      # @param options [Hash] Hash with options for the aggregate fact
+      # @param options [Hash] Hash with options for the command
       #
       # @option options [Object] :on_fail How to behave when the command could
       #   not be run. Specifying :raise will raise an error, anything else will
@@ -113,6 +113,26 @@ module Facter
       # @api public
       def execute(command, options = {})
         @@impl.execute(command, options)
+      end
+
+      # Execute a command and return the stdout and stderr of that program.
+      # @param command [String] Command to run
+      #
+      # @param options [Hash] Hash with options for the command
+      #
+      # @option options [Object] :on_fail How to behave when the command could
+      #   not be run. Specifying :raise will raise an error, anything else will
+      #   return that object on failure. Default is :raise.
+      #
+      # @raise [Facter::Core::Execution::ExecutionFailure] If the command does
+      #   not exist or could not be executed.
+      #
+      # @return [String, String] the stdout and stderr of the program, or the value of
+      #   :on_fail if command execution failed and :on_fail was specified.
+      #
+      # @api private
+      def execute_command(command, options = {})
+        @@impl.execute_command(command, options)
       end
 
       class ExecutionFailure < StandardError; end
