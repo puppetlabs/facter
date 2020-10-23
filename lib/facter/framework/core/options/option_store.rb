@@ -8,31 +8,38 @@ module Facter
     # TODO: constant is not yet available when running puppet facts
     @log_level = :warn
     @show_legacy = true
-    @block = true
-    @custom_dir = []
-    @config_file_custom_dir = []
     @custom_facts = true
-    @external_dir = []
+    @blocked_facts = []
+    @ruby = true
+    @external_facts = true
+    @config = nil
+    @user_query = []
+    @strict = false
+    @json = false
+    @cache = true
+    @yaml = false
+    @puppet = false
+    @ttls = []
+    @block = true
+    @cli = nil
+    @config_file_custom_dir = []
     @config_file_external_dir = []
     @default_external_dir = []
-    @external_facts = true
-    @ruby = true
-    @cache = true
-    @blocked_facts = []
-    @user_query = []
-    @block_list = {}
     @fact_groups = {}
     @parallel = false
     @ttls = []
+    @block_list = []
     @color = true
+    @trace = false
     @timing = false
-    @strict = false
+    @external_dir = []
+    @custom_dir = []
 
     class << self
       attr_reader :debug, :verbose, :log_level, :show_legacy,
                   :custom_facts, :blocked_facts, :ruby, :external_facts
 
-      attr_accessor :config, :user_query, :strict, :json, :haml,
+      attr_accessor :config, :user_query, :strict, :json,
                     :cache, :yaml, :puppet, :ttls, :block, :cli, :config_file_custom_dir,
                     :config_file_external_dir, :default_external_dir, :fact_groups,
                     :block_list, :color, :trace, :parallel, :timing
@@ -161,30 +168,36 @@ module Facter
         # TODO: constant is not yet available when running puppet facts
         @log_level = :warn
         @show_legacy = true
-        @block = true
         @ruby = true
         @user_query = []
-        @cli = nil
+        @json = false
         @cache = true
-        @trace = false
-        @color = true
+        @yaml = false
+        @puppet = false
+        @ttls = []
+        @block = true
+        @cli = nil
+        @custom_facts = true
         reset_config
       end
 
       def reset_config
-        @custom_dir = []
-        @custom_facts = true
-        @external_dir = []
-        @default_external_dir = []
+        @blocked_facts = []
+        @external_facts = true
+        @config = nil
+        @strict = false
         @config_file_custom_dir = []
         @config_file_external_dir = []
-        @external_facts = true
-        @blocked_facts = []
+        @default_external_dir = []
         @fact_groups = {}
         @block_list = {}
+        @color = true
         @parallel = false
         @ttls = []
+        @trace = false
         @timing = false
+        @external_dir = []
+        @custom_dir = []
       end
 
       def fallback_external_dir

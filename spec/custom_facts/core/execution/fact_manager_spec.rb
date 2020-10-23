@@ -142,7 +142,7 @@ describe Facter::Core::Execution::Base do
 
       it 'loggs warning messages on stderr' do
         executor.execute(command)
-        expect(logger).to have_received(:warn).with('Command /bin/foo resulted with '\
+        expect(logger).to have_received(:debug).with('Command /bin/foo completed with '\
                                                                             'the following stderr message: some error')
       end
     end

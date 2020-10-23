@@ -74,7 +74,10 @@ module Facter
     end
 
     def read_fact(searched_fact, fact_group)
-      data = read_group_json(fact_group)
+      data = nil
+      Facter::Framework::Benchmarking::Timer.measure(searched_fact.name, 'cached') do
+        data = read_group_json(fact_group)
+      end
       return unless data
 
       @log.debug("loading cached values for #{searched_fact.name} facts")

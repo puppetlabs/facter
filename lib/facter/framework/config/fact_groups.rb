@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'facter/config'
+
 module Facter
   class FactGroups
     attr_reader :groups, :block_list, :facts_ttls
@@ -8,10 +10,8 @@ module Facter
 
     STRING_TO_SECONDS = { 'seconds' => 1, 'minutes' => 60, 'hours' => 3600, 'days' => 3600 * 24 }.freeze
 
-    def initialize(group_list_path = nil)
-      default_path = File.join(File.dirname(__FILE__), '../../fact_groups.conf')
-      @groups_file_path = group_list_path || default_path
-      @groups ||= File.readable?(@groups_file_path) ? Hocon.load(@groups_file_path) : {}
+    def initialize
+      @groups = Facter::Config::FACT_GROUPS.dup
       load_groups
       load_groups_from_options
       load_facts_ttls
@@ -91,7 +91,7 @@ module Facter
 
     def load_groups
       config = ConfigReader.init(Options[:config])
-      @block_list = config.block_list || {}
+      @block_list = config.block_list || []
       @groups_ttls = config.ttls || []
       @groups.merge!(config.fact_groups) if config.fact_groups
     end

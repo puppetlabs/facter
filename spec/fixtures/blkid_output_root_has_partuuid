@@ -1,0 +1,6 @@
+/dev/xvda1: LABEL="cloudimg-rootfs" UUID="f387d281-b162-4d60-84b5-e7e94687e6b8" TYPE="ext4" PARTUUID="a2f52878-01"
+/dev/loop0: TYPE="squashfs"
+/dev/loop1: TYPE="squashfs"
+/dev/loop2: TYPE="squashfs"
+/dev/loop3: TYPE="squashfs"
+/dev/loop4: TYPE="squashfs"

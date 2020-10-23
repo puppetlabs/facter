@@ -10,7 +10,7 @@ module Facter
         @fact_list ||= {}
 
         DIR = '/sys/block'
-        FILE_PATHS = { model: 'device/model', size: 'size', vendor: 'device/vendor' }.freeze
+        FILE_PATHS = { model: 'device/model', size: 'size', vendor: 'device/vendor', type: 'queue/rotational' }.freeze
 
         class << self
           private
@@ -29,8 +29,16 @@ module Facter
                 result = Util::FileHelper.safe_read(file_path).strip
                 next if result.empty?
 
-                # Linux always considers sectors to be 512 bytes long independently of the devices real block size.
-                value[key] = file =~ /size/ ? construct_size(value, result) : result
+                value[key] = case key
+                             when :size
+                               # Linux always considers sectors to be 512 bytes long
+                               # independently of the devices real block size.
+                               construct_size(value, result)
+                             when :type
+                               result == '0' ? 'ssd' : 'hdd'
+                             else
+                               result
+                             end
               end
             end
 

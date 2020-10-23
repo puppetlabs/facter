@@ -135,9 +135,10 @@ describe LegacyFacter::Util::Parser do
     let(:cmd) { "/tmp/foo#{ext}" }
     let(:data_in_txt) { "one=two\nthree=four\n" }
     let(:yaml_data) { "one: two\nthree: four\n" }
+    let(:logger) { instance_spy(Facter::Log) }
 
-    def expects_script_to_return(path, content, result)
-      allow(Facter::Core::Execution).to receive(:exec).with(path).and_return(content)
+    def expects_script_to_return(path, content, result, err = nil)
+      allow(Facter::Core::Execution).to receive(:execute_command).with(path, nil).and_return([content, err])
       allow(File).to receive(:executable?).with(path).and_return(true)
       allow(FileTest).to receive(:file?).with(path).and_return(true)
 
@@ -168,9 +169,18 @@ describe LegacyFacter::Util::Parser do
       expects_script_to_return(cmd, yaml_data, exptected_data)
     end
 
+    it 'writes warning message' do
+      allow(Facter).to receive(:warn).at_least(:once)
+      allow(Facter::Log).to receive(:new).with("foo#{ext}").and_return(logger)
+
+      expects_script_to_return(cmd, yaml_data, data, 'some error')
+      expect(logger).to have_received(:warn).with("Command /tmp/foo#{ext} completed with the "\
+        'following stderr message: some error')
+    end
+
     it 'handles Time correctly' do
       yaml_data = "---\nfirst: 2020-07-15 05:38:12.427678398 +00:00\n"
-      allow(Facter::Core::Execution).to receive(:exec).with(cmd).and_return(yaml_data)
+      allow(Facter::Core::Execution).to receive(:execute_command).with(cmd, nil).and_return([yaml_data, nil])
       allow(File).to receive(:executable?).with(cmd).and_return(true)
       allow(FileTest).to receive(:file?).with(cmd).and_return(true)
 
@@ -184,7 +194,8 @@ describe LegacyFacter::Util::Parser do
     it 'quotes scripts with spaces' do
       path = "/h a s s p a c e s#{ext}"
 
-      expect(Facter::Core::Execution).to receive(:exec).with("\"#{path}\"").and_return(data_in_txt)
+      expect(Facter::Core::Execution).to receive(:execute_command)
+        .with("\"#{path}\"", nil).and_return([data_in_txt, nil])
       expects_script_to_return(path, data_in_txt, data)
     end
 
@@ -219,6 +230,11 @@ describe LegacyFacter::Util::Parser do
 
     describe 'powershell' do
       let(:ps1) { '/tmp/foo.ps1' }
+      let(:logger) { instance_spy(Facter::Log) }
+
+      before do
+        allow(File).to receive(:readable?).and_return(false)
+      end
 
       def expects_to_parse_powershell(cmd, result)
         allow(LegacyFacter::Util::Config).to receive(:windows?).and_return(true)
@@ -232,15 +248,24 @@ describe LegacyFacter::Util::Parser do
       end
 
       it 'parses output from powershell' do
-        allow(Facter::Core::Execution).to receive(:exec).and_return(data_in_txt)
+        allow(Facter::Core::Execution).to receive(:execute_command).and_return([data_in_txt, nil])
 
         expects_to_parse_powershell(ps1, data)
       end
 
       it 'parses yaml output from powershell' do
-        allow(Facter::Core::Execution).to receive(:exec).and_return(yaml_data)
+        allow(Facter::Core::Execution).to receive(:execute_command).and_return([yaml_data, nil])
 
         expects_to_parse_powershell(ps1, data)
+      end
+
+      it 'logs warning from powershell' do
+        allow(Facter::Core::Execution).to receive(:execute_command).and_return([yaml_data, 'some error'])
+        allow(Facter::Log).to receive(:new).with('foo.ps1').and_return(logger)
+
+        expects_to_parse_powershell(ps1, data)
+        expect(logger).to have_received(:warn).with('Command "powershell.exe" -NoProfile -NonInteractive -NoLogo '\
+          '-ExecutionPolicy Bypass -File "/tmp/foo.ps1" completed with the following stderr message: some error')
       end
 
       context 'when executing powershell' do
@@ -254,9 +279,9 @@ describe LegacyFacter::Util::Parser do
         it 'prefers the sysnative alias to resolve 64-bit powershell on 32-bit ruby' do
           allow(File).to receive(:readable?).with(sysnative_powershell).and_return(true)
           allow(Facter::Core::Execution)
-            .to receive(:exec)
+            .to receive(:execute_command)
             .with(sysnative_regexp)
-            .and_return(data_in_txt)
+            .and_return([data_in_txt, nil])
 
           expects_to_parse_powershell(ps1, data)
         end
@@ -264,7 +289,8 @@ describe LegacyFacter::Util::Parser do
         it "uses system32 if sysnative alias doesn't exist on 64-bit ruby" do
           allow(File).to receive(:readable?).with(sysnative_powershell).and_return(false)
           allow(File).to receive(:readable?).with(system32_powershell).and_return(true)
-          allow(Facter::Core::Execution).to receive(:exec).with(system32_regexp).and_return(data_in_txt)
+          allow(Facter::Core::Execution).to receive(:execute_command).with(system32_regexp)
+                                                                     .and_return([data_in_txt, nil])
 
           expects_to_parse_powershell(ps1, data)
         end
@@ -273,9 +299,9 @@ describe LegacyFacter::Util::Parser do
           allow(File).to receive(:readable?).with(sysnative_powershell).and_return(false)
           allow(File).to receive(:readable?).with(system32_powershell).and_return(false)
           allow(Facter::Core::Execution)
-            .to receive(:exec)
+            .to receive(:execute_command)
             .with(powershell_regexp)
-            .and_return(data_in_txt)
+            .and_return([data_in_txt, nil])
 
           expects_to_parse_powershell(ps1, data)
         end

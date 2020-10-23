@@ -6,8 +6,9 @@ module Facter
       class OsRelease < BaseResolver
         @semaphore = Mutex.new
         @fact_list ||= {}
-        @os_version_regex_patterns = ['Solaris \d+ \d+/\d+ s(\d+)[sx]?_u(\d+)wos_',
-                                      'Solaris (\d+)[.](\d+)', 'Solaris (\d+)']
+        OS_VERSION_REGEX_PATTERNS = ['Solaris \d+ \d+/\d+ s(\d+)[sx]?_u(\d+)wos_',
+                                     'Solaris (\d+)[.](\d+)', 'Solaris (\d+)'].freeze
+
         class << self
           private
 
@@ -19,7 +20,7 @@ module Facter
             result = Util::FileHelper.safe_read('/etc/release', nil)
             return @fact_list[fact_name] = nil if result.nil?
 
-            @os_version_regex_patterns.each do |os_version_regex|
+            OS_VERSION_REGEX_PATTERNS.each do |os_version_regex|
               major, minor = search_for_os_version(/#{os_version_regex}/, result)
               next unless major || minor
 

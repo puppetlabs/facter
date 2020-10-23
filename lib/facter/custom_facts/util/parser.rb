@@ -8,6 +8,8 @@
 module LegacyFacter
   module Util
     module Parser
+      STDERR_MESSAGE = 'Command %s completed with the following stderr message: %s'
+
       @parsers = []
 
       # For support mutliple extensions you can pass an array of extensions as
@@ -75,6 +77,15 @@ module LegacyFacter
           res = KeyValuePairOutputFormat.parse output unless res.is_a?(Hash)
           res
         end
+
+        def log_stderr(msg, command, file)
+          return if !msg || msg.empty?
+
+          file_name = file.split('/').last
+          logger = Facter::Log.new(file_name)
+
+          logger.warn(format(STDERR_MESSAGE, command, msg.strip))
+        end
       end
 
       module KeyValuePairOutputFormat
@@ -139,7 +150,9 @@ module LegacyFacter
 
       class ScriptParser < Base
         def parse_results
-          parse_executable_output(Facter::Core::Execution.exec(quote(filename)))
+          stdout, stderr = Facter::Core::Execution.execute_command(quote(filename), nil)
+          log_stderr(stderr, filename, filename)
+          parse_executable_output(stdout)
         end
 
         private
@@ -172,8 +185,9 @@ module LegacyFacter
 
           shell_command =
             "\"#{powershell}\" -NoProfile -NonInteractive -NoLogo -ExecutionPolicy Bypass -File \"#{filename}\""
-          output = Facter::Core::Execution.exec(shell_command)
-          parse_executable_output(output)
+          stdout, stderr = Facter::Core::Execution.execute_command(shell_command)
+          log_stderr(stderr, shell_command, filename)
+          parse_executable_output(stdout)
         end
       end
 

@@ -17,8 +17,12 @@ module Facter
           def collect_processors_info(fact_name)
             require 'facter/resolvers/bsd/ffi/ffi_helper'
 
-            @fact_list[:logical_count] = logical_count
-            @fact_list[:models] = Array.new(logical_count, model) if logical_count && model
+            count = logical_count
+            model = processor_model
+            speed = processor_speed
+
+            @fact_list[:logical_count] = count
+            @fact_list[:models] = Array.new(count, model) if count && model
             @fact_list[:speed] = speed * 1000 * 1000 if speed
 
             @fact_list[fact_name]
@@ -29,16 +33,16 @@ module Facter
           HW_NCPU = 3
           HW_CPUSPEED = 12
 
-          def model
-            @model ||= Facter::Bsd::FfiHelper.sysctl(:string, [CTL_HW, HW_MODEL])
+          def processor_model
+            Facter::Bsd::FfiHelper.sysctl(:string, [CTL_HW, HW_MODEL])
           end
 
           def logical_count
-            @logical_count ||= Facter::Bsd::FfiHelper.sysctl(:uint32_t, [CTL_HW, HW_NCPU])
+            Facter::Bsd::FfiHelper.sysctl(:uint32_t, [CTL_HW, HW_NCPU])
           end
 
-          def speed
-            @speed ||= Facter::Bsd::FfiHelper.sysctl(:uint32_t, [CTL_HW, HW_CPUSPEED])
+          def processor_speed
+            Facter::Bsd::FfiHelper.sysctl(:uint32_t, [CTL_HW, HW_CPUSPEED])
           end
         end
       end

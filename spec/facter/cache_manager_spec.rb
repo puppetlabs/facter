@@ -32,6 +32,7 @@ describe Facter::CacheManager do
     allow(LegacyFacter::Util::Config).to receive(:facts_cache_dir).and_return(cache_dir)
     allow(Facter::FactGroups).to receive(:new).and_return(fact_groups)
     allow(Facter::Options).to receive(:[]).with(:debug).and_return(false)
+    allow(Facter::Options).to receive(:[])
   end
 
   describe '#resolve_facts' do
@@ -133,6 +134,33 @@ describe Facter::CacheManager do
           an_instance_of(Facter::ResolvedFact).and(having_attributes(name: 'my_external_fact', value: 'ext_fact',
                                                                      type: :file))
         )
+      end
+    end
+
+    context 'with timer' do
+      before do
+        allow(File).to receive(:directory?).and_return(true)
+        allow(fact_groups).to receive(:get_fact_group).and_return(group_name)
+        allow(fact_groups).to receive(:get_group_ttls).and_return(nil)
+        allow(fact_groups).to receive(:get_fact).and_return(nil)
+        allow(File).to receive(:readable?)
+        allow(File).to receive(:mtime).with(cache_file_name).and_return(Time.now)
+        allow(Facter::Util::FileHelper).to receive(:safe_read).with(cache_file_name).and_return(cached_core_fact)
+        allow(Facter::Options).to receive(:[]).with(:cache).and_return(true)
+        allow(Facter::Framework::Benchmarking::Timer).to receive(:measure)
+      end
+
+      it 'returns cached external facts' do
+        allow(fact_groups).to receive(:get_fact).with('os').and_return(nil)
+        allow(fact_groups).to receive(:get_fact).with('my_custom_fact').and_return(nil)
+        allow(fact_groups).to receive(:get_fact).with('ext_file.txt').and_return(external_fact)
+        allow(Facter::Util::FileHelper).to receive(:safe_read).with(File.join(cache_dir, 'ext_file.txt'))
+                                                              .and_return(cached_external_fact)
+        allow(File).to receive(:mtime).with(File.join(cache_dir, 'ext_file.txt')).and_return(Time.now)
+
+        cache_manager.resolve_facts(searched_facts)
+
+        expect(Facter::Framework::Benchmarking::Timer).to have_received(:measure)
       end
     end
   end

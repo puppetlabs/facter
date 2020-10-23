@@ -10,7 +10,6 @@ module Facter
         @semaphore = Mutex.new
         @log = Facter::Log.new(self)
         @fact_list ||= {}
-        @interfaces = {}
 
         class << self
           private
