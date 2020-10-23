@@ -150,7 +150,7 @@ module LegacyFacter
 
       class ScriptParser < Base
         def parse_results
-          stdout, stderr = Facter::Core::Execution.execute_command(quote(filename))
+          stdout, stderr = Facter::Core::Execution.execute_command(quote(filename), nil)
           log_stderr(stderr, filename, filename)
           parse_executable_output(stdout)
         end
