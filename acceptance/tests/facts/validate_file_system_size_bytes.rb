@@ -4,6 +4,7 @@ test_name "C100110: verify that file system sizes are positive" do
   tag 'risk:high'
 
   confine :except, :platform => 'windows' # Windows does not list mount points as facts like Unix
+  confine :to, :platform => /skip/
 
   require 'json'
 
