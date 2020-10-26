@@ -177,16 +177,16 @@ module Facter
       Facter::Options[:debug] = debug_bool
     end
 
-    def enable_parallel
-      Facter::Options[:parallel] = true
+    def enable_sequential
+      Facter::Options[:sequential] = true
     end
 
-    def disable_parallel
-      Facter::Options[:parallel] = false
+    def disable_sequential
+      Facter::Options[:sequential] = false
     end
 
-    def parallel?
-      Facter::Options[:parallel]
+    def sequential?
+      Facter::Options[:sequential]
     end
 
     # Iterates over fact names and values

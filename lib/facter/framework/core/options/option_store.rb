@@ -26,7 +26,7 @@ module Facter
     @config_file_external_dir = []
     @default_external_dir = []
     @fact_groups = {}
-    @parallel = false
+    @sequential = false
     @ttls = []
     @block_list = []
     @color = true
@@ -42,7 +42,7 @@ module Facter
       attr_accessor :config, :user_query, :strict, :json,
                     :cache, :yaml, :puppet, :ttls, :block, :cli, :config_file_custom_dir,
                     :config_file_external_dir, :default_external_dir, :fact_groups,
-                    :block_list, :color, :trace, :parallel, :timing
+                    :block_list, :color, :trace, :sequential, :timing
 
       attr_writer :external_dir
 
@@ -192,7 +192,7 @@ module Facter
         @fact_groups = {}
         @block_list = {}
         @color = true
-        @parallel = false
+        @sequential = false
         @ttls = []
         @trace = false
         @timing = false

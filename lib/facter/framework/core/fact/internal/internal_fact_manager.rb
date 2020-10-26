@@ -7,14 +7,14 @@ module Facter
     def resolve_facts(searched_facts)
       internal_searched_facts = filter_internal_facts(searched_facts)
 
-      resolved_facts = if Options[:parallel]
+      resolved_facts = if Options[:sequential]
+                         @@log.debug('Resolving facts sequentially')
+                         resolve_sequentially(internal_searched_facts)
+                       else
                          @@log.debug('Resolving fact in parallel')
                          threads = start_threads(internal_searched_facts)
                          join_threads(threads, internal_searched_facts)
                          # thread_pool(internal_searched_facts)
-                       else
-                         @@log.debug('Resolving facts sequentially')
-                         resolve_sequentially(internal_searched_facts)
                        end
 
       nil_resolved_facts = resolve_nil_facts(searched_facts)
