@@ -36,8 +36,6 @@ module Facter
           end
 
           def call_virtinfo(fact_name)
-            # return unless File.executable?('/usr/sbin/virtinfo')
-
             virtinfo_output = Facter::Core::Execution.execute('/usr/sbin/virtinfo  -a  -p', logger: log)
             return if virtinfo_output.empty?
 
