@@ -14,7 +14,6 @@ module Facter
                          @@log.debug('Resolving fact in parallel')
                          threads = start_threads(internal_searched_facts)
                          join_threads(threads, internal_searched_facts)
-                         # thread_pool(internal_searched_facts)
                        end
 
       nil_resolved_facts = resolve_nil_facts(searched_facts)
@@ -80,25 +79,6 @@ module Facter
       end
 
       resolved_facts.flatten!
-
-      FactAugmenter.augment_resolved_facts(searched_facts, resolved_facts)
-    end
-
-    def thread_pool(searched_facts)
-      require 'concurrent'
-
-      pool = Concurrent::FixedThreadPool.new(12)
-      pr_futures = []
-
-      searched_facts
-        .uniq { |searched_fact| searched_fact.fact_class.name }
-        .each do |searched_fact|
-          pr_futures << Concurrent::Promises.future_on(pool) do
-            resolve_fact(searched_fact)
-          end
-        end
-
-      resolved_facts = Concurrent::Promises.zip(*pr_futures).value!.flatten.compact
 
       FactAugmenter.augment_resolved_facts(searched_facts, resolved_facts)
     end
