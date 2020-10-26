@@ -6,6 +6,8 @@ test_name "C100036: when run from puppet facts, facts can be blocked via a list 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 
+  confine :to, :platform => /skip/
+
   agents.each do |agent|
     step "facts should be blocked when Facter is run from Puppet with a configured blocklist" do
       # default facter.conf

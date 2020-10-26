@@ -4,6 +4,7 @@ test_name "C100110: verify that file system sizes are positive" do
   tag 'risk:high'
 
   confine :except, :platform => 'windows' # Windows does not list mount points as facts like Unix
+  confine :to, :platform => /skip/
 
   require 'json'
 
@@ -25,9 +26,9 @@ test_name "C100110: verify that file system sizes are positive" do
 
       on(agent, puppet("facts --render-as json")) do |puppet_facts|
         puppet_results = JSON.parse(puppet_facts.stdout)
-        puppet_results['values']['mountpoints'].each_key do |mount_key|
+        puppet_results['mountpoints'].each_key do |mount_key|
           ['available_bytes', 'size_bytes', 'used_bytes'].each do |sub_key|
-            assert_operator(puppet_results['values']['mountpoints'][mount_key][sub_key], :>=, 0,
+            assert_operator(puppet_results['mountpoints'][mount_key][sub_key], :>=, 0,
                             "Expected the #{sub_key} from puppet facts to be positive for #{mount_key}")
           end
         end
