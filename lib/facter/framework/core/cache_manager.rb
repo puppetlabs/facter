@@ -1,5 +1,15 @@
 # frozen_string_literal: true
 
+# class CachedFacts
+#   attr_accessor :name, :ttls, :group
+#
+#   def initialize(name, ttls, group)
+#     @name = name
+#     @ttls = ttls
+#     @group = group
+#   end
+# end
+
 module Facter
   class CacheManager
     def initialize
@@ -7,14 +17,39 @@ module Facter
       @log = Log.new(self)
       @fact_groups = Facter::FactGroups.new
       @cache_dir = LegacyFacter::Util::Config.facts_cache_dir
+      # @cf = []
+    end
+
+    def add_searched_facts(searched_facts)
+      ttls = @fact_groups.facts_ttls
+
+      searched_facts.each do |fact|
+        fact_name = if fact.file
+                      File.basename(fact.file)
+                    else
+                      fact.name
+                    end
+
+        ttls.each do |fact_key, details|
+          fact.group = details[:group] if fact_name =~ /^#{fact_key}/
+        end
+      end
+
+      puts "^^"
+      # @cf
     end
 
     def resolve_facts(searched_facts)
       return searched_facts, [] if (!File.directory?(@cache_dir) || !Options[:cache]) && Options[:ttls].any?
 
+
       facts = []
-      searched_facts.delete_if do |fact|
-        res = resolve_fact(fact)
+      searched_facts.delete_if do |searched_fact|
+        # next unless @cf.map{|cf| cf.name}.select { |name| name == searched_fact.name }
+
+        # group = extract_group(searched_fact)
+
+        res = read_fact(searched_fact, searched_fact.group) if searched_fact.group
         if res
           facts << res
           true
@@ -25,6 +60,11 @@ module Facter
 
       [searched_facts, facts.flatten]
     end
+
+    # def extract_group(searched_fact)
+    #   matching_fact = @cf.select{ |cf| cf.name == searched_fact.name }
+    #   matching_fact.first&.group
+    # end
 
     def cache_facts(resolved_facts)
       return unless Options[:cache] && Options[:ttls].any?
@@ -90,14 +130,14 @@ module Facter
         facts = []
         data.each do |fact_name, fact_value|
           fact = Facter::ResolvedFact.new(fact_name, fact_value, searched_fact.type,
-                                          searched_fact.user_query, searched_fact.filter_tokens)
+                                          searched_fact.user_query, searched_fact.filter_tokens, searched_fact.group)
           fact.file = searched_fact.file
           facts << fact
         end
         facts
       else
         [Facter::ResolvedFact.new(searched_fact.name, data[searched_fact.name], searched_fact.type,
-                                  searched_fact.user_query, searched_fact.filter_tokens)]
+                                  searched_fact.user_query, searched_fact.filter_tokens, searched_fact.group)]
       end
     end
 

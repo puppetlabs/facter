@@ -31,6 +31,7 @@ module Facter
       matched_facts.each do |matched_fact|
         matched_fact.user_query = searched_fact.user_query
         matched_fact.filter_tokens = searched_fact.filter_tokens
+        matched_fact.group = searched_fact.group
       end
     end
   end

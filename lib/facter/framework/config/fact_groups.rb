@@ -78,12 +78,14 @@ module Facter
       @groups_ttls.reduce(:merge).each do |group, ttls|
         ttls = ttls_to_seconds(ttls)
         if @groups[group]
+          # the ttls is for a group
           @groups[group].each do |fact|
             if (@facts_ttls[fact] && @facts_ttls[fact][:ttls] < ttls) || @facts_ttls[fact].nil?
               @facts_ttls[fact] = { ttls: ttls, group: group }
             end
           end
         else
+          # the ttls is for a fact not a group
           @facts_ttls[group] = { ttls: ttls, group: group }
         end
       end

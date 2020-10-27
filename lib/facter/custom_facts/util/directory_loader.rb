@@ -69,6 +69,7 @@ module LegacyFacter
           end
         end
 
+        cm.add_searched_facts(facts)
         cm.resolve_facts(facts)
       end
 
