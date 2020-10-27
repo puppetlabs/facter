@@ -10,7 +10,7 @@ module Facter
     end
 
     def resolve_facts(searched_facts)
-      return searched_facts, [] if !File.directory?(@cache_dir) || !Options[:cache]
+      return searched_facts, [] if (!File.directory?(@cache_dir) || !Options[:cache]) && Options[:ttls].any?
 
       facts = []
       searched_facts.delete_if do |fact|
@@ -27,7 +27,7 @@ module Facter
     end
 
     def cache_facts(resolved_facts)
-      return unless Options[:cache]
+      return unless Options[:cache] && Options[:ttls].any?
 
       resolved_facts.each do |fact|
         cache_fact(fact)
