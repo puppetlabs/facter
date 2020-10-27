@@ -33,6 +33,7 @@ describe Facter::CacheManager do
     allow(Facter::FactGroups).to receive(:new).and_return(fact_groups)
     allow(Facter::Options).to receive(:[]).with(:debug).and_return(false)
     allow(Facter::Options).to receive(:[])
+    allow(Facter::Options).to receive(:[]).with(:ttls).and_return([])
   end
 
   describe '#resolve_facts' do
@@ -40,6 +41,7 @@ describe Facter::CacheManager do
       before do
         allow(File).to receive(:directory?).with(cache_dir).and_return(false)
         allow(Facter::Options).to receive(:[]).with(:cache).and_return(true)
+        allow(Facter::Options).to receive(:[]).with(:ttls).and_return(['fact'])
       end
 
       it 'returns searched facts' do
@@ -57,6 +59,7 @@ describe Facter::CacheManager do
       before do
         allow(File).to receive(:directory?).with(cache_dir).and_return(true)
         allow(Facter::Options).to receive(:[]).with(:cache).and_return(false)
+        allow(Facter::Options).to receive(:[]).with(:ttls).and_return(['fact'])
       end
 
       it 'returns searched facts' do
@@ -192,6 +195,7 @@ describe Facter::CacheManager do
         allow(File).to receive(:readable?).with(cache_file_name).and_return(false)
         allow(File).to receive(:write).with(cache_file_name, cached_core_fact)
         allow(Facter::Options).to receive(:[]).with(:cache).and_return(true)
+        allow(Facter::Options).to receive(:[]).with(:ttls).and_return(['fact'])
       end
 
       it 'caches fact' do
