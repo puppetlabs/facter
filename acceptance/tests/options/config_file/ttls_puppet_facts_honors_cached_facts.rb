@@ -5,8 +5,6 @@ test_name "C100039: ttls configured cached facts run from puppet facts return ca
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 
-  confine :to, :platform => /skip/
-
   # This fact must be resolvable on ALL platforms
   # Do NOT use the 'kernel' fact as it is used to configure the tests
   cached_factname = 'uptime'
