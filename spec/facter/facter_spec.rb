@@ -300,6 +300,20 @@ describe Facter do
       it 'returns hash with os.name fact' do
         expect(Facter.values({}, ['os.name'])).to eq(result)
       end
+
+      it 'sets show_legacy to true' do
+        Facter.values({}, [])
+
+        expect(Facter::Options[:show_legacy]).to be true
+      end
+
+      it 'logs blocked facts' do
+        allow(Facter::Options).to receive(:[]).with(:block_list).and_return(['os'])
+
+        Facter.values({}, [])
+
+        expect(logger).to have_received(:debug).with('blocking collection of os facts')
+      end
     end
 
     context 'when no user query' do

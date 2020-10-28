@@ -138,7 +138,7 @@ describe LegacyFacter::Util::Parser do
     let(:logger) { instance_spy(Facter::Log) }
 
     def expects_script_to_return(path, content, result, err = nil)
-      allow(Facter::Core::Execution).to receive(:execute_command).with(path, nil).and_return([content, err])
+      allow(Facter::Core::Execution).to receive(:execute_command).with(path).and_return([content, err])
       allow(File).to receive(:executable?).with(path).and_return(true)
       allow(FileTest).to receive(:file?).with(path).and_return(true)
 
@@ -180,7 +180,7 @@ describe LegacyFacter::Util::Parser do
 
     it 'handles Time correctly' do
       yaml_data = "---\nfirst: 2020-07-15 05:38:12.427678398 +00:00\n"
-      allow(Facter::Core::Execution).to receive(:execute_command).with(cmd, nil).and_return([yaml_data, nil])
+      allow(Facter::Core::Execution).to receive(:execute_command).with(cmd).and_return([yaml_data, nil])
       allow(File).to receive(:executable?).with(cmd).and_return(true)
       allow(FileTest).to receive(:file?).with(cmd).and_return(true)
 
@@ -195,7 +195,7 @@ describe LegacyFacter::Util::Parser do
       path = "/h a s s p a c e s#{ext}"
 
       expect(Facter::Core::Execution).to receive(:execute_command)
-        .with("\"#{path}\"", nil).and_return([data_in_txt, nil])
+        .with("\"#{path}\"").and_return([data_in_txt, nil])
       expects_script_to_return(path, data_in_txt, data)
     end
 
