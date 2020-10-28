@@ -339,13 +339,15 @@ module Facter
     # @param options [Hash] parameters for the fact - attributes
     #   of {Facter::Util::Fact} and {Facter::Util::Resolution} can be
     #   supplied here
-    # @param user_queries [String] the fact names
+    # @param user_queries [Array] the fact names
     #
     # @return [FactCollection] hash with fact names and values
     #
     # @api public
     def values(options, user_queries)
       init_cli_options(options, user_queries)
+      Options[:show_legacy] = true
+      log_blocked_facts
       resolved_facts = Facter::FactManager.instance.resolve_facts(user_queries)
 
       if user_queries.count.zero?
