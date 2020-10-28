@@ -113,6 +113,8 @@ module Facter
                       "ip4_mask_length = #{ip4_mask_length}")
 
           binding = ::Resolvers::Utils::Networking.build_binding(ip4_address, ip4_mask_length)
+          return unless binding
+
           build_network_info_structure!(network_info, interface_name, :bindings)
 
           network_info[interface_name][:bindings] << binding
@@ -120,7 +122,7 @@ module Facter
 
         def retrieve_name_and_ip_info(tokens)
           interface_name = tokens[1]
-          ip_info = tokens[3].split('/')
+          ip_info = tokens[4] =~ /peer/ ? tokens[5].split('/') : tokens[3].split('/')
           ip_address = ip_info[0]
           ip_mask_length = ip_info[1]
 
