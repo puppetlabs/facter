@@ -14,10 +14,13 @@ module Facter
           end
 
           def freebsd_version_system_call(fact_name)
-            output = Facter::Core::Execution.execute('/bin/freebsd-version -kru', logger: log)
-            return if output.empty?
+            output = Facter::Core::Execution.execute('/bin/freebsd-version -k', logger: log)
 
-            build_fact_list(output)
+            @fact_list[:installed_kernel] = output.strip unless output.empty?
+
+            output = Facter::Core::Execution.execute('/bin/freebsd-version -ru', logger: log)
+
+            build_fact_list(output) unless output.empty?
 
             @fact_list[fact_name]
           end
@@ -25,9 +28,8 @@ module Facter
           def build_fact_list(output)
             freebsd_version_results = output.split("\n")
 
-            @fact_list[:installed_kernel]   = freebsd_version_results[0].strip
-            @fact_list[:running_kernel]     = freebsd_version_results[1].strip
-            @fact_list[:installed_userland] = freebsd_version_results[2].strip
+            @fact_list[:running_kernel]     = freebsd_version_results[0].strip
+            @fact_list[:installed_userland] = freebsd_version_results[1].strip
           end
         end
       end
