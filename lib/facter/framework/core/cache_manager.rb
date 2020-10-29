@@ -20,11 +20,10 @@ module Facter
                     end
 
         ttls.each do |fact_key, details|
-          fact.group = details[:group] if fact_name =~ /^#{fact_key}/
+          fact.group = details[:group] if fact_name =~ /^#{fact_key}[\.]?.*/
         end
       end
 
-      puts "^^"
     end
 
     def resolve_facts(searched_facts)
