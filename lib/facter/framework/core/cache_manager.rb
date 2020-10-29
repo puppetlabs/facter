@@ -76,23 +76,7 @@ module Facter
 
     private
 
-    def resolve_fact(searched_fact)
-      fact_name = if searched_fact.file
-                    File.basename(searched_fact.file)
-                  else
-                    searched_fact.name
-                  end
 
-      return unless fact_cache_enabled?(fact_name)
-
-      fact = @fact_groups.get_fact(fact_name)
-
-      return unless fact
-
-      return unless check_ttls?(fact[:group], fact[:ttls])
-
-      read_fact(searched_fact, fact[:group])
-    end
 
     def read_fact(searched_fact, fact_group)
       data = nil
@@ -120,23 +104,6 @@ module Facter
         [Facter::ResolvedFact.new(searched_fact.name, data[searched_fact.name], searched_fact.type,
                                   searched_fact.user_query, searched_fact.filter_tokens, searched_fact.group)]
       end
-    end
-
-    def cache_fact(fact)
-      fact_name = if fact.file
-                    File.basename(fact.file)
-                  else
-                    fact.name
-                  end
-
-      group_name = @fact_groups.get_fact_group(fact_name)
-
-      return if !group_name || fact.value.nil?
-
-      return unless fact_cache_enabled?(fact_name)
-
-      @groups[group_name] ||= {}
-      @groups[group_name][fact.name] = fact.value
     end
 
     def write_cache
