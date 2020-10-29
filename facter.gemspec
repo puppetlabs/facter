@@ -11,6 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = 'New version of Facter'
   spec.description   = 'New version of Facter'
+  spec.license       = 'MIT'
 
   spec.files = Dir['bin/facter'] +
                Dir['lib/**/*.rb'] +
