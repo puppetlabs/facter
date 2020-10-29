@@ -22,7 +22,7 @@ module Facter
     def resolve_nil_facts(searched_facts)
       resolved_facts = []
       searched_facts.select { |fact| fact.type == :nil }.each do |fact|
-        resolved_facts << ResolvedFact.new(fact.name, nil, :nil, fact.name,[], fact.group)
+        resolved_facts << ResolvedFact.new(fact.name, nil, :nil, fact.name,[], fact.cache_group)
       end
 
       resolved_facts

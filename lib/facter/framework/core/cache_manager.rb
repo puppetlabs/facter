@@ -9,7 +9,7 @@ module Facter
       @cache_dir = LegacyFacter::Util::Config.facts_cache_dir
     end
 
-    def add_searched_facts(searched_facts)
+    def augment_with_cache_group(searched_facts)
       ttls = @fact_groups.facts_ttls
 
       searched_facts.each do |fact|
@@ -20,10 +20,11 @@ module Facter
                     end
 
         ttls.each do |fact_key, details|
-          fact.group = details[:group] if fact_name =~ /^#{fact_key}[\.]?.*/
+          fact.cache_group = details[:cache_group] if fact_name =~ /^#{fact_key}[\.]?.*/
         end
       end
 
+      puts "!!!"
     end
 
     def resolve_facts(searched_facts)
@@ -31,7 +32,7 @@ module Facter
 
       facts = []
       searched_facts.delete_if do |searched_fact|
-        res = read_fact(searched_fact, searched_fact.group) if searched_fact.group
+        res = read_fact(searched_fact, searched_fact.cache_group) if searched_fact.cache_group
         if res
           facts << res
           true
@@ -47,8 +48,8 @@ module Facter
       return unless Options[:cache] && Options[:ttls].any?
 
       resolved_facts
-        .select { |resolved_fact| resolved_fact.group != nil }
-        .group_by { |resolved_fact| resolved_fact.group }
+        .select { |resolved_fact| resolved_fact.cache_group != nil }
+        .group_by { |resolved_fact| resolved_fact.cache_group }
         .each do |group_name, array_of_facts|
           @groups[group_name] ||= {}
           array_of_facts.each { |resolved_fact| @groups[group_name][resolved_fact.name] = resolved_fact.value}
@@ -61,21 +62,7 @@ module Facter
       end
     end
 
-    def fact_cache_enabled?(fact_name)
-      fact = @fact_groups.get_fact(fact_name)
-      cached = if fact
-                 !fact[:ttls].nil?
-               else
-                 false
-               end
-
-      fact_group = @fact_groups.get_fact_group(fact_name)
-      delete_cache(fact_group) if fact_group && !cached
-      cached
-    end
-
     private
-
 
 
     def read_fact(searched_fact, fact_group)
@@ -95,14 +82,14 @@ module Facter
         facts = []
         data.each do |fact_name, fact_value|
           fact = Facter::ResolvedFact.new(fact_name, fact_value, searched_fact.type,
-                                          searched_fact.user_query, searched_fact.filter_tokens, searched_fact.group)
+                                          searched_fact.user_query, searched_fact.filter_tokens, searched_fact.cache_group)
           fact.file = searched_fact.file
           facts << fact
         end
         facts
       else
         [Facter::ResolvedFact.new(searched_fact.name, data[searched_fact.name], searched_fact.type,
-                                  searched_fact.user_query, searched_fact.filter_tokens, searched_fact.group)]
+                                  searched_fact.user_query, searched_fact.filter_tokens, searched_fact.cache_group)]
       end
     end
 

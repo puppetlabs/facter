@@ -35,7 +35,7 @@ describe Facter::Resolvers::PosxIdentity do
   end
 
   describe 'GROUP' do
-    it_behaves_like 'a resolved fact', :group, 'staff'
+    it_behaves_like 'a resolved fact', :cache_group, 'staff'
   end
 
   describe 'PRIVILEGED' do

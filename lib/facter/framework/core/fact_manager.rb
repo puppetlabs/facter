@@ -21,7 +21,7 @@ module Facter
       searched_facts = QueryParser.parse(user_query, loaded_facts)
 
       cache_manager = Facter::CacheManager.new
-      cache_manager.add_searched_facts(searched_facts)
+      cache_manager.augment_with_cache_group(searched_facts)
       searched_facts, cached_facts = cache_manager.resolve_facts(searched_facts)
       internal_facts = @internal_fact_mgr.resolve_facts(searched_facts)
       external_facts = @external_fact_mgr.resolve_facts(searched_facts)

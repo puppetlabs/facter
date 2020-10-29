@@ -33,28 +33,11 @@ module Facter
       fact_list
     end
 
-    # Get the group name a fact is part of
-    def get_fact_group(fact_name)
-      fact = get_fact(fact_name)
-      return fact[:group] if fact
-
-      @groups.detect { |k, v| break k if Array(v).find { |f| fact_name =~ /^#{f}.*/ } }
-    end
-
     # Get config ttls for a given group
     def get_group_ttls(group_name)
       return unless (ttls = @groups_ttls.find { |g| g[group_name] })
 
       ttls_to_seconds(ttls[group_name])
-    end
-
-    def get_fact(fact_name)
-      return @facts_ttls[fact_name] if @facts_ttls[fact_name]
-
-      result = @facts_ttls.select { |name, fact| break fact if fact_name =~ /^#{name}\..*/ }
-      return nil if result == {}
-
-      result
     end
 
     private
@@ -81,12 +64,12 @@ module Facter
           # the ttls is for a group
           @groups[group].each do |fact|
             if (@facts_ttls[fact] && @facts_ttls[fact][:ttls] < ttls) || @facts_ttls[fact].nil?
-              @facts_ttls[fact] = { ttls: ttls, group: group }
+              @facts_ttls[fact] = {ttls: ttls, cache_group: group }
             end
           end
         else
           # the ttls is for a fact not a group
-          @facts_ttls[group] = { ttls: ttls, group: group }
+          @facts_ttls[group] = {ttls: ttls, cache_group: group }
         end
       end
     end
