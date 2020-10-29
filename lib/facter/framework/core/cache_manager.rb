@@ -1,15 +1,5 @@
 # frozen_string_literal: true
 
-# class CachedFacts
-#   attr_accessor :name, :ttls, :group
-#
-#   def initialize(name, ttls, group)
-#     @name = name
-#     @ttls = ttls
-#     @group = group
-#   end
-# end
-
 module Facter
   class CacheManager
     def initialize
@@ -17,7 +7,6 @@ module Facter
       @log = Log.new(self)
       @fact_groups = Facter::FactGroups.new
       @cache_dir = LegacyFacter::Util::Config.facts_cache_dir
-      # @cf = []
     end
 
     def add_searched_facts(searched_facts)
@@ -36,7 +25,6 @@ module Facter
       end
 
       puts "^^"
-      # @cf
     end
 
     def resolve_facts(searched_facts)
@@ -45,10 +33,6 @@ module Facter
 
       facts = []
       searched_facts.delete_if do |searched_fact|
-        # next unless @cf.map{|cf| cf.name}.select { |name| name == searched_fact.name }
-
-        # group = extract_group(searched_fact)
-
         res = read_fact(searched_fact, searched_fact.group) if searched_fact.group
         if res
           facts << res
@@ -60,11 +44,6 @@ module Facter
 
       [searched_facts, facts.flatten]
     end
-
-    # def extract_group(searched_fact)
-    #   matching_fact = @cf.select{ |cf| cf.name == searched_fact.name }
-    #   matching_fact.first&.group
-    # end
 
     def cache_facts(resolved_facts)
       return unless Options[:cache] && Options[:ttls].any?
