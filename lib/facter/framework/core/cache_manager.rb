@@ -30,7 +30,6 @@ module Facter
     def resolve_facts(searched_facts)
       return searched_facts, [] if (!File.directory?(@cache_dir) || !Options[:cache]) && Options[:ttls].any?
 
-
       facts = []
       searched_facts.delete_if do |searched_fact|
         res = read_fact(searched_fact, searched_fact.group) if searched_fact.group
@@ -48,8 +47,12 @@ module Facter
     def cache_facts(resolved_facts)
       return unless Options[:cache] && Options[:ttls].any?
 
-      resolved_facts.each do |fact|
-        cache_fact(fact)
+      resolved_facts
+        .select { |resolved_fact| resolved_fact.group != nil }
+        .group_by { |resolved_fact| resolved_fact.group }
+        .each do |group_name, array_of_facts|
+          @groups[group_name] ||= {}
+          array_of_facts.each { |resolved_fact| @groups[group_name][resolved_fact.name] = resolved_fact.value}
       end
 
       begin
