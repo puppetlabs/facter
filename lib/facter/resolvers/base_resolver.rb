@@ -11,6 +11,11 @@ module Facter
         @fact_list = {}
       end
 
+      def self.init_resolver
+        @fact_list = {}
+        @semaphore = Mutex.new
+      end
+
       def self.subscribe_to_manager
         Facter::SessionCache.subscribe(self)
       end

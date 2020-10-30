@@ -7,8 +7,7 @@ module Facter
       # :version
       # :codename
 
-      @semaphore = Mutex.new
-      @fact_list ||= {}
+      init_resolver
 
       class << self
         private

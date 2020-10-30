@@ -14,8 +14,7 @@ module Facter
         # :role_service
         # :role_impl
 
-        @semaphore = Mutex.new
-        @fact_list ||= {}
+        init_resolver
 
         VIRTINFO_MAPPING = {
           chassis_serial: %w[DOMAINCHASSIS serialno],

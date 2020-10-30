@@ -4,8 +4,8 @@ module Facter
   module Resolvers
     module Aix
       class Mountpoints < BaseResolver
-        @semaphore = Mutex.new
-        @fact_list ||= {}
+        init_resolver
+
         BLOCK_SIZE = 512
 
         class << self

@@ -3,8 +3,7 @@
 module Facter
   module Resolvers
     class Xen < BaseResolver
-      @semaphore = Mutex.new
-      @fact_list ||= {}
+      init_resolver
 
       XEN_PATH = '/proc/xen/capabilities'
       XEN_TOOLSTACK = '/usr/lib/xen-common/bin/xen-toolstack'

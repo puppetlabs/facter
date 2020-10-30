@@ -5,8 +5,7 @@ module Facter
     module Windows
       class Networking < BaseResolver
         @log = Facter::Log.new(self)
-        @semaphore = Mutex.new
-        @fact_list ||= {}
+        init_resolver
 
         class << self
           private

@@ -5,8 +5,7 @@ module Facter
     class PuppetVersionResolver < BaseResolver
       # :puppetversion
 
-      @semaphore = Mutex.new
-      @fact_list ||= {}
+      init_resolver
 
       class << self
         private

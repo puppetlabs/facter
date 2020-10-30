@@ -3,8 +3,7 @@
 module Facter
   module Resolvers
     class Ec2 < BaseResolver
-      @semaphore = Mutex.new
-      @fact_list ||= {}
+      init_resolver
 
       EC2_METADATA_ROOT_URL = 'http://169.254.169.254/latest/meta-data/'
       EC2_USERDATA_ROOT_URL = 'http://169.254.169.254/latest/user-data/'

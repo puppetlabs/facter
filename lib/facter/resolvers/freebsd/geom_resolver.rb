@@ -4,8 +4,8 @@ module Facter
   module Resolvers
     module Freebsd
       class Geom < BaseResolver
-        @semaphore = Mutex.new
-        @fact_list ||= {}
+        init_resolver
+
         DISKS_ATTRIBUTES = %i[read_model read_serial_number read_size].freeze
         PARTITIONS_ATTRIBUTES = %i[read_partlabel read_partuuid read_size].freeze
 

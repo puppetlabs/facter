@@ -5,8 +5,7 @@ require 'win32/registry'
 module Facter
   module Resolvers
     class ProductRelease < BaseResolver
-      @semaphore = Mutex.new
-      @fact_list ||= {}
+      init_resolver
 
       class << self
         private

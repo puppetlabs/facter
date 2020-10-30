@@ -6,8 +6,7 @@ module Facter
       class Processors < BaseResolver
         @log = Facter::Log.new(self)
 
-        @semaphore = Mutex.new
-        @fact_list ||= {}
+        init_resolver
 
         MHZ_TO_HZ = 1_000_000
 

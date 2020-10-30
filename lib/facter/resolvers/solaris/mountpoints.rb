@@ -5,8 +5,7 @@ module Facter
     module Solaris
       class Mountpoints < BaseResolver
         include Facter::FilesystemHelper
-        @semaphore = Mutex.new
-        @fact_list ||= {}
+        init_resolver
 
         class << self
           private

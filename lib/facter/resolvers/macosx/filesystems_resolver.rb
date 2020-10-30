@@ -5,8 +5,7 @@ module Facter
     module Macosx
       class Filesystems < BaseResolver
         # :macosx_filesystems
-        @semaphore = Mutex.new
-        @fact_list ||= {}
+        init_resolver
 
         class << self
           private

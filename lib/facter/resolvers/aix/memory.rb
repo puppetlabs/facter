@@ -4,9 +4,9 @@ module Facter
   module Resolvers
     module Aix
       class Memory < BaseResolver
-        @semaphore = Mutex.new
+        init_resolver
         # :hardware
-        @fact_list ||= {}
+
         class << self
           private
 

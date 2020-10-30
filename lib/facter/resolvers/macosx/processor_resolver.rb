@@ -4,8 +4,8 @@ module Facter
   module Resolvers
     module Macosx
       class Processors < BaseResolver
-        @semaphore = Mutex.new
-        @fact_list = {}
+        init_resolver
+
         ITEMS = { logical_count: 'hw.logicalcpu_max',
                   physical_count: 'hw.physicalcpu_max',
                   brand: 'machdep.cpu.brand_string',

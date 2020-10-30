@@ -4,8 +4,7 @@ module Facter
   module Resolvers
     module Linux
       class Memory < BaseResolver
-        @semaphore = Mutex.new
-        @fact_list ||= {}
+        init_resolver
 
         @log = Facter::Log.new(self)
 

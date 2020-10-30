@@ -3,8 +3,7 @@
 module Facter
   module Resolvers
     class Lspci < BaseResolver
-      @semaphore = Mutex.new
-      @fact_list ||= {}
+      init_resolver
 
       REGEX_VALUES = { 'VirtualBox' => 'virtualbox', 'XenSource' => 'xenhvm',
                        'Microsoft Corporation Hyper-V' => 'hyperv', 'Class 8007: Google, Inc' => 'gce',

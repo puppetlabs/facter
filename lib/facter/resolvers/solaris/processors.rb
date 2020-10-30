@@ -4,8 +4,8 @@ module Facter
   module Resolvers
     module Solaris
       class Processors < BaseResolver
-        @semaphore = Mutex.new
-        @fact_list ||= {}
+        init_resolver
+
         class << self
           private
 

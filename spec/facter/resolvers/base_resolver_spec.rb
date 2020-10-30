@@ -4,8 +4,8 @@ describe Facter::Resolvers::BaseResolver do
   let(:fact) { 'fact' }
   let(:resolver) do
     Class.new(Facter::Resolvers::BaseResolver) do
-      @semaphore = Mutex.new
-      @fact_list = {}
+      init_resolver
+
       def self.post_resolve(fact_name)
         @fact_list[fact_name] = 'value'
         @fact_list

@@ -8,8 +8,7 @@ module Facter
       class Uptime < BaseResolver
         @log = Facter::Log.new(self)
 
-        @semaphore = Mutex.new
-        @fact_list ||= {}
+        init_resolver
 
         class << self
           private

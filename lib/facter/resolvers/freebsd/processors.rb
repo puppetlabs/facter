@@ -6,9 +6,9 @@ module Facter
   module Resolvers
     module Freebsd
       class Processors < BaseResolver
-        @semaphore = Mutex.new
+        init_resolver
         @log = Facter::Log.new(self)
-        @fact_list ||= {}
+
         class << self
           private
 

@@ -3,8 +3,7 @@
 module Facter
   module Resolvers
     class Partitions < BaseResolver
-      @semaphore = Mutex.new
-      @fact_list ||= {}
+      init_resolver
 
       BLOCK_PATH = '/sys/block'
       BLOCK_SIZE = 512

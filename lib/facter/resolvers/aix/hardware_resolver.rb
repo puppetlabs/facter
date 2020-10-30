@@ -4,8 +4,8 @@ module Facter
   module Resolvers
     class Hardware < BaseResolver
       # :hardware
-      @semaphore = Mutex.new
-      @fact_list ||= {}
+      init_resolver
+
       class << self
         private
 

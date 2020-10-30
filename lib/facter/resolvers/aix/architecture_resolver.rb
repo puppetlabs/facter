@@ -4,8 +4,8 @@ module Facter
   module Resolvers
     class Architecture < BaseResolver
       # :architecture
-      @semaphore = Mutex.new
-      @fact_list ||= {}
+      init_resolver
+
       class << self
         private
 

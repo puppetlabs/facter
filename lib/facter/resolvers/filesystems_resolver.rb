@@ -6,8 +6,7 @@ module Facter
       class Filesystems < BaseResolver
         # :systems
 
-        @semaphore = Mutex.new
-        @fact_list ||= {}
+        init_resolver
 
         @log = Facter::Log.new(self)
 
