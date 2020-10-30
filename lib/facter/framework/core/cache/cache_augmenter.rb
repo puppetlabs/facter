@@ -18,7 +18,7 @@ module Facter
                       end
 
           ttls.each do |fact_key, details|
-            fact.cache_group = details[:cache_group] if fact_name =~ /^#{fact_key}[\.]?.*/
+            fact.cache_group = details[:cache_group] if fact_name =~ /^#{fact_key}\..*/ || fact_name =~ /^#{fact_key}$/
           end
         end
       end
