@@ -53,7 +53,8 @@ module LegacyFacter
       private
 
       def load_directory_entries(_collection)
-        cm = Facter::CacheManager.new
+        cache_reader = Facter::Cache::CacheReader.new
+        cache_augmenter = Facter::Cache::CacheAugmenter.new
         facts = []
         entries.each do |file|
           basename = File.basename(file)
@@ -61,7 +62,7 @@ module LegacyFacter
 
           searched_fact = Facter::SearchedFact.new(basename, nil, [], nil, :file)
           searched_fact.file = file
-          cm.augment_with_cache_group([searched_fact])
+          cache_augmenter.augment_with_cache_group([searched_fact])
 
           if facts.find { |f| f.name == basename } && searched_fact.cache_group != nil
             Facter.log_exception(Exception.new("Caching is enabled for group \"#{basename}\" while "\
@@ -71,7 +72,7 @@ module LegacyFacter
           end
         end
 
-        cm.resolve_facts(facts)
+        cache_reader.read_from_cache(facts)
       end
 
       def load_cached_facts(collection, cached_facts, weight)
