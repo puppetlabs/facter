@@ -4,13 +4,14 @@ describe Facter::Resolvers::NetworkingLinux do
   subject(:networking_linux) { Facter::Resolvers::NetworkingLinux }
 
   let(:log_spy) { instance_spy(Facter::Log) }
+  let(:ip_command) { load_fixture('ip_o_address_linux').read }
 
   describe '#resolve' do
     before do
       networking_linux.instance_variable_set(:@log, log_spy)
       allow(Facter::Core::Execution).to receive(:execute)
         .with('ip -o address', logger: log_spy)
-        .and_return(load_fixture('ip_o_address_linux').read)
+        .and_return(ip_command)
       allow(Facter::Core::Execution).to receive(:execute)
         .with('ip route get 1', logger: log_spy)
         .and_return(load_fixture('ip_route_get_1_linux').read)
@@ -123,6 +124,47 @@ describe Facter::Resolvers::NetworkingLinux do
         }
       }
     end
+
+    let(:result_with_peer) do
+      {
+        'lo' => {
+          bindings: [
+            { address: '127.0.0.1', netmask: '255.0.0.0', network: '127.0.0.0' }
+          ],
+          bindings6: [
+            { address: '::1', netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff', network: '::1' }
+          ],
+          dhcp: '10.32.22.9',
+          ip: '127.0.0.1',
+          ip6: '::1',
+          mtu: 65_536,
+          netmask: '255.0.0.0',
+          netmask6: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+          network: '127.0.0.0',
+          network6: '::1',
+          scope6: 'host'
+        },
+        'ens160' => {
+          bindings: [
+            { address: '127.0.0.1', netmask: '255.0.0.0', network: '127.0.0.0' },
+            { address: '10.141.0.2', netmask: '255.255.255.255', network: '10.141.0.2' }
+          ],
+          bindings6: [
+            { address: 'fe80::250:56ff:fe9a:8481', netmask: 'ffff:ffff:ffff:ffff::', network: 'fe80::' }
+          ],
+          dhcp: '10.32.22.10',
+          ip: '10.141.0.2',
+          ip6: 'fe80::250:56ff:fe9a:8481',
+          mac: '00:50:56:9a:61:46',
+          mtu: 1500,
+          netmask: '255.255.255.255',
+          netmask6: 'ffff:ffff:ffff:ffff::',
+          network: '10.141.0.2',
+          network6: 'fe80::',
+          scope6: 'link'
+        }
+      }
+    end
     let(:macaddress) { '00:50:56:9a:ec:fb' }
 
     it 'returns all the interfaces' do
@@ -151,14 +193,18 @@ describe Facter::Resolvers::NetworkingLinux do
     end
 
     context 'when 127.0.0.1 is first ip' do
-      before do
-        allow(Facter::Core::Execution).to receive(:execute)
-          .with('ip -o address', logger: log_spy)
-          .and_return(load_fixture('ip_o_address_linux_with_127_first').read)
-      end
+      let(:ip_command) { load_fixture('ip_o_address_linux_with_127_first').read }
 
       it 'is ignored and the next ip is used' do
         expect(networking_linux.resolve(:interfaces)).to eq(result_with_127_first)
+      end
+    end
+
+    context 'when there is a peer ip address' do
+      let(:ip_command) { load_fixture('ip_o_address_with_peer').read }
+
+      it 'resolves all bindings' do
+        expect(networking_linux.resolve(:interfaces)).to eq(result_with_peer)
       end
     end
 

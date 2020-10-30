@@ -19,6 +19,12 @@ describe Resolvers::Utils::Networking do
       end
     end
 
+    context "when mask's length is nil" do
+      it 'returns nil' do
+        expect(networking_helper.build_binding(ipv4, nil)).to be(nil)
+      end
+    end
+
     context 'when input is ipv6 address' do
       let(:network) do
         IPAddr.new('fe80:0000:0000:0000:0000:0000:0000:0000/ffff:ffff:ffff:ffff:0000:0000:0000:0000').to_s

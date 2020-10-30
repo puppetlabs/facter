@@ -12,6 +12,8 @@ module Resolvers
         #
         # @return [Hash] Hash containing ip address, netmask and network
         def build_binding(addr, mask_length)
+          return if !addr || !mask_length
+
           ip = IPAddr.new(addr)
           mask_helper = ip.ipv6? ? 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff' : '255.255.255.255'
           mask = IPAddr.new(mask_helper).mask(mask_length)
