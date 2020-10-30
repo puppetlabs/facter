@@ -56,18 +56,30 @@ describe Facts::Solaris::Hypervisors::Ldom do
       end
 
       context 'when role_control is false' do
-        let(:value) do
-          {
-            'chassis_serial' => nil,
-            'control_domain' => nil,
-            'domain_name' => nil,
-            'domain_uuid' => nil,
-            'role_control' => nil,
-            'role_io' => nil,
-            'role_root' => nil,
-            'role_service' => nil
-          }
+        let(:value) { nil }
+
+        it 'returns virtual fact as physical' do
+          expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+            have_attributes(name: 'hypervisors.ldom', value: value)
         end
+      end
+    end
+
+    context 'when ldom resolver returns empty string' do
+      before do
+        allow(Facter::Resolvers::Solaris::Ldom).to receive(:resolve).with(:chassis_serial).and_return('')
+        allow(Facter::Resolvers::Solaris::Ldom).to receive(:resolve).with(:control_domain).and_return('')
+        allow(Facter::Resolvers::Solaris::Ldom).to receive(:resolve).with(:domain_name).and_return('')
+        allow(Facter::Resolvers::Solaris::Ldom).to receive(:resolve).with(:role_control).and_return('')
+        allow(Facter::Resolvers::Solaris::Ldom).to receive(:resolve).with(:role_impl).and_return('')
+        allow(Facter::Resolvers::Solaris::Ldom).to receive(:resolve).with(:role_io).and_return('')
+        allow(Facter::Resolvers::Solaris::Ldom).to receive(:resolve).with(:role_root).and_return('')
+        allow(Facter::Resolvers::Solaris::Ldom).to receive(:resolve).with(:role_service).and_return('')
+        allow(Facter::Resolvers::Solaris::Ldom).to receive(:resolve).with(:domain_uuid).and_return('')
+      end
+
+      context 'when role_control is false' do
+        let(:value) { nil }
 
         it 'returns virtual fact as physical' do
           expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \

@@ -10,8 +10,11 @@ module Facts
       end
 
       def call_the_resolver
+        chassis_serial = resolve(:chassis_serial)
+        return Facter::ResolvedFact.new(FACT_NAME, nil) if !chassis_serial || chassis_serial.empty?
+
         fact_value = {
-          domainchassis: resolve(:chassis_serial),
+          domainchassis: chassis_serial,
           domaincontrol: resolve(:control_domain),
           domainname: resolve(:domain_name),
           domainrole: {
