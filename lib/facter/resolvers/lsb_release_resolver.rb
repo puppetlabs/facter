@@ -9,7 +9,7 @@ module Facter
       # :release
       # :codename
 
-      @fact_list ||= {}
+      init_resolver
 
       class << self
         private

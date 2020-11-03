@@ -4,7 +4,9 @@ module Facter
   module Resolvers
     class Memory < BaseResolver
       @log = Facter::Log.new(self)
-      @fact_list ||= {}
+
+      init_resolver
+
       class << self
         private
 

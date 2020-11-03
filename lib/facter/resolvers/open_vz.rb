@@ -5,7 +5,7 @@ module Facter
     class OpenVz < BaseResolver
       # build
 
-      @fact_list ||= {}
+      init_resolver
 
       class << self
         private

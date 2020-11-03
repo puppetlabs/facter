@@ -5,8 +5,11 @@ module Facter
     module Linux
       class FipsEnabled < BaseResolver
         #:fips_enabled
-        @fact_list ||= {}
+
+        init_resolver
+
         @log = Facter::Log.new(self)
+
         class << self
           private
 

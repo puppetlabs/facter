@@ -5,7 +5,7 @@ module Facter
     module Macosx
       class Filesystems < BaseResolver
         # :macosx_filesystems
-        @fact_list ||= {}
+        init_resolver
 
         class << self
           private

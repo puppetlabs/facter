@@ -4,10 +4,11 @@ module Facter
   module Resolvers
     module Solaris
       class Memory < BaseResolver
+        init_resolver
         BLOCKSIZE = 512
         # :system
         # :swap
-        @fact_list ||= {}
+
         class << self
           private
 

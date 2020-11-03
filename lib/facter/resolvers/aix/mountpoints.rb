@@ -4,7 +4,8 @@ module Facter
   module Resolvers
     module Aix
       class Mountpoints < BaseResolver
-        @fact_list ||= {}
+        init_resolver
+
         BLOCK_SIZE = 512
 
         class << self

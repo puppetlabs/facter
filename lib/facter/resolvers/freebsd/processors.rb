@@ -6,8 +6,9 @@ module Facter
   module Resolvers
     module Freebsd
       class Processors < BaseResolver
+        init_resolver
         @log = Facter::Log.new(self)
-        @fact_list ||= {}
+
         class << self
           private
 

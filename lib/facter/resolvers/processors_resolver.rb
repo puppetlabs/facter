@@ -5,8 +5,11 @@ module Facter
     module Linux
       class Processors < BaseResolver
         @log = Facter::Log.new(self)
-        @fact_list ||= {}
+
+        init_resolver
+
         MHZ_TO_HZ = 1_000_000
+
         class << self
           # :count
           # :models

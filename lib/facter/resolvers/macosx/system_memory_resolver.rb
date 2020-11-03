@@ -4,7 +4,8 @@ module Facter
   module Resolvers
     module Macosx
       class SystemMemory < BaseResolver
-        @fact_list ||= {}
+        init_resolver
+
         class << self
           private
 

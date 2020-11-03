@@ -7,7 +7,15 @@ module Facter
     def resolve_facts(searched_facts)
       internal_searched_facts = filter_internal_facts(searched_facts)
 
-      resolved_facts = resolve(internal_searched_facts)
+      resolved_facts = if Options[:sequential]
+                         @@log.debug('Resolving facts sequentially')
+                         resolve_sequentially(internal_searched_facts)
+                       else
+                         @@log.debug('Resolving fact in parallel')
+                         threads = start_threads(internal_searched_facts)
+                         join_threads(threads, internal_searched_facts)
+                       end
+
       nil_resolved_facts = resolve_nil_facts(searched_facts)
 
       resolved_facts.concat(nil_resolved_facts)
@@ -28,7 +36,7 @@ module Facter
       resolved_facts
     end
 
-    def resolve(searched_facts)
+    def resolve_sequentially(searched_facts)
       resolved_facts = []
 
       searched_facts
@@ -46,6 +54,33 @@ module Facter
 
       resolved_facts.flatten!
       FactAugmenter.augment_resolved_facts(searched_facts, resolved_facts)
+    end
+
+    def start_threads(searched_facts)
+      # only resolve a fact once, even if multiple search facts depend on that fact
+      searched_facts
+        .uniq { |searched_fact| searched_fact.fact_class.name }
+        .map do |searched_fact|
+        Thread.new do
+          resolve_fact(searched_fact)
+        end
+      end
+    end
+
+    def join_threads(threads, searched_facts)
+      resolved_facts = threads.map(&:value)
+      resolved_facts.compact!
+      resolved_facts.flatten!
+
+      FactAugmenter.augment_resolved_facts(searched_facts, resolved_facts)
+    end
+
+    def resolve_fact(searched_fact)
+      fact = CoreFact.new(searched_fact)
+      fact.create
+    rescue StandardError => e
+      @@log.log_exception(e)
+      nil
     end
   end
 end

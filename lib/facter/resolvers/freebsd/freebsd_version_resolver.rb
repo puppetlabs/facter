@@ -4,7 +4,7 @@ module Facter
   module Resolvers
     module Freebsd
       class FreebsdVersion < BaseResolver
-        @fact_list ||= {}
+        init_resolver
 
         class << self
           private

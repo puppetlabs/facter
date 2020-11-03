@@ -4,7 +4,7 @@ module Facter
   module Resolvers
     module Aix
       class Networking < BaseResolver
-        @fact_list ||= {}
+        init_resolver
 
         class << self
           private

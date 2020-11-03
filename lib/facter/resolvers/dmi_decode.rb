@@ -3,7 +3,7 @@
 module Facter
   module Resolvers
     class DmiDecode < BaseResolver
-      @fact_list ||= {}
+      init_resolver
 
       ADDRESS_TO_VERSION = {
         0xe8480 => 'ESXi 2.5',

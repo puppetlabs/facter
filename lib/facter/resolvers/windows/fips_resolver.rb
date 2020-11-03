@@ -7,7 +7,8 @@ module Facter
     module Windows
       class Fips < BaseResolver
         # :fips_enabled
-        @fact_list ||= {}
+        init_resolver
+
         class << self
           private
 

@@ -6,8 +6,8 @@ module Facter
       # :productname
       # :productversion
       # :buildversion
-      #
-      @fact_list ||= {}
+
+      init_resolver
 
       class << self
         private

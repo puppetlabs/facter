@@ -3,7 +3,8 @@
 module Facter
   module Resolvers
     class ZFS < BaseResolver
-      @fact_list ||= {}
+      init_resolver
+
       class << self
         private
 

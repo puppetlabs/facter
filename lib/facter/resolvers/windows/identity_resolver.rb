@@ -5,7 +5,8 @@ module Facter
     class Identity < BaseResolver
       NAME_SAM_COMPATIBLE = 2
       @log = Facter::Log.new(self)
-      @fact_list ||= {}
+
+      init_resolver
 
       class << self
         private

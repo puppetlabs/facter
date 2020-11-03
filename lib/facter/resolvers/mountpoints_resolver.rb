@@ -4,8 +4,11 @@ module Facter
   module Resolvers
     class Mountpoints < BaseResolver
       include Facter::FilesystemHelper
-      @fact_list ||= {}
+
+      init_resolver
+
       @log = Facter::Log.new(self)
+
       class << self
         private
 

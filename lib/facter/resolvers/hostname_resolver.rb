@@ -3,7 +3,8 @@
 module Facter
   module Resolvers
     class Hostname < BaseResolver
-      @fact_list ||= {}
+      init_resolver
+
       class << self
         private
 

@@ -5,8 +5,11 @@ module Facter
     module Linux
       class Filesystems < BaseResolver
         # :systems
-        @fact_list ||= {}
+
+        init_resolver
+
         @log = Facter::Log.new(self)
+
         class << self
           private
 

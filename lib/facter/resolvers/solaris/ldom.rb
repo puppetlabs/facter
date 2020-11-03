@@ -14,7 +14,7 @@ module Facter
         # :role_service
         # :role_impl
 
-        @fact_list ||= {}
+        init_resolver
 
         VIRTINFO_MAPPING = {
           chassis_serial: %w[DOMAINCHASSIS serialno],

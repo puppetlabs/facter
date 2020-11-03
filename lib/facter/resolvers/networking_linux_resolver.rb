@@ -3,7 +3,8 @@
 module Facter
   module Resolvers
     class NetworkingLinux < BaseResolver
-      @fact_list = {}
+      init_resolver
+
       DIRS = ['/var/lib/dhclient/', '/var/lib/dhcp/', '/var/lib/dhcp3/', '/var/lib/NetworkManager/', '/var/db/'].freeze
 
       class << self
@@ -16,8 +17,6 @@ module Facter
         end
 
         def retrieve_network_info(fact_name)
-          @fact_list ||= {}
-
           retrieve_interface_info
           retrieve_interfaces_mac_and_mtu
           retrieve_default_interface

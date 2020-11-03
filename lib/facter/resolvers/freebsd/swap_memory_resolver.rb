@@ -4,7 +4,8 @@ module Facter
   module Resolvers
     module Freebsd
       class SwapMemory < BaseResolver
-        @fact_list ||= {}
+        init_resolver
+
         class << self
           private
 

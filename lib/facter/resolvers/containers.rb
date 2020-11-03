@@ -6,7 +6,8 @@ module Facter
       # :virtual
       # :hypervisor
 
-      @fact_list ||= {}
+      init_resolver
+
       INFO = { 'docker' => 'id', 'lxc' => 'name' }.freeze
 
       class << self

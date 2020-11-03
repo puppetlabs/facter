@@ -3,7 +3,7 @@
 module Facter
   module Resolvers
     class Ruby < BaseResolver
-      @fact_list ||= {}
+      init_resolver
 
       class << self
         private

@@ -4,9 +4,12 @@ module Facter
   module Resolvers
     class SshResolver < BaseResolver
       @log = Facter::Log.new(self)
-      @fact_list ||= {}
+
+      init_resolver
+
       FILE_NAMES = %w[ssh_host_rsa_key.pub ssh_host_dsa_key.pub ssh_host_ecdsa_key.pub ssh_host_ed25519_key.pub].freeze
       FILE_PATHS = %w[/etc/ssh /usr/local/etc/ssh /etc /usr/local/etc /etc/opt/ssh].freeze
+
       class << self
         private
 

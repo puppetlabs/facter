@@ -4,7 +4,8 @@ describe Facter::Resolvers::BaseResolver do
   let(:fact) { 'fact' }
   let(:resolver) do
     Class.new(Facter::Resolvers::BaseResolver) do
-      @fact_list = {}
+      init_resolver
+
       def self.post_resolve(fact_name)
         @fact_list[fact_name] = 'value'
         @fact_list
@@ -93,17 +94,17 @@ describe Facter::Resolvers::BaseResolver do
 
   describe '#validate_resolution' do
     before do
-      allow(resolver).to receive(:validate_resolution)
+      allow(resolver).to receive(:cache_nil_for_unresolved_facts)
     end
 
     it 'sets the fact to nil if undefined' do
-      resolver.validate_resolution('unresolved_fact')
+      resolver.cache_nil_for_unresolved_facts('unresolved_fact')
       expect(resolver.resolve('unresolved_fact')).to be_nil
     end
 
     it 'does not overwrite values' do
       resolver.resolve('my_fact')
-      resolver.validate_resolution('my_fact')
+      resolver.cache_nil_for_unresolved_facts('my_fact')
 
       expect(resolver.post_resolve('my_fact')).to eq({ 'my_fact' => 'value' })
     end

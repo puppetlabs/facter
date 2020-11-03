@@ -15,7 +15,7 @@ module Facter
         SP_ETHERNET_DATA_TYPE = %i[type bus vendor_id device_id subsystem_vendor_id
                                    subsystem_id revision_id bsd_name kext_name location version].freeze
 
-        @fact_list = {}
+        init_resolver
 
         class << self
           private
@@ -25,8 +25,6 @@ module Facter
           end
 
           def retrieve_system_profiler(fact_name)
-            @fact_list ||= {}
-
             case fact_name
             when *SP_HARDWARE_DATA_TYPE
               @fact_list.merge!(SystemProfileExecutor.execute('SPHardwareDataType'))

@@ -5,9 +5,12 @@ module Facter
     module Linux
       class Disk < BaseResolver
         @log = Facter::Log.new(self)
-        @fact_list ||= {}
+
+        init_resolver
+
         DIR = '/sys/block'
         FILE_PATHS = { model: 'device/model', size: 'size', vendor: 'device/vendor', type: 'queue/rotational' }.freeze
+
         class << self
           private
 

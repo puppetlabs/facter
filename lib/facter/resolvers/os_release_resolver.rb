@@ -14,7 +14,7 @@ module Facter
       # :support_url
       # :bug_report_url
 
-      @fact_list ||= {}
+      init_resolver
 
       class << self
         private

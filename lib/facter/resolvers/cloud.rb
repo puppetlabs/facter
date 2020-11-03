@@ -5,7 +5,7 @@ module Facter
     class Cloud < BaseResolver
       # cloud_provider
 
-      @fact_list ||= {}
+      init_resolver
 
       class << self
         private

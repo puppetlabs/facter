@@ -4,7 +4,8 @@ module Facter
   module Resolvers
     class Architecture < BaseResolver
       # :architecture
-      @fact_list ||= {}
+      init_resolver
+
       class << self
         private
 

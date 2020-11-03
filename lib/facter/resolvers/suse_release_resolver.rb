@@ -7,7 +7,7 @@ module Facter
       # :version
       # :codename
 
-      @fact_list ||= {}
+      init_resolver
 
       class << self
         private

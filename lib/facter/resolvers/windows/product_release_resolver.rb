@@ -5,7 +5,8 @@ require 'win32/registry'
 module Facter
   module Resolvers
     class ProductRelease < BaseResolver
-      @fact_list ||= {}
+      init_resolver
+
       class << self
         private
 

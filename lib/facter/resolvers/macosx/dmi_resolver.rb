@@ -4,7 +4,7 @@ module Facter
   module Resolvers
     module Macosx
       class DmiBios < BaseResolver
-        @fact_list ||= {}
+        init_resolver
 
         class << self
           #:model

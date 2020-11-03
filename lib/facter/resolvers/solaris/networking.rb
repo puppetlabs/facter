@@ -7,8 +7,8 @@ module Facter
   module Resolvers
     module Solaris
       class Networking < BaseResolver
+        init_resolver
         @log = Facter::Log.new(self)
-        @fact_list ||= {}
 
         class << self
           private

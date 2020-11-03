@@ -5,8 +5,8 @@ module Facter
     module Solaris
       class Mountpoints < BaseResolver
         include Facter::FilesystemHelper
-        @fact_list ||= {}
-        @log = Facter::Log.new(self)
+        init_resolver
+
         class << self
           private
 

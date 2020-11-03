@@ -5,7 +5,7 @@ module Facter
     module Windows
       class AioAgentVersion < BaseResolver
         REGISTRY_PATH = 'SOFTWARE\\Puppet Labs\\Puppet'
-        @fact_list ||= {}
+        init_resolver
 
         class << self
           private

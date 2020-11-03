@@ -5,7 +5,7 @@ module Facter
     class PuppetVersionResolver < BaseResolver
       # :puppetversion
 
-      @fact_list ||= {}
+      init_resolver
 
       class << self
         private

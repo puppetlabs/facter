@@ -177,6 +177,18 @@ module Facter
       Facter::Options[:debug] = debug_bool
     end
 
+    def enable_sequential
+      Facter::Options[:sequential] = true
+    end
+
+    def disable_sequential
+      Facter::Options[:sequential] = false
+    end
+
+    def sequential?
+      Facter::Options[:sequential]
+    end
+
     # Iterates over fact names and values
     #
     # @yieldparam [String] name the fact name

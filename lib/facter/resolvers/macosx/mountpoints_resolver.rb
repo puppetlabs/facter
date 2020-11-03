@@ -5,7 +5,8 @@ module Facter
     module Macosx
       class Mountpoints < BaseResolver
         include Facter::FilesystemHelper
-        @fact_list ||= {}
+        init_resolver
+
         class << self
           private
 

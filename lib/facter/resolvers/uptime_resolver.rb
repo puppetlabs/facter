@@ -3,7 +3,7 @@
 module Facter
   module Resolvers
     class Uptime < BaseResolver
-      @fact_list ||= {}
+      init_resolver
 
       class << self
         private

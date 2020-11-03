@@ -4,8 +4,9 @@ module Facter
   module Resolvers
     module Aix
       class Memory < BaseResolver
+        init_resolver
         # :hardware
-        @fact_list ||= {}
+
         class << self
           private
 

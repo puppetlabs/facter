@@ -4,7 +4,8 @@ module Facter
   module Resolvers
     module Macosx
       class SwapMemory < BaseResolver
-        @fact_list ||= {}
+        init_resolver
+
         class << self
           private
 

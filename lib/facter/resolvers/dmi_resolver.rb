@@ -5,7 +5,8 @@ module Facter
     module Linux
       class DmiBios < BaseResolver
         @log = Facter::Log.new(self)
-        @fact_list ||= {}
+
+        init_resolver
 
         class << self
           # :bios_vendor

@@ -3,7 +3,8 @@
 module Facter
   module Resolvers
     class Partitions < BaseResolver
-      @fact_list ||= {}
+      init_resolver
+
       BLOCK_PATH = '/sys/block'
       BLOCK_SIZE = 512
 

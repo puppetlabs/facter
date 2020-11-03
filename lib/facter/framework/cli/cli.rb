@@ -93,6 +93,10 @@ module Facter
                  aliases: '-t',
                  desc: 'Show how much time it took to resolve each fact'
 
+    class_option :sequential,
+                 type: :boolean,
+                 desc: 'Resolve facts sequentially'
+
     desc '--man', 'Display manual.', hide: true
     map ['--man'] => :man
     def man(*args)

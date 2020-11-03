@@ -19,14 +19,18 @@ module Facter
       private
 
       def augment_all
-        if Options.cli?
-          augment_cli(Facter::ConfigReader.cli)
-          augment_ruby(Facter::ConfigReader.global)
-        end
+        augment_cli(Facter::ConfigReader.cli) if Options.cli?
+        augment_globals
+        augment_facts(Facter::ConfigReader.ttls, Facter::ConfigReader.fact_groups)
+      end
+
+      def augment_globals
+        augment_ruby(Facter::ConfigReader.global)
+
         augment_custom(Facter::ConfigReader.global)
         augment_external(Facter::ConfigReader.global)
         augment_show_legacy(Facter::ConfigReader.global)
-        augment_facts(Facter::ConfigReader.ttls, Facter::ConfigReader.fact_groups)
+        augment_sequential(Facter::ConfigReader.global)
       end
 
       def augment_config_path(config_path)
@@ -68,6 +72,7 @@ module Facter
 
       def augment_ruby(global_conf)
         return unless global_conf
+        return unless Options.cli?
 
         @options[:no_ruby] = global_conf['no-ruby'].nil? ? false : global_conf['no-ruby']
       end
@@ -76,6 +81,12 @@ module Facter
         return unless global_conf
 
         @options[:show_legacy] = global_conf['show-legacy'] unless global_conf['show-legacy'].nil?
+      end
+
+      def augment_sequential(global_conf)
+        return unless global_conf
+
+        @options[:sequential] = global_conf['sequential'] unless global_conf['sequential'].nil?
       end
 
       def augment_facts(ttls, groups)

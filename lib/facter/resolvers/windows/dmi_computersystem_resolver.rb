@@ -4,7 +4,7 @@ module Facter
   module Resolvers
     class DMIComputerSystem < BaseResolver
       @log = Facter::Log.new(self)
-      @fact_list ||= {}
+      init_resolver
 
       class << self
         # Name
