@@ -16,7 +16,7 @@ module Facter
     private_class_method def self.get_resolved_facts_for_searched_fact(searched_fact, resolved_facts)
       if searched_fact.name.include?('.*')
         resolved_facts
-          .select { |resolved_fact| resolved_fact.name.match(searched_fact.user_query) }
+          .select { |resolved_fact| resolved_fact.name.match(searched_fact.name) }
           .reject(&:user_query)
           .uniq(&:name)
       else
@@ -31,6 +31,7 @@ module Facter
       matched_facts.each do |matched_fact|
         matched_fact.user_query = searched_fact.user_query
         matched_fact.filter_tokens = searched_fact.filter_tokens
+        matched_fact.cache_group = searched_fact.cache_group
       end
     end
   end

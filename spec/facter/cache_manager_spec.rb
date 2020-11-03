@@ -25,8 +25,8 @@ describe Facter::CacheManager do
   let(:group_name) { 'operating system' }
   let(:cache_file_name) { File.join(cache_dir, group_name) }
   let(:fact_groups) { instance_spy(Facter::FactGroups) }
-  let(:os_fact) { { ttls: 60, group: 'operating system' } }
-  let(:external_fact) { { ttls: 60, group: 'ext_file.txt' } }
+  let(:os_fact) { {ttls: 60, cache_group: 'operating system' } }
+  let(:external_fact) { {ttls: 60, cache_group: 'ext_file.txt' } }
 
   before do
     allow(LegacyFacter::Util::Config).to receive(:facts_cache_dir).and_return(cache_dir)

@@ -7,12 +7,12 @@ describe Facts::Freebsd::Identity::Group do
     let(:value) { 'staff' }
 
     before do
-      allow(Facter::Resolvers::PosxIdentity).to receive(:resolve).with(:group).and_return(value)
+      allow(Facter::Resolvers::PosxIdentity).to receive(:resolve).with(:cache_group).and_return(value)
     end
 
     it 'calls Facter::Resolvers::PosxIdentity' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::PosxIdentity).to have_received(:resolve).with(:group)
+      expect(Facter::Resolvers::PosxIdentity).to have_received(:resolve).with(:cache_group)
     end
 
     it 'returns identity group fact' do
