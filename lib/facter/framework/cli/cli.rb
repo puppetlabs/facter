@@ -158,8 +158,16 @@ module Facter
 
     desc '--puppet, -p', '(NOT SUPPORTED)Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.'
     map ['--puppet', '-p'] => :puppet
-    def puppet(*_args)
-      puts '`facter --puppet` and `facter -p` are no longer supported, use `puppet facts show` instead'
+    def puppet(*args)
+      log = Log.new(self)
+      log.warn('`facter --puppet` and `facter -p` are no longer supported, use `puppet facts show` instead')
+      log.warn('the output does not contain puppet facts!')
+
+      output, status = Facter.to_user_output(@options, *args)
+      puts output
+
+      status = 1 if Facter::Log.errors?
+      exit status
     end
 
     desc 'help', 'Help for all arguments'
