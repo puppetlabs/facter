@@ -11,7 +11,12 @@ module Facter
 
       return unless fact_class
 
-      fact_class.new.call_the_resolver
+      fact_value = nil
+      Facter::Framework::Benchmarking::Timer.measure(@searched_fact.name) do
+        fact_value = fact_class.new.call_the_resolver
+      end
+
+      fact_value
     end
   end
 end
