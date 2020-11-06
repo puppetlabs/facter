@@ -214,6 +214,7 @@ module Facter
       end
 
       def build_option(name, aliases, description)
+        name = name.tr('_', '-')
         help_option = +''
         help_option << aliases.join(',').rjust(10)
         help_option << ' '
