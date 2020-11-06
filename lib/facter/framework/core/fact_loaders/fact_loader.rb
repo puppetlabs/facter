@@ -84,7 +84,7 @@ module Facter
 
       blocked_facts.each do |blocked|
         facts.each do |fact|
-          next unless fact.name =~ /^#{blocked}/
+          next unless fact.name =~ /^#{blocked}\..*|^#{blocked}$/
 
           if fact.type == :core
             reject_list_core << fact
