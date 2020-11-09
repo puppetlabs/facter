@@ -11,9 +11,9 @@ task(:commits) do
   commit_range = 'HEAD^..HEAD'
   puts "Checking commits #{commit_range}"
   `git log --no-merges --pretty=%s #{commit_range}`.each_line do |commit_summary|
-    # This regex tests for the currently supported commit summary tokens: maint, doc, gem, or fact-<number>.
+    # This regex tests for the currently supported commit summary tokens: maint, packaging, doc, gem, or fact-<number>.
     # The exception tries to explain it in more full.
-    if /^\((maint|doc|docs|gem|fact-\d+)\)|revert|merge/i.match(commit_summary).nil?
+    if /^\((maint|packaging|doc|docs|gem|fact-\d+)\)|revert|merge/i.match(commit_summary).nil?
       raise "\n\n\n\tThis commit summary didn't match CONTRIBUTING.md guidelines:\n" \
         "\n\t\t#{commit_summary}\n" \
         "\tThe commit summary (i.e. the first line of the commit message) should start with one of:\n"  \
@@ -22,6 +22,7 @@ task(:commits) do
         "\t\t(docs)(DOCUMENT-<digits>)\n" \
         "\t\t(maint)\n" \
         "\t\t(gem)\n" \
+        "\t\t(packaging)\n" \
         "\n\tThis test for the commit summary is case-insensitive.\n\n\n"
     else
       puts commit_summary.to_s
