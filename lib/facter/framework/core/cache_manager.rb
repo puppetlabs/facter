@@ -29,12 +29,14 @@ module Facter
     def cache_facts(resolved_facts)
       return unless Options[:cache] && Options[:ttls].any?
 
+      cached_facts = []
       resolved_facts.each do |fact|
-        cache_fact(fact)
+        group_name = cache_fact(fact)
+        cached_facts << fact if group_name
       end
 
       begin
-        write_cache unless @groups.empty?
+        write_cache(cached_facts) unless cached_facts.empty?
       rescue Errno::EACCES => e
         @log.warn("Could not write cache: #{e.message}")
       end
@@ -87,16 +89,22 @@ module Facter
 
     def create_facts(searched_fact, data)
       if searched_fact.type == :file
-        facts = []
-        data.each do |fact_name, fact_value|
-          fact = Facter::ResolvedFact.new(fact_name, fact_value, searched_fact.type,
-                                          searched_fact.user_query, searched_fact.filter_tokens)
-          fact.file = searched_fact.file
-          facts << fact
-        end
-        facts
+        # facts = []
+        # data.each do |fact_name, fact_value|
+        #   fact = Facter::ResolvedFact.new(fact_name, fact_value, searched_fact.type,
+        #                                   searched_fact.user_query, searched_fact.filter_tokens)
+        #   fact.file = searched_fact.file
+        #   facts << fact
+        # end
+        # facts
+        fact_value = data.dig(*searched_fact.name.split('.'))
+        fact = Facter::ResolvedFact.new(searched_fact.name, fact_value, searched_fact.type,
+                                        searched_fact.user_query, searched_fact.filter_tokens)
+        fact.file = searched_fact.file
+        fact
       else
-        [Facter::ResolvedFact.new(searched_fact.name, data[searched_fact.name], searched_fact.type,
+        fact_value = data.dig(*searched_fact.name.split('.'))
+        [Facter::ResolvedFact.new(searched_fact.name,fact_value, searched_fact.type,
                                   searched_fact.user_query, searched_fact.filter_tokens)]
       end
     end
@@ -114,25 +122,38 @@ module Facter
 
       return unless fact_cache_enabled?(fact_name)
 
-      @groups[group_name] ||= {}
-      @groups[group_name][fact.name] = fact.value
+      group_name
     end
 
-    def write_cache
+    def write_cache(cached_facts)
       unless File.directory?(@cache_dir)
         require 'fileutils'
         FileUtils.mkdir_p(@cache_dir)
       end
 
-      @groups.each do |group_name, data|
-        next unless check_ttls?(group_name, @fact_groups.get_group_ttls(group_name))
+      # data = FactCollection.new.build_fact_collection!(cached_facts)
+
+      @fact_groups.facts_ttls.each do |group_name, random_hash|
+        facts_for_collection = cached_facts.filter { |rf|  rf.name =~ /^#{group_name}/ }
+        value_to_cache = FactCollection.new.build_fact_collection!(facts_for_collection)
+
+        # value_to_cache = data[group_name]
 
         cache_file_name = File.join(@cache_dir, group_name)
         next if File.readable?(cache_file_name)
 
         @log.debug("caching values for #{group_name} facts")
-        File.write(cache_file_name, JSON.pretty_generate(data))
+        File.write(cache_file_name, JSON.pretty_generate(value_to_cache))
       end
+      # @groups.each do |group_name, data|
+      #   next unless check_ttls?(group_name, @fact_groups.get_group_ttls(group_name))
+      #
+      #   cache_file_name = File.join(@cache_dir, group_name)
+      #   next if File.readable?(cache_file_name)
+      #
+      #   @log.debug("caching values for #{group_name} facts")
+      #   File.write(cache_file_name, JSON.pretty_generate(data))
+      # end
     end
 
     def read_group_json(group_name)
