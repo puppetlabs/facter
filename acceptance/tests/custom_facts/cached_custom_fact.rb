@@ -18,7 +18,8 @@ test_name 'ttls configured custom facts files creates cache file and reads cache
 
   cached_file_content = <<~CACHED_FILE
     {
-      "#{custom_fact_name}": "#{custom_fact_value}"
+      "#{custom_fact_name}": "#{custom_fact_value}",
+      "cache_format_version": 1
     }
   CACHED_FILE
 
@@ -57,7 +58,7 @@ test_name 'ttls configured custom facts files creates cache file and reads cache
     step "should log that it creates cache file and it caches custom facts found in facter.conf" do
       on(agent, facter("#{custom_fact_name} --debug", environment: env)) do |facter_result|
         assert_equal(custom_fact_value, facter_result.stdout.chomp, "#{custom_fact_name} value changed")
-        assert_match(/facts cache file expired\/missing/, facter_result.stderr,
+        assert_match(/facts cache file expired, missing or is corrupt/, facter_result.stderr,
                      'Expected debug message to state that custom facts cache file is missing or expired')
         assert_match(/Saving cached custom facts to ".+"|caching values for cached-custom-facts facts/, facter_result.stderr,
                      'Expected debug message to state that custom facts will be cached')

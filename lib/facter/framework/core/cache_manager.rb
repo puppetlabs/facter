@@ -29,6 +29,7 @@ module Facter
     def cache_facts(resolved_facts)
       return unless Options[:cache] && Options[:ttls].any?
 
+      @groups = {}
       resolved_facts.each do |fact|
         cache_fact(fact)
       end
@@ -51,6 +52,10 @@ module Facter
       fact_group = @fact_groups.get_fact_group(fact_name)
       delete_cache(fact_group) if fact_group && !cached
       cached
+    end
+
+    def get_fact_group(fact_name)
+      @fact_groups.get_fact_group(fact_name)
     end
 
     private
@@ -80,25 +85,46 @@ module Facter
       end
       return unless data
 
+      check_cache_format_version(searched_fact, data, fact_group) unless searched_fact.file
+
       @log.debug("loading cached values for #{searched_fact.name} facts")
 
       create_facts(searched_fact, data)
     end
 
+    def check_cache_format_version(searched_fact, data, fact_group)
+      unless data['cache_format_version'] == 1
+        @log.debug("The fact #{searched_fact.name} could not be read from the cache, \
+cache_format_version is incorrect!")
+        delete_cache(fact_group)
+        return
+      end
+
+      delete_cache(fact_group) unless data[searched_fact.name]
+    end
+
     def create_facts(searched_fact, data)
       if searched_fact.type == :file
-        facts = []
-        data.each do |fact_name, fact_value|
-          fact = Facter::ResolvedFact.new(fact_name, fact_value, searched_fact.type,
-                                          searched_fact.user_query, searched_fact.filter_tokens)
-          fact.file = searched_fact.file
-          facts << fact
-        end
-        facts
+        resolve_external_fact(searched_fact, data)
       else
+        return unless data[searched_fact.name]
+
         [Facter::ResolvedFact.new(searched_fact.name, data[searched_fact.name], searched_fact.type,
                                   searched_fact.user_query, searched_fact.filter_tokens)]
       end
+    end
+
+    def resolve_external_fact(searched_fact, data)
+      facts = []
+      data.each do |fact_name, fact_value|
+        next if fact_name == 'cache_format_version'
+
+        fact = Facter::ResolvedFact.new(fact_name, fact_value, searched_fact.type,
+                                        searched_fact.user_query, searched_fact.filter_tokens)
+        fact.file = searched_fact.file
+        facts << fact
+      end
+      facts
     end
 
     def cache_fact(fact)
@@ -128,9 +154,11 @@ module Facter
         next unless check_ttls?(group_name, @fact_groups.get_group_ttls(group_name))
 
         cache_file_name = File.join(@cache_dir, group_name)
-        next if File.readable?(cache_file_name)
+        # next if File.readable?(cache_file_name)
 
         @log.debug("caching values for #{group_name} facts")
+
+        data['cache_format_version'] = 1
         File.write(cache_file_name, JSON.pretty_generate(data))
       end
     end
@@ -142,7 +170,7 @@ module Facter
       data = nil
       file = Util::FileHelper.safe_read(cache_file_name)
       begin
-        data = JSON.parse(file)
+        data = JSON.parse(file) unless file.nil?
       rescue JSON::ParserError
         delete_cache(group_name)
       end
@@ -161,12 +189,13 @@ module Facter
         File.delete(cache_file_name)
       end
 
-      @log.debug("#{group_name} facts cache file expired/missing")
+      @log.debug("#{group_name} facts cache file expired, missing or is corrupt")
       true
     end
 
     def delete_cache(group_name)
       cache_file_name = File.join(@cache_dir, group_name)
+
       File.delete(cache_file_name) if File.readable?(cache_file_name)
     end
   end

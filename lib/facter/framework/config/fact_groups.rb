@@ -4,9 +4,8 @@ require 'facter/config'
 
 module Facter
   class FactGroups
+    attr_accessor :groups_ttls
     attr_reader :groups, :block_list, :facts_ttls
-
-    @groups_ttls = []
 
     STRING_TO_SECONDS = { 'seconds' => 1, 'minutes' => 60, 'hours' => 3600, 'days' => 3600 * 24 }.freeze
 

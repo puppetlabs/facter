@@ -31,7 +31,8 @@ test_name 'ttls configured weighted custom facts files creates cache file and re
 
   cached_file_content_highest_weight = <<~CACHED_FILE
     {
-      "#{duplicate_custom_fact_name}": "#{custom_fact_value} 110"
+      "#{duplicate_custom_fact_name}": "#{custom_fact_value} 110",
+      "cache_format_version": 1
     }
   CACHED_FILE
 
@@ -69,7 +70,7 @@ test_name 'ttls configured weighted custom facts files creates cache file and re
     step "should log that it creates cache file and it caches custom facts found in facter.conf with the highest weight" do
       on(agent, facter("#{duplicate_custom_fact_name} --debug", environment: env)) do |facter_result|
         assert_equal(custom_fact_value + " 110", facter_result.stdout.chomp, "#{duplicate_custom_fact_name} value changed")
-        assert_match(/facts cache file expired\/missing/, facter_result.stderr,
+        assert_match(/facts cache file expired, missing or is corrupt/, facter_result.stderr,
                      'Expected debug message to state that custom facts cache file is missing or expired')
         assert_match(/Saving cached custom facts to ".+"|caching values for cached-custom-facts facts/, facter_result.stderr,
                      'Expected debug message to state that custom facts will be cached')

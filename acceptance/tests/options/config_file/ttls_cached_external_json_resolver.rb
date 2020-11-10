@@ -21,7 +21,8 @@ test_name "ttls configured cached external json resolver creates and read json c
 
       external_fact_content = <<EOM
 {
-  "#{cached_fact_name}": "#{initial_fact_value}"
+  "#{cached_fact_name}": "#{initial_fact_value}",
+  "cache_format_version": 1
 }
 EOM
       create_remote_file(agent, external_fact, external_fact_content)

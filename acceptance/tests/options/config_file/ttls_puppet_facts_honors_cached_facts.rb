@@ -19,7 +19,8 @@ EOM
   cached_value = "CACHED_FACT_VALUE"
   cached_fact_content = <<EOM
 {
-  "#{cached_factname}": "#{cached_value}"
+  "#{cached_factname}": "#{cached_value}",
+  "cache_format_version": 1
 }
 EOM
 

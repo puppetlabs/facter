@@ -11,7 +11,8 @@ test_name "ttls config that contains fact name caches individual facts" do
   cached_fact_value = "CACHED_FACT_VALUE"
   cached_fact_content = <<EOM
 {
- "#{cached_fact_name}": "#{cached_fact_value}"
+ "#{cached_fact_name}": "#{cached_fact_value}",
+ "cache_format_version": 1
 }
 EOM
 
