@@ -54,6 +54,10 @@ module Facter
       cached
     end
 
+    def get_fact_group(fact_name)
+      @fact_groups.get_fact_group(fact_name)
+    end
+
     private
 
     def resolve_fact(searched_fact)
