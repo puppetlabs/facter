@@ -48,7 +48,8 @@ EOM
       agent.mkdir_p(config_dir)
       cached_fact_content = <<EOM
 {
-  "#{cached_fact_name}": "#{cached_fact_value}"
+  "#{cached_fact_name}": "#{cached_fact_value}",
+  "cache_format_version": 1
 }
 EOM
 
