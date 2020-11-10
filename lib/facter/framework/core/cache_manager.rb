@@ -85,8 +85,8 @@ module Facter
       return unless data
 
 
-      @fact_groups.groups_ttls[fact_group]
-      data.fetch(searched_fact.name) { puts "!!!!!"; fact[:ttls] = nil; delete_cache(fact_group) }
+      # @fact_groups.groups_ttls[fact_group]
+      data.fetch(searched_fact.name) { puts "!!!!!"; delete_cache(fact_group) }
 
       return unless data[searched_fact.name]
 
