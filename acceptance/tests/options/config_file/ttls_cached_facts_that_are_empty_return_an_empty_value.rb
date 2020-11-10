@@ -2,6 +2,8 @@
 test_name "C100043: ttls configured cached facts that are empty, return an empty string" do
   tag 'risk:high'
 
+  skip_test 'Facts should be resolved if values are not found in cache'
+
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 
