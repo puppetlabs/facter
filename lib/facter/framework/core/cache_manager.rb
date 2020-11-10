@@ -7,40 +7,23 @@ module Facter
       @log = Log.new(self)
       @fact_groups = Facter::FactGroups.new
       @cache_dir = LegacyFacter::Util::Config.facts_cache_dir
-      @invalidated_groups = Set.new
     end
 
     def resolve_facts(searched_facts)
       return searched_facts, [] if (!File.directory?(@cache_dir) || !Options[:cache]) && Options[:ttls].any?
 
-      cached_facts = read_cached_facts(searched_facts)
-      remove_fact_belonging_to_invalid_groups!(cached_facts)
-
-      # remove cached facts from searched facts
-      cached_fact_names = cached_facts.map(&:name)
-      searched_facts.delete_if do |searched_fact|
-        cached_fact_names.include?(searched_fact.name)
-      end
-
-      [searched_facts, cached_facts.flatten]
-    end
-
-    def read_cached_facts(searched_facts)
-      cached_facts = []
-      searched_facts.each do |fact|
+      facts = []
+      searched_facts.delete_if do |fact|
         res = resolve_fact(fact)
-        cached_facts << res if res
+        if res
+          facts << res
+          true
+        else
+          false
+        end
       end
-      cached_facts.flatten!
 
-      cached_facts
-    end
-
-    def remove_fact_belonging_to_invalid_groups!(cached_facts)
-      # remove facts belonging to invalid groups
-      cached_facts.delete_if do |cached_fact|
-        @invalidated_groups.include?(cached_fact.group)
-      end
+      [searched_facts, facts.flatten]
     end
 
     def cache_facts(resolved_facts)
@@ -104,41 +87,29 @@ module Facter
           @log.debug("The fact #{searched_fact.name} could not be read from the cache, \
 the cache file might be corrupt, will remove it!")
           delete_cache(fact_group)
-          @invalidated_groups.add(fact_group)
           return
         end
       end
 
       @log.debug("loading cached values for #{searched_fact.name} facts")
 
-      create_facts(searched_fact, data, fact_group)
+      create_facts(searched_fact, data)
     end
 
-    def create_facts(searched_fact, data, fact_group)
+    def create_facts(searched_fact, data)
       if searched_fact.type == :file
-        build_resolve_fact_for_external_fact(searched_fact, data, fact_group)
+        facts = []
+        data.each do |fact_name, fact_value|
+          fact = Facter::ResolvedFact.new(fact_name, fact_value, searched_fact.type,
+                                          searched_fact.user_query, searched_fact.filter_tokens)
+          fact.file = searched_fact.file
+          facts << fact
+        end
+        facts
       else
-        build_resolve_fact(searched_fact, data, fact_group)
+        [Facter::ResolvedFact.new(searched_fact.name, data[searched_fact.name], searched_fact.type,
+                                  searched_fact.user_query, searched_fact.filter_tokens)]
       end
-    end
-
-    def build_resolve_fact_for_external_fact(searched_fact, data, fact_group)
-      facts = []
-      data.each do |fact_name, fact_value|
-        fact = Facter::ResolvedFact.new(fact_name, fact_value, searched_fact.type,
-                                        searched_fact.user_query, searched_fact.filter_tokens)
-        fact.file = searched_fact.file
-        fact.group = fact_group
-        facts << fact
-      end
-      facts
-    end
-
-    def build_resolve_fact(searched_fact, data, fact_group)
-      fact = Facter::ResolvedFact.new(searched_fact.name, data[searched_fact.name], searched_fact.type,
-                                      searched_fact.user_query, searched_fact.filter_tokens)
-      fact.group = fact_group
-      fact
     end
 
     def cache_fact(fact)

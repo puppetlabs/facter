@@ -3,7 +3,7 @@
 module Facter
   class ResolvedFact
     attr_reader :name, :type
-    attr_accessor :user_query, :filter_tokens, :value, :file, :group
+    attr_accessor :user_query, :filter_tokens, :value, :file
 
     def initialize(name, value = '', type = :core, user_query = nil, filter_tokens = [])
       @name = name
