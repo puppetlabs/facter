@@ -4,6 +4,7 @@ require 'facter/config'
 
 module Facter
   class FactGroups
+    attr_accessor :groups_ttls
     attr_reader :groups, :block_list, :facts_ttls
 
     @groups_ttls = []

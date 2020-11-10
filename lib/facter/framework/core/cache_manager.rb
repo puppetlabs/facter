@@ -28,7 +28,7 @@ module Facter
 
     def cache_facts(resolved_facts)
       return unless Options[:cache] && Options[:ttls].any?
-
+      @groups = {}
       resolved_facts.each do |fact|
         cache_fact(fact)
       end
@@ -48,6 +48,9 @@ module Facter
                  false
                end
 
+      if cached
+        puts "))))"
+      end
       fact_group = @fact_groups.get_fact_group(fact_name)
       delete_cache(fact_group) if fact_group && !cached
       cached
@@ -70,15 +73,22 @@ module Facter
 
       return unless check_ttls?(fact[:group], fact[:ttls])
 
-      read_fact(searched_fact, fact[:group])
+      read_fact(searched_fact, fact)
     end
 
-    def read_fact(searched_fact, fact_group)
+    def read_fact(searched_fact, fact)
       data = nil
+      fact_group = fact[:group]
       Facter::Framework::Benchmarking::Timer.measure(searched_fact.name, 'cached') do
         data = read_group_json(fact_group)
       end
       return unless data
+
+
+      @fact_groups.groups_ttls[fact_group]
+      data.fetch(searched_fact.name) { puts "!!!!!"; fact[:ttls] = nil; delete_cache(fact_group) }
+
+      return unless data[searched_fact.name]
 
       @log.debug("loading cached values for #{searched_fact.name} facts")
 
