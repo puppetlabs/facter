@@ -28,6 +28,7 @@ module Facter
 
     def cache_facts(resolved_facts)
       return unless Options[:cache] && Options[:ttls].any?
+
       @groups = {}
       resolved_facts.each do |fact|
         cache_fact(fact)
@@ -48,9 +49,6 @@ module Facter
                  false
                end
 
-      if cached
-        puts "))))"
-      end
       fact_group = @fact_groups.get_fact_group(fact_name)
       delete_cache(fact_group) if fact_group && !cached
       cached
@@ -84,11 +82,12 @@ module Facter
       end
       return unless data
 
-
-      # @fact_groups.groups_ttls[fact_group]
-      data.fetch(searched_fact.name) { puts "!!!!!"; delete_cache(fact_group) }
-
-      return unless data[searched_fact.name]
+      data.fetch(searched_fact.name) do
+        @log.debug("The fact #{searched_fact.name} could not be read from the cache, \
+the cache file might be corrupt, will remove it!")
+        delete_cache(fact_group)
+        return
+      end
 
       @log.debug("loading cached values for #{searched_fact.name} facts")
 
@@ -154,7 +153,8 @@ module Facter
       begin
         data = JSON.parse(file)
       rescue JSON::ParserError
-        delete_cache(group_name)
+        # should not delete cache
+        # delete_cache(group_name)
       end
       @groups[group_name] = data
     end
@@ -171,7 +171,7 @@ module Facter
         File.delete(cache_file_name)
       end
 
-      @log.debug("#{group_name} facts cache file expired/missing")
+      @log.debug("#{group_name} facts cache file expired, missing or is corrupt")
       true
     end
 
