@@ -81,15 +81,17 @@ module Facter
       end
       return unless data
 
-      unless data['cache_format_version'] == 1
-        @log.debug("The fact #{searched_fact.name} could not be read from the cache, \
+      unless searched_fact.file
+        unless data['cache_format_version'] == 1
+          @log.debug("The fact #{searched_fact.name} could not be read from the cache, \
 cache_format_version is incorrect!")
-        delete_cache(fact_group)
-        return
-      end
+          delete_cache(fact_group)
+          return
+        end
 
-      delete_cache(fact_group) unless data[searched_fact.name]
-      return unless data[searched_fact.name]
+        delete_cache(fact_group) unless data[searched_fact.name]
+        return unless data[searched_fact.name]
+      end
 
       @log.debug("loading cached values for #{searched_fact.name} facts")
 
