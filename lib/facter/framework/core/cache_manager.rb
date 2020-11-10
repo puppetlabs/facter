@@ -101,13 +101,14 @@ cache_format_version is incorrect!")
       end
 
       delete_cache(fact_group) unless data[searched_fact.name]
-      return unless data[searched_fact.name]
     end
 
     def create_facts(searched_fact, data)
       if searched_fact.type == :file
         resolve_external_fact(searched_fact, data)
       else
+        return unless data[searched_fact.name]
+
         [Facter::ResolvedFact.new(searched_fact.name, data[searched_fact.name], searched_fact.type,
                                   searched_fact.user_query, searched_fact.filter_tokens)]
       end
