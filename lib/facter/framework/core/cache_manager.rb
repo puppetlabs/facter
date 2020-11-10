@@ -153,10 +153,9 @@ the cache file might be corrupt, will remove it!")
       data = nil
       file = Util::FileHelper.safe_read(cache_file_name)
       begin
-        data = JSON.parse(file)
+        data = JSON.parse(file) unless file.nil?
       rescue JSON::ParserError
-        # should not delete cache
-        # delete_cache(group_name)
+        delete_cache(group_name)
       end
       @groups[group_name] = data
     end
