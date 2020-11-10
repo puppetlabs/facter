@@ -81,15 +81,15 @@ module Facter
       end
       return unless data
 
-      # the check should not be done for external fact file names
-      unless searched_fact.file
-        unless data['cache_format_version'] == 1
-          @log.debug("The fact #{searched_fact.name} could not be read from the cache, \
-the cache file might be corrupt, will remove it!")
-          delete_cache(fact_group)
-          return
-        end
+      unless data['cache_format_version'] == 1
+        @log.debug("The fact #{searched_fact.name} could not be read from the cache, \
+cache_format_version is incorrect!")
+        delete_cache(fact_group)
+        return
       end
+
+      delete_cache(fact_group) unless data[searched_fact.name]
+      return unless data[searched_fact.name]
 
       @log.debug("loading cached values for #{searched_fact.name} facts")
 
@@ -98,18 +98,24 @@ the cache file might be corrupt, will remove it!")
 
     def create_facts(searched_fact, data)
       if searched_fact.type == :file
-        facts = []
-        data.each do |fact_name, fact_value|
-          fact = Facter::ResolvedFact.new(fact_name, fact_value, searched_fact.type,
-                                          searched_fact.user_query, searched_fact.filter_tokens)
-          fact.file = searched_fact.file
-          facts << fact
-        end
-        facts
+        resolve_external_fact(searched_fact, data)
       else
         [Facter::ResolvedFact.new(searched_fact.name, data[searched_fact.name], searched_fact.type,
                                   searched_fact.user_query, searched_fact.filter_tokens)]
       end
+    end
+
+    def resolve_external_fact(searched_fact, data)
+      facts = []
+      data.each do |fact_name, fact_value|
+        next if fact_name == 'cache_format_version'
+
+        fact = Facter::ResolvedFact.new(fact_name, fact_value, searched_fact.type,
+                                        searched_fact.user_query, searched_fact.filter_tokens)
+        fact.file = searched_fact.file
+        facts << fact
+      end
+      facts
     end
 
     def cache_fact(fact)
