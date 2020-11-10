@@ -75,7 +75,8 @@ module LegacyFacter
       end
 
       def check_custom_cache_groups(cache_manager, basename)
-        return unless cache_manager.get_fact_group(basename) != basename
+        fact_group = cache_manager.get_fact_group(basename)
+        return if fact_group.nil? || fact_group == basename
 
         Facter.log_exception(Exception.new("Cannot cache fact #{basename}. Cache grouping not "\
             'supported for external facts'))
