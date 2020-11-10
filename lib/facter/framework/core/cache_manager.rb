@@ -71,22 +71,24 @@ module Facter
 
       return unless check_ttls?(fact[:group], fact[:ttls])
 
-      read_fact(searched_fact, fact)
+      read_fact(searched_fact, fact[:group])
     end
 
-    def read_fact(searched_fact, fact)
+    def read_fact(searched_fact, fact_group)
       data = nil
-      fact_group = fact[:group]
       Facter::Framework::Benchmarking::Timer.measure(searched_fact.name, 'cached') do
         data = read_group_json(fact_group)
       end
       return unless data
 
-      data.fetch(searched_fact.name) do
-        @log.debug("The fact #{searched_fact.name} could not be read from the cache, \
+      # the check shold not be done for external fact file names
+      unless searched_fact.file
+        data.fetch(searched_fact.name) do
+          @log.debug("The fact #{searched_fact.name} could not be read from the cache, \
 the cache file might be corrupt, will remove it!")
-        delete_cache(fact_group)
-        return
+          delete_cache(fact_group)
+          return
+        end
       end
 
       @log.debug("loading cached values for #{searched_fact.name} facts")
