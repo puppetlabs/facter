@@ -81,9 +81,9 @@ module Facter
       end
       return unless data
 
-      # the check shold not be done for external fact file names
+      # the check should not be done for external fact file names
       unless searched_fact.file
-        data.fetch(searched_fact.name) do
+        unless data['cache_format_version'] == 1
           @log.debug("The fact #{searched_fact.name} could not be read from the cache, \
 the cache file might be corrupt, will remove it!")
           delete_cache(fact_group)
@@ -142,6 +142,8 @@ the cache file might be corrupt, will remove it!")
         next if File.readable?(cache_file_name)
 
         @log.debug("caching values for #{group_name} facts")
+
+        data['cache_format_version'] = 1
         File.write(cache_file_name, JSON.pretty_generate(data))
       end
     end
@@ -178,6 +180,7 @@ the cache file might be corrupt, will remove it!")
 
     def delete_cache(group_name)
       cache_file_name = File.join(@cache_dir, group_name)
+
       File.delete(cache_file_name) if File.readable?(cache_file_name)
     end
   end

@@ -17,7 +17,7 @@ describe Facter::CacheManager do
                                        user_query: '', type: :file, file: '/tmp/ext_file.txt')
   end
   let(:searched_facts) { [searched_core_fact, searched_custom_fact, searched_external_fact] }
-  let(:cached_core_fact) { "{\n  \"os\": \"Ubuntu\"\n}" }
+  let(:cached_core_fact) { "{\n  \"os\": \"Ubuntu\",\n  \"cache_format_version\": 1\n}" }
   let(:cached_external_fact) { "{\n  \"my_external_fact\": \"ext_fact\"\n}" }
 
   let(:resolved_core_fact) { mock_resolved_fact('os', 'Ubuntu', '', []) }
