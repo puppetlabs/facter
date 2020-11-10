@@ -392,7 +392,7 @@ module Facter
 
       status = error_check(resolved_facts)
 
-      [fact_formatter.format(resolved_facts), status || 0]
+      [fact_formatter.format(resolved_facts), status]
     end
 
     # Logs an exception and an optional message
@@ -504,14 +504,13 @@ module Facter
     #
     # @api private
     def error_check(resolved_facts)
+      status = 0
       if Options[:strict]
         missing_names = resolved_facts.select { |fact| fact.type == :nil }.map(&:user_query)
 
         if missing_names.count.positive?
           status = 1
           log_errors(missing_names)
-        else
-          status = nil
         end
       end
 
