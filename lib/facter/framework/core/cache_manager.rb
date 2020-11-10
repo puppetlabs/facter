@@ -49,8 +49,8 @@ module Facter
                  false
                end
 
-      fact_group = @fact_groups.get_fact_group(fact_name)
-      delete_cache(fact_group) if fact_group && !cached
+      # fact_group = @fact_groups.get_fact_group(fact_name)
+      # delete_cache(fact_group) if fact_group && !cached
       cached
     end
 
