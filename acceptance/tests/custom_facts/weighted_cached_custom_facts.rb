@@ -31,7 +31,8 @@ test_name 'ttls configured weighted custom facts files creates cache file and re
 
   cached_file_content_highest_weight = <<~CACHED_FILE
     {
-      "#{duplicate_custom_fact_name}": "#{custom_fact_value} 110"
+      "#{duplicate_custom_fact_name}": "#{custom_fact_value} 110",
+      "cache_format_version": 1
     }
   CACHED_FILE
 

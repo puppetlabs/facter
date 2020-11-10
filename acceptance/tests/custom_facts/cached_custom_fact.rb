@@ -18,7 +18,8 @@ test_name 'ttls configured custom facts files creates cache file and reads cache
 
   cached_file_content = <<~CACHED_FILE
     {
-      "#{custom_fact_name}": "#{custom_fact_value}"
+      "#{custom_fact_name}": "#{custom_fact_value}",
+      "cache_format_version": 1
     }
   CACHED_FILE
 
