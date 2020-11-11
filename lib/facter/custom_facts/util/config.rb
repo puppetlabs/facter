@@ -78,7 +78,7 @@ module LegacyFacter
         @facts_cache_dir = if windows_dir
                              File.join(windows_dir, 'PuppetLabs', 'facter', 'cache', 'cached_facts')
                            else
-                             '/opt/puppetlabs/facter/cache/cached_facts'
+                             '/Users/bogdan.irimie/projects/facter/cached_facts'
                            end
       end
 
