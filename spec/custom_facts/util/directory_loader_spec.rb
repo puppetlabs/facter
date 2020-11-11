@@ -24,18 +24,14 @@ describe LegacyFacter::Util::DirectoryLoader do
 
   describe 'when loading facts from disk' do
     let(:log_spy) { instance_spy(Facter::Log) }
-    let(:basename) { 'data.yaml' }
 
     before do
-      # rubocop:disable RSpec/AnyInstance
-      allow_any_instance_of(Facter::CacheManager).to receive(:get_fact_group).and_return(basename)
-      # rubocop:enable RSpec/AnyInstance
       allow(Facter::Log).to receive(:new).and_return(log_spy)
     end
 
     it 'is able to load files from disk and set facts' do
       data = { 'f1' => 'one', 'f2' => 'two' }
-      write_to_file(basename, YAML.dump(data))
+      write_to_file('data.yaml', YAML.dump(data))
 
       dir_loader.load(collection)
 
@@ -44,10 +40,10 @@ describe LegacyFacter::Util::DirectoryLoader do
 
     it 'adds fact with external type to collection' do
       data = { 'f1' => 'one' }
-      write_to_file(basename, YAML.dump(data))
+      write_to_file('data.yaml', YAML.dump(data))
 
       dir_loader.load(collection_double)
-      file = File.join(dir_loader.directories[0], basename)
+      file = File.join(dir_loader.directories[0], 'data.yaml')
 
       expect(collection_double).to have_received(:add).with('f1', value: 'one', fact_type: :external, file: file)
     end
@@ -63,16 +59,19 @@ describe LegacyFacter::Util::DirectoryLoader do
     end
 
     %w[bak orig].each do |ext|
-      describe "with #{ext}" do
-        let(:basename) { 'data' + ".#{ext}" }
+      it "ignores files with an extension of '#{ext}'" do
+        expect(log_spy).to receive(:debug).with(/#{ext}/)
+        write_to_file('data' + ".#{ext}", 'foo=bar')
 
-        it "ignores files with an extension of '#{ext}'" do
-          expect(log_spy).to receive(:debug).with(/#{ext}/)
-          write_to_file('data' + ".#{ext}", 'foo=bar')
-
-          dir_loader.load(collection)
-        end
+        dir_loader.load(collection)
       end
+    end
+
+    it 'warns when trying to parse unknown file types' do
+      write_to_file('file.unknownfiletype', 'stuff=bar')
+      expect(log_spy).to receive(:debug).with(/file.unknownfiletype/)
+
+      dir_loader.load(collection)
     end
 
     it 'external facts should almost always precedence over all other facts' do
@@ -81,33 +80,20 @@ describe LegacyFacter::Util::DirectoryLoader do
       end
 
       data = { 'f1' => 'external_fact' }
-      write_to_file(basename, YAML.dump(data))
+      write_to_file('data.yaml', YAML.dump(data))
 
       dir_loader.load(collection)
 
       expect(collection.value('f1')).to eq 'external_fact'
     end
 
-    describe 'with unknown file type' do
-      let(:basename) { 'file.unknownfiletype' }
-
-      it 'warns when trying to parse unknown file types' do
-        write_to_file('file.unknownfiletype', 'stuff=bar')
-        expect(log_spy).to receive(:debug).with(/file.unknownfiletype/)
-
-        dir_loader.load(collection)
-      end
-    end
-
     describe 'given a custom weight' do
       subject(:dir_loader) { LegacyFacter::Util::DirectoryLoader.new(tmpdir('directory_loader'), 10) }
-
-      let(:basename) { 'data.yaml' }
 
       it 'sets that weight for loaded external facts' do
         collection.add('f1', value: 'higher_weight_fact') { has_weight(11) }
         data = { 'f1' => 'external_fact' }
-        write_to_file(basename, YAML.dump(data))
+        write_to_file('data.yaml', YAML.dump(data))
 
         dir_loader.load(collection)
 
@@ -117,12 +103,12 @@ describe LegacyFacter::Util::DirectoryLoader do
 
     context 'when blocking external facts' do
       before do
-        Facter::Options[:blocked_facts] = [basename]
+        Facter::Options[:blocked_facts] = ['data.yaml']
       end
 
       it 'is not loading blocked file' do
         data = { 'f1' => 'one', 'f2' => 'two' }
-        write_to_file(basename, YAML.dump(data))
+        write_to_file('data.yaml', YAML.dump(data))
 
         dir_loader.load(collection)
 

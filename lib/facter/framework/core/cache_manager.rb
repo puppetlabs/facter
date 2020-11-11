@@ -54,10 +54,6 @@ module Facter
       cached
     end
 
-    def get_fact_group(fact_name)
-      @fact_groups.get_fact_group(fact_name)
-    end
-
     private
 
     def resolve_fact(searched_fact)
@@ -85,22 +81,26 @@ module Facter
       end
       return unless data
 
-      check_cache_format_version(searched_fact, data, fact_group) unless searched_fact.file
+      unless searched_fact.file
+        return unless valid_format_version?(searched_fact, data, fact_group)
+
+        delete_cache(fact_group) unless data[searched_fact.name]
+      end
 
       @log.debug("loading cached values for #{searched_fact.name} facts")
 
       create_facts(searched_fact, data)
     end
 
-    def check_cache_format_version(searched_fact, data, fact_group)
+    def valid_format_version?(searched_fact, data, fact_group)
       unless data['cache_format_version'] == 1
         @log.debug("The fact #{searched_fact.name} could not be read from the cache, \
 cache_format_version is incorrect!")
         delete_cache(fact_group)
-        return
+        return false
       end
 
-      delete_cache(fact_group) unless data[searched_fact.name]
+      true
     end
 
     def create_facts(searched_fact, data)
@@ -154,7 +154,7 @@ cache_format_version is incorrect!")
         next unless check_ttls?(group_name, @fact_groups.get_group_ttls(group_name))
 
         cache_file_name = File.join(@cache_dir, group_name)
-        # next if File.readable?(cache_file_name)
+        next if File.readable?(cache_file_name)
 
         @log.debug("caching values for #{group_name} facts")
 

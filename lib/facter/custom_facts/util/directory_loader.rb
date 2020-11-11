@@ -59,8 +59,6 @@ module LegacyFacter
           basename = File.basename(file)
           next if file_blocked?(basename)
 
-          check_custom_cache_groups(cm, basename)
-
           if facts.find { |f| f.name == basename } && cm.fact_cache_enabled?(basename)
             Facter.log_exception(Exception.new("Caching is enabled for group \"#{basename}\" while "\
               'there are at least two external facts files with the same filename'))
@@ -72,14 +70,6 @@ module LegacyFacter
         end
 
         cm.resolve_facts(facts)
-      end
-
-      def check_custom_cache_groups(cache_manager, basename)
-        fact_group = cache_manager.get_fact_group(basename)
-        return if fact_group.nil? || fact_group == basename
-
-        Facter.log_exception(Exception.new("Cannot cache fact #{basename}. Cache grouping not "\
-            'supported for external facts'))
       end
 
       def load_cached_facts(collection, cached_facts, weight)
