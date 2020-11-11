@@ -67,11 +67,23 @@ module Facter
 
       fact = @fact_groups.get_fact(fact_name)
 
+      return if external_fact_in_custom_group?(searched_fact, fact_name, fact)
+
       return unless fact
 
       return unless check_ttls?(fact[:group], fact[:ttls])
 
       read_fact(searched_fact, fact[:group])
+    end
+
+    def external_fact_in_custom_group?(searched_fact, fact_name, fact)
+      if searched_fact.file && fact[:group] != fact_name
+        @log.error("Can not cache #{fact_name} fact from #{fact[:group]} group."\
+                    'Cache group is not supported for external facts')
+        return true
+      end
+
+      false
     end
 
     def read_fact(searched_fact, fact_group)
