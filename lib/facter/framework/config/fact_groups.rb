@@ -10,7 +10,6 @@ module Facter
     STRING_TO_SECONDS = { 'seconds' => 1, 'minutes' => 60, 'hours' => 3600, 'days' => 3600 * 24 }.freeze
 
     def initialize
-      @log = Log.new(self)
       @groups = Facter::Config::FACT_GROUPS.dup
       load_groups
       load_groups_from_options
