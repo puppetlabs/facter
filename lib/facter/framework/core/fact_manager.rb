@@ -27,8 +27,8 @@ module Facter
 
       resolved_facts = override_core_facts(internal_facts, external_facts)
 
-      resolved_facts = resolved_facts.concat(cached_facts)
       cache_manager.cache_facts(resolved_facts)
+      resolved_facts = resolved_facts.concat(cached_facts)
 
       FactFilter.new.filter_facts!(resolved_facts)
 
