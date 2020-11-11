@@ -10,6 +10,7 @@ module Facter
     STRING_TO_SECONDS = { 'seconds' => 1, 'minutes' => 60, 'hours' => 3600, 'days' => 3600 * 24 }.freeze
 
     def initialize
+      @log = Log.new(self)
       @groups = Facter::Config::FACT_GROUPS.dup
       load_groups
       load_groups_from_options
@@ -17,7 +18,6 @@ module Facter
 
       # Reverse sort facts so that children have precedence when caching. eg: os.macosx vs os
       @facts_ttls = @facts_ttls.sort.reverse.to_h
-      @log = Log.new(self)
     end
 
     # Breakes down blocked groups in blocked facts
@@ -79,19 +79,14 @@ module Facter
         ttls = ttls_to_seconds(ttls)
         if @groups[group]
           @groups[group].each do |fact|
-            next unless (@facts_ttls[fact] && @facts_ttls[fact][:ttls] < ttls) || @facts_ttls[fact].nil?
-
-            fact_and_group_with_same_name?(fact, group)
-            @facts_ttls[fact] = { ttls: ttls, group: group }
+            if (@facts_ttls[fact] && @facts_ttls[fact][:ttls] < ttls) || @facts_ttls[fact].nil?
+              @facts_ttls[fact] = { ttls: ttls, group: group }
+            end
           end
         else
           @facts_ttls[group] = { ttls: ttls, group: group }
         end
       end
-    end
-
-    def fact_and_group_with_same_name?(fact, group)
-      @log.error("Custom fact group name #{group} cannot match  fact name #{fact}") if fact == group
     end
 
     def load_groups

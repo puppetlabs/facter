@@ -78,8 +78,8 @@ module Facter
 
     def external_fact_in_custom_group?(searched_fact, fact_name, fact)
       if searched_fact.file && fact[:group] != fact_name
-        @log.error("Can not cache #{fact_name} fact from #{fact[:group]} group."\
-                    'Cache group is not supported for external facts')
+        @log.error("Cannot cache '#{fact_name}' fact from '#{fact[:group]}' group. "\
+                    'Caching custom group is not supported for external facts.')
         return true
       end
 
