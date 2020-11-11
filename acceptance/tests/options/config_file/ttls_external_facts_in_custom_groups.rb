@@ -1,5 +1,7 @@
-test_name "ttls configured cached with external in custom group caches fact" do
+test_name "ttls configured cached with external in custom group prints error" do
   tag 'risk:high'
+
+  skip_test "WIP"
 
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
@@ -7,9 +9,8 @@ test_name "ttls configured cached with external in custom group caches fact" do
   # This fact must be resolvable on ALL platforms
   # Do NOT use the 'kernel' fact as it is used to configure the tests
   external_cachegroup = 'external_fact_group'
-  cached_fact_name = 'single_fact'
-  initial_fact_value = 'initial_external_value'
-  cached_fact_value = 'cached_external_value'
+  cached_fact_name = 'external_fact'
+  fact_value = 'initial_external_value'
 
   agents.each do |agent|
     step "Agent #{agent}: create config file" do
@@ -18,25 +19,16 @@ test_name "ttls configured cached with external in custom group caches fact" do
       external_fact = File.join(external_dir, "#{cached_fact_name}#{ext}")
 
       external_fact_content = <<EOM
-#{cached_fact_name}=#{initial_fact_value}
+#{cached_fact_name}=#{fact_value}
 EOM
 
       create_remote_file(agent, external_fact, external_fact_content)
 
       config_dir = get_default_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
       config_file = File.join(config_dir, "facter.conf")
-      cached_facts_dir = get_cached_facts_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
-
-      cached_fact_file = File.join(cached_facts_dir, "#{external_cachegroup}")
 
       # Setup facter conf
       agent.mkdir_p(config_dir)
-      cached_fact_content = <<EOM
-{
-  "#{cached_fact_name}": "#{cached_fact_value}",
-  "cache_format_version": 1
-}
-EOM
 
       config = <<EOM
 facts : {
@@ -57,24 +49,9 @@ EOM
         agent.rm_rf(external_dir)
       end
 
-      step "should create a JSON file for a fact that is to be cached" do
-        agent.rm_rf(cached_facts_dir)
-        on(agent, facter("--external-dir \"#{external_dir}\" --debug #{cached_fact_name}")) do |facter_output|
-          assert_match(/caching values for .+ facts/, facter_output.stderr, "Expected debug message to state that values will be cached")
-        end
-        cat_output = agent.cat(cached_fact_file)
-        assert_match(/#{cached_fact_name}/, cat_output.strip, "Expected cached fact file to contain fact information")
-      end
-
-      step "should read from a cached JSON file for a fact that has been cached" do
-        agent.rm_rf(cached_facts_dir)
-        on(agent, facter("--external-dir \"#{external_dir}\" --debug #{cached_fact_name}"))
-
-        create_remote_file(agent, cached_fact_file, cached_fact_content)
-
-        on(agent, facter("--external-dir \"#{external_dir}\" --debug #{cached_fact_name}")) do |facter_output|
-          assert_match(/loading cached values for .+ facts/, stderr, "Expected debug message to state that values are read from cache")
-          assert_match(/#{cached_fact_value}/, stdout, "Expected fact to match the cached fact file")
+      step "should print error and not cache anything" do
+        on(agent, facter("--external-dir \"#{external_dir}\" --debug #{cached_fact_name}"), acceptable_exit_codes: [1]) do |facter_output|
+          assert_match(/Caching custom group is not supported for external facts/, facter_output.stderr, "Expected error message to state that external facts cannot be grouped")
         end
       end
     end
