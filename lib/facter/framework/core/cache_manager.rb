@@ -154,7 +154,7 @@ cache_format_version is incorrect!")
         next unless check_ttls?(group_name, @fact_groups.get_group_ttls(group_name))
 
         cache_file_name = File.join(@cache_dir, group_name)
-        # next if File.readable?(cache_file_name)
+        next if File.readable?(cache_file_name)
 
         @log.debug("caching values for #{group_name} facts")
 
