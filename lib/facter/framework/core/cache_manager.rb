@@ -84,7 +84,7 @@ module Facter
       unless searched_fact.file
         return unless valid_format_version?(searched_fact, data, fact_group)
 
-        delete_cache(fact_group) unless data[searched_fact.name]
+        data.fetch(searched_fact.name) { delete_cache(fact_group) }
       end
 
       @log.debug("loading cached values for #{searched_fact.name} facts")
@@ -136,7 +136,7 @@ cache_format_version is incorrect!")
 
       group_name = @fact_groups.get_fact_group(fact_name)
 
-      return if !group_name || fact.value.nil?
+      return unless group_name
 
       return unless fact_cache_enabled?(fact_name)
 
