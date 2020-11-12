@@ -117,6 +117,7 @@ module Facter
           domain
           fqdn
           dhcp_servers
+          scope6
         ],
         'operating system' => %w[
           os
