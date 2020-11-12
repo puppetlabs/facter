@@ -1,6 +1,5 @@
-# This test is intended to verify that when the ttls list in the config file is empty
-# that the existing cached facts are removed
-test_name "C100125: ttls config that is empty causes facter to remove existing cached facts" do
+# This test verifies that a previouslt cached fact is being resolved correctly after it is not cached anymore
+test_name "ttls configured cached fact is resolved after ttls is removed" do
   tag 'risk:high'
 
   require 'facter/acceptance/user_fact_utils'
@@ -54,17 +53,15 @@ EOM
         create_remote_file(agent, cached_fact_file, cached_fact_content)
       end
 
-      step "Agent #{agent}: clean out unused cache files on each facter run" do
+      step "Agent #{agent}: resolves fact after ttls was removed" do
         # Create config file with no caching
         no_cache_config_file = File.join(config_dir, "no-cache.conf")
         create_remote_file(agent, no_cache_config_file, config_no_cache)
 
         on(agent, facter("--config \"#{no_cache_config_file}\"")) do |facter_output|
+          assert_match(/#{cached_fact_name}/, facter_output.stdout, "Expected to see the fact in output")
           assert_no_match(/#{cached_fact_value}/, facter_output.stdout, "Expected to not see the cached fact value")
         end
-
-        # Expect cache file to not exist
-        refute(agent.file_exist?("#{cached_fact_file}"), "Expected cache file to be absent")
       end
     end
   end

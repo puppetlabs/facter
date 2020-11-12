@@ -111,17 +111,6 @@ describe Facter::CacheManager do
         )
       end
 
-      it 'deletes cache file' do
-        allow(fact_groups).to receive(:get_fact).with('os').and_return(nil)
-        allow(File).to receive(:readable?).with(cache_file_name).and_return(true)
-        allow(File).to receive(:delete).with(cache_file_name)
-        allow(fact_groups).to receive(:get_fact_group).with('os').and_return(group_name)
-        allow(File).to receive(:readable?).with(File.join(cache_dir, 'ext_file.txt')).and_return(false)
-
-        cache_manager.resolve_facts(searched_facts)
-        expect(File).to have_received(:delete).with(cache_file_name)
-      end
-
       it 'returns cached external facts' do
         allow(fact_groups).to receive(:get_fact).with('os').and_return(nil)
         allow(fact_groups).to receive(:get_fact).with('my_custom_fact').and_return(nil)
@@ -230,12 +219,6 @@ describe Facter::CacheManager do
         allow(File).to receive(:readable?).with(cache_file_name).and_return(false)
         result = cache_manager.fact_cache_enabled?('os')
         expect(result).to be false
-      end
-
-      it 'deletes invalid cache file' do
-        allow(File).to receive(:readable?).with(cache_file_name).and_return(true)
-        cache_manager.fact_cache_enabled?('os')
-        expect(File).to have_received(:delete).with(cache_file_name)
       end
     end
   end
