@@ -4,6 +4,7 @@ module Facts
   module Windows
     class Interfaces
       FACT_NAME = 'interfaces'
+      TYPE = :legacy
 
       def call_the_resolver
         fact_value = Facter::Resolvers::Windows::Networking.resolve(:interfaces)
