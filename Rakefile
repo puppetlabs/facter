@@ -13,3 +13,12 @@ desc 'Generate changelog'
 task :changelog, [:version] do |_t, args|
   sh "./scripts/generate_changelog.rb #{args[:version]}"
 end
+
+if Rake.application.top_level_tasks.grep(/^(pl:|package:)/).any?
+  begin
+    require 'packaging'
+    Pkg::Util::RakeUtils.load_packaging_tasks
+  rescue LoadError => e
+    puts "Error loading packaging rake tasks: #{e}"
+  end
+end
