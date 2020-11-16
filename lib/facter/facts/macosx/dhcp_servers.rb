@@ -4,6 +4,7 @@ module Facts
   module Macosx
     class DhcpServers
       FACT_NAME = 'dhcp_servers'
+      TYPE = :legacy
 
       def call_the_resolver
         fact_value = construct_addresses_hash
