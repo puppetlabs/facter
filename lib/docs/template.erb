@@ -26,18 +26,4 @@ This legacy fact is hidden by default in Facter's command-line output.
 <%= schema['elements'].map{|name, info| format_fact_element(name, info)}.join('') %>
 <% end -%>
 
-<% if schema['resolution'] -%>
-**Resolution:**
-
-<%= schema['resolution'].split("\n").map { |line| "* " + line }.join("\n") %>
-<% end -%>
-
-<% if schema['caveats'] -%>
-**Caveats:**
-
-<%= schema['caveats'].split("\n").map { |line| "* " + line }.join("\n") %>
-<% end -%>
-
-([↑ Back to top](#page-nav))
-
 <% end -%>
