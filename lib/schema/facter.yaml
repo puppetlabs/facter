@@ -244,6 +244,9 @@ disks:
                 vendor:
                     type: string
                     description: The vendor of the disk or block device.
+                type:
+                    type: string
+                    description: The type of disk or block device (sshd or hdd). This fact is available only on Linux.
 
 dmi:
     type: map
@@ -380,6 +383,8 @@ fips_enabled:
         Windows: check if key `HKEY_LOCAL_MACHINE/System/CurrentControlSet/Control/Lsa/FipsAlgorithmPolicy/Enabled` is 1 or 0
     caveats: |
         Linux: Limited to linux redhat family only
+    details: |
+        Only available on Windows and Redhat linux family
 
 fqdn:
     type: string
@@ -2022,3 +2027,9 @@ zpool_version:
         Solaris: use the `zpool` utility to retrieve the version for ZFS storage pools
     caveats: |
         Solaris: the `zpool` utility must be present.
+
+nim_type:
+    type: string
+    description: Tells if the node is master or standalone inside an AIX Nim environment.
+    details: |
+        Is Available only on AIX.

@@ -26,4 +26,9 @@ This legacy fact is hidden by default in Facter's command-line output.
 <%= schema['elements'].map{|name, info| format_fact_element(name, info)}.join('') %>
 <% end -%>
 
+<% if schema['details'] -%>
+**Details:**
+
+<%= schema['details'] %>
+<% end -%>
 <% end -%>
