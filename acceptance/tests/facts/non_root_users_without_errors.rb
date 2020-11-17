@@ -24,7 +24,7 @@ test_name "C59196: running facter as a non-root user should not produce permissi
     end
 
     step "Agent #{agent}: run facter as #{non_root_user} and get no errors" do
-      on(agent, %Q[su #{non_root_user} -c "'#{facter_path}'"]) do |facter_results|
+      on(agent, %Q[su #{non_root_user} -c "'#{facter_path}' #{@options[:trace]}"]) do |facter_results|
         assert_empty(facter_results.stderr.chomp, "Expected no errors from facter when run as user #{non_root_user}")
       end
     end

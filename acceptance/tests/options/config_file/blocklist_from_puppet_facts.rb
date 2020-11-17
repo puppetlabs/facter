@@ -9,7 +9,8 @@ test_name "C100036: when run from puppet facts, facts can be blocked via a list 
   agents.each do |agent|
     step "facts should be blocked when Facter is run from Puppet with a configured blocklist" do
       # default facter.conf
-      facter_conf_default_dir = get_default_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
+      facter_conf_default_dir = get_default_fact_dir(agent['platform'],
+                                                     on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f)
       facter_conf_default_path = File.join(facter_conf_default_dir, "facter.conf")
 
       teardown do

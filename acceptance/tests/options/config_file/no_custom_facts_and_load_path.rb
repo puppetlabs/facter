@@ -4,9 +4,6 @@ test_name "C100004: config file option no-custom-facts : true does not load $LOA
   confine :except, :platform => 'cisco_nexus' # see BKR-749
   tag 'risk:high'
 
-  require 'puppet/acceptance/common_utils'
-  extend Puppet::Acceptance::CommandUtils
-
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 
@@ -41,7 +38,7 @@ EOM
       end
 
       step("Agent #{agent}: using config no-custom-facts : true should not resolve facts in facter directories on the $LOAD_PATH") do
-        on(agent, facter("--config \"#{config_file}\" custom_fact")) do |facter_output|
+        on(agent, facter("--config \"#{config_file}\" custom_fact #{@options[:trace]}")) do |facter_output|
           assert_equal("", facter_output.stdout.chomp, "Custom fact in $LOAD_PATH/facter should not have resolved")
         end
       end

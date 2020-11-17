@@ -21,7 +21,7 @@ test_name "Facter::Util::Resolution accepts timeout option" do
     end
 
     step "Facter: Errors that the custom fact reached the timeout" do
-      on(agent, facter('--custom-dir', custom_dir, 'foo'), acceptable_exit_codes: 1) do |output|
+      on(agent, facter("--custom-dir #{custom_dir} foo #{@options[:trace]}"), acceptable_exit_codes: 1) do |output|
         assert_match(/ERROR .*Timed out after 0.2 seconds while resolving fact='foo', resolution=.*/,
                      output.stderr.chomp)
       end

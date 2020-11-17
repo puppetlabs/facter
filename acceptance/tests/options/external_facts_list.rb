@@ -26,7 +26,8 @@ test_name "C99998: external fact commandline option --external-dir can be specif
       end
 
       step "Agent #{agent}: resolve a fact from each specified --external_dir option" do
-        on(agent, facter("--external-dir \"#{external_dir_1}\" --external-dir \"#{external_dir_2}\" --json")) do |facter_output|
+        facter_command = "--external-dir \"#{external_dir_1}\" --external-dir \"#{external_dir_2}\" --json #{@options[:trace]}"
+        on(agent, facter(facter_command)) do |facter_output|
           results = JSON.parse(facter_output.stdout)
           assert_equal("external_value_1", results['external_fact_1'], "Incorrect external fact value for external_fact_1")
           assert_equal("external_value_2", results['external_fact_2'], "Incorrect external fact value for external_fact_2")

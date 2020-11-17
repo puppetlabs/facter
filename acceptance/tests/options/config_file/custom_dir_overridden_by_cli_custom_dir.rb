@@ -49,7 +49,8 @@ EOM
       end
 
       step "Agent #{agent}: resolve a fact from the command line custom-dir and not the config file" do
-        on(agent, facter("--config \"#{config_file}\" --custom-dir \"#{custom_cli_dir}\" --json")) do |facter_output|
+        facter_command = "--config \"#{config_file}\" --custom-dir \"#{custom_cli_dir}\" --json #{@options[:trace]}"
+        on(agent, facter(facter_command)) do |facter_output|
           results = JSON.parse(facter_output.stdout)
           assert_equal("cli_value", results['cli_fact'], "Incorrect custom fact value for cli_fact")
           assert_nil(results['config_fact'], "Config fact should not resolve and be nil")

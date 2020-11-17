@@ -16,7 +16,8 @@ cli : {
 EOM
 
   agents.each do |agent|
-    config_dir = get_default_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
+    config_dir = get_default_fact_dir(agent['platform'],
+                                      on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f)
     config_file = File.join(config_dir, "facter.conf")
 
     teardown do
@@ -29,7 +30,7 @@ EOM
     end
 
     step "conflict logic applies across settings sources" do
-      on(agent, facter("--no-external-facts"), :acceptable_exit_codes => [1]) do |facter_output|
+      on(agent, facter("--no-external-facts #{@options[:trace]}"), :acceptable_exit_codes => [1]) do |facter_output|
         assert_match(/no-external-facts and external-dir options conflict/, facter_output.stderr, "Facter should have warned about conflicting settings")
       end
     end

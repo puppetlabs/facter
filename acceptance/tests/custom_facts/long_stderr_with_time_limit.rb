@@ -24,7 +24,7 @@ test_name "Facter::Core::Execution doesn't kill process with long stderr message
     end
 
     step "Facter: should resolve the external fact and print as warning script's stderr message" do
-      on agent, facter('--external-dir', external_dir, 'newfact') do |facter_output|
+      on agent, facter("--external-dir #{external_dir} newfact #{@options[:trace]}") do |facter_output|
         assert_match(/value_of_fact/, facter_output.stdout.chomp)
         assert_match(/WARN test.sh .*test.sh completed with the following stderr message: This is a very long error message./, facter_output.stderr.chomp)
       end

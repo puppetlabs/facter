@@ -31,14 +31,15 @@ test_name 'Facter::Core::Execution accepts and correctly sets a time limit optio
     end
 
     step "Facter: Logs that command of the first custom fact had timeout after setted time limit" do
-      on agent, facter('--custom-dir', custom_dir, 'foo --debug') do |output|
+      on agent, facter('--custom-dir', custom_dir, "foo --debug #{@options[:trace]}") do |output|
         assert_match(/DEBUG Facter::Core::Execution.*Timeout encounter after 2s, killing process with pid:/,
                      output.stderr.chomp)
       end
     end
 
     step "Facter: Logs an error stating that the command of the second custom fact had timeout" do
-      on(agent, facter('--custom-dir', custom_dir, 'custom_fact --debug'), acceptable_exit_codes: 1) do |output|
+      on(agent, facter('--custom-dir', custom_dir, "custom_fact --debug #{@options[:trace]}"),
+         acceptable_exit_codes: 1) do |output|
         assert_match(/ERROR\s+.*Failed while executing '.*sleep.*2': Timeout encounter after 1s, killing process/,
                      output.stderr.chomp)
       end

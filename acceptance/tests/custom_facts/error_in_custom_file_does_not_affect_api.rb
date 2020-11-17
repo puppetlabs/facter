@@ -40,6 +40,7 @@ test_name 'Facter api works when there is an error inside a custom fact file' do
   def create_api_call_file(test_vars, facter_querry)
     file_content = <<-EOM
       require 'facter'
+      #{'Facter.trace(true)' if @options[:trace]}
       Facter.search(\'#{test_vars[:facts_dir]}\')
       #{facter_querry}
     EOM
@@ -91,7 +92,7 @@ test_name 'Facter api works when there is an error inside a custom fact file' do
     end
 
     step "Agent #{agent}: Verify that a core fact is still available" do
-      os_name = on(agent, facter('os.name')).stdout.chomp
+      os_name = on(agent, facter("os.name #{@options[:trace]}")).stdout.chomp
       create_api_call_file(test_vars, "puts Facter.value('os.name')")
       on(agent, "#{ruby_command(agent)} #{test_vars[:test_script_path]}") do |ruby_result|
         assert_match(/#{os_name}/, ruby_result.stdout)

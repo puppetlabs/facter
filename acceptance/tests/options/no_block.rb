@@ -8,7 +8,8 @@ test_name "C99971: the `--no-block` command line flag prevents facts from being 
 
   agents.each do |agent|
     # default facter.conf
-    facter_conf_default_dir = get_default_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
+    facter_conf_default_dir = get_default_fact_dir(agent['platform'],
+                                                   on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f)
     facter_conf_default_path = File.join(facter_conf_default_dir, "facter.conf")
 
     teardown do
@@ -26,7 +27,7 @@ test_name "C99971: the `--no-block` command line flag prevents facts from being 
     end
 
     step "no facts should be blocked when `--no-block` is specified" do
-      on(agent, facter("--no-block")) do |facter_output|
+      on(agent, facter("--no-block #{@options[:trace]}")) do |facter_output|
         assert_no_match(/blocking collection of .+ facts/, facter_output.stderr, "Expected no facts to be blocked")
       end
     end

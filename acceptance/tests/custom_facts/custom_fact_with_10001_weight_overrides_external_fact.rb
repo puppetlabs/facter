@@ -21,7 +21,9 @@ test_name "C100153: custom fact with weight of >= 10001 overrides an external fa
 
     # Custom fact with weight >= 10001 should override an external fact
     step "Agent #{agent}: resolve a custom fact with weight of 10001 overriding the external fact" do
-      on(agent, facter("--external-dir \"#{facts_dir}\" --custom-dir=#{facts_dir} test")) do |facter_output|
+      facter_command = "--external-dir \"#{facts_dir}\" --custom-dir=#{facts_dir} test #{@options[:trace]}"
+
+      on(agent, facter(facter_command)) do |facter_output|
         assert_equal("CUSTOM", facter_output.stdout.chomp)
       end
     end

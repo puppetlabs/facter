@@ -22,7 +22,7 @@ test_name 'FACT-2054: Custom facts that execute a shell command should expand it
     end
 
     step "Agent: Verify that command is expanded" do
-      on(agent, facter('foo', :environment => env)) do |facter_result|
+      on(agent, facter("foo #{@options[:trace]}", :environment => env)) do |facter_result|
         refute_equal('/opt/puppetlabs', facter_result.stdout.chomp, 'command was not expanded')
       end
     end

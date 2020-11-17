@@ -9,7 +9,7 @@ test_name "C87571: facter resolves facts in the default facts.d directory" do
   extend Facter::Acceptance::UserFactUtils
 
   agents.each do |agent|
-    os_version = on(agent, facter('kernelmajversion')).stdout.chomp.to_f
+    os_version = on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f
     ext = get_external_fact_script_extension(agent['platform'])
     factsd = get_factsd_dir(agent['platform'], os_version)
     fact_file = File.join(factsd, "external_fact_1#{ext}")
@@ -26,7 +26,7 @@ test_name "C87571: facter resolves facts in the default facts.d directory" do
     end
 
     step "agent #{agent}: resolve the external fact" do
-      on(agent, facter('external_fact')) do |facter_output|
+      on(agent, facter("external_fact #{@options[:trace]}")) do |facter_output|
         assert_equal('external_value', facter_output.stdout.chomp, 'Expected to resolve the external_fact')
       end
     end

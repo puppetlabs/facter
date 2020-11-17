@@ -45,7 +45,7 @@ test_name 'C98163: mountpoints fact should show mounts on tmpfs' do
     end
 
     step 'verify tmpfs mount point seen by facter' do
-      on(agent, facter("mountpoints.#{mount_point}")) do |facter_output|
+      on(agent, facter("mountpoints.#{mount_point} #{@options[:trace]}")) do |facter_output|
         assert_match(/filesystem\s+=>\s+\"tmpfs\"/, facter_output.stdout, 'filesystem is the wrong type')
         assert_match(/device\s+=>\s+\"tmpfs\"/, facter_output.stdout, 'device is not a tmpfs')
         assert_match(/noexec/, facter_output.stdout, 'expected to see noexec option')

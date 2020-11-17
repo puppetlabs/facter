@@ -22,7 +22,7 @@ test_name 'FACT-2054: Execute on Windows with expand => false should raise an er
     end
 
     step "Agent: Verify that exception is raised" do
-      on(agent, facter('foo', :environment => env), :acceptable_exit_codes => [0, 1]) do |output|
+      on(agent, facter("foo #{@options[:trace]}", :environment => env), :acceptable_exit_codes => [0, 1]) do |output|
         assert_match(/Unsupported argument on Windows/, output.stderr, '{:expand => false} on Windows should raise error')
       end
     end

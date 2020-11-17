@@ -48,10 +48,12 @@ test_name 'ttls configured weighted custom facts files creates cache file and re
   FACTER_CONF
 
   agents.each do |agent|
-    cache_folder = get_cached_facts_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
+    cache_folder = get_cached_facts_dir(agent['platform'],
+                                        on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f)
     fact_dir = agent.tmpdir('facter')
     env = { 'FACTERLIB' => fact_dir }
-    config_dir = get_default_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
+    config_dir = get_default_fact_dir(agent['platform'],
+                                      on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f)
     config_file = File.join(config_dir, 'facter.conf')
 
     step "Agent #{agent}: create config file" do
@@ -68,7 +70,8 @@ test_name 'ttls configured weighted custom facts files creates cache file and re
     end
 
     step "should log that it creates cache file and it caches custom facts found in facter.conf with the highest weight" do
-      on(agent, facter("#{duplicate_custom_fact_name} --debug", environment: env)) do |facter_result|
+      facter_command = "#{duplicate_custom_fact_name} --debug #{@options[:trace]}"
+      on(agent, facter(facter_command, environment: env)) do |facter_result|
         assert_equal(custom_fact_value + " 110", facter_result.stdout.chomp, "#{duplicate_custom_fact_name} value changed")
         assert_match(/facts cache file expired, missing or is corrupt/, facter_result.stderr,
                      'Expected debug message to state that custom facts cache file is missing or expired')
@@ -85,7 +88,8 @@ test_name 'ttls configured weighted custom facts files creates cache file and re
     end
 
     step 'should read from the cached file for a custom fact that has been cached' do
-      on(agent, facter("#{duplicate_custom_fact_name} --debug", environment: env)) do |facter_result|
+      facter_command = "#{duplicate_custom_fact_name} --debug #{@options[:trace]}"
+      on(agent, facter(facter_command, environment: env)) do |facter_result|
         assert_match(/Loading cached custom facts from file ".+"|loading cached values for random_custom_fact facts/, facter_result.stderr,
                      'Expected debug message to state that cached custom facts are read from file')
       end

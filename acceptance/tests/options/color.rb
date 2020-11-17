@@ -7,7 +7,8 @@ test_name "C86545: --debug and --color command-line options should print DEBUG m
   agents.each do |agent|
     step "Agent #{agent}: retrieve debug info from stderr using --debug and --color option" do
       # set the TERM type to be a color xterm to help ensure we emit the escape sequence to change the color
-      on(agent, facter('--debug --color'), :environment => { 'TERM' => 'xterm-256color' }) do |facter_output|
+      on(agent, facter("--debug --color #{@options[:trace]}"),
+         :environment => { 'TERM' => 'xterm-256color' }) do |facter_output|
         assert_match(/DEBUG/, facter_output.stderr, "Expected DEBUG information in stderr")
         assert_match(
           /\e\[(\d{2,3})?;?(\d{1})?;?(\d{2,3})?m/,

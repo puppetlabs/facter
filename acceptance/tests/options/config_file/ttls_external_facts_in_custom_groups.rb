@@ -24,7 +24,8 @@ EOM
 
       create_remote_file(agent, external_fact, external_fact_content)
 
-      config_dir = get_default_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
+      config_dir = get_default_fact_dir(agent['platform'],
+                                        on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f)
       config_file = File.join(config_dir, "facter.conf")
 
       # Setup facter conf
@@ -50,7 +51,8 @@ EOM
       end
 
       step "should print error and not cache anything" do
-        on(agent, facter("--external-dir \"#{external_dir}\" --debug #{cached_fact_name}"), acceptable_exit_codes: [1]) do |facter_output|
+        on(agent, facter("--external-dir \"#{external_dir}\" --debug #{cached_fact_name} #{@options[:trace]}"),
+           acceptable_exit_codes: [1]) do |facter_output|
           assert_match(/Caching custom group is not supported for external facts/, facter_output.stderr, "Expected error message to state that external facts cannot be grouped")
         end
       end

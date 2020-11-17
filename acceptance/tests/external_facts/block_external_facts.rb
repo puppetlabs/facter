@@ -28,7 +28,8 @@ test_name 'custom facts included in blocklist will not be displayed' do
     end
 
     step "agent #{agent}: resolve the external fact" do
-      on(agent, facter("--debug --external-dir \"#{facts_dir}\" --config \"#{config_file}\"")) do |facter_output|
+      facter_command = "--debug --external-dir \"#{facts_dir}\" --config \"#{config_file}\" #{@options[:trace]}"
+      on(agent, facter(facter_command)) do |facter_output|
         assert_match(/External fact file external_fact_1#{ext} blocked./, facter_output.stderr.chomp, 'Expected to block the external_fact')
         assert_no_match(/external_fact => external_value/, stdout, 'Expected fact not to match fact')
       end

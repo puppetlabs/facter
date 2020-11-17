@@ -25,7 +25,8 @@ EOM
       end
 
       step "Agent #{agent}: facter should resolve a fact from the directory specified by the environment variable FACTERLIB" do
-        on(agent, facter('custom_fact_facterlib', :environment => { 'FACTERLIB' => custom_dir })) do |facter_output|
+        on(agent, facter("custom_fact_facterlib #{@options[:trace]}",
+                         :environment => { 'FACTERLIB' => custom_dir })) do |facter_output|
           assert_equal("facterlib", facter_output.stdout.chomp, "Incorrect custom fact value for fact in FACTERLIB")
         end
       end

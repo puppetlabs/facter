@@ -36,7 +36,7 @@ EOM
       end
 
       step "Agent #{agent}: resolve a fact from each configured external-dir path" do
-        on(agent, facter("--config \"#{config_file}\" --json")) do |facter_output|
+        on(agent, facter("--config \"#{config_file}\" --json #{@options[:trace]}")) do |facter_output|
           results = JSON.parse(facter_output.stdout)
           assert_equal("external_value_1", results['external_fact_1'], "Incorrect external fact value for external_fact_1")
           assert_equal("external_value_2", results['external_fact_2'], "Incorrect external fact value for external_fact_2")

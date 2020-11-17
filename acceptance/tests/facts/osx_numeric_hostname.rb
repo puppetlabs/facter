@@ -17,7 +17,7 @@ test_name 'Querying the fqdn with a numeric hostname should not fail' do
     end
 
     step 'Verify fqdn fact does not fail' do
-      on(agent, facter('fqdn'))
+      on(agent, facter("fqdn #{@options[:trace]}"))
     end
   end
 end

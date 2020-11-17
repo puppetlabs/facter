@@ -7,9 +7,6 @@ test_name "C100003: custom fact commandline options --no-custom-facts does not l
   confine :except, :platform => 'cisco_nexus' # see BKR-749
   tag 'risk:high'
 
-  require 'puppet/acceptance/common_utils'
-  extend Puppet::Acceptance::CommandUtils
-
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 
@@ -34,7 +31,7 @@ EOM
       end
 
       step("Agent #{agent}: using --no-custom-facts should not resolve facts on the $LOAD_PATH") do
-        on(agent, facter("--no-custom-facts custom_fact")) do |facter_output|
+        on(agent, facter("--no-custom-facts custom_fact #{@options[:trace]}")) do |facter_output|
           assert_equal("", facter_output.stdout.chomp, "Custom fact in $LOAD_PATH/facter should not have resolved")
         end
       end

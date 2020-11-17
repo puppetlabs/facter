@@ -14,7 +14,8 @@ EOM
 
   agents.each do |agent|
     step "Agent #{agent}: create config file" do
-      config_dir = get_default_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
+      config_dir = get_default_fact_dir(agent['platform'],
+                                        on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f)
       config_file = File.join(config_dir, "facter.conf")
       agent.mkdir_p(config_dir)
       create_remote_file(agent, config_file, config)
@@ -24,7 +25,7 @@ EOM
       end
 
       step "debug output should print when config file is loaded" do
-        on(agent, facter("")) do |facter_output|
+        on(agent, facter((@options[:trace]).to_s)) do |facter_output|
           assert_match(/INFO/, facter_output.stderr, "Expected stderr to contain verbose (INFO) statements")
         end
       end

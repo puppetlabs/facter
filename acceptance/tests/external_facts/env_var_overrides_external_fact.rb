@@ -25,7 +25,7 @@ test_name 'C100537: FACTER_ env var should override external fact' do
     end
 
     step "Agent: #{agent}: ensure external fact resolves correctly" do
-      on(agent, facter("--external-dir \"#{external_dir}\" #{fact_name}")) do |facter_output|
+      on(agent, facter("--external-dir \"#{external_dir}\" #{fact_name} #{@options[:trace]}")) do |facter_output|
         assert_equal(fact_value,
                      facter_output.stdout.chomp,
                      'Expected external fact to resolve as defined in script')
@@ -33,7 +33,7 @@ test_name 'C100537: FACTER_ env var should override external fact' do
     end
 
     step "Agent #{agent}: the fact value from FACTER_ env var should override the external fact value" do
-      on(agent, facter("--external-dir \"#{external_dir}\" #{fact_name}",
+      on(agent, facter("--external-dir \"#{external_dir}\" #{fact_name} #{@options[:trace]}",
                        :environment => { "FACTER_#{fact_name}" => override_value })) do |facter_output|
         assert_equal(override_value,
                      facter_output.stdout.chomp,

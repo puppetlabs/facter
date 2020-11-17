@@ -5,7 +5,8 @@ test_name "C14892: external facts should only be run once" do
   extend Facter::Acceptance::UserFactUtils
 
   agents.each do |agent|
-    factsd = get_factsd_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
+    factsd = get_factsd_dir(agent['platform'],
+                            on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f)
     ext = get_external_fact_script_extension(agent['platform'])
     ext_fact = File.join(factsd, "external_fact#{ext}")
 
@@ -33,7 +34,7 @@ EOM
     end
 
     step "Agent #{agent}: ensure the fact is only executed once" do
-      on(agent, facter) do |facter_output|
+      on(agent, facter((@options[:trace]).to_s)) do |facter_output|
         lines = facter_output.stderr.split('\n')
         times = lines.count { |line| line =~ /SCRIPT CALLED/ }
         assert_equal(1, times, "External fact should only execute once: #{facter_output.stderr}")

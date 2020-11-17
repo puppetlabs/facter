@@ -15,7 +15,8 @@ test_name "C98141: config file is loaded when Facter is run from Puppet" do
     # create paths for default facter.conf, external-dir, and custom-dir
 
     # default facter.conf
-    facter_conf_default_dir = get_default_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
+    facter_conf_default_dir = get_default_fact_dir(agent['platform'],
+                                                   on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f)
     facter_conf_default_path = File.join(facter_conf_default_dir, "facter.conf")
 
     # external-dir
@@ -45,6 +46,13 @@ test_name "C98141: config file is loaded when Facter is run from Puppet" do
         global : {
           external-dir : ["#{ext_fact_dir1}", "#{ext_fact_dir2}"],
           custom-dir : ["#{cust_fact_dir}"]
+      }
+      #{
+        if @options[:trace]
+          '  cli : {
+          trace : true
+        }'
+        end
       }
       FILE
 

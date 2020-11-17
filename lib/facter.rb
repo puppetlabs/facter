@@ -239,8 +239,8 @@ module Facter
       nil
     end
 
-    # Flushes cached values for all facts. This does not cause code to be
-    # reloaded; it only clears the cached results.
+    # Flushes cached values for all core and custom facts (external facts are not cleared).
+    # This does not cause code to be reloaded; it only clears the cached results.
     #
     # @return [void]
     #

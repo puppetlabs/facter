@@ -64,7 +64,7 @@ EOM
   kv_output = 'one'
 
   agents.each do |agent|
-    os_version = on(agent, facter('kernelmajversion')).stdout.chomp.to_f
+    os_version = on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f
     factsd = get_factsd_dir(agent['platform'], os_version)
     ext = get_external_fact_script_extension(agent['platform'])
 
@@ -94,7 +94,7 @@ EOM
       agent.chmod('+x', yaml_fact)
 
       step "YAML output should produce a structured fact" do
-        on(agent, facter("yaml_fact")) do
+        on(agent, facter("yaml_fact #{@options[:trace]}")) do
           assert_match(/#{yaml_structured_output}/, stdout, "Expected properly structured fact")
         end
       end
@@ -106,7 +106,7 @@ EOM
       agent.chmod('+x', json_fact)
 
       step "JSON output should produce a structured fact" do
-        on(agent, facter("json_fact")) do
+        on(agent, facter("json_fact #{@options[:trace]}")) do
           assert_match(/#{json_structured_output}/, stdout, "Expected properly structured fact")
         end
       end
@@ -118,7 +118,7 @@ EOM
       agent.chmod('+x', kv_fact)
 
       step "output that is neither yaml nor json should not produce a structured fact" do
-        on(agent, facter("kv_fact")) do
+        on(agent, facter("kv_fact #{@options[:trace]}")) do
           assert_match(/#{kv_output}/, stdout, "Expected a simple key-value fact")
         end
       end
@@ -130,7 +130,7 @@ EOM
       agent.chmod('+x', bad_fact)
 
       step "should error when output is not in a supported format" do
-        on(agent, facter("bad_fact --debug")) do
+        on(agent, facter("bad_fact --debug #{@options[:trace]}")) do
           assert_match(/Could not parse executable fact/, stderr, "Expected parsing the malformed fact to fail")
         end
       end

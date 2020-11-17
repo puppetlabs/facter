@@ -2,9 +2,6 @@
 test_name 'C100161: Ruby can load libfacter without raising an error' do
   tag 'risk:high'
 
-  require 'puppet/acceptance/common_utils'
-  extend Puppet::Acceptance::CommandUtils
-
   def puppet_ruby_path_to_puppet_install_dir(puppet_ruby_path)
     # find the "puppet" directory which should be the root of the install
     puppet_dir = puppet_ruby_path
@@ -23,6 +20,9 @@ test_name 'C100161: Ruby can load libfacter without raising an error' do
     # create a ruby program that will add a fact through Facter
     fact_content = <<-EOM
     require 'facter'
+
+    #{'Facter.trace(true)' if @options[:trace]}
+
     Facter.add('facter_loaded') do
       setcode do
         'FACTER_LOADED'

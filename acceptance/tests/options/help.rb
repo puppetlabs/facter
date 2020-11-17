@@ -5,7 +5,7 @@ test_name 'C99984: --help command-line option prints usage information to stdout
 
   agents.each do |agent|
     step "Agent #{agent}: retrieve usage info from stdout using --help option" do
-      on(agent, facter('--help')) do
+      on(agent, facter("--help #{@options[:trace]}")) do
         assert_match(/(facter|facter-ng) \[options\] \[query\] \[query\] \[...\]/, stdout, 'Expected stdout to contain usage information')
       end
     end
@@ -25,7 +25,7 @@ test_name 'C99984: --help command-line option prints usage information to stdout
         --list-block-groups
         --list-cache-groups
       ]
-      on(agent, facter('--help')) do
+      on(agent, facter("--help #{@options[:trace]}")) do
         options.each do |option|
           assert_match(/#{option}/, stdout, "Key: #{option} not found in help description")
         end

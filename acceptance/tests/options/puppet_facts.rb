@@ -26,11 +26,11 @@ test_name "C14783: facter -p loads facts from puppet" do
     end
 
     step "Agent #{agent}: verify facts" do
-      on(agent, facter("-p external")) do |facter_output|
+      on(agent, facter("-p external #{@options[:trace]}")) do |facter_output|
         assert_equal("external", facter_output.stdout.chomp)
       end
 
-      on(agent, facter("-p custom")) do |facter_output|
+      on(agent, facter("-p custom #{@options[:trace]}")) do |facter_output|
         assert_equal("custom", facter_output.stdout.chomp)
       end
     end

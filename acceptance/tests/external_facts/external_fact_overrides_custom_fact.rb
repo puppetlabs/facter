@@ -20,7 +20,8 @@ test_name "C100150: external fact overrides custom fact without a weight" do
     end
 
     step "Agent #{agent}: resolve an external fact over a custom fact" do
-      on(agent, facter("--external-dir \"#{facts_dir}\" --custom-dir=#{facts_dir} #{fact_name}")) do |facter_output|
+      facter_command = "--external-dir \"#{facts_dir}\" --custom-dir=#{facts_dir} #{fact_name} #{@options[:trace]}"
+      on(agent, facter(facter_command)) do |facter_output|
         assert_equal("EXTERNAL", facter_output.stdout.chomp)
       end
     end

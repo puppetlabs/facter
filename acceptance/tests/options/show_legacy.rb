@@ -4,13 +4,13 @@ test_name "C87580: --show-legacy command-line option results in output with lega
 
   agents.each do |agent|
     step "Agent #{agent}: retrieve legacy output using a hash" do
-      on(agent, facter("--show-legacy")) do
+      on(agent, facter("--show-legacy #{@options[:trace]}")) do
         assert_match(/^rubyversion => [0-9]+\.[0-9]+\.[0-9]+$/, stdout.chomp, 'hash legacy output does not contain legacy fact rubyversion')
       end
     end
 
     step "Agent #{agent}: retrieve legacy output using the --json option" do
-      on(agent, facter("--show-legacy --json")) do
+      on(agent, facter("--show-legacy --json #{@options[:trace]}")) do
         assert_match(/^  "rubyversion": "[0-9]+\.[0-9]+\.[0-9]+",$/, stdout.chomp, 'json legacy output does not contain legacy fact rubyversion')
       end
     end

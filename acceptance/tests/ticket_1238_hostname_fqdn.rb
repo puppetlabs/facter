@@ -30,7 +30,7 @@ test_name 'C93827: facter fqdn should return the hostname when its a fully quali
     end
 
     step 'validate facter uses hostname as the fqdn if its a fully qualified domain name' do
-      on(agent, 'facter fqdn') do |facter_output|
+      on(agent, "facter fqdn #{@options[:trace]}") do |facter_output|
         assert_equal(fqdn, facter_output.stdout.chomp, 'facter did not return the hostname set by the test')
       end
     end
@@ -50,7 +50,7 @@ test_name 'C93827: facter fqdn should return the hostname when its a fully quali
   end
 
   step 'validate facter uses hostname as the LONG fqdn if its a fully qualified domain name' do
-    on(agent, 'facter fqdn') do |facter_output|
+    on(agent, "facter fqdn #{@options[:trace]}") do |facter_output|
       assert_equal(fqdn_long, facter_output.stdout.chomp, 'facter did not return the hostname set by the test')
     end
   end

@@ -14,6 +14,8 @@ end
 
 require 'facter'
 
+#{'Facter.trace(true)' if @options[:trace]}
+
 file_name = 'custom_fact.rb'
 
 path = ARGV[0]

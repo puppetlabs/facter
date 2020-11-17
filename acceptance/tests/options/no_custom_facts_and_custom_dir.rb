@@ -11,7 +11,8 @@ test_name "C100001: custom fact commandline options --no-custom-facts together w
     end
 
     step "Agent #{agent}: --no-custom-facts and --custom-dir options should result in a error" do
-      on(agent, facter("--no-custom-facts --custom-dir '#{custom_dir}'"), :acceptable_exit_codes => 1) do |facter_output|
+      facter_command = "--no-custom-facts --custom-dir '#{custom_dir}' #{@options[:trace]}"
+      on(agent, facter(facter_command), :acceptable_exit_codes => 1) do |facter_output|
         assert_match(/options conflict/, facter_output.stderr.chomp, "Output does not contain error string")
       end
     end

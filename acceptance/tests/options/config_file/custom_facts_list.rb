@@ -48,7 +48,7 @@ EOM
       end
 
       step "Agent #{agent}: resolve a fact from each configured custom-dir path" do
-        on(agent, facter("--config \"#{config_file}\" --json")) do |facter_output|
+        on(agent, facter("--config \"#{config_file}\" --json #{@options[:trace]}")) do |facter_output|
           results = JSON.parse(facter_output.stdout)
           assert_equal("config_value_1", results['config_fact_1'], "Incorrect custom fact value for config_fact_1")
           assert_equal("config_value_2", results['config_fact_2'], "Incorrect custom fact value for config_fact_2")

@@ -30,7 +30,7 @@ EOM
       end
 
       step "Agent #{agent}: resolve a fact in the external-dir in the configuration file" do
-        on(agent, facter("--config \"#{config_file}\" single_fact")) do |facter_output|
+        on(agent, facter("--config \"#{config_file}\" single_fact #{@options[:trace]}")) do |facter_output|
           assert_equal("external_value", facter_output.stdout.chomp, "Incorrect external fact value")
         end
       end

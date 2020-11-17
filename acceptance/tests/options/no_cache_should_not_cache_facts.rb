@@ -15,7 +15,7 @@ test_name "C99968: --no-cache command-line option causes facter to not cache fac
   FILE
 
   agents.each do |agent|
-    kernel_version = on(agent, facter('kernelmajversion')).stdout.chomp.to_f
+    kernel_version = on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f
     config_dir = get_default_fact_dir(agent['platform'], kernel_version)
     config_file = File.join(config_dir, "facter.conf")
 
@@ -35,7 +35,7 @@ test_name "C99968: --no-cache command-line option causes facter to not cache fac
     end
 
     step "facter should not cache facts when --no-cache is specified" do
-      on(agent, facter("--no-cache")) do |facter_output|
+      on(agent, facter("--no-cache #{@options[:trace]}")) do |facter_output|
         assert_no_match(/caching/, facter_output.stderr, "facter should not have tried to cache any facts")
       end
     end

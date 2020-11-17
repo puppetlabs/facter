@@ -31,9 +31,11 @@ EOM
 
   agents.each do |agent|
     step "Agent #{agent}: create config file" do
-      config_dir = get_default_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
+      config_dir = get_default_fact_dir(agent['platform'],
+                                        on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f)
       config_file = File.join(config_dir, "facter.conf")
-      cached_facts_dir = get_cached_facts_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
+      cached_facts_dir = get_cached_facts_dir(agent['platform'],
+                                              on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f)
 
       cached_fact_file = File.join(cached_facts_dir, cached_fact_name)
 
@@ -49,7 +51,7 @@ EOM
       step "Agent #{agent}: create config file with no cached facts" do
         # Set up a known cached fact
         agent.rm_rf(cached_facts_dir)
-        on(agent, facter(""))
+        on(agent, facter(@options[:trace].to_s))
         create_remote_file(agent, cached_fact_file, cached_fact_content)
       end
 
@@ -58,7 +60,7 @@ EOM
         no_cache_config_file = File.join(config_dir, "no-cache.conf")
         create_remote_file(agent, no_cache_config_file, config_no_cache)
 
-        on(agent, facter("--config \"#{no_cache_config_file}\"")) do |facter_output|
+        on(agent, facter("--config \"#{no_cache_config_file}\" #{@options[:trace]}")) do |facter_output|
           assert_match(/#{cached_fact_name}/, facter_output.stdout, "Expected to see the fact in output")
           assert_no_match(/#{cached_fact_value}/, facter_output.stdout, "Expected to not see the cached fact value")
         end

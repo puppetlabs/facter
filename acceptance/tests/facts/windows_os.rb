@@ -34,7 +34,7 @@ test_name "Test facter os reports correct os.windows.system32" do
 
     step "Install Windows remote desktop feature" do
       if os_type == "Server"
-        on(agent, powershell("facter os.windows.system32")) do |facter_before_output|
+        on(agent, powershell("facter os.windows.system32 #{@options[:trace]}")) do |facter_before_output|
           assert_equal("C:\\Windows\\system32", facter_before_output.stdout.chomp, 'Before windows feature installation, should be C:\\Windows\\system32')
         end
         on(agent, powershell("Add-WindowsFeature –Name RDS-RD-Server –IncludeAllSubFeature"))
@@ -55,7 +55,7 @@ test_name "Test facter os reports correct os.windows.system32" do
     end
 
     step "Verify facter os reports correct system32 variable" do
-      on(agent, powershell("facter os.windows.system32")) do |facter_output|
+      on(agent, powershell("facter os.windows.system32 #{@options[:trace]}")) do |facter_output|
         assert_equal("C:\\Windows\\system32", facter_output.stdout.chomp, 'Result should be C:\\Windows\\system32')
       end
     end
