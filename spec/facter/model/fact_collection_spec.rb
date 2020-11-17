@@ -57,9 +57,9 @@ describe Facter::FactCollection do
         let(:fact_value) { nil }
         let(:type) { :custom }
 
-        it 'adds fact to collection' do
+        it 'does not add fact to collection' do
           fact_collection.build_fact_collection!([resolved_fact])
-          expected_hash = { 'operatingsystem' => nil }
+          expected_hash = {}
 
           expect(fact_collection).to eq(expected_hash)
         end
