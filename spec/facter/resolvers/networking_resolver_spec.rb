@@ -55,8 +55,10 @@ describe Facter::Resolvers::Networking do
     end
 
     it 'checks interface lo0 has the expected bindings6' do
-      expected = { bindings6: [{ address: '::1', netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff', network: '::1' },
-                               { address: 'fe80::1', netmask: 'ffff:ffff:ffff:ffff::', network: 'fe80::' }] }
+      expected = { bindings6: [{ address: '::1', netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff', network: '::1',
+                                 scope6: 'host' },
+                               { address: 'fe80::1', netmask: 'ffff:ffff:ffff:ffff::', network: 'fe80::',
+                                 scope6: 'link' }] }
       expect(networking.resolve(:interfaces)['lo0']).to include(expected)
     end
 
