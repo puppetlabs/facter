@@ -1,0 +1,34 @@
+<%# This template is used to generate a markdown file documenting facts. -%>
+<%# Run 'ruby generate.rb > facts.md' to generate the markdown file. -%>
+<%
+  def format_fact_element(name, info, indent = '')
+    subelements = (info['elements'] || {}).map{|n, i| format_fact_element(n, i, "#{indent}    ")}.join('')
+
+    "#{indent}* `#{name}` (#{info['type']}) --- #{info['description']}\n#{subelements}"
+  end
+-%>
+<% facts.each do |name, schema| -%>
+### `<%= name %>`
+
+<% if schema['hidden'] -%>
+This legacy fact is hidden by default in Facter's command-line output.
+
+<% end -%>
+**Type:** <%= schema['type'] %>
+
+**Purpose:**
+
+<%= schema['description'] %>
+
+<% if schema['elements'] -%>
+**Elements:**
+
+<%= schema['elements'].map{|name, info| format_fact_element(name, info)}.join('') %>
+<% end -%>
+
+<% if schema['details'] -%>
+**Details:**
+
+<%= schema['details'] %>
+<% end -%>
+<% end -%>

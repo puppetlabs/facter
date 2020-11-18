@@ -1,0 +1,2035 @@
+# This file is used to validate the facter output schema and also document facts.
+#
+# Use the following attributes for each entry:
+#   - pattern (optional): the pattern to match against a fact name; if not specified, an exact match is performed.
+#   - type (required): the type of the fact.  Must be one of the following:
+#       * integer
+#       * double
+#       * string
+#       * boolean
+#       * array
+#       * map
+#       * ip (IPv4 address string)
+#       * ip6 (IPv6 address string)
+#       * mac (MAC address string)
+#   - hidden (optional; default: false): true if the value is hidden from facter output by default, false if not.
+#   - description (required): describes the fact's purpose.
+#   - resolution (optional): describes how the fact is resolved.
+#   - caveats (optional): describes any caveats to the fact.
+#   - elements (required for map types): contains the element values of a map value; each element is another entry.
+#   - validate (optional; default: true): true if a map value's elements should be validated or false if not.
+#   - blockgroup (optional): the block group of this fact; if not specified, the fact cannot be blocked
+#
+# Please keep the facts in alphabetical order.
+
+aio_agent_version:
+    type: string
+    description: Return the version of the puppet-agent package that installed facter.
+    resolution: |
+        All platforms: use the compile-time enabled version definition.
+
+architecture:
+    type: string
+    hidden: true
+    description: Return the operating system's hardware architecture.
+    resolution: |
+        POSIX platforms: use the `uname` function to retrieve the OS hardware architecture.
+        Windows: use the `GetNativeSystemInfo` function to retrieve the OS hardware architecture.
+    caveats: |
+        Linux: Debian, Gentoo, kFreeBSD, and Ubuntu use "amd64" for "x86_64" and Gentoo uses "x86" for "i386".
+
+augeas:
+    type: map
+    description: Return information about augeas.
+    resolution: |
+        All platforms: query augparse for augeas metadata.
+    elements:
+        version:
+            type: string
+            description: The version of augparse.
+
+augeasversion:
+    type: string
+    hidden: true
+    description: Return the version of augeas.
+    resolution: |
+        All platforms: query augparse for the augeas version.
+
+blockdevices:
+    type: string
+    hidden: true
+    description: Return a comma-separated list of block devices.
+    resolution: |
+        Linux: parse the contents of `/sys/block/<device>/`.
+        Solaris: use the `kstat` function to query disk information.
+    caveats: |
+        Linux: kernel 2.6+ is required due to the reliance on sysfs.
+
+blockdevice_<devicename>_model:
+    pattern: '^blockdevice_[A-Za-z0-9]+_model$'
+    type: string
+    hidden: true
+    description: Return the model name of block devices attached to the system.
+    resolution: |
+        Linux: parse the contents of `/sys/block/<device>/device/model` to retrieve the model name/number for a device.
+        Solaris: use the `kstat` function to query disk information.
+    caveats: |
+        Linux: kernel 2.6+ is required due to the reliance on sysfs.
+
+blockdevice_<devicename>_size:
+    pattern: ^blockdevice_[A-Za-z0-9]+_size$
+    type: integer
+    hidden: true
+    description: Return the size of a block device in bytes.
+    resolution: |
+        Linux: parse the contents of `/sys/block/<device>/size` to receive the size (multiplying by 512 to correct for blocks-to-bytes).
+        Solaris: use the `kstat` function to query disk information.
+    caveats: |
+        Linux: kernel 2.6+ is required due to the reliance on sysfs.
+
+blockdevice_<devicename>_vendor:
+    pattern: ^blockdevice_[A-Za-z0-9]+_vendor$
+    type: string
+    hidden: true
+    description: Return the vendor name of block devices attached to the system.
+    resolution: |
+        Linux: parse the contents of `/sys/block/<device>/device/vendor` to retrieve the vendor for a device.
+        Solaris: use the `kstat` function to query disk information.
+    caveats: |
+        Linux: kernel 2.6+ is required due to the reliance on sysfs.
+
+bios_release_date:
+    type: string
+    hidden: true
+    description: Return the release date of the system BIOS.
+    resolution: |
+        Linux: parse the contents of `/sys/class/dmi/id/bios_date` to retrieve the system BIOS release date.
+        Solaris: use the `smbios` utility to retrieve the system BIOS release date.
+    caveats: |
+        Linux: kernel 2.6+ is required due to the reliance on sysfs.
+
+bios_vendor:
+    type: string
+    hidden: true
+    description: Return the vendor of the system BIOS.
+    resolution: |
+        Linux: parse the contents of `/sys/class/dmi/id/bios_vendor` to retrieve the system BIOS vendor.
+        Solaris: use the `smbios` utility to retrieve the system BIOS vendor.
+    caveats: |
+        Linux: kernel 2.6+ is required due to the reliance on sysfs.
+
+bios_version:
+    type: string
+    hidden: true
+    description: Return the version of the system BIOS.
+    resolution: |
+        Linux: parse the contents of `/sys/class/dmi/id/bios_version` to retrieve the system BIOS version.
+        Solaris: use the `smbios` utility to retrieve the system BIOS version.
+    caveats: |
+        Linux: kernel 2.6+ is required due to the reliance on sysfs.
+
+boardassettag:
+    type: string
+    hidden: true
+    description: Return the system board asset tag.
+    resolution: |
+        Linux: parse the contents of `/sys/class/dmi/id/board_asset_tag` to retrieve the system board asset tag.
+    caveats: |
+        Linux: kernel 2.6+ is required due to the reliance on sysfs.
+
+boardmanufacturer:
+    type: string
+    hidden: true
+    description: Return the system board manufacturer.
+    resolution: |
+        Linux: parse the contents of `/sys/class/dmi/id/board_vendor` to retrieve the system board manufacturer.
+    caveats: |
+        Linux: kernel 2.6+ is required due to the reliance on sysfs.
+
+boardproductname:
+    type: string
+    hidden: true
+    description: Return the system board product name.
+    resolution: |
+        Linux: parse the contents of `/sys/class/dmi/id/board_name` to retrieve the system board product name.
+    caveats: |
+        Linux: kernel 2.6+ is required due to the reliance on sysfs.
+
+boardserialnumber:
+    type: string
+    hidden: true
+    description: Return the system board serial number.
+    resolution: |
+        Linux: parse the contents of `/sys/class/dmi/id/board_serial` to retrieve the system board serial number.
+    caveats: |
+        Linux: kernel 2.6+ is required due to the reliance on sysfs.
+
+chassisassettag:
+    type: string
+    hidden: true
+    description: Return the system chassis asset tag.
+    resolution: |
+        Linux: parse the contents of `/sys/class/dmi/id/chassis_asset_tag` to retrieve the system chassis asset tag.
+        Solaris: use the `smbios` utility to retrieve the system chassis asset tag.
+    caveats: |
+        Linux: kernel 2.6+ is required due to the reliance on sysfs.
+
+chassistype:
+    type: string
+    hidden: true
+    description: Return the system chassis type.
+    resolution: |
+        Linux: parse the contents of `/sys/class/dmi/id/chassis_type` to retrieve the system chassis type.
+        Solaris: use the `smbios` utility to retrieve the system chassis type.
+    caveats: |
+        Linux: kernel 2.6+ is required due to the reliance on sysfs.
+
+cloud:
+    type: map
+    description: Information about the cloud instance of the node. This is currently only populated on Linux nodes running in Microsoft Azure.
+    elements:
+        provider:
+            type: string
+            description: The cloud provider for the node.
+
+dhcp_servers:
+    type: map
+    hidden: true
+    description: Return the DHCP servers for the system.
+    resolution: |
+        Linux: parse `dhclient` lease files or use the `dhcpcd` utility to retrieve the DHCP servers.
+        Mac OSX: use the `ipconfig` utility to retrieve the DHCP servers.
+        Solaris: use the `dhcpinfo` utility to retrieve the DHCP servers.
+        Windows: use the `GetAdaptersAddresses` (Windows Server 2003: `GetAdaptersInfo`) function to retrieve the DHCP servers.
+    elements:
+        <interface>:
+            pattern: ^((?!system).+)*$
+            type: ip
+            description: The DHCP server for the interface.
+        system:
+            type: ip
+            description: The DHCP server for the default interface.
+
+disks:
+    type: map
+    description: Return the disk (block) devices attached to the system.
+    resolution: |
+        AIX: query the ODM for all disk devices
+        Linux: parse the contents of `/sys/block/<device>/`.
+        Solaris: use the `kstat` function to query disk information.
+    caveats: |
+        Linux: kernel 2.6+ is required due to the reliance on sysfs.
+    elements:
+        <devicename>:
+            pattern: \w+
+            type: map
+            description: Represents a disk or block device.
+            elements:
+                model:
+                    type: string
+                    description: The model of the disk or block device.
+                product:
+                    type: string
+                    description: The product name of the disk or block device.
+                    caveats: Only present on Solaris.
+                serial_number:
+                    type: string
+                    description: The serial number of the disk or block device.
+                size:
+                    type: string
+                    description: The display size of the disk or block device, such as "1 GiB".
+                size_bytes:
+                    type: integer
+                    description: The size of the disk or block device, in bytes.
+                vendor:
+                    type: string
+                    description: The vendor of the disk or block device.
+                type:
+                    type: string
+                    description: The type of disk or block device (sshd or hdd). This fact is available only on Linux.
+
+dmi:
+    type: map
+    description: Return the system management information.
+    resolution: |
+        Linux: parse the contents of `/sys/class/dmi/id/` to retrieve system management information.
+        Mac OSX: use the `sysctl` function to retrieve system management information.
+        Solaris: use the `smbios`, `prtconf`, and `uname` utilities to retrieve system management information.
+        Windows: use WMI to retrieve system management information.
+    caveats: |
+        Linux: kernel 2.6+ is required due to the reliance on sysfs.
+    elements:
+        bios:
+            type: map
+            description: The system BIOS information.
+            elements:
+                release_date:
+                    type: string
+                    description: The release date of the system BIOS.
+                vendor:
+                    type: string
+                    description: The vendor of the system BIOS.
+                version:
+                    type: string
+                    description: The version of the system BIOS.
+        board:
+            type: map
+            description: The system board information.
+            elements:
+                asset_tag:
+                    type: string
+                    description: The asset tag of the system board.
+                manufacturer:
+                    type: string
+                    description: The manufacturer of the system board.
+                product:
+                    type: string
+                    description: The product name of the system board.
+                serial_number:
+                    type: string
+                    description: The serial number of the system board.
+        chassis:
+            type: map
+            description: The system chassis information.
+            elements:
+                asset_tag:
+                    type: string
+                    description: The asset tag of the system chassis.
+                type:
+                    type: string
+                    description: The type of the system chassis.
+        manufacturer:
+            type: string
+            description: The system manufacturer.
+        product:
+            type: map
+            description: The system product information.
+            elements:
+                name:
+                    type: string
+                    description: The product name of the system.
+                serial_number:
+                    type: string
+                    description: The product serial number of the system.
+                uuid:
+                    type: string
+                    description: The product unique identifier of the system.
+
+domain:
+    type: string
+    hidden: true
+    description: Return the network domain of the system.
+    resolution: |
+        POSIX platforms: use the `getaddrinfo` function to retrieve the network domain.
+        Windows: query the registry to retrieve the network domain; falls back to the primary interface's domain if not set in the registry.
+
+ec2_metadata:
+    type: map
+    description: |
+        Return the Amazon Elastic Compute Cloud (EC2) instance metadata.
+        Please see the [EC2 instance metadata documentation](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html) for the contents of this fact.
+    resolution: |
+        EC2: query the EC2 metadata endpoint and parse the response.
+    caveats: |
+        All platforms: `libfacter` must be built with `libcurl` support.
+    validate: false
+    blockgroup: EC2
+
+ec2_userdata:
+    type: string
+    description: |
+        Return the Amazon Elastic Compute Cloud (EC2) instance user data.
+        Please see the [EC2 instance user data documentation](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html) for the contents of this fact.
+    resolution: |
+        EC2: query the EC2 user data endpoint and parse the response.
+    caveats: |
+        All platforms: `libfacter` must be built with `libcurl` support.
+    blockgroup: EC2
+
+env_windows_installdir:
+    type: string
+    description: Return the path of the directory in which Puppet was installed.
+    resolution: |
+      Windows: This fact is specific to the Windows MSI generated environment, and is
+        set using the `environment.bat` script that configures the runtime environment
+        for all Puppet executables. Please see [the original commit in the puppet_for_the_win repo](https://github.com/puppetlabs/puppet_for_the_win/commit/0cc32c1a09550c13d725b200d3c0cc17d93ec262) for more information.
+    caveats: |
+      This fact is specific to Windows, and will not resolve on any other platform.
+
+facterversion:
+    type: string
+    description: Return the version of facter.
+    resolution: |
+        All platforms: use the built-in version of libfacter.
+
+filesystems:
+    type: string
+    description: Return the usable file systems for block or disk devices.
+    resolution: |
+        AIX: parse the contents of `/etc/vfs` to retrieve the usable file systems.
+        Linux: parse the contents of `/proc/filesystems` to retrieve the usable file systems.
+        Mac OSX: use the `getfsstat` function to retrieve the usable file systems.
+        Solaris: use the `sysdef` utility to retrieve the usable file systems.
+    caveats: |
+        Linux: The proc file system must be mounted.
+        Mac OSX: The usable file systems is limited to the file system of mounted devices.
+    blockgroup: file system
+
+fips_enabled:
+    type: boolean
+    description: Return whether the platform is in FIPS mode
+    resolution: |
+        Linux: parse the contents of `/proc/sys/crypto/fips_enabled` which if non-zero indicates fips mode has been enabled.
+        Windows: check if key `HKEY_LOCAL_MACHINE/System/CurrentControlSet/Control/Lsa/FipsAlgorithmPolicy/Enabled` is 1 or 0
+    caveats: |
+        Linux: Limited to linux redhat family only
+    details: |
+        Only available on Windows and Redhat linux family
+
+fqdn:
+    type: string
+    hidden: true
+    description: Return the fully qualified domain name (FQDN) of the system.
+    resolution: |
+        POSIX platforms: use the `getaddrinfo` function to retrieve the FQDN or use host and domain names.
+        Windows: use the host and domain names to build the FQDN.
+
+gce:
+    type: map
+    description: |
+        Return the Google Compute Engine (GCE) metadata.
+        Please see the [GCE metadata documentation](https://cloud.google.com/compute/docs/metadata) for the contents of this fact.
+    resolution: |
+        GCE: query the GCE metadata endpoint and parse the response.
+    caveats: |
+        All platforms: `libfacter` must be built with `libcurl` support.
+    validate: false
+
+gid:
+    type: string
+    hidden: true
+    description: Return the group identifier (GID) of the user running facter.
+    resolution: |
+        POSIX platforms: use the `getegid` fuction to retrieve the group identifier.
+
+hardwareisa:
+    type: string
+    hidden: true
+    description: Return the hardware instruction set architecture (ISA).
+    resolution: |
+        POSIX platforms: use `uname` to retrieve the hardware ISA.
+        Windows: use WMI to retrieve the hardware ISA.
+
+hardwaremodel:
+    type: string
+    hidden: true
+    description: Return the operating system's hardware model.
+    resolution: |
+        POSIX platforms: use the `uname` function to retrieve the OS hardware model.
+        Windows: use the `GetNativeSystemInfo` function to retrieve the OS hardware model.
+
+hostname:
+    type: string
+    hidden: true
+    description: Return the host name of the system.
+    resolution: |
+        POSIX platforms: use the `gethostname` function to retrieve the host name
+        Windows: use the `GetComputerNameExW` function to retrieve the host name.
+
+hypervisors:
+    type: map
+    description: |
+        Experimental fact: Return the names of any detected hypervisors and any collected metadata about them.
+    resolution: |
+        All platforms: Use the external `whereami` library to gather hypervisor data, if available.
+    validate: false
+
+id:
+    type: string
+    hidden: true
+    description: Return the user identifier (UID) of the user running facter.
+    resolution: |
+        POSIX platforms: use the `geteuid` fuction to retrieve the user identifier.
+
+identity:
+    type: map
+    description: Return the identity information of the user running facter.
+    resolution: |
+        POSIX platforms: use the `getegid`, `getpwuid_r`, `geteuid`, and `getgrgid_r` functions to retrieve the identity information; use the result of the `geteuid() == 0` test as the value of the privileged element
+        Windows: use the `GetUserNameExW` function to retrieve the identity information; use the `GetTokenInformation` to get the current process token elevation status and use it as the value of the privileged element on versions of Windows supporting the token elevation, on older versions of Windows use the `CheckTokenMembership` to test whether the well known local Administrators group SID is enabled in the current thread impersonation token and use the test result as the value of the privileged element
+    elements:
+        gid:
+            type: integer
+            description: The group identifier of the user running facter.
+        group:
+            type: string
+            description: The group name of the user running facter.
+        uid:
+            type: integer
+            description: The user identifier of the user running facter.
+        user:
+            type: string
+            description: The user name of the user running facter.
+        privileged:
+            type: boolean
+            description: True if facter is running as a privileged process or false if not.
+
+interfaces:
+    type: string
+    hidden: true
+    description: Return the comma-separated list of network interface names.
+    resolution: |
+        Linux: use the `getifaddrs` function to retrieve the network interface names.
+        Mac OSX: use the `getifaddrs` function to retrieve the network interface names.
+        Solaris: use the `ioctl` function to retrieve the network interface names.
+        Windows: use the `GetAdaptersAddresses` function to retrieve the network interface names.
+
+ipaddress:
+    type: ip
+    hidden: true
+    description: Return the IPv4 address for the default network interface.
+    resolution: |
+        Linux: use the `getifaddrs` function to retrieve the network interface address.
+        Mac OSX: use the `getifaddrs` function to retrieve the network interface address.
+        Solaris: use the `ioctl` function to retrieve the network interface address.
+        Windows: use the `GetAdaptersAddresses` function to retrieve the network interface address.
+
+ipaddress6:
+    type: ip6
+    hidden: true
+    description: Return the IPv6 address for the default network interface.
+    resolution: |
+        Linux: use the `getifaddrs` function to retrieve the network interface address.
+        Mac OSX: use the `getifaddrs` function to retrieve the network interface address.
+        Solaris: use the `ioctl` function to retrieve the network interface address.
+        Windows: use the `GetAdaptersAddresses` function to retrieve the network interface address.
+
+ipaddress6_<interface>:
+    pattern: ^ipaddress6_.+$
+    type: ip6
+    hidden: true
+    description: Return the IPv6 address for a network interface.
+    resolution: |
+        Linux: use the `getifaddrs` function to retrieve the network interface address.
+        Mac OSX: use the `getifaddrs` function to retrieve the network interface address.
+        Solaris: use the `ioctl` function to retrieve the network interface address.
+        Windows: use the `GetAdaptersAddresses` function to retrieve the network interface address.
+
+ipaddress_<interface>:
+    pattern: ^ipaddress_.+$
+    type: ip
+    hidden: true
+    description: Return the IPv4 address for a network interface.
+    resolution: |
+        Linux: use the `getifaddrs` function to retrieve the network interface address.
+        Mac OSX: use the `getifaddrs` function to retrieve the network interface address.
+        Solaris: use the `ioctl` function to retrieve the network interface address.
+        Windows: use the `GetAdaptersAddresses` function to retrieve the network interface address.
+
+is_virtual:
+    type: boolean
+    description: Return whether or not the host is a virtual machine.
+    resolution: |
+        Linux: use procfs or utilities such as `vmware` and `virt-what` to retrieve virtual machine status.
+        Mac OSX: use the system profiler to retrieve virtual machine status.
+        Solaris: use the `zonename` utility to retrieve virtual machine status.
+        Windows: use WMI to retrieve virtual machine status.
+
+kernel:
+    type: string
+    description: Return the kernel's name.
+    resolution: |
+        POSIX platforms: use the `uname` function to retrieve the kernel name.
+        Windows: use the value of `windows` for all Windows versions.
+
+kernelmajversion:
+    type: string
+    description: Return the kernel's major version.
+    resolution: |
+        POSIX platforms: use the `uname` function to retrieve the kernel's major version.
+        Windows: use the file version of `kernel32.dll` to retrieve the kernel's major version.
+
+kernelrelease:
+    type: string
+    description: Return the kernel's release.
+    resolution: |
+        POSIX platforms: use the `uname` function to retrieve the kernel's release.
+        Windows: use the file version of `kernel32.dll` to retrieve the kernel's release.
+
+kernelversion:
+    type: string
+    description: Return the kernel's version.
+    resolution: |
+        POSIX platforms: use the `uname` function to retrieve the kernel's version.
+        Windows: use the file version of `kernel32.dll` to retrieve the kernel's version.
+
+ldom:
+    type: map
+    description: Return Solaris LDom information from the `virtinfo` utility.
+    resolution: |
+        Solaris: use the `virtinfo` utility to retrieve LDom information.
+    validate: false
+
+ldom_<name>:
+    pattern: ^ldom_.+$
+    hidden: true
+    type: string
+    description: Return Solaris LDom information.
+    resolution: |
+        Solaris: use the `virtinfo` utility to retrieve LDom information.
+
+load_averages:
+    type: map
+    description: Return the load average over the last 1, 5 and 15 minutes.
+    resolution: |
+        POSIX platforms: use `getloadavg` function to retrieve the system load averages.
+    elements:
+        1m:
+            type: double
+            description: The system load average over the last minute.
+        5m:
+            type: double
+            description: The system load average over the last 5 minutes.
+        15m:
+            type: double
+            description: The system load average over the last 15 minutes.
+
+lsbdistcodename:
+    type: string
+    hidden: true
+    description: Return the Linux Standard Base (LSB) distribution code name.
+    resolution: |
+        Linux: use the `lsb_release` utility to retrieve the LSB distribution code name.
+    caveats: |
+        Linux: Requires that the `lsb_release` utility be installed.
+
+lsbdistdescription:
+    type: string
+    hidden: true
+    description: Return the Linux Standard Base (LSB) distribution description.
+    resolution: |
+        Linux: use the `lsb_release` utility to retrieve the LSB distribution description.
+    caveats: |
+        Linux: Requires that the `lsb_release` utility be installed.
+
+lsbdistid:
+    type: string
+    hidden: true
+    description: Return the Linux Standard Base (LSB) distribution identifier.
+    resolution: |
+        Linux: use the `lsb_release` utility to retrieve the LSB distribution identifier.
+    caveats: |
+        Linux: Requires that the `lsb_release` utility be installed.
+
+lsbdistrelease:
+    type: string
+    hidden: true
+    description: Return the Linux Standard Base (LSB) distribution release.
+    resolution: |
+        Linux: use the `lsb_release` utility to retrieve the LSB distribution release.
+    caveats: |
+        Linux: Requires that the `lsb_release` utility be installed.
+
+lsbmajdistrelease:
+    type: string
+    hidden: true
+    description: Return the Linux Standard Base (LSB) major distribution release.
+    resolution: |
+        Linux: use the `lsb_release` utility to retrieve the LSB major distribution release.
+    caveats: |
+        Linux: Requires that the `lsb_release` utility be installed.
+
+lsbminordistrelease:
+    type: string
+    hidden: true
+    description: Return the Linux Standard Base (LSB) minor distribution release.
+    resolution: |
+        Linux: use the `lsb_release` utility to retrieve the LSB minor distribution release.
+    caveats: |
+        Linux: Requires that the `lsb_release` utility be installed.
+
+lsbrelease:
+    type: string
+    hidden: true
+    description: Return the Linux Standard Base (LSB) release.
+    resolution: |
+        Linux: use the `lsb_release` utility to retrieve the LSB release.
+    caveats: |
+        Linux: Requires that the `lsb_release` utility be installed.
+
+macaddress:
+    type: mac
+    hidden: true
+    description: Return the MAC address for the default network interface.
+    resolution: |
+        Linux: use the `getifaddrs` function to retrieve the network interface address.
+        Mac OSX: use the `getifaddrs` function to retrieve the network interface address.
+        Solaris: use the `ioctl` function to retrieve the network interface address.
+        Windows: use the `GetAdaptersAddresses` function to retrieve the network interface address.
+
+macaddress_<interface>:
+    pattern: ^macaddress_.+$
+    type: mac
+    hidden: true
+    description: Return the MAC address for a network interface.
+    resolution: |
+        Linux: use the `getifaddrs` function to retrieve the network interface address.
+        Mac OSX: use the `getifaddrs` function to retrieve the network interface address.
+        Solaris: use the `ioctl` function to retrieve the network interface address.
+        Windows: use the `GetAdaptersAddresses` function to retrieve the network interface address.
+
+macosx_buildversion:
+    type: string
+    hidden: true
+    description: Return the Mac OSX build version.
+    resolution: |
+        Mac OSX: use the `sw_vers` utility to retrieve the Mac OSX build version.
+
+macosx_productname:
+    type: string
+    hidden: true
+    description: Return the Mac OSX product name.
+    resolution: |
+        Mac OSX: use the `sw_vers` utility to retrieve the Mac OSX product name.
+
+macosx_productversion:
+    type: string
+    hidden: true
+    description: Return the Mac OSX product version.
+    resolution: |
+        Mac OSX: use the `sw_vers` utility to retrieve the Mac OSX product version.
+
+macosx_productversion_major:
+    type: string
+    hidden: true
+    description: Return the Mac OSX product major version.
+    resolution: |
+        Mac OSX: use the `sw_vers` utility to retrieve the Mac OSX product major version.
+
+macosx_productversion_minor:
+    type: string
+    hidden: true
+    description: Return the Mac OSX product minor version.
+    resolution: |
+        Mac OSX: use the `sw_vers` utility to retrieve the Mac OSX product minor version.
+
+manufacturer:
+    type: string
+    hidden: true
+    description: Return the system manufacturer.
+    resolution: |
+        Linux: parse the contents of `/sys/class/dmi/id/sys_vendor` to retrieve the system manufacturer.
+        Solaris: use the `prtconf` utility to retrieve the system manufacturer.
+        Windows: use WMI to retrieve the system manufacturer.
+    caveats: |
+        Linux: kernel 2.6+ is required due to the reliance on sysfs.
+
+memory:
+    type: map
+    description: Return the system memory information.
+    resolution: |
+        Linux: parse the contents of `/proc/meminfo` to retrieve the system memory information.
+        Mac OSX: use the `sysctl` function to retrieve the system memory information.
+        Solaris: use the `kstat` function to retrieve the system memory information.
+        Windows: use the `GetPerformanceInfo` function to retrieve the system memory information.
+    elements:
+        swap:
+            type: map
+            description: Represents information about swap memory.
+            elements:
+                available:
+                    type: string
+                    description: The display size of the available amount of swap memory, such as "1 GiB".
+                available_bytes:
+                    type: integer
+                    description: The size of the available amount of swap memory, in bytes.
+                capacity:
+                    type: string
+                    description: The capacity percentage (0% is empty, 100% is full).
+                encrypted:
+                    type: boolean
+                    description: True if the swap is encrypted or false if not.
+                total:
+                    type: string
+                    description: The display size of the total amount of swap memory, such as "1 GiB".
+                total_bytes:
+                    type: integer
+                    description: The size of the total amount of swap memory, in bytes.
+                used:
+                    type: string
+                    description: The display size of the used amount of swap memory, such as "1 GiB".
+                used_bytes:
+                    type: integer
+                    description: The size of the used amount of swap memory, in bytes.
+        system:
+            type: map
+            description: Represents information about system memory.
+            elements:
+                available:
+                    type: string
+                    description: The display size of the available amount of system memory, such as "1 GiB".
+                available_bytes:
+                    type: integer
+                    description: The size of the available amount of system memory, in bytes.
+                capacity:
+                    type: string
+                    description: The capacity percentage (0% is empty, 100% is full).
+                total:
+                    type: string
+                    description: The display size of the total amount of system memory, such as "1 GiB".
+                total_bytes:
+                    type: integer
+                    description: The size of the total amount of system memory, in bytes.
+                used:
+                    type: string
+                    description: The display size of the used amount of system memory, such as "1 GiB".
+                used_bytes:
+                    type: integer
+                    description: The size of the used amount of system memory, in bytes.
+
+memoryfree:
+    type: string
+    hidden: true
+    description: Return the display size of the free system memory, such as "1 GiB".
+    resolution: |
+        Linux: parse the contents of `/proc/meminfo` to retrieve the free system memory.
+        Mac OSX: use the `sysctl` function to retrieve the free system memory.
+        Solaris: use the `kstat` function to retrieve the free system memory.
+        Windows: use the `GetPerformanceInfo` function to retrieve the free system memory.
+
+memoryfree_mb:
+    type: double
+    hidden: true
+    description: Return the size of the free system memory, in mebibytes.
+    resolution: |
+        Linux: parse the contents of `/proc/meminfo` to retrieve the free system memory.
+        Mac OSX: use the `sysctl` function to retrieve the free system memory.
+        Solaris: use the `kstat` function to retrieve the free system memory.
+        Windows: use the `GetPerformanceInfo` function to retrieve the free system memory.
+
+memorysize:
+    type: string
+    hidden: true
+    description: Return the display size of the total system memory, such as "1 GiB".
+    resolution: |
+        Linux: parse the contents of `/proc/meminfo` to retrieve the total system memory.
+        Mac OSX: use the `sysctl` function to retrieve the total system memory.
+        Solaris: use the `kstat` function to retrieve the total system memory.
+        Windows: use the `GetPerformanceInfo` function to retrieve the total system memory.
+
+memorysize_mb:
+    type: double
+    hidden: true
+    description: Return the size of the total system memory, in mebibytes.
+    resolution: |
+        Linux: parse the contents of `/proc/meminfo` to retrieve the total system memory.
+        Mac OSX: use the `sysctl` function to retrieve the total system memory.
+        Solaris: use the `kstat` function to retrieve the total system memory.
+        Windows: use the `GetPerformanceInfo` function to retrieve the total system memory.
+
+mountpoints:
+    type: map
+    description: Return the current mount points of the system.
+    resolution: |
+        AIX: use the `mntctl` function to retrieve the mount points.
+        Linux: use the `setmntent` function to retrieve the mount points.
+        Mac OSX: use the `getfsstat` function to retrieve the mount points.
+        Solaris: parse the contents of `/etc/mnttab` to retrieve the mount points.
+    blockgroup: file system
+    elements:
+        <mountpoint>:
+            pattern: .+
+            type: map
+            description: Represents a mount point.
+            elements:
+                available:
+                    type: string
+                    description: The display size of the available space, such as "1 GiB".
+                available_bytes:
+                    type: integer
+                    description: The size of the available space, in bytes.
+                capacity:
+                    type: string
+                    description: The capacity percentage (0% is empty, 100% is full).
+                device:
+                    type: string
+                    description: The name of the mounted device.
+                filesystem:
+                    type: string
+                    description: The file system of the mounted device.
+                options:
+                    type: array
+                    description: The mount options.
+                size:
+                    type: string
+                    description: The display size of the total space, such as "1 GiB".
+                size_bytes:
+                    type: integer
+                    description: The size of the total space, in bytes.
+                used:
+                    type: string
+                    description: The display size of the used space, such as "1 GiB".
+                used_bytes:
+                    type: integer
+                    description: The size of the used space, in bytes.
+
+mtu_<interface>:
+    pattern: ^mtu_.+$
+    type: integer
+    hidden: true
+    description: Return the Maximum Transmission Unit (MTU) for a network interface.
+    resolution: |
+        Linux: use the `ioctl` function to retrieve the network interface MTU.
+        Mac OSX: use the `getifaddrs` function to retrieve the network interface MTU.
+        Solaris: use the `ioctl` function to retrieve the network interface MTU.
+        Windows: use the `GetAdaptersAddresses` function to retrieve the network interface MTU.
+
+netmask:
+    type: ip
+    hidden: true
+    description: Return the IPv4 netmask for the default network interface.
+    resolution: |
+        Linux: use the `getifaddrs` function to retrieve the network interface netmask.
+        Mac OSX: use the `getifaddrs` function to retrieve the network interface netmask.
+        Solaris: use the `ioctl` function to retrieve the network interface netmask.
+        Windows: use the `GetAdaptersAddresses` (Windows Server 2003: `GetAdaptersInfo`) function to retrieve the network interface netmask.
+
+netmask6:
+    type: ip6
+    hidden: true
+    description: Return the IPv6 netmask for the default network interface.
+    resolution: |
+        Linux: use the `getifaddrs` function to retrieve the network interface netmask.
+        Mac OSX: use the `getifaddrs` function to retrieve the network interface netmask.
+        Solaris: use the `ioctl` function to retrieve the network interface netmask.
+        Windows: use the `GetAdaptersAddresses` function to retrieve the network interface netmask.
+    caveats: |
+        Windows Server 2003: IPv6 netmasks are not supported.
+
+netmask6_<interface>:
+    pattern: ^netmask6_.+$
+    type: ip6
+    hidden: true
+    description: Return the IPv6 netmask for a network interface.
+    resolution: |
+        Linux: use the `getifaddrs` function to retrieve the network interface netmask.
+        Mac OSX: use the `getifaddrs` function to retrieve the network interface netmask.
+        Solaris: use the `ioctl` function to retrieve the network interface netmask.
+        Windows: use the `GetAdaptersAddresses` function to retrieve the network interface netmask.
+    caveats: |
+        Windows Server 2003: IPv6 netmasks are not supported.
+
+netmask_<interface>:
+    pattern: ^netmask_.+$
+    type: ip
+    hidden: true
+    description: Return the IPv4 netmask for a network interface.
+    resolution: |
+        Linux: use the `getifaddrs` function to retrieve the network interface netmask.
+        Mac OSX: use the `getifaddrs` function to retrieve the network interface netmask.
+        Solaris: use the `ioctl` function to retrieve the network interface netmask.
+        Windows: use the `GetAdaptersAddresses` (Windows Server 2003: `GetAdaptersInfo`) function to retrieve the network interface netmask.
+
+network:
+    type: ip
+    hidden: true
+    description: Return the IPv4 network for the default network interface.
+    resolution: |
+        Linux: use the `getifaddrs` function to retrieve the network interface network.
+        Mac OSX: use the `getifaddrs` function to retrieve the network interface network.
+        Solaris: use the `ioctl` function to retrieve the network interface network.
+        Windows: use the `GetAdaptersAddresses` function to retrieve the network interface network.
+
+network6:
+    type: ip6
+    hidden: true
+    description: Return the IPv6 network for the default network interface.
+    resolution: |
+        Linux: use the `getifaddrs` function to retrieve the network interface network.
+        Mac OSX: use the `getifaddrs` function to retrieve the network interface network.
+        Solaris: use the `ioctl` function to retrieve the network interface network.
+        Windows: use the `GetAdaptersAddresses` function to retrieve the network interface network.
+
+network6_<interface>:
+    pattern: ^network6_.+$
+    type: ip6
+    hidden: true
+    description: Return the IPv6 network for a network interface.
+    resolution: |
+        Linux: use the `getifaddrs` function to retrieve the network interface network.
+        Mac OSX: use the `getifaddrs` function to retrieve the network interface network.
+        Solaris: use the `ioctl` function to retrieve the network interface network.
+        Windows: use the `GetAdaptersAddresses` function to retrieve the network interface network.
+
+network_<interface>:
+    pattern: ^network_.+$
+    type: ip
+    hidden: true
+    description: Return the IPv4 network for a network interface.
+    resolution: |
+        Linux: use the `getifaddrs` function to retrieve the network interface network.
+        Mac OSX: use the `getifaddrs` function to retrieve the network interface network.
+        Solaris: use the `ioctl` function to retrieve the network interface network.
+        Windows: use the `GetAdaptersAddresses` function to retrieve the network interface network.
+
+networking:
+    type: map
+    description: Return the networking information for the system.
+    resolution: |
+        Linux: use the `getifaddrs` function to retrieve the network interfaces.
+        Mac OSX: use the `getifaddrs` function to retrieve the network interfaces.
+        Solaris: use the `ioctl` function to retrieve the network interfaces.
+        Windows: use the `GetAdaptersAddresses` function to retrieve the network interfaces.
+    caveats: |
+        Windows Server 2003: the `GetAdaptersInfo` function is used for DHCP and netmask lookup. This function does not support IPv6 netmasks.
+    elements:
+        dhcp:
+            type: ip
+            description: The address of the DHCP server for the default interface.
+        domain:
+            type: string
+            description: The domain name of the system.
+        fqdn:
+            type: string
+            description: The fully-qualified domain name of the system.
+        hostname:
+            type: string
+            description: The host name of the system.
+        interfaces:
+            type: map
+            description: The network interfaces of the system.
+            elements:
+                <interface>:
+                    pattern: .+
+                    type: map
+                    description: Represents a network interface.
+                    elements:
+                        bindings:
+                            type: array
+                            description: The array of IPv4 address bindings for the interface.
+                        bindings6:
+                            type: array
+                            description: The array of IPv6 address bindings for the interface.
+                        dhcp:
+                            type: ip
+                            description: The DHCP server for the network interface.
+                        ip:
+                            type: ip
+                            description: The IPv4 address for the network interface.
+                        ip6:
+                            type: ip6
+                            description: The IPv6 address for the network interface.
+                        mac:
+                            type: mac
+                            description: The MAC address for the network interface.
+                        mtu:
+                            type: integer
+                            description: The Maximum Transmission Unit (MTU) for the network interface.
+                        netmask:
+                            type: ip
+                            description: The IPv4 netmask for the network interface.
+                        netmask6:
+                            type: ip6
+                            description: The IPv6 netmask for the network interface.
+                        network:
+                            type: ip
+                            description: The IPv4 network for the network interface.
+                        network6:
+                            type: ip6
+                            description: The IPv6 network for the network interface.
+                        scope6:
+                            type: string
+                            description: The IPv6 scope for the network interface.
+        ip:
+            type: ip
+            description: The IPv4 address of the default network interface.
+        ip6:
+            type: ip6
+            description: The IPv6 address of the default network interface.
+        mac:
+            type: mac
+            description: The MAC address of the default network interface.
+        mtu:
+            type: integer
+            description: The Maximum Transmission Unit (MTU) of the default network interface.
+        netmask:
+            type: ip
+            description: The IPv4 netmask of the default network interface.
+        netmask6:
+            type: ip6
+            description: The IPv6 netmask of the default network interface.
+        network:
+            type: ip
+            description: The IPv4 network of the default network interface.
+        network6:
+            type: ip6
+            description: The IPv6 network of the default network interface.
+        primary:
+            type: string
+            description: The name of the primary interface.
+        scope6:
+            type: string
+            description: The IPv6 scope of the default network interface.
+
+operatingsystem:
+    type: string
+    hidden: true
+    description: Return the name of the operating system.
+    resolution: |
+        All platforms: default to the kernel name.
+        Linux: use various release files in `/etc` to retrieve the OS name.
+
+operatingsystemmajrelease:
+    type: string
+    hidden: true
+    description: Return the major release of the operating system.
+    resolution: |
+        All platforms: default to the major version of the kernel release.
+        Linux: parse the contents of release files in `/etc` to retrieve the OS major release.
+        Solaris: parse the contents of `/etc/release` to retrieve the OS major release.
+        Windows: use WMI to retrieve the OS major release.
+    caveats: |
+        Linux: for Ubuntu, the major release is X.Y, such as "10.4".
+
+operatingsystemrelease:
+    type: string
+    hidden: true
+    description: Return the release of the operating system.
+    resolution: |
+        All platforms: default to the kernel release.
+        Linux: parse the contents of release files in `/etc` to retrieve the OS release.
+        Solaris: parse the contents of `/etc/release` to retrieve the OS release.
+        Windows: use WMI to retrieve the OS release.
+
+os:
+    type: map
+    description: Return information about the host operating system.
+    resolution: |
+        Linux: use the `lsb_release` utility and parse the contents of release files in `/etc` to retrieve the OS information.
+        OSX: use the `sw_vers` utility to retrieve the OS information.
+        Solaris: parse the contents of `/etc/release` to retrieve the OS information.
+        Windows: use WMI to retrieve the OS information.
+    elements:
+        architecture:
+            type: string
+            description: The operating system's hardware architecture.
+        distro:
+            type: map
+            description: Represents information about a Linux distribution.
+            caveats: |
+                Linux: requires that the `lsb_release` is present.
+            elements:
+                codename:
+                    type: string
+                    description: The code name of the Linux distribution.
+                description:
+                    type: string
+                    description: The description of the Linux distribution.
+                id:
+                    type: string
+                    description: The identifier of the Linux distribution.
+                release:
+                    type: map
+                    description: Represents information about a Linux distribution release.
+                    elements:
+                        full:
+                            type: string
+                            description: The full release of the Linux distribution.
+                        major:
+                            type: string
+                            description: The major release of the Linux distribution.
+                        minor:
+                            type: string
+                            description: The minor release of the Linux distribution.
+                specification:
+                    type: string
+                    description: The Linux Standard Base (LSB) release specification.
+        family:
+            type: string
+            description: The operating system family.
+        hardware:
+            type: string
+            description: The operating system's hardware model.
+        macosx:
+            type: map
+            description: Represents information about Mac OSX.
+            elements:
+                build:
+                    type: string
+                    description: The Mac OSX build version.
+                product:
+                    type: string
+                    description: The Mac OSX product name.
+                version:
+                    type: map
+                    description: Represents information about the Mac OSX version.
+                    elements:
+                        full:
+                            type: string
+                            description: The full Mac OSX version number.
+                        major:
+                            type: string
+                            description: The major Mac OSX version number.
+                        minor:
+                            type: string
+                            description: The minor Mac OSX version number.
+        name:
+            type: string
+            description: The operating system's name.
+        release:
+            type: map
+            description: Represents the operating system's release.
+            elements:
+                full:
+                    type: string
+                    description: The full operating system release.
+                major:
+                    type: string
+                    description: The major release of the operating system.
+                minor:
+                    type: string
+                    description: The minor release of the operating system.
+                patchlevel:
+                    type: string
+                    description: The patchlevel of the operating system.
+                branch:
+                    type: string
+                    description: The branch the operating system was cut from.
+        selinux:
+            type: map
+            description: Represents information about Security-Enhanced Linux (SELinux).
+            resolution: |
+                Linux: parse the contents of `/proc/self/mounts`, `/etc/selinux/config`, and `<selinux_mountpoint>/enforce` to retrieve SELinux information.
+            elements:
+                config_mode:
+                    type: string
+                    description: The configured SELinux mode.
+                config_policy:
+                    type: string
+                    description: The configured SELinux policy.
+                current_mode:
+                    type: string
+                    description: The current SELinux mode.
+                enabled:
+                    type: boolean
+                    description: True if SELinux is enabled or false if not.
+                enforced:
+                    type: boolean
+                    description: True if SELinux policy is enforced or false if not.
+                policy_version:
+                    type: string
+                    description: The version of the SELinux policy.
+        windows:
+            type: map
+            description: Represents information about Windows.
+            elements:
+                edition_id:
+                    type: string
+                    description: Specify the edition variant. (ServerStandard|Professional|Enterprise)
+                installation_type:
+                    type: string
+                    description: Specify the installation type. (Server|Server Core|Client)
+                product_name:
+                    type: string
+                    description: Specify the textual product name.
+                release_id:
+                    type: string
+                    description: Windows Build Version of the form YYMM.
+                system32:
+                    type: string
+                    description: The path to the System32 directory.
+
+osfamily:
+    type: string
+    hidden: true
+    description: Return the family of the operating system.
+    resolution: |
+        All platforms: default to the kernel name.
+        Linux: map various Linux distributions to their base distribution. For example, Ubuntu is a "Debian" distro.
+        Solaris: map various Solaris-based operating systems to the "Solaris" family.
+        Windows: use "windows" as the family name.
+
+partitions:
+    type: map
+    description: Return the disk partitions of the system.
+    resolution: |
+        AIX: use the ODM to retrieve list of logical volumes; use `lvm_querylv` function to get details
+        Linux: use `libblkid` to retrieve the disk partitions.
+    caveats: |
+        Linux: `libfacter` must be built with `libblkid` support.
+    blockgroup: file system
+    elements:
+        <partition>:
+            pattern: \w+
+            type: map
+            description: Represents a disk partition.
+            elements:
+                filesystem:
+                    type: string
+                    description: The file system of the partition.
+                label:
+                    type: string
+                    description: The label of the partition.
+                mount:
+                    type: string
+                    description: The mount point of the partition (if mounted).
+                partlabel:
+                    type: string
+                    description: The label of a GPT partition.
+                partuuid:
+                    type: string
+                    description: The unique identifier of a GPT partition.
+                size:
+                    type: string
+                    description: The display size of the partition, such as "1 GiB".
+                size_bytes:
+                    type: integer
+                    description: The size of the partition, in bytes.
+                uuid:
+                    type: string
+                    description: The unique identifier of a partition.
+                backing_file:
+                    type: string
+                    description: The path to the file backing the partition.
+
+path:
+    type: string
+    description: Return the PATH environment variable.
+    resolution: |
+        All platforms: retrieve the value of the PATH environment variable.
+
+physicalprocessorcount:
+    type: integer
+    hidden: true
+    description: Return the count of physical processors.
+    resolution: |
+        Linux: parse the contents `/sys/devices/system/cpu/` and `/proc/cpuinfo` to retrieve the count of physical processors.
+        Mac OSX: use the `sysctl` function to retrieve the count of physical processors.
+        Solaris: use the `kstat` function to retrieve the count of physical processors.
+        Windows: use WMI to retrieve the count of physical processors.
+    caveats: |
+        Linux: kernel 2.6+ is required due to the reliance on sysfs.
+
+processor<N>:
+    pattern: ^processor\d+$
+    type: string
+    hidden: true
+    description: Return the model string of processor N.
+    resolution: |
+        Linux: parse the contents of `/proc/cpuinfo` to retrieve the processor model string.
+        Mac OSX: use the `sysctl` function to retrieve the processor model string.
+        Solaris: use the `kstat` function to retrieve the processor model string.
+        Windows: use WMI to retrieve the processor model string.
+
+processorcount:
+    type: integer
+    hidden: true
+    description: Return the count of logical processors.
+    resolution: |
+        Linux: parse the contents `/sys/devices/system/cpu/` and `/proc/cpuinfo` to retrieve the count of logical processors.
+        Mac OSX: use the `sysctl` function to retrieve the count of logical processors.
+        Solaris: use the `kstat` function to retrieve the count of logical processors.
+        Windows: use WMI to retrieve the count of logical processors.
+    caveats: |
+        Linux: kernel 2.6+ is required due to the reliance on sysfs.
+
+processors:
+    type: map
+    description: Return information about the system's processors.
+    resolution: |
+        Linux: parse the contents `/sys/devices/system/cpu/` and `/proc/cpuinfo` to retrieve the processor information.
+        Mac OSX: use the `sysctl` function to retrieve the processor information.
+        Solaris: use the `kstat` function to retrieve the processor information.
+        Windows: use WMI to retrieve the processor information.
+    elements:
+        count:
+            type: integer
+            description: The count of logical processors.
+        isa:
+            type: string
+            description: The processor instruction set architecture.
+        models:
+            type: array
+            description: The processor model strings (one for each logical processor).
+        physicalcount:
+            type: integer
+            description: The count of physical processors.
+        speed:
+            type: string
+            description: The speed of the processors, such as "2.0 GHz".
+
+productname:
+    type: string
+    hidden: true
+    description: Return the system product name.
+    resolution: |
+        Linux: parse the contents of `/sys/class/dmi/id/product_name` to retrieve the system product name.
+        Mac OSX: use the `sysctl` function to retrieve the system product name.
+        Solaris: use the `smbios` utility to retrieve the system product name.
+        Windows: use WMI to retrieve the system product name.
+    caveats: |
+        Linux: kernel 2.6+ is required due to the reliance on sysfs.
+
+ruby:
+    type: map
+    description: Return information about the Ruby loaded by facter.
+    resolution: |
+        All platforms: Use `RbConfig`, `RUBY_PLATFORM`, and `RUBY_VERSION` to retrieve information about Ruby.
+    caveats: |
+        All platforms: facter must be able to locate `libruby`.
+    elements:
+        platform:
+            type: string
+            description: The platform Ruby was built for.
+        sitedir:
+            type: string
+            description: The path to Ruby's site library directory.
+        version:
+            type: string
+            description: The version of Ruby.
+
+rubyplatform:
+    type: string
+    hidden: true
+    description: Return the platform Ruby was built for.
+    resolution: |
+        All platforms: use `RUBY_PLATFORM` from the Ruby loaded by facter.
+    caveats: |
+        All platforms: facter must be able to locate `libruby`.
+
+rubysitedir:
+    type: string
+    hidden: true
+    description: Return the path to Ruby's site library directory.
+    resolution: |
+        All platforms: use `RbConfig` from the Ruby loaded by facter.
+    caveats: |
+        All platforms: facter must be able to locate `libruby`.
+
+rubyversion:
+    type: string
+    hidden: true
+    description: Return the version of Ruby.
+    resolution: |
+        All platforms: use `RUBY_VERSION` from the Ruby loaded by facter.
+    caveats: |
+        All platforms: facter must be able to locate `libruby`.
+
+scope6:
+    type: string
+    hidden: true
+    description: Return the IPv6 scope for the default network interface.
+    resolution: |
+        Linux: parse the contents of /proc/net/if_inet6 to retrieve the network interface scope.
+        Mac OSX: use the `getifaddrs` function to retrieve the network interface scope.
+        Solaris: use the `ioctl` function to retrieve the network interface scope.
+        Windows: use the `GetAdaptersAddresses` function to retrieve the network interface scope.
+
+scope6_<interface>:
+    pattern: ^scope6_.+$
+    type: string
+    hidden: true
+    description: Return the IPv6 scope for the default network interface.
+    resolution: |
+        Linux: parse the contents of /proc/net/if_inet6 to retrieve the network interface scope.
+        Mac OSX: use the `getifaddrs` function to retrieve the network interface scope.
+        Solaris: use the `ioctl` function to retrieve the network interface scope.
+        Windows: use the `GetAdaptersAddresses` function to retrieve the network interface scope.
+
+selinux:
+    type: boolean
+    hidden: true
+    description: Return whether Security-Enhanced Linux (SELinux) is enabled.
+    resolution: |
+        Linux: parse the contents of `/proc/self/mounts` to determine if SELinux is enabled.
+
+selinux_config_mode:
+    type: string
+    hidden: true
+    description: Return the configured Security-Enhanced Linux (SELinux) mode.
+    resolution: |
+        Linux: parse the contents of `/etc/selinux/config` to retrieve the configured SELinux mode.
+
+selinux_config_policy:
+    type: string
+    hidden: true
+    description: Return the configured Security-Enhanced Linux (SELinux) policy.
+    resolution: |
+        Linux: parse the contents of `/etc/selinux/config` to retrieve the configured SELinux policy.
+
+selinux_current_mode:
+    type: string
+    hidden: true
+    description: Return the current Security-Enhanced Linux (SELinux) mode.
+    resolution: |
+        Linux: parse the contents of `<mountpoint>/enforce` to retrieve the current SELinux mode.
+
+selinux_enforced:
+    type: boolean
+    hidden: true
+    description: Return whether Security-Enhanced Linux (SELinux) is enforced.
+    resolution: |
+        Linux: parse the contents of `<mountpoint>/enforce` to retrieve the current SELinux mode.
+
+selinux_policyversion:
+    type: string
+    hidden: true
+    description: Return the Security-Enhanced Linux (SELinux) policy version.
+    resolution: |
+        Linux: parse the contents of `<mountpoint>/policyvers` to retrieve the SELinux policy version.
+
+serialnumber:
+    type: string
+    hidden: true
+    description: Return the system product serial number.
+    resolution: |
+        Linux: parse the contents of `/sys/class/dmi/id/product_name` to retrieve the system product serial number.
+        Solaris: use the `smbios` utility to retrieve the system product serial number.
+        Windows: use WMI to retrieve the system product serial number.
+    caveats: |
+        Linux: kernel 2.6+ is required due to the reliance on sysfs.
+
+solaris_zones:
+    type: map
+    description: Return information about Solaris zones.
+    resolution: |
+        Solaris: use the `zoneadm` and `zonename` utilities to retrieve information about the Solaris zones.
+    elements:
+        current:
+            type: string
+            description: The name of the current Solaris zone.
+        zones:
+            type: map
+            description: Represents the Solaris zones.
+            elements:
+                <zonename>:
+                    pattern: .*
+                    type: map
+                    description: Represents a Solaris zone.
+                    elements:
+                        brand:
+                            type: string
+                            description: The brand of the Solaris zone.
+                        id:
+                            type: string
+                            description: The id of the Solaris zone.
+                        ip_type:
+                            type: string
+                            description: The IP type of the Solaris zone.
+                        path:
+                            type: string
+                            description: The path of the Solaris zone.
+                        status:
+                            type: string
+                            description: The status of the Solaris zone.
+                        uuid:
+                            type: string
+                            description: The unique identifier of the Solaris zone.
+
+sp_<name>:
+    pattern: ^sp_\w+$
+    hidden: true
+    type: string
+    description: Return Mac OSX system profiler information.
+    resolution: |
+        Mac OSX: use the `system_profiler` utility to retrieve system profiler information.
+
+ssh:
+    type: map
+    description: Return SSH public keys and fingerprints.
+    resolution: |
+        POSIX platforms: parse SSH public key files and derive fingerprints.
+    caveats: |
+        POSIX platforms: facter must be built with OpenSSL support.
+    elements:
+        dsa:
+            type: map
+            description: Represents the public key and fingerprints for the DSA algorithm.
+            elements:
+                fingerprints:
+                    type: map
+                    description: Represents fingerprint information.
+                    elements:
+                        sha1:
+                            type: string
+                            description: The SHA1 fingerprint of the public key.
+                        sha256:
+                            type: string
+                            description: The SHA256 fingerprint of the public key.
+                key:
+                    type: string
+                    description: The DSA public key.
+                type:
+                    type: string
+                    description: The exact type of the key, i.e. "ssh-dss".
+        ecdsa:
+            type: map
+            description: Represents the public key and fingerprints for the ECDSA algorithm.
+            elements:
+                fingerprints:
+                    type: map
+                    description: Represents fingerprint information.
+                    elements:
+                        sha1:
+                            type: string
+                            description: The SHA1 fingerprint of the public key.
+                        sha256:
+                            type: string
+                            description: The SHA256 fingerprint of the public key.
+                key:
+                    type: string
+                    description: The ECDSA public key.
+                type:
+                    type: string
+                    description: The exact type of the key, e.g. "ecdsa-sha2-nistp256".
+        ed25519:
+            type: map
+            description: Represents the public key and fingerprints for the Ed25519 algorithm.
+            elements:
+                fingerprints:
+                    type: map
+                    description: Represents fingerprint information.
+                    elements:
+                        sha1:
+                            type: string
+                            description: The SHA1 fingerprint of the public key.
+                        sha256:
+                            type: string
+                            description: The SHA256 fingerprint of the public key.
+                key:
+                    type: string
+                    description: The Ed25519 public key.
+                type:
+                    type: string
+                    description: The exact type of the key, i.e. "ssh-ed25519".
+        rsa:
+            type: map
+            description: Represents the public key and fingerprints for the RSA algorithm.
+            elements:
+                fingerprints:
+                    type: map
+                    description: Represents fingerprint information.
+                    elements:
+                        sha1:
+                            type: string
+                            description: The SHA1 fingerprint of the public key.
+                        sha256:
+                            type: string
+                            description: The SHA256 fingerprint of the public key.
+                key:
+                    type: string
+                    description: The RSA public key.
+                type:
+                    type: string
+                    description: The exact type of the key, i.e. "ssh-rsa".
+
+ssh<algorithm>key:
+    pattern: ^ssh\w*key$
+    hidden: true
+    type: string
+    description: Return the SSH public key for the algorithm.
+    resolution: |
+        POSIX platforms: parse SSH public key files.
+    caveats: |
+        POSIX platforms: facter must be built with OpenSSL support.
+
+sshfp_<algorithm>:
+    pattern: ^sshfp_\w*$
+    hidden: true
+    type: string
+    description: Return the SSH fingerprints for the algorithm's public key.
+    resolution: |
+        POSIX platforms: derive the SHA1 and SHA256 fingerprints; delimit with a new line character.
+    caveats: |
+        POSIX platforms: facter must be built with OpenSSL support.
+
+swapencrypted:
+    type: boolean
+    hidden: true
+    description: Return whether or not the swap is encrypted.
+    resolution: |
+        Mac OSX: use the `sysctl` function to retrieve swap encryption status.
+
+swapfree:
+    type: string
+    hidden: true
+    description: Return the display size of the free swap memory, such as "1 GiB".
+    resolution: |
+        Linux: parse the contents of `/proc/meminfo` to retrieve the free swap memory.
+        Mac OSX: use the `sysctl` function to retrieve the free swap memory.
+        Solaris: use the `swapctl` function to retrieve the free swap memory.
+
+swapfree_mb:
+    type: double
+    hidden: true
+    description: Return the size of the free swap memory, in mebibytes.
+    resolution: |
+        Linux: parse the contents of `/proc/meminfo` to retrieve the free swap memory.
+        Mac OSX: use the `sysctl` function to retrieve the free swap memory.
+        Solaris: use the `swapctl` function to retrieve the free swap memory.
+
+swapsize:
+    type: string
+    hidden: true
+    description: Return the display size of the total swap memory, such as "1 GiB".
+    resolution: |
+        Linux: parse the contents of `/proc/meminfo` to retrieve the total swap memory.
+        Mac OSX: use the `sysctl` function to retrieve the total swap memory.
+        Solaris: use the `swapctl` function to retrieve the total swap memory.
+
+swapsize_mb:
+    type: double
+    hidden: true
+    description: Return the size of the total swap memory, in mebibytes.
+    resolution: |
+        Linux: parse the contents of `/proc/meminfo` to retrieve the total swap memory.
+        Mac OSX: use the `sysctl` function to retrieve the total swap memory.
+        Solaris: use the `swapctl` function to retrieve the total swap memory.
+
+windows_edition_id:
+    type: string
+    hidden: true
+    description: Return the type of Windows edition, Server or Desktop Edition variant.
+    resolution: |
+        Windows: query the registry to retrieve the type of edition (ServerStandard|Professional|Enterprise).
+
+windows_installation_type:
+    type: string
+    hidden: true
+    description: Return Windows installation type (Server|Server Core|Client).
+    resolution: |
+        Windows: query the registry to retrive data to differentiate Server, Server Core, Client.
+
+windows_product_name:
+    type: string
+    hidden: true
+    description: Return Windows textual product name.
+    resolution: |
+        Windows: uery the registry to retrive textual product name.
+
+windows_release_id:
+    type: string
+    hidden: true
+    description: Return Windows Build Version of the form YYMM.
+    resolution: |
+        Windows: query the registry to retrieve the build version number.
+
+system32:
+    type: string
+    hidden: true
+    description: Return the path to the System32 directory on Windows.
+    resolution: |
+        Windows: use the `SHGetFolderPath` function to retrieve the path to the System32 directory.
+
+system_profiler:
+    type: map
+    description: Return information from the Mac OSX system profiler.
+    resolution: |
+        Mac OSX: use the `system_profiler` utility to retrieve system profiler information.
+    elements:
+        boot_mode:
+            type: string
+            description: The boot mode.
+        boot_rom_version:
+            type: string
+            description: The boot ROM version.
+        boot_volume:
+            type: string
+            description: The boot volume.
+        computer_name:
+            type: string
+            description: The name of the computer.
+        cores:
+            type: string
+            description: The total number of processor cores.
+        hardware_uuid:
+            type: string
+            description: The hardware unique identifier.
+        kernel_version:
+            type: string
+            description: The version of the kernel.
+        l2_cache_per_core:
+            type: string
+            description: The size of the processor per-core L2 cache.
+        l3_cache:
+            type: string
+            description: The size of the processor L3 cache.
+        memory:
+            type: string
+            description: The size of the system memory.
+        model_identifier:
+            type: string
+            description: The identifier of the computer model.
+        model_name:
+            type: string
+            description: The name of the computer model.
+        processor_name:
+            type: string
+            description: The model name of the processor.
+        processor_speed:
+            type: string
+            description: The speed of the processor.
+        processors:
+            type: string
+            description: The total number of processors.
+        secure_virtual_memory:
+            type: string
+            description: Whether or not secure virtual memory is enabled.
+        serial_number:
+            type: string
+            description: The serial number of the computer.
+        smc_version:
+            type: string
+            description: The System Management Controller (SMC) version.
+        system_version:
+            type: string
+            description: The operating system version.
+        uptime:
+            type: string
+            description: The uptime of the system.
+        username:
+            type: string
+            description: The name of the user running facter.
+
+system_uptime:
+    type: map
+    description: Return the system uptime information.
+    resolution: |
+        Linux: use the `sysinfo` function to retrieve the system uptime.
+        POSIX platforms: use the `uptime` utility to retrieve the system uptime.
+        Solaris: use the `kstat` function to retrieve the system uptime.
+        Windows: use WMI to retrieve the system uptime.
+    elements:
+        days:
+            type: integer
+            description: The number of complete days the system has been up.
+        hours:
+            type: integer
+            description: The number of complete hours the system has been up.
+        seconds:
+            type: integer
+            description: The number of total seconds the system has been up.
+        uptime:
+            type: string
+            description: The full uptime string.
+
+timezone:
+    type: string
+    description: Return the system timezone.
+    resolution: |
+        POSIX platforms: use the `localtime_r` function to retrieve the system timezone.
+        Windows: use the `localtime_s` function to retrieve the system timezone.
+
+uptime:
+    type: string
+    hidden: true
+    description: Return the system uptime.
+    resolution: |
+        Linux: use the `sysinfo` function to retrieve the system uptime.
+        POSIX platforms: use the `uptime` utility to retrieve the system uptime.
+        Solaris: use the `kstat` function to retrieve the system uptime.
+        Windows: use WMI to retrieve the system uptime.
+
+uptime_days:
+    type: integer
+    hidden: true
+    description: Return the system uptime days.
+    resolution: |
+        Linux: use the `sysinfo` function to retrieve the system uptime days.
+        POSIX platforms: use the `uptime` utility to retrieve the system uptime days.
+        Solaris: use the `kstat` function to retrieve the system uptime days.
+        Windows: use WMI to retrieve the system uptime days.
+
+uptime_hours:
+    type: integer
+    hidden: true
+    description: Return the system uptime hours.
+    resolution: |
+        Linux: use the `sysinfo` function to retrieve the system uptime hours.
+        POSIX platforms: use the `uptime` utility to retrieve the system uptime hours.
+        Solaris: use the `kstat` function to retrieve the system uptime hours.
+        Windows: use WMI to retrieve the system uptime hours.
+
+uptime_seconds:
+    type: integer
+    hidden: true
+    description: Return the system uptime seconds.
+    resolution: |
+        Linux: use the `sysinfo` function to retrieve the system uptime seconds.
+        POSIX platforms: use the `uptime` utility to retrieve the system uptime seconds.
+        Solaris: use the `kstat` function to retrieve the system uptime seconds.
+        Windows: use WMI to retrieve the system uptime seconds.
+
+uuid:
+    type: string
+    hidden: true
+    description: Return the system product unique identifier.
+    resolution: |
+        Linux: parse the contents of `/sys/class/dmi/id/product_uuid` to retrieve the system product unique identifier.
+        Solaris: use the `smbios` utility to retrieve the system product unique identifier.
+    caveats: |
+        Linux: kernel 2.6+ is required due to the reliance on sysfs.
+
+virtual:
+    type: string
+    description: Return the hypervisor name for virtual machines or "physical" for physical machines.
+    resolution: |
+        Linux: use procfs or utilities such as `vmware` and `virt-what` to retrieve virtual machine name.
+        Mac OSX: use the system profiler to retrieve virtual machine name.
+        Solaris: use the `zonename` utility to retrieve virtual machine name.
+        Windows: use WMI to retrieve virtual machine name.
+
+xen:
+    type: map
+    description: Return metadata for the Xen hypervisor.
+    resolution: |
+        POSIX platforms: use `/usr/lib/xen-common/bin/xen-toolstack` to locate xen admin commands if available, otherwise fallback to `/usr/sbin/xl` or `/usr/sbin/xm`. Use the found command to execute the `list` query.
+    caveats: |
+        POSIX platforms: confined to Xen privileged virtual machines.
+    elements:
+        domains:
+            type: array
+            description: list of strings identifying active Xen domains.
+
+xendomains:
+    type: string
+    hidden: true
+    description: Return a list of comma-separated active Xen domain names.
+    resolution: |
+        POSIX platforms: see the `xen` structured fact.
+    caveats: |
+        POSIX platforms: confined to Xen privileged virtual machines.
+
+zfs_featurenumbers:
+    type: string
+    description: Return the comma-delimited feature numbers for ZFS.
+    resolution: |
+        Solaris: use the `zfs` utility to retrieve the feature numbers for ZFS
+    caveats: |
+        Solaris: the `zfs` utility must be present.
+
+zfs_version:
+    type: string
+    description: Return the version for ZFS.
+    resolution: |
+        Solaris: use the `zfs` utility to retrieve the version for ZFS
+    caveats: |
+        Solaris: the `zfs` utility must be present.
+
+zone_<name>_brand:
+    pattern: ^zone_[\w\-\.]+_brand$
+    type: string
+    hidden: true
+    description: Return the brand for the Solaris zone.
+    resolution: |
+        Solaris: use the `zoneadm` utility to retrieve the brand for the Solaris zone.
+    caveats: |
+        Solaris: the `zoneadm` utility must be present.
+
+zone_<name>_iptype:
+    pattern: ^zone_[\w\-\.]+_iptype$
+    type: string
+    hidden: true
+    description: Return the IP type for the Solaris zone.
+    resolution: |
+        Solaris: use the `zoneadm` utility to retrieve the IP type for the Solaris zone.
+    caveats: |
+        Solaris: the `zoneadm` utility must be present.
+
+zone_<name>_name:
+    pattern: ^zone_[\w\-\.]+_name$
+    type: string
+    hidden: true
+    description: Return the name for the Solaris zone.
+    resolution: |
+        Solaris: use the `zoneadm` utility to retrieve the name for the Solaris zone.
+    caveats: |
+        Solaris: the `zoneadm` utility must be present.
+
+zone_<name>_uuid:
+    pattern: ^zone_[\w\-\.]+_uuid$
+    type: string
+    hidden: true
+    description: Return the unique identifier for the Solaris zone.
+    resolution: |
+        Solaris: use the `zoneadm` utility to retrieve the unique identifier for the Solaris zone.
+    caveats: |
+        Solaris: the `zoneadm` utility must be present.
+
+zone_<name>_id:
+    pattern: ^zone_[\w\-\.]+_id$
+    type: string
+    hidden: true
+    description: Return the zone identifier for the Solaris zone.
+    resolution: |
+        Solaris: use the `zoneadm` utility to retrieve the zone identifier for the Solaris zone.
+    caveats: |
+        Solaris: the `zoneadm` utility must be present.
+
+zone_<name>_path:
+    pattern: ^zone_[\w\-\.]+_path$
+    type: string
+    hidden: true
+    description: Return the zone path for the Solaris zone.
+    resolution: |
+        Solaris: use the `zoneadm` utility to retrieve the zone path for the Solaris zone.
+    caveats: |
+        Solaris: the `zoneadm` utility must be present.
+
+zone_<name>_status:
+    pattern: ^zone_[\w\-\.]+_status$
+    type: string
+    hidden: true
+    description: Return the zone state for the Solaris zone.
+    resolution: |
+        Solaris: use the `zoneadm` utility to retrieve the zone state for the Solaris zone.
+    caveats: |
+        Solaris: the `zoneadm` utility must be present.
+
+zonename:
+    type: string
+    hidden: true
+    description: Return the name of the current Solaris zone.
+    resolution: |
+        Solaris: use the `zonename` utility to retrieve the current zone name.
+    caveats: |
+        Solaris: the `zonename` utility must be present.
+
+zones:
+    type: integer
+    hidden: true
+    description: Return the count of Solaris zones.
+    resolution: |
+        Solaris: use the `zoneadm` utility to retrieve the count of Solaris zones.
+    caveats: |
+        Solaris: the `zoneadm` utility must be present.
+
+zpool_featureflags:
+    type: string
+    description: Return the comma-delimited feature flags for ZFS storage pools.
+    resolution: |
+        Solaris: use the `zpool` utility to retrieve the feature numbers for ZFS storage pools
+    caveats: |
+        Solaris: the `zpool` utility must be present.
+
+zpool_featurenumbers:
+    type: string
+    description: Return the comma-delimited feature numbers for ZFS storage pools.
+    resolution: |
+        Solaris: use the `zpool` utility to retrieve the feature numbers for ZFS storage pools
+    caveats: |
+        Solaris: the `zpool` utility must be present.
+
+zpool_version:
+    type: string
+    description: Return the version for ZFS storage pools.
+    resolution: |
+        Solaris: use the `zpool` utility to retrieve the version for ZFS storage pools
+    caveats: |
+        Solaris: the `zpool` utility must be present.
+
+nim_type:
+    type: string
+    description: Tells if the node is master or standalone inside an AIX Nim environment.
+    details: |
+        Is Available only on AIX.
