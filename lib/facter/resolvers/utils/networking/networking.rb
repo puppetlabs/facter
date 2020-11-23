@@ -58,6 +58,12 @@ module Resolvers
           addr.empty? || addr.start_with?('127.', '169.254.') || addr.start_with?('fe80') || addr.eql?('::1')
         end
 
+        def calculate_mask_length(netmask)
+          ipaddr = IPAddr.new(netmask)
+
+          ipaddr.to_i.to_s(2).count('1')
+        end
+
         private
 
         def expand_interfaces(interfaces)

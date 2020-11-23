@@ -23,6 +23,10 @@ module Facter
             return
           end
 
+          # we need to enlarge the scope of this pointer so that Ruby GC will not free the memory.
+          # If the pointer if freed, Lifreq structures will contain garbage from memory.
+          @long_living_pointer = state_ptr
+
           PerformanceInformation.new(state_ptr)
         end
 
