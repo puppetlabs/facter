@@ -14,7 +14,7 @@ module Facter
           end
 
           def query_cudv(fact_name)
-            odmquery = Facter::ODMQuery.new
+            odmquery = Facter::Util::Aix::ODMQuery.new
             odmquery.equals('PdDvLn', 'logical_volume/lvsubclass/lvtype')
 
             result = odmquery.execute
@@ -40,13 +40,13 @@ module Facter
 
             return if stdout.empty?
 
-            info_hash =  InfoExtractor.extract(stdout, /PPs:|PP SIZE|TYPE:|LABEL:|MOUNT/)
+            info_hash =  Facter::Util::Aix::InfoExtractor.extract(stdout, /PPs:|PP SIZE|TYPE:|LABEL:|MOUNT/)
             size_bytes = compute_size(info_hash)
 
             part_info = {
               filesystem: info_hash['TYPE'],
               size_bytes: size_bytes,
-              size: Facter::FactsUtils::UnitConverter.bytes_to_human_readable(size_bytes)
+              size: Facter::Util::Facts::UnitConverter.bytes_to_human_readable(size_bytes)
             }
             mount = info_hash['MOUNT POINT']
             label = info_hash['LABEL']
@@ -59,9 +59,9 @@ module Facter
             physical_partitions = info_hash['PPs'].to_i
             size_physical_partition = info_hash['PP SIZE']
             exp = if size_physical_partition[/mega/]
-                    InfoExtractor::MEGABYTES_EXPONENT
+                    Facter::Util::Aix::InfoExtractor::MEGABYTES_EXPONENT
                   else
-                    InfoExtractor::GIGABYTES_EXPONENT
+                    Facter::Util::Aix::InfoExtractor::GIGABYTES_EXPONENT
                   end
             size_physical_partition.to_i * physical_partitions * exp
           end

@@ -23,7 +23,7 @@ module Facter
             files.select! { |filename| filename =~ /^dhclient.*lease.*$/ }
             files.each do |file|
               path = File.join([path, file])
-              output = Util::FileHelper.safe_read(path)
+              output = Facter::Util::FileHelper.safe_read(path)
 
               if output.include?('option unknown-245') || output.include?('option 245')
                 @fact_list[:cloud_provider] = 'azure'

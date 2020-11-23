@@ -51,7 +51,7 @@ module Facter
             mediasize = Integer(mediasize.value)
 
             res[:size_bytes] = mediasize
-            res[:size] = Facter::FactsUtils::UnitConverter.bytes_to_human_readable(mediasize)
+            res[:size] = Facter::Util::Facts::UnitConverter.bytes_to_human_readable(mediasize)
             res
           end
 

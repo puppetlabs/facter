@@ -21,7 +21,7 @@ module Facter
 
             populate_with_mtu_and_mac!(@fact_list[:interfaces])
             get_primary_interface_info(output)
-            ::Resolvers::Utils::Networking.expand_main_bindings(@fact_list)
+            Facter::Util::Resolvers::Networking.expand_main_bindings(@fact_list)
             @fact_list[fact_name]
           end
 
@@ -49,7 +49,8 @@ module Facter
             mask_length = mask_length.to_i - 1 unless is_ipv4
             @fact_list[:interfaces][name] ||= {}
             @fact_list[:interfaces][name][bind_to_add] ||= []
-            @fact_list[:interfaces][name][bind_to_add] << ::Resolvers::Utils::Networking.build_binding(ip, mask_length)
+            @fact_list[:interfaces][name][bind_to_add] << Facter::Util::Resolvers::Networking
+                                                          .build_binding(ip, mask_length)
           end
 
           def populate_with_mtu_and_mac!(interfaces)

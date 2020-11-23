@@ -27,11 +27,11 @@ module Facter
           def retrieve_system_profiler(fact_name)
             case fact_name
             when *SP_HARDWARE_DATA_TYPE
-              @fact_list.merge!(SystemProfileExecutor.execute('SPHardwareDataType'))
+              @fact_list.merge!(Facter::Util::Macosx::SystemProfileExecutor.execute('SPHardwareDataType'))
             when *SP_SOFTWARE_DATA_TYPE
-              @fact_list.merge!(SystemProfileExecutor.execute('SPSoftwareDataType'))
+              @fact_list.merge!(Facter::Util::Macosx::SystemProfileExecutor.execute('SPSoftwareDataType'))
             when *SP_ETHERNET_DATA_TYPE
-              @fact_list.merge!(SystemProfileExecutor.execute('SPEthernetDataType'))
+              @fact_list.merge!(Facter::Util::Macosx::SystemProfileExecutor.execute('SPEthernetDataType'))
             end
 
             @fact_list[fact_name]

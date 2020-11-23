@@ -23,11 +23,11 @@ module Facter
             next unless File.directory?(file_path)
 
             FILE_NAMES.each do |file_name|
-              file_content = Util::FileHelper.safe_read(File.join(file_path, file_name), nil)
+              file_content = Facter::Util::FileHelper.safe_read(File.join(file_path, file_name), nil)
               next unless file_content
 
               key_type, key = file_content.split(' ')
-              ssh_list << ::Resolvers::Utils::SshHelper.create_ssh(key_type, key)
+              ssh_list << Facter::Util::Resolvers::SshHelper.create_ssh(key_type, key)
             end
           end
           @fact_list[:ssh] = ssh_list

@@ -36,7 +36,7 @@ module Facter
               disk_size = sizes[index].to_i
               disks[name] = {
                 product: products[index],
-                size: Facter::FactsUtils::UnitConverter.bytes_to_human_readable(disk_size),
+                size: Facter::Util::Facts::UnitConverter.bytes_to_human_readable(disk_size),
                 size_bytes: disk_size,
                 vendor: vendors[index]
               }

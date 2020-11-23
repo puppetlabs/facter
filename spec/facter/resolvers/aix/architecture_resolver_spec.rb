@@ -3,10 +3,10 @@
 describe Facter::Resolvers::Architecture do
   describe '#resolve' do
     before do
-      odm1 = instance_double(Facter::ODMQuery)
-      odm2 = instance_double(Facter::ODMQuery)
+      odm1 = instance_double(Facter::Util::Aix::ODMQuery)
+      odm2 = instance_double(Facter::Util::Aix::ODMQuery)
 
-      allow(Facter::ODMQuery).to receive(:new).and_return(odm1, odm2)
+      allow(Facter::Util::Aix::ODMQuery).to receive(:new).and_return(odm1, odm2)
       allow(odm1).to receive(:equals).with('PdDvLn', 'processor/sys/proc_rspc').and_return(odm1)
       allow(odm1).to receive(:equals).with('status', '1').and_return(odm1)
       allow(odm1).to receive(:execute).and_return('proc8')

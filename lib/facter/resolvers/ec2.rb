@@ -50,7 +50,7 @@ module Facter
         end
 
         def get_data_from(url)
-          Utils::Http.get_request(url, {}, { session: determine_session_timeout })
+          Facter::Util::Resolvers::Http.get_request(url, {}, { session: determine_session_timeout })
         end
 
         def determine_session_timeout

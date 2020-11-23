@@ -17,7 +17,7 @@ module Facter
         end
 
         def read_redhat_release(fact_name)
-          output = Util::FileHelper.safe_read('/etc/redhat-release', nil)
+          output = Facter::Util::FileHelper.safe_read('/etc/redhat-release', nil)
           return @fact_list[fact_name] = nil if output.nil?
 
           build_fact_list(output)

@@ -17,7 +17,7 @@ module Facter
           end
 
           def build_release_facts(fact_name)
-            result = Util::FileHelper.safe_read('/etc/release', nil)
+            result = Facter::Util::FileHelper.safe_read('/etc/release', nil)
             return @fact_list[fact_name] = nil if result.nil?
 
             OS_VERSION_REGEX_PATTERNS.each do |os_version_regex|

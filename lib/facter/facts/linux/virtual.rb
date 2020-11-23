@@ -7,7 +7,7 @@ module Facts
 
       def initialize
         @log = Facter::Log.new(self)
-        @virtual = Facter::VirtualDetector.new
+        @virtual = Facter::Util::Facts::VirtualDetector.new
       end
 
       def call_the_resolver

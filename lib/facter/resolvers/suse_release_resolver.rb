@@ -17,7 +17,7 @@ module Facter
         end
 
         def read_suse_release(fact_name)
-          output = Util::FileHelper.safe_read('/etc/SuSE-release', nil)
+          output = Facter::Util::FileHelper.safe_read('/etc/SuSE-release', nil)
           return @fact_list[fact_name] = nil if output.nil?
 
           output_strings = output.split(' ')

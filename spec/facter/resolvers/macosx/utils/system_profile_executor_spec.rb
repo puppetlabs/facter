@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe Facter::Resolvers::Macosx::SystemProfileExecutor do
-  subject(:system_profiler_executor) { Facter::Resolvers::Macosx::SystemProfileExecutor }
+describe Facter::Util::Macosx::SystemProfileExecutor do
+  subject(:system_profiler_executor) { Facter::Util::Macosx::SystemProfileExecutor }
 
   describe '#execute' do
     before do

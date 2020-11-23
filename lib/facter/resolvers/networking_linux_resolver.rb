@@ -20,15 +20,15 @@ module Facter
           retrieve_interface_info
           retrieve_interfaces_mac_and_mtu
           retrieve_default_interface
-          ::Resolvers::Utils::Networking.expand_main_bindings(@fact_list)
+          Facter::Util::Resolvers::Networking.expand_main_bindings(@fact_list)
           @fact_list[fact_name]
         end
 
         def retrieve_interfaces_mac_and_mtu
           @fact_list[:interfaces].map do |name, info|
-            macaddress = Util::FileHelper.safe_read("/sys/class/net/#{name}/address", nil)
+            macaddress = Facter::Util::FileHelper.safe_read("/sys/class/net/#{name}/address", nil)
             info[:mac] = macaddress.strip if macaddress && !macaddress.include?('00:00:00:00:00:00')
-            mtu = Util::FileHelper.safe_read("/sys/class/net/#{name}/mtu", nil)
+            mtu = Facter::Util::FileHelper.safe_read("/sys/class/net/#{name}/mtu", nil)
             info[:mtu] = mtu.strip.to_i if mtu
           end
         end
@@ -58,7 +58,7 @@ module Facter
           return if !network_info[interface_name] || network_info[interface_name][:dhcp]
 
           index = tokens[0].delete(':')
-          file_content = Util::FileHelper.safe_read("/run/systemd/netif/leases/#{index}", nil)
+          file_content = Facter::Util::FileHelper.safe_read("/run/systemd/netif/leases/#{index}", nil)
           dhcp = file_content.match(/SERVER_ADDRESS=(.*)/) if file_content
           if dhcp
             network_info[interface_name][:dhcp] = dhcp[1]
@@ -76,7 +76,7 @@ module Facter
             next if lease_files.empty?
 
             lease_files.select do |file|
-              content = Util::FileHelper.safe_read("#{dir}#{file}", nil)
+              content = Facter::Util::FileHelper.safe_read("#{dir}#{file}", nil)
               next unless content =~ /interface.*#{interface_name}/
 
               dhcp = content.match(/dhcp-server-identifier ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/)
@@ -93,7 +93,7 @@ module Facter
           lease_file = files.find { |file| file =~ /internal.*#{interface_name}\.lease/ }
           return unless lease_file
 
-          dhcp = Util::FileHelper.safe_read("/var/lib/NetworkManager/#{lease_file}", nil)
+          dhcp = Facter::Util::FileHelper.safe_read("/var/lib/NetworkManager/#{lease_file}", nil)
 
           return unless dhcp
 
@@ -111,7 +111,7 @@ module Facter
                       "ip4_address = #{ip4_address}\n" \
                       "ip4_mask_length = #{ip4_mask_length}")
 
-          binding = ::Resolvers::Utils::Networking.build_binding(ip4_address, ip4_mask_length)
+          binding = Facter::Util::Resolvers::Networking.build_binding(ip4_address, ip4_mask_length)
           return unless binding
 
           build_network_info_structure!(network_info, interface_name, :bindings)
@@ -133,7 +133,7 @@ module Facter
 
           interface_name, ip6_address, ip6_mask_length = retrieve_name_and_ip_info(ip_tokens)
 
-          binding = ::Resolvers::Utils::Networking.build_binding(ip6_address, ip6_mask_length)
+          binding = Facter::Util::Resolvers::Networking.build_binding(ip6_address, ip6_mask_length)
 
           build_network_info_structure!(network_info, interface_name, :bindings6)
 

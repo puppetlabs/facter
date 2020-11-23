@@ -4,9 +4,9 @@ describe Facter::Resolvers::DMIComputerSystem do
   let(:logger) { instance_spy(Facter::Log) }
 
   before do
-    win = double('Win32Ole')
+    win = double('Facter::Util::Windows::Win32Ole')
 
-    allow(Win32Ole).to receive(:new).and_return(win)
+    allow(Facter::Util::Windows::Win32Ole).to receive(:new).and_return(win)
     allow(win).to receive(:return_first).with('SELECT Name,UUID FROM Win32_ComputerSystemProduct').and_return(comp)
 
     Facter::Resolvers::DMIComputerSystem.instance_variable_set(:@log, logger)

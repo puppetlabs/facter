@@ -4,10 +4,10 @@ describe Facts::Linux::Ec2Userdata do
   describe '#call_the_resolver' do
     subject(:fact) { Facts::Linux::Ec2Userdata.new }
 
-    let(:virtual_detector_double) { instance_spy(Facter::VirtualDetector) }
+    let(:virtual_detector_double) { instance_spy(Facter::Util::Facts::VirtualDetector) }
 
     before do
-      allow(Facter::VirtualDetector).to receive(:new).and_return(virtual_detector_double)
+      allow(Facter::Util::Facts::VirtualDetector).to receive(:new).and_return(virtual_detector_double)
       allow(Facter::Resolvers::Ec2).to receive(:resolve).with(:userdata).and_return(value)
     end
 

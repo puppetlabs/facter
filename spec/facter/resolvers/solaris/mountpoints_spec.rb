@@ -50,8 +50,8 @@ describe Facter::Resolvers::Solaris::Mountpoints do
       .with('/proc/cmdline')
       .and_return(load_fixture('cmdline_root_device').read)
 
-    allow(Facter::FilesystemHelper).to receive(:read_mountpoints).and_return([mount])
-    allow(Facter::FilesystemHelper).to receive(:read_mountpoint_stats).and_return(stat)
+    allow(Facter::Util::Resolvers::FilesystemHelper).to receive(:read_mountpoints).and_return([mount])
+    allow(Facter::Util::Resolvers::FilesystemHelper).to receive(:read_mountpoint_stats).and_return(stat)
 
     # mock sys/filesystem methods
     allow(stat).to receive(:bytes_total).and_return(stat.blocks * stat.fragment_size)
@@ -68,17 +68,17 @@ describe Facter::Resolvers::Solaris::Mountpoints do
   end
 
   it 'does not drop non-tmpfs mounts under /proc or /sys' do
-    allow(Facter::FilesystemHelper).to receive(:read_mountpoints).and_return(ignored_mount1)
+    allow(Facter::Util::Resolvers::FilesystemHelper).to receive(:read_mountpoints).and_return(ignored_mount1)
 
     resolver.resolve(:mountpoints)
-    expect(Facter::FilesystemHelper).to have_received(:read_mountpoint_stats).with('/system/')
+    expect(Facter::Util::Resolvers::FilesystemHelper).to have_received(:read_mountpoint_stats).with('/system/')
   end
 
   it 'does not drop automounts mounts under /proc or /sys' do
-    allow(Facter::FilesystemHelper).to receive(:read_mountpoints).and_return(ignored_mount2)
+    allow(Facter::Util::Resolvers::FilesystemHelper).to receive(:read_mountpoints).and_return(ignored_mount2)
 
     resolver.resolve(:mountpoints)
-    expect(Facter::FilesystemHelper).to have_received(:read_mountpoint_stats).with('/mnt/auto')
+    expect(Facter::Util::Resolvers::FilesystemHelper).to have_received(:read_mountpoint_stats).with('/mnt/auto')
   end
 
   describe '.root_device' do

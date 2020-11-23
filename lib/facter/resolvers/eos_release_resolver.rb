@@ -17,7 +17,7 @@ module Facter
         end
 
         def read_eos_release(fact_name)
-          output = Util::FileHelper.safe_read('/etc/Eos-release', nil)
+          output = Facter::Util::FileHelper.safe_read('/etc/Eos-release', nil)
           return @fact_list[fact_name] = nil if output.nil?
 
           output_strings = output.split(' ')

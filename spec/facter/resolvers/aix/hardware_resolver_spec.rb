@@ -5,7 +5,7 @@ describe Facter::Resolvers::Hardware do
     before do
       odm = double('ODMQuery')
 
-      allow(Facter::ODMQuery).to receive(:new).and_return(odm)
+      allow(Facter::Util::Aix::ODMQuery).to receive(:new).and_return(odm)
       allow(odm).to receive(:equals).with('name', 'sys0').and_return(odm)
       allow(odm).to receive(:equals).with('attribute', 'modelname')
       allow(odm).to receive(:execute).and_return(result)

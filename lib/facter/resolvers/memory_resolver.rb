@@ -16,7 +16,7 @@ module Facter
           end
 
           def read_meminfo_file(fact_name)
-            meminfo_output = Util::FileHelper.safe_read('/proc/meminfo', nil)
+            meminfo_output = Facter::Util::FileHelper.safe_read('/proc/meminfo', nil)
             return unless meminfo_output
 
             read_system(meminfo_output)

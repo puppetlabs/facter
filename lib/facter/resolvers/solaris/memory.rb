@@ -32,7 +32,7 @@ module Facter
             sys[:total_bytes] = total
             sys[:available_bytes] = free
             sys[:used_bytes] = total - free
-            sys[:capacity] = FilesystemHelper.compute_capacity(total - free, total)
+            sys[:capacity] = Facter::Util::Resolvers::FilesystemHelper.compute_capacity(total - free, total)
 
             sys
           end
@@ -45,7 +45,7 @@ module Facter
             swap_hash[:total_bytes] = total
             swap_hash[:available_bytes] = free
             swap_hash[:used_bytes] = total - free
-            swap_hash[:capacity] = FilesystemHelper.compute_capacity(total - free, total)
+            swap_hash[:capacity] = Facter::Util::Resolvers::FilesystemHelper.compute_capacity(total - free, total)
 
             swap_hash if total != 0
           end

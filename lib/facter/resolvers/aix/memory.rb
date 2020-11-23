@@ -44,7 +44,7 @@ module Facter
             { available_bytes: content[3].to_i * pagesize,
               total_bytes: total,
               used_bytes: used,
-              capacity: FilesystemHelper.compute_capacity(used, total) }
+              capacity: Facter::Util::Resolvers::FilesystemHelper.compute_capacity(used, total) }
           end
 
           def populate_swap(content, pagesize)
@@ -56,7 +56,7 @@ module Facter
             { available_bytes: total - used,
               total_bytes: total,
               used_bytes: used,
-              capacity: FilesystemHelper.compute_capacity(used, total) }
+              capacity: Facter::Util::Resolvers::FilesystemHelper.compute_capacity(used, total) }
           end
         end
       end

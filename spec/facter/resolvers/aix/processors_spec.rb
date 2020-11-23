@@ -3,14 +3,14 @@
 describe Facter::Resolvers::Aix::Processors do
   subject(:resolver) { Facter::Resolvers::Aix::Processors }
 
-  let(:odm_query_spy) { instance_spy(Facter::ODMQuery) }
-  let(:odm_query_spy2) { instance_spy(Facter::ODMQuery) }
-  let(:odm_query_spy3) { instance_spy(Facter::ODMQuery) }
+  let(:odm_query_spy) { instance_spy(Facter::Util::Aix::ODMQuery) }
+  let(:odm_query_spy2) { instance_spy(Facter::Util::Aix::ODMQuery) }
+  let(:odm_query_spy3) { instance_spy(Facter::Util::Aix::ODMQuery) }
   let(:logger_spy) { instance_spy(Facter::Log) }
 
   before do
     resolver.instance_variable_set(:@log, logger_spy)
-    allow(Facter::ODMQuery).to receive(:new).and_return(odm_query_spy, odm_query_spy2, odm_query_spy3)
+    allow(Facter::Util::Aix::ODMQuery).to receive(:new).and_return(odm_query_spy, odm_query_spy2, odm_query_spy3)
     allow(odm_query_spy).to receive(:equals).with('class', 'processor')
     allow(odm_query_spy).to receive(:execute).and_return(result)
   end

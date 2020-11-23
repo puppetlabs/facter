@@ -16,7 +16,7 @@ module Facter
           def detect_uptime(fact_name)
             days, hours, minutes, seconds = extract_uptime_from_docker
             total_seconds = convert_to_seconds(days, hours, minutes, seconds)
-            @fact_list = Utils::UptimeHelper.create_uptime_hash(total_seconds)
+            @fact_list =  Facter::Util::Resolvers::UptimeHelper.create_uptime_hash(total_seconds)
 
             @fact_list[fact_name]
           end

@@ -10,7 +10,7 @@ module Facts
           def call_the_resolver
             fact_value = Facter::Resolvers::Solaris::Memory.resolve(:swap)
             if fact_value
-              fact_value = Facter::FactsUtils::UnitConverter.bytes_to_human_readable(fact_value[:used_bytes])
+              fact_value = Facter::Util::Facts::UnitConverter.bytes_to_human_readable(fact_value[:used_bytes])
             end
             Facter::ResolvedFact.new(FACT_NAME, fact_value)
           end
