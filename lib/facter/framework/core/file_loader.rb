@@ -35,6 +35,7 @@ require 'facter/framework/config/fact_groups'
 load_dir(['config'])
 
 load_dir(%w[resolvers utils])
+load_dir(%w[resolvers utils networking])
 load_dir(['resolvers'])
 load_dir(['facts_utils'])
 load_dir(%w[framework core])

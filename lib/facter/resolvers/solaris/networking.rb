@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative 'ffi/ffi.rb'
-require 'ipaddr'
 
 module Facter
   module Resolvers
@@ -18,24 +17,31 @@ module Facter
           end
 
           def read_facts(fact_name)
-            lifreqs = load_interfaces
-            @interfaces = {}
+            begin
+              lifreqs = load_interfaces
+              @interfaces = {}
 
-            lifreqs.each do |lifreq|
-              @interfaces[lifreq.name] ||= {}
+              lifreqs.each do |lifreq|
+                obtain_info_for_interface(lifreq)
+              end
 
-              add_mac(lifreq)
-              add_bindings(lifreq)
-              add_mtu(lifreq)
-              add_dhcp(lifreq.name)
+              @fact_list = { interfaces: @interfaces } unless @interfaces.empty?
+              @fact_list[:primary_interface] = Utils::Networking::PrimaryInterface.get(@log)
+
+              ::Resolvers::Utils::Networking.expand_main_bindings(@fact_list)
+            rescue StandardError => e
+              @log.log_exception(e)
             end
-
-            @fact_list = { interfaces: @interfaces } unless @interfaces.empty?
-            primary_interface
-
-            ::Resolvers::Utils::Networking.expand_main_bindings(@fact_list)
-
             @fact_list[fact_name]
+          end
+
+          def obtain_info_for_interface(lifreq)
+            @interfaces[lifreq.name] ||= {}
+
+            add_mac(lifreq)
+            add_bindings(lifreq)
+            add_mtu(lifreq)
+            @interfaces[lifreq.name][:dhcp] = Utils::Networking::Dhcp.get(lifreq.name, @log)
           end
 
           def add_mac(lifreq)
@@ -43,7 +49,10 @@ module Facter
 
             ioctl = FFI::Ioctl.ioctl(FFI::SIOCGARP, arp, lifreq.ss_family)
 
-            @log.debug("Error! #{::FFI::LastError.error}") if ioctl == -1
+            if ioctl == -1
+              @log.debug("Could not read MAC address for interface #{lifreq.name} "\
+                          "error code is: #{::FFI::LastError.error}")
+            end
 
             mac = arp.sa_data_to_mac
             @interfaces[lifreq.name][:mac] ||= mac if mac.count('0') < 12
@@ -63,7 +72,10 @@ module Facter
           def add_mtu(lifreq)
             ioctl = FFI::Ioctl.ioctl(FFI::SIOCGLIFMTU, lifreq, lifreq.ss_family)
 
-            @log.debug("Error! #{::FFI::LastError.error}") if ioctl == -1
+            if ioctl == -1
+              @log.error("Cold not read MTU, error code is #{::FFI::LastError.error}")
+              return
+            end
 
             @interfaces[lifreq.name][:mtu] ||= lifreq[:lifr_lifru][:lifru_metric]
           end
@@ -74,11 +86,12 @@ module Facter
             ioctl = FFI::Ioctl.ioctl(FFI::SIOCGLIFNETMASK, netmask_lifreq, lifreq.ss_family)
 
             if ioctl == -1
-              @log.debug("Error! #{::FFI::LastError.error}")
-            else
-              netmask = inet_ntop(netmask_lifreq, lifreq.ss_family)
-              [netmask, calculate_mask_length(netmask)]
+              @log.error("Could not read Netmask, error code is: #{::FFI::LastError.error}")
+              return
             end
+
+            netmask = inet_ntop(netmask_lifreq, lifreq.ss_family)
+            [netmask, ::Resolvers::Utils::Networking.calculate_mask_length(netmask)]
           end
 
           def inet_ntop(lifreq, ss_family)
@@ -100,7 +113,7 @@ module Facter
 
             ioctl = FFI::Ioctl.ioctl(FFI::SIOCGLIFNUM, lifnum)
 
-            @log.debug("Error! #{::FFI::LastError.error}") if ioctl == -1
+            @log.error("Could not read interface count, error code is: #{::FFI::LastError.error}") if ioctl == -1
 
             lifnum[:lifn_count]
           end
@@ -112,7 +125,14 @@ module Facter
 
             ioctl = FFI::Ioctl.ioctl(FFI::SIOCGLIFCONF, lifconf)
 
-            @log.debug("Error! #{::FFI::LastError.error}") if ioctl == -1
+            # we need to enlarge the scope of this pointer so that Ruby GC will not free the memory.
+            # If the pointer if freed, Lifreq structures will contain garbage from memory.
+            @long_living_pointer = lifconf
+
+            if ioctl == -1
+              @log.error("Could not read interface information, error code is: #{::FFI::LastError.error}")
+              return []
+            end
 
             interfaces = []
             interface_count.times do |i|
@@ -120,24 +140,6 @@ module Facter
             end
 
             interfaces
-          end
-
-          def calculate_mask_length(netmask)
-            ipaddr = IPAddr.new(netmask)
-            ipaddr.to_i.to_s(2).count('1')
-          end
-
-          def primary_interface
-            result = Facter::Core::Execution.execute('route -n get default', logger: log)
-
-            @fact_list[:primary_interface] = result.match(/interface: (.+)/)&.captures&.first
-          end
-
-          def add_dhcp(interface_name)
-            dhcpinfo_command = Facter::Core::Execution.which('dhcpinfo') || '/sbin/dhcpinfo'
-            result = Facter::Core::Execution.execute("#{dhcpinfo_command} -i #{interface_name} ServerID", logger: log)
-
-            @interfaces[interface_name][:dhcp] = result.chomp
           end
         end
       end

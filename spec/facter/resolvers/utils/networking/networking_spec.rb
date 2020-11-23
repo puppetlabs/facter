@@ -262,4 +262,26 @@ describe Resolvers::Utils::Networking do
       end
     end
   end
+
+  describe '#calculate_mask_length' do
+    context 'when ip v4' do
+      let(:netmask) { '255.0.0.0' }
+
+      it 'returns 8 as mask length' do
+        mask_length = Resolvers::Utils::Networking.calculate_mask_length(netmask)
+
+        expect(mask_length).to be(8)
+      end
+    end
+
+    context 'when ip v6' do
+      let(:netmask) { '::ffff:ffff:ffff:ffff:ffff:ffff' }
+
+      it 'returns 10 as mask length' do
+        mask_length = Resolvers::Utils::Networking.calculate_mask_length(netmask)
+
+        expect(mask_length).to be(96)
+      end
+    end
+  end
 end
