@@ -524,6 +524,25 @@ describe Facter do
       end
     end
 
+    describe '#load_external' do
+      before do
+        allow(Facter::Options).to receive(:[]=)
+      end
+
+      it 'sends call to Facter::Options' do
+        allow(Facter::Options).to receive(:[]=)
+        Facter.load_external(true)
+
+        expect(Facter::Options).to have_received(:[]=).with(:no_external_facts, false)
+      end
+
+      it 'logs a debug message' do
+        Facter.load_external(true)
+
+        expect(logger).to have_received(:debug).with('Facter.load_external(true) called. External facts will be loaded')
+      end
+    end
+
     describe '#search' do
       it 'sends call to Facter::Options' do
         allow(Facter::Options).to receive(:[]=)
