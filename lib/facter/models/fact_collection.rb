@@ -4,6 +4,7 @@ module Facter
   class FactCollection < Hash
     def initialize
       super
+      @log = Log.new(self)
     end
 
     def build_fact_collection!(facts)
@@ -40,6 +41,10 @@ module Facter
 
     def bury_fact(fact)
       bury(*fact.name.split('.') + fact.filter_tokens << fact.value)
+    rescue NoMethodError
+      @log.error("#{fact.type.to_s.capitalize} fact `#{fact.name}` cannot be added to collection."\
+          ' The format of this fact is incompatible with other'\
+          " facts that belong to `#{fact.name.split('.').first}` group")
     end
   end
 end
