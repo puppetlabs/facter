@@ -7,8 +7,9 @@ module Facter
     end
 
     def platform # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
-      fact_value = check_docker_lxc || check_dmi || check_gce || retrieve_from_virt_what || check_vmware
-      fact_value ||= check_open_vz || check_vserver || check_xen || check_other_facts || check_lspci || 'physical'
+      fact_value = check_docker_lxc || check_dmi || check_freebsd || check_gce || retrieve_from_virt_what
+      fact_value ||= check_vmware || check_open_vz || check_vserver || check_xen || check_other_facts
+      fact_value ||= check_lspci || 'physical'
 
       fact_value
     end
@@ -56,6 +57,13 @@ module Facter
     def check_xen
       @log.debug('Checking XEN')
       Facter::Resolvers::Xen.resolve(:vm)
+    end
+
+    def check_freebsd
+      return unless Object.const_defined?('Facter::Resolvers::Freebsd::Virtual')
+
+      @log.debug('Checking if jailed')
+      Facter::Resolvers::Freebsd::Virtual.resolve(:vm)
     end
 
     def check_other_facts
