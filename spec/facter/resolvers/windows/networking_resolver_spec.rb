@@ -193,7 +193,8 @@ describe Facter::Resolvers::Windows::Networking do
         {
           address: 'fe80::7ca0:ab22:703a:b329',
           netmask: 'ffff:ff00::',
-          network: 'fe80::'
+          network: 'fe80::',
+          scope6: 'link'
         }
       end
 

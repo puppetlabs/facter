@@ -29,8 +29,8 @@ describe Facter::Resolvers::Aix::Networking do
                    ip: '10.32.77.40', mac: '0a:c6:24:39:41:03', mtu: 1500, netmask: '255.255.255.0',
                    network: '10.32.77.0' },
         'lo0' => { bindings: [{ address: '127.0.0.1', netmask: '255.0.0.0', network: '127.0.0.0' }],
-                   bindings6: [{ address: '::1', netmask: '::', network: '::' }], ip: '127.0.0.1', ip6: '::1',
-                   mtu: 16_896, netmask: '255.0.0.0', netmask6: '::', network: '127.0.0.0',
+                   bindings6: [{ address: '::1', netmask: '::', network: '::', scope6: 'host' }], ip: '127.0.0.1',
+                   ip6: '::1', mtu: 16_896, netmask: '255.0.0.0', netmask6: '::', network: '127.0.0.0',
                    network6: '::', scope6: 'host' }
       }
     end

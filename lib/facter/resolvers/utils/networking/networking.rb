@@ -15,10 +15,19 @@ module Resolvers
           return if !addr || !mask_length
 
           ip = IPAddr.new(addr)
-          mask_helper = ip.ipv6? ? 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff' : '255.255.255.255'
+          mask_helper = nil
+          scope = nil
+          if ip.ipv6?
+            scope = get_scope(addr)
+            mask_helper = 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff'
+          else
+            mask_helper = '255.255.255.255'
+          end
           mask = IPAddr.new(mask_helper).mask(mask_length)
 
-          { address: addr, netmask: mask.to_s, network: ip.mask(mask_length).to_s }
+          result = { address: addr, netmask: mask.to_s, network: ip.mask(mask_length).to_s }
+          result[:scope6] = scope if scope
+          result
         end
 
         def expand_main_bindings(networking_facts)

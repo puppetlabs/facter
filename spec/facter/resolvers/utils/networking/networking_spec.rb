@@ -35,7 +35,8 @@ describe Resolvers::Utils::Networking do
       let(:addr) { 'fe80::dc20:a2b9:5253:9b46' }
 
       it 'returns ipv6 binding' do
-        expect(networking_helper.build_binding(addr, 64)).to eql(address: addr, netmask: netmask, network: network)
+        expect(networking_helper.build_binding(addr, 64)).to eql(address: addr, netmask: netmask, network: network,
+                                                                 scope6: 'link')
       end
     end
   end
