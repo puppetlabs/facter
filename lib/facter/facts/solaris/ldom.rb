@@ -4,16 +4,35 @@ module Facts
   module Solaris
     class Ldom
       FACT_NAME = 'ldom'
+      ALIASES = %w[
+        ldom_domainchassis
+        ldom_domaincontrol
+        ldom_domainname
+        ldom_domainrole_control
+        ldom_domainrole_impl
+        ldom_domainrole_io
+        ldom_domainrole_root
+        ldom_domainrole_service
+        ldom_domainuuid
+      ].freeze
 
       def initialize
         @log = Facter::Log.new(self)
       end
 
       def call_the_resolver
-        chassis_serial = resolve(:chassis_serial)
-        return Facter::ResolvedFact.new(FACT_NAME, nil) if !chassis_serial || chassis_serial.empty?
+        @log.debug('Solving the ldom fact.')
+        fact_value = resolve_fact
+        return Facter::ResolvedFact.new(FACT_NAME, nil) if fact_value.nil?
 
-        fact_value = {
+        create_resolved_facts_list(fact_value)
+      end
+
+      def resolve_fact
+        chassis_serial = resolve(:chassis_serial)
+        return nil if !chassis_serial || chassis_serial.empty?
+
+        {
           domainchassis: chassis_serial,
           domaincontrol: resolve(:control_domain),
           domainname: resolve(:domain_name),
@@ -26,12 +45,20 @@ module Facts
           },
           domainuuid: resolve(:domain_uuid)
         }
-
-        Facter::ResolvedFact.new(FACT_NAME, fact_value)
       end
 
       def resolve(key)
         Facter::Resolvers::Solaris::Ldom.resolve(key)
+      end
+
+      def create_resolved_facts_list(fact_value)
+        resolved_facts = [Facter::ResolvedFact.new(FACT_NAME, fact_value)]
+        ALIASES.each do |fact_alias|
+          key = fact_alias.split('_')[1..-1].map!(&:to_sym)
+          resolved_facts << Facter::ResolvedFact.new(fact_alias, fact_value.dig(*key), :legacy)
+        end
+
+        resolved_facts
       end
     end
   end
