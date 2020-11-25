@@ -42,12 +42,19 @@ module Facter
     end
     unless defined? FACT_GROUPS
       FACT_GROUPS = {
+        'AIX NIM type' => [
+          'nim_type'
+        ],
         'EC2' => %w[
           ec2_metadata
           ec2_userdata
         ],
         'GCE' => [
           'gce'
+        ],
+        'Xen' => %w[
+          xen
+          xendomains
         ],
         'augeas' => %w[
           augeas
@@ -69,10 +76,17 @@ module Facter
           uuid
           chassistype
         ],
+        'disks' => %w[
+          blockdevices
+          disks
+        ],
         'file system' => %w[
           mountpoints
           filesystems
           partitions
+        ],
+        'fips' => [
+          'fips_enabled'
         ],
         'hypervisors' => [
           'hypervisors'
@@ -112,12 +126,12 @@ module Facter
           netmask6
           network
           network6
+          scope6
           macaddress
           interfaces
           domain
           fqdn
           dhcp_servers
-          scope6
         ],
         'operating system' => %w[
           os
@@ -209,6 +223,23 @@ module Facter
           virtual
           is_virtual
           cloud
+        ],
+        'ldom' => [
+          'ldom'
+        ],
+        'Solaris zone' => %w[
+          zones
+          zonename
+          solaris_zones
+        ],
+        'ZFS' => %w[
+          zfs_version
+          zfs_featurenumbers
+        ],
+        'ZFS storage pool' => %w[
+          zpool_version
+          zpool_featureflags
+          zpool_featurenumbers
         ],
         'legacy' => [
           'architecture',
