@@ -40,11 +40,16 @@ module Facter
     private
 
     def bury_fact(fact)
-      bury(*fact.name.split('.') + fact.filter_tokens << fact.value)
+      split_fact_name = extract_fact_name(fact)
+      bury(*split_fact_name + fact.filter_tokens << fact.value)
     rescue NoMethodError
       @log.error("#{fact.type.to_s.capitalize} fact `#{fact.name}` cannot be added to collection."\
           ' The format of this fact is incompatible with other'\
           " facts that belong to `#{fact.name.split('.').first}` group")
+    end
+
+    def extract_fact_name(fact)
+      fact.type == :legacy ? [fact.name] : fact.name.split('.')
     end
   end
 end
