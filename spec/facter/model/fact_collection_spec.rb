@@ -67,6 +67,22 @@ describe Facter::FactCollection do
           expect(fact_collection).to eq(expected_hash)
         end
       end
+
+      context 'when fact type is :legacy' do
+        context 'when fact name contains dots' do
+          let(:fact_name) { 'my.dotted.external.fact.name' }
+          let(:fact_value) { 'legacy_fact_value' }
+          let(:type) { :legacy }
+
+          it 'returns a fact with dot in it`s name' do
+            fact_collection.build_fact_collection!([resolved_fact])
+
+            expected_hash = { 'my.dotted.external.fact.name' => 'legacy_fact_value' }
+
+            expect(fact_collection).to eq(expected_hash)
+          end
+        end
+      end
     end
 
     context 'when fact cannot be added to collection' do
