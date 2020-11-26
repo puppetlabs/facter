@@ -30,7 +30,7 @@ EOM
       end
 
       step "config file should be loaded automatically and turn DEBUG output on" do
-        on(agent, facter("")) do |facter_output|
+        on(agent, facter((@options[:trace]).to_s)) do |facter_output|
           assert_match(/DEBUG/, facter_output.stderr, "Expected DEBUG information in stderr")
         end
       end

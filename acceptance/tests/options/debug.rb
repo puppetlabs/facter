@@ -4,7 +4,7 @@ test_name "C63191: --debug command-line option prints debugging information to s
 
   agents.each do |agent|
     step "Agent #{agent}: retrieve debug info from stderr using --debug option" do
-      on(agent, facter('--debug')) do
+      on(agent, facter("--debug #{@options[:trace]}")) do
         assert_match(/DEBUG/, stderr, "Expected DEBUG information in stderr")
       end
     end

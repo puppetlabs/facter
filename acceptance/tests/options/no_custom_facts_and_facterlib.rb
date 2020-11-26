@@ -25,7 +25,8 @@ EOM
       end
 
       step "Agent #{agent}: --no-custom-facts should ignore the FACTERLIB environment variable" do
-        on(agent, facter('--no-custom-facts custom_fact', :environment => { 'FACTERLIB' => facterlib_dir })) do |facter_output|
+        facter_command = "--no-custom-facts custom_fact #{@options[:trace]}"
+        on(agent, facter(facter_command, :environment => { 'FACTERLIB' => facterlib_dir })) do |facter_output|
           assert_equal("", facter_output.stdout.chomp, "Custom fact in FACTERLIB should not have resolved")
         end
       end

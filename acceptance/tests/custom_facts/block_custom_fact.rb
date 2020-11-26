@@ -26,7 +26,8 @@ test_name 'custom facts included in blocklist will not be displayed' do
     fact_dir = agent.tmpdir('custom_facts')
     fact_file = File.join(fact_dir, custom_fact_file)
 
-    config_dir = get_default_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
+    config_dir = get_default_fact_dir(agent['platform'],
+                                      on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f)
     config_file = File.join(config_dir, 'facter.conf')
 
     agent.mkdir_p(config_dir)
@@ -39,7 +40,7 @@ test_name 'custom facts included in blocklist will not be displayed' do
     end
 
     step "Facter: Verify that the blocked custom fact is not displayed" do
-      on(agent, facter("--custom-dir=#{fact_dir} my_custom_fact")) do |facter_output|
+      on(agent, facter("--custom-dir=#{fact_dir} my_custom_fact #{@options[:trace]}")) do |facter_output|
         assert_equal("", facter_output.stdout.chomp)
       end
     end

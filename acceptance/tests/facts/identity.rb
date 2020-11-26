@@ -41,7 +41,7 @@ test_name 'C100202: Facter identity facts resolve on all platforms' do
         }
       end
 
-      on(agent, facter('--json')) do |facter_result|
+      on(agent, facter("--json #{@options[:trace]}")) do |facter_result|
         results = JSON.parse(facter_result.stdout)
         expected_identity.each do |fact, value|
           assert_match(value, results['identity'][fact].to_s, "Incorrect fact value for identity.#{fact}")

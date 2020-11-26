@@ -7,9 +7,6 @@ test_name "C14777: custom facts loaded from facter subdirectory found in $LOAD_P
 
   tag 'risk:high'
 
-  require 'puppet/acceptance/common_utils'
-  extend Puppet::Acceptance::CommandUtils
-
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 
@@ -34,7 +31,7 @@ EOM
       end
 
       step("Agent #{agent}: resolve the custom fact that is in a facter directory on the $LOAD_PATH")
-      on(agent, facter("custom_fact")) do |facter_output|
+      on(agent, facter("custom_fact #{@options[:trace]}")) do |facter_output|
         assert_equal("load_path", facter_output.stdout.chomp, "Incorrect custom fact value for fact in $LOAD_PATH/facter")
       end
     end

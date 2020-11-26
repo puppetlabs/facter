@@ -19,7 +19,7 @@ test_name "C96148: verify partitions facts" do
 
   agents.each do |agent|
     step("verify that partitions contain facts") do
-      on(agent, facter("--json partitions")) do |facter_output|
+      on(agent, facter("--json partitions #{@options[:trace]}")) do |facter_output|
         facter_results = JSON.parse(facter_output.stdout)
         facter_results['partitions'].each_key do |partition_name|
           partition_facts = facter_results['partitions'][partition_name]

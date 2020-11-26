@@ -4,6 +4,8 @@ test_name 'facter should flush fact values' do
   fact_content1 = <<-EOM
     require 'facter'
 
+    #{'Facter.trace(true)' if @options[:trace]}
+
     Facter.add(:fact1) do
       'this should be flushed'
     end
@@ -15,6 +17,8 @@ test_name 'facter should flush fact values' do
 
   fact_content2 = <<-EOM
     require 'facter'
+
+    #{'Facter.trace(true)' if @options[:trace]}
 
     Facter.add(:fact2) do
       on_flush do

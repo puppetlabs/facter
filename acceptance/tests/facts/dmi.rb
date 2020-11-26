@@ -39,7 +39,7 @@ test_name "C96148: verify dmi facts" do
     end
 
     step("verify that dmi structured fact contains facts") do
-      on(agent, facter("--json dmi")) do |facter_results|
+      on(agent, facter("--json dmi #{@options[:trace]}")) do |facter_results|
         json_facts = JSON.parse(facter_results.stdout)
         expected_facts.each do |fact, value|
           actual_fact = json_result_fact_by_key_path(json_facts, fact)

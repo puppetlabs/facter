@@ -28,7 +28,7 @@ CUSTOM_FACT
     end
 
     fact_name = 'timezone'
-    builtin_value = on(agent, facter('timezone')).stdout.chomp
+    builtin_value = on(agent, facter("timezone #{@options[:trace]}")).stdout.chomp
 
     step "Verify that Facter uses the custom fact's value when its weight is > 0" do
       custom_fact_value = "custom_timezone"
@@ -41,7 +41,7 @@ CUSTOM_FACT
         value: "'#{custom_fact_value}'"
       )
 
-      on(agent, facter("--custom-dir \"#{custom_fact_dir}\" timezone")) do |result|
+      on(agent, facter("--custom-dir \"#{custom_fact_dir}\" timezone #{@options[:trace]}")) do |result|
         assert_match(/#{custom_fact_value}/, result.stdout.chomp, "Facter does not use the custom fact's value when its weight is > 0")
       end
     end
@@ -58,7 +58,7 @@ CUSTOM_FACT
         )
       end
 
-      on(agent, facter("--custom-dir \"#{custom_fact_dir}\" timezone")) do |result|
+      on(agent, facter("--custom-dir \"#{custom_fact_dir}\" timezone #{@options[:trace]}")) do |result|
         assert_match(/#{builtin_value}/, result.stdout.chomp, "Facter does not use the builtin fact's value when all conflicting custom facts fail to resolve")
       end
     end
@@ -77,7 +77,7 @@ CUSTOM_FACT
           )
         end
 
-        on(agent, facter("--custom-dir \"#{custom_fact_dir}\" timezone")) do |result|
+        on(agent, facter("--custom-dir \"#{custom_fact_dir}\" timezone #{@options[:trace]}")) do |result|
           assert_match(/#{builtin_value}/, result.stdout.chomp, "Facter does not give precedence to the builtin fact when all custom facts have zero weight")
         end
       end
@@ -97,7 +97,7 @@ CUSTOM_FACT
           )
         end
 
-        on(agent, facter("--custom-dir \"#{custom_fact_dir}\" timezone")) do |result|
+        on(agent, facter("--custom-dir \"#{custom_fact_dir}\" timezone #{@options[:trace]}")) do |result|
           assert_match(/#{builtin_value}/, result.stdout.chomp, "Facter does not give precedence to the builtin fact when only some custom facts have zero weight")
         end
       end

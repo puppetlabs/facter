@@ -3,7 +3,9 @@ test_name 'facter should not update it`s session cache in same session' do
 
   fact_content = <<-EOM
     require 'facter'
-    
+
+    #{'Facter.trace(true)' if @options[:trace]}
+
     seconds_before = Facter.value('system_uptime.seconds')
     sleep(3)
     seconds_after = Facter.value('system_uptime.seconds')

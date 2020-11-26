@@ -18,7 +18,8 @@ EOM
 
   agents.each do |agent|
     step "Agent #{agent}: create a structured custom fact" do
-      custom_dir = get_user_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
+      custom_dir = get_user_fact_dir(agent['platform'],
+                                     on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f)
       custom_fact = File.join(custom_dir, 'custom_fact.rb')
       agent.mkdir_p(custom_dir)
       create_remote_file(agent, custom_fact, content)
@@ -29,7 +30,7 @@ EOM
       end
 
       step "Agent #{agent}: retrieve output using the --json option" do
-        on(agent, facter("--custom-dir \"#{custom_dir}\" --json structured_fact")) do
+        on(agent, facter("--custom-dir \"#{custom_dir}\" --json structured_fact #{@options[:trace]}")) do
           begin
             expected = {"structured_fact" => {"foo" => {"nested" => "value1"}, "bar" => "value2", "baz" => "value3", "true" => true, "false" => false}}
             assert_equal(expected, JSON.parse(stdout.chomp), "JSON output does not match expected output")

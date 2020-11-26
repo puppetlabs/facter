@@ -18,7 +18,7 @@ test_name "C99970: the `--list-cache-groups` command line flag prints available 
     end
 
     step "the various cache groups should be listed" do
-      on(agent, facter("--list-cache-groups")) do |facter_output|
+      on(agent, facter("--list-cache-groups #{@options[:trace]}")) do |facter_output|
         assert_match(/EC2/, facter_output.stdout, "EC2 group should be listed as cacheable")
         assert_match(/ec2_metadata/, facter_output.stdout, "EC2 group's facts should be listed")
         assert_match(/kernel/, facter_output.stdout, "kernel group should be listed as cacheable")
@@ -42,7 +42,7 @@ test_name "C99970: the `--list-cache-groups` command line flag prints available 
       external_fact_script_yaml = File.join(external_dir, "#{external_filename}.yaml")
       create_remote_file(agent, external_fact_script_yaml, '')
 
-      on(agent, facter("--external-dir \"#{external_dir}\" --list-cache-groups")) do |facter_output|
+      on(agent, facter("--external-dir \"#{external_dir}\" --list-cache-groups #{@options[:trace]}")) do |facter_output|
         assert_match(/#{external_filename}#{ext}/, facter_output.stdout, "external facts script files should be listed as cacheable")
         assert_match(/#{external_filename}.txt/, facter_output.stdout, "external facts txt files should be listed as cacheable")
         assert_match(/#{external_filename}.json/, facter_output.stdout, "external facts json files should be listed as cacheable")
@@ -54,10 +54,10 @@ test_name "C99970: the `--list-cache-groups` command line flag prints available 
     step "external facts groups should be listed only without --no-external-facts" do
       agent.mkdir_p(etc_factsd_dir)
       create_remote_file(agent, etc_factsd_path, 'test_fact: test_value')
-      on(agent, facter("--list-cache-groups")) do |facter_output|
+      on(agent, facter("--list-cache-groups #{@options[:trace]}")) do |facter_output|
         assert_match(/#{filename}/, facter_output.stdout, "external facts script files should be listed as cacheable")
       end
-      on(agent, facter("--list-cache-groups --no-external-facts")) do |facter_output|
+      on(agent, facter("--list-cache-groups --no-external-facts #{@options[:trace]}")) do |facter_output|
         assert_no_match(/#{filename}/, facter_output.stdout, "external facts script files should now be listed as cacheable when --no-external-facts is used")
       end
       agent.rm_rf(etc_factsd_path)

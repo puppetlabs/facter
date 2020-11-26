@@ -14,6 +14,11 @@ facts : {
         { "#{cached_factname}" : 30 days }
     ]
 }
+#{if @options[:trace]
+    'cli : {
+      trace : true
+}'
+  end}
 EOM
 
   cached_value = "CACHED_FACT_VALUE"
@@ -26,9 +31,11 @@ EOM
 
   agents.each do |agent|
     step "Agent #{agent}: create config file" do
-      facter_conf_default_dir = get_default_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
+      facter_conf_default_dir = get_default_fact_dir(agent['platform'],
+                                                     on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f)
       facter_conf_default_path = File.join(facter_conf_default_dir, "facter.conf")
-      cached_facts_dir = get_cached_facts_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
+      cached_facts_dir = get_cached_facts_dir(agent['platform'],
+                                              on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f)
       cached_fact_file = File.join(cached_facts_dir, cached_factname)
 
       agent.mkdir_p(facter_conf_default_dir)

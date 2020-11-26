@@ -1,3 +1,4 @@
 {
-  :type => 'aio',
+  type: 'aio',
+  trace: '--trace'
 }

@@ -19,7 +19,7 @@ test_name "C99961: external fact command line option --no-external-facts does no
       end
 
       step "Agent #{agent}: --no-external-facts option should not load external facts" do
-        on(agent, facter("--no-external-facts external_fact")) do |facter_output|
+        on(agent, facter("--no-external-facts external_fact #{@options[:trace]}")) do |facter_output|
           assert_equal("", facter_output.stdout.chomp, "External fact should not have resolved")
         end
       end

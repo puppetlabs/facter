@@ -22,7 +22,7 @@ facts : { ttls : [ { "#{cached_fact_name}" : 30 minutes } ] }
 FILE
 
   agents.each do |agent|
-    kernel_version = on(agent, facter('kernelmajversion')).stdout.chomp.to_f
+    kernel_version = on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f
     config_dir = get_default_fact_dir(agent['platform'], kernel_version)
     config_file = File.join(config_dir, "facter.conf")
 
@@ -44,14 +44,14 @@ FILE
       agent.rm_rf(cached_facts_dir)
 
       # run once to cache the uptime fact
-      on(agent, facter(""))
+      on(agent, facter((@options[:trace]).to_s))
 
       # override cached content
       create_remote_file(agent, cached_fact_file, bad_cached_content)
       # update the modify time on the new cached fact to prompt a refresh
       agent.modified_at(cached_fact_file, '198001010000')
 
-      on(agent, facter("--no-cache")) do |facter_output|
+      on(agent, facter("--no-cache #{@options[:trace]}")) do |facter_output|
         assert_no_match(/caching/, facter_output.stderr, "facter should not have tried to refresh the cache")
       end
 

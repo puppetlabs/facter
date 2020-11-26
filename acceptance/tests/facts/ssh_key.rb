@@ -36,14 +36,14 @@ test_name 'SSH publick key' do
 
     step 'SSH publick key with comment is printed' do
       on(agent, "echo '#{rsa_pub_host_key_with_comment}' > #{ssh_host_rsa_key_file}")
-      on(agent, facter('ssh.rsa.key')) do |facter_output|
+      on(agent, facter("ssh.rsa.key #{@options[:trace]}")) do |facter_output|
         assert_equal(key, facter_output.stdout.chomp, 'Expected debug to contain key only')
       end
     end
 
     step 'SSH publick key without comment is printed' do
       on(agent, "echo '#{rsa_pub_host_key_without_comment}' > #{ssh_host_rsa_key_file}")
-      on(agent, facter('ssh.rsa.key')) do |facter_output|
+      on(agent, facter("ssh.rsa.key #{@options[:trace]}")) do |facter_output|
         assert_equal(key, facter_output.stdout.chomp, 'Expected debug to contain key only')
       end
     end

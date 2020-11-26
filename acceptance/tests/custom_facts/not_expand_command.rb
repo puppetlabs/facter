@@ -22,7 +22,7 @@ confine :to, :platform => /el-7/
     end
 
     step "Agent: Verify that command is not expanded" do
-      on(agent, facter('foo', :environment => env)) do |facter_result|
+      on(agent, facter("foo #{@options[:trace]}", :environment => env)) do |facter_result|
         assert_equal('/opt/puppetlabs', facter_result.stdout.chomp, 'command was expanded')
       end
     end

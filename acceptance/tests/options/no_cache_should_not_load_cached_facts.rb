@@ -23,7 +23,7 @@ EOM
   FILE
 
   agents.each do |agent|
-    kernel_version = on(agent, facter('kernelmajversion')).stdout.chomp.to_f
+    kernel_version = on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f
     config_dir = get_default_fact_dir(agent['platform'], kernel_version)
     config_file = File.join(config_dir, "facter.conf")
 
@@ -45,11 +45,11 @@ EOM
       agent.rm_rf(cached_facts_dir)
 
       # run once to cache the uptime fact
-      on(agent, facter(""))
+      on(agent, facter((@options[:trace]).to_s))
       # override cached content
       create_remote_file(agent, cached_fact_file, bad_cached_content)
 
-      on(agent, facter("--no-cache #{cached_fact_name}")) do |facter_output|
+      on(agent, facter("--no-cache #{cached_fact_name} #{@options[:trace]}")) do |facter_output|
         assert_no_match(/loading cached values for .+ fact/, facter_output.stderr, "facter should not have tried to load any cached facts")
         assert_no_match(/#{bad_cached_fact_value}/, facter_output.stdout, "facter should not have loaded the cached value")
       end

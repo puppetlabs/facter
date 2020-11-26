@@ -46,7 +46,7 @@ test_name "C100305: The Ruby fact should resolve as expected in AIO" do
       }
 
       step("verify that ruby structured fact contains facts") do
-        on(agent, facter("--json ruby")) do |facter_results|
+        on(agent, facter("--json ruby #{@options[:trace]}")) do |facter_results|
           json_facts = JSON.parse(facter_results.stdout)
           expected_facts.each do |fact, value|
             actual_fact = json_result_fact_by_key_path(json_facts, fact)

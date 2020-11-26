@@ -7,7 +7,7 @@ test_name "C99975: --debug and --no-color command-line options should print DEBU
 
   agents.each do |agent|
     step "Agent #{agent}: retrieve debug info from stderr using --debug anod --no-color options" do
-      on(agent, facter('--debug --no-color')) do |facter_output|
+      on(agent, facter("--debug --no-color #{@options[:trace]}")) do |facter_output|
         assert_match(/DEBUG/, facter_output.stderr, "Expected DEBUG information in stderr")
         refute_match(/\e\[0;/, facter_output.stderr, "Expected to output to not contain an escape sequence")
       end

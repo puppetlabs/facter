@@ -19,7 +19,7 @@ test_name "C99974: external fact commandline options --external-dir resolves an 
       end
 
       step "Agent #{agent}: resolve a fact from each specified --external_dir option" do
-        on(agent, facter("--external-dir \"#{external_dir}\" single_fact")) do |facter_output|
+        on(agent, facter("--external-dir \"#{external_dir}\" single_fact #{@options[:trace]}")) do |facter_output|
           assert_equal("external_value", facter_output.stdout.chomp, "Incorrect external fact value")
         end
       end

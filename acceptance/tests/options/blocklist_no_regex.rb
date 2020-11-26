@@ -26,7 +26,8 @@ test_name 'blocking os fact does not block oss fact' do
     fact_dir = agent.tmpdir('custom_facts')
     fact_file = File.join(fact_dir, custom_fact_file)
 
-    config_dir = get_default_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
+    config_dir = get_default_fact_dir(agent['platform'],
+                                      on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f)
     config_file = File.join(config_dir, 'facter.conf')
 
     agent.mkdir_p(config_dir)
@@ -39,13 +40,13 @@ test_name 'blocking os fact does not block oss fact' do
     end
 
     step "Facter: Verify that the blocked fact is not displayed" do
-      on(agent, facter("os")) do |facter_output|
+      on(agent, facter("os #{@options[:trace]}")) do |facter_output|
         assert_equal("", facter_output.stdout.chomp)
       end
     end
 
     step "Facter: Verify that the custom fact is displayed" do
-      on(agent, facter("--custom-dir=#{fact_dir} oss")) do |facter_output|
+      on(agent, facter("--custom-dir=#{fact_dir} oss #{@options[:trace]}")) do |facter_output|
         assert_match(/#{custom_fact_value}/, facter_output.stdout.chomp)
       end
     end

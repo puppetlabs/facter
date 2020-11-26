@@ -18,7 +18,7 @@ EOM
 
   agents.each do |agent|
     step "--no-ruby option should disable Ruby and facts requiring ruby from being loaded" do
-      on(agent, facter("--no-ruby ruby")) do
+      on(agent, facter("--no-ruby ruby #{@options[:trace]}")) do
         assert_equal("", stdout.chomp, "Expected Ruby and Ruby fact to be disabled, but got output: #{stdout.chomp}")
         assert_equal("", stderr.chomp, "Expected no warnings about Ruby on stderr, but got output: #{stderr.chomp}")
       end
@@ -26,7 +26,8 @@ EOM
 
     step "--no-ruby option should disable custom facts" do
       step "Agent #{agent}: create custom fact directory and custom fact" do
-        custom_dir = get_user_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
+        custom_dir = get_user_fact_dir(agent['platform'],
+                                       on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f)
         agent.mkdir_p(custom_dir)
         custom_fact = File.join(custom_dir, 'custom_fact.rb')
         create_remote_file(agent, custom_fact, content)
@@ -35,7 +36,7 @@ EOM
           agent.rm_rf(custom_fact)
         end
 
-        on(agent, facter('--no-ruby custom_fact', :environment => { 'FACTERLIB' => custom_dir })) do
+        on(agent, facter("--no-ruby custom_fact #{@options[:trace]}", :environment => { 'FACTERLIB' => custom_dir })) do
           assert_equal("", stdout.chomp, "Expected custom fact to be disabled while using --no-ruby option, but it resolved as #{stdout.chomp}")
         end
       end

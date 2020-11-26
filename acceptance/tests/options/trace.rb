@@ -16,7 +16,8 @@ EOM
 
   agents.each do |agent|
     step "Agent #{agent}: create custom fact directory and executable custom fact" do
-      custom_dir = get_user_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
+      custom_dir = get_user_fact_dir(agent['platform'],
+                                     on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f)
       agent.mkdir_p(custom_dir)
       custom_fact = File.join(custom_dir, 'custom_fact.rb')
       create_remote_file(agent, custom_fact, content)

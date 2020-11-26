@@ -6,7 +6,7 @@ test_name "C99969: the `--list-block-groups` command line flag prints available 
 
   agents.each do |agent|
     step "the EC2 blockgroup should be listed" do
-      on(agent, facter("--list-block-groups")) do |facter_output|
+      on(agent, facter("--list-block-groups #{@options[:trace]}")) do |facter_output|
         assert_match(/EC2/, facter_output.stdout, "Expected the EC2 group to be listed")
         assert_match(/ec2_metadata/, facter_output.stdout, "Expected the EC2 group's facts to be listed")
       end

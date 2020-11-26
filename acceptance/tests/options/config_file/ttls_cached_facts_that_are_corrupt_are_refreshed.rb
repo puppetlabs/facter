@@ -19,9 +19,11 @@ EOM
 
   agents.each do |agent|
     step "Agent #{agent}: create config file" do
-      config_dir = get_default_fact_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
+      config_dir = get_default_fact_dir(agent['platform'],
+                                        on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f)
       config_file = File.join(config_dir, "facter.conf")
-      cached_facts_dir = get_cached_facts_dir(agent['platform'], on(agent, facter('kernelmajversion')).stdout.chomp.to_f)
+      cached_facts_dir = get_cached_facts_dir(agent['platform'],
+                                              on(agent, facter("kernelmajversion #{@options[:trace]}")).stdout.chomp.to_f)
 
       cached_fact_file = File.join(cached_facts_dir, cached_factname)
 
@@ -37,11 +39,11 @@ EOM
       step "should refresh a cached fact if cache file is corrupt" do
         # Setup a known cached fact
         agent.rm_rf(cached_facts_dir)
-        on(agent, facter(""))
+        on(agent, facter("#{@options[:trace]}"))
         # Corrupt the cached fact file
         create_remote_file(agent, cached_fact_file, 'ThisIsNotvalidJSON')
 
-        on(agent, facter("#{cached_factname}")) do
+        on(agent, facter("#{cached_factname} #{@options[:trace]}")) do
           assert_match(/.+/, stdout, "Expected fact to be resolved")
         end
         cat_output = agent.cat(cached_fact_file)

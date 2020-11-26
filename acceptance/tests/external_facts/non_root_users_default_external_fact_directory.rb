@@ -95,7 +95,7 @@ test_name "C64580: Non-root default user external facts directory is searched fo
     end
 
     step "Agent #{agent}: run facter as #{non_root_user} and make sure we get the fact" do
-      on(agent, %Q[su #{non_root_user} -c "'#{facter_path}' test"]) do |facter_result|
+      on(agent, %Q[su #{non_root_user} -c "'#{facter_path}' test #{@options[:trace]}"]) do |facter_result|
         assert_match(/USER_TEST_FACTER/, facter_result.stdout, "Fact from #{user_facts_dir} did not resolve correctly")
       end
     end
@@ -119,7 +119,7 @@ test_name "C64580: Non-root default user external facts directory is searched fo
     end
 
     step "Agent #{agent}: run facter as #{non_root_user} and make sure we get the fact" do
-      on(agent, %Q[su #{non_root_user} -c "'#{facter_path}' test"]) do |facter_result|
+      on(agent, %Q[su #{non_root_user} -c "'#{facter_path}' test #{@options[:trace]}"]) do |facter_result|
         assert_match(/USER_TEST_PUPPETLABS/, facter_result.stdout, "Fact from #{user_puppetlabs_facts_dir} did not resolve correctly")
       end
     end
@@ -137,7 +137,7 @@ test_name "C64580: Non-root default user external facts directory is searched fo
     end
 
     step "Agent #{agent}: run facter as #{non_root_user} and .facter will take precedence over .puppetlabs" do
-      on(agent, %Q[su #{non_root_user} -c "'#{facter_path}' test"]) do |facter_result|
+      on(agent, %Q[su #{non_root_user} -c "'#{facter_path}' test #{@options[:trace]}"]) do |facter_result|
         assert_match(/USER_PRECEDENCE_FACTER/, facter_result.stdout, "Fact from #{user_puppetlabs_facts_dir} did not resolve correctly")
       end
     end
