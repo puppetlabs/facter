@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe Facter::Resolvers::SshResolver do
+describe Facter::Resolvers::Ssh do
   describe '#folders' do
     let(:ecdsa_content) { load_fixture('ecdsa').read.strip! }
     let(:rsa_content) { load_fixture('rsa').read.strip! }
@@ -66,12 +66,12 @@ describe Facter::Resolvers::SshResolver do
     end
 
     after do
-      Facter::Resolvers::SshResolver.invalidate_cache
+      Facter::Resolvers::Ssh.invalidate_cache
     end
 
     context 'when ssh_host_dsa_key.pub file is not readable' do
       it 'returns resolved ssh' do
-        expect(Facter::Resolvers::SshResolver.resolve(:ssh)).to eq([rsa_result, ecdsa_result, ed25519_result])
+        expect(Facter::Resolvers::Ssh.resolve(:ssh)).to eq([rsa_result, ecdsa_result, ed25519_result])
       end
     end
 
@@ -82,7 +82,7 @@ describe Facter::Resolvers::SshResolver do
       end
 
       it 'returns resolved ssh' do
-        expect(Facter::Resolvers::SshResolver.resolve(:ssh)).to eq([rsa_result, ed25519_result])
+        expect(Facter::Resolvers::Ssh.resolve(:ssh)).to eq([rsa_result, ed25519_result])
       end
     end
 
@@ -92,7 +92,7 @@ describe Facter::Resolvers::SshResolver do
       end
 
       it 'returns empty array' do
-        expect(Facter::Resolvers::SshResolver.resolve(:ssh)).to eq([])
+        expect(Facter::Resolvers::Ssh.resolve(:ssh)).to eq([])
       end
     end
   end
@@ -116,12 +116,12 @@ describe Facter::Resolvers::SshResolver do
     end
 
     after do
-      Facter::Resolvers::SshResolver.invalidate_cache
+      Facter::Resolvers::Ssh.invalidate_cache
     end
 
     context 'when reading invalid ssh key' do
       it 'returns empty array' do
-        expect(Facter::Resolvers::SshResolver.resolve(:ssh)).to eq([])
+        expect(Facter::Resolvers::Ssh.resolve(:ssh)).to eq([])
       end
     end
   end

@@ -2,7 +2,7 @@
 
 module Facter
   module Resolvers
-    class SshResolver < BaseResolver
+    class Ssh < BaseResolver
       @log = Facter::Log.new(self)
 
       init_resolver
