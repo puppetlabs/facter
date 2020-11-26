@@ -4,9 +4,9 @@ describe Facter::Resolvers::WinOsDescription do
   let(:logger) { instance_spy(Facter::Log) }
 
   before do
-    win = double('Win32Ole')
+    win = double('Facter::Util::Windows::Win32Ole')
 
-    allow(Win32Ole).to receive(:new).and_return(win)
+    allow(Facter::Util::Windows::Win32Ole).to receive(:new).and_return(win)
     allow(win).to receive(:return_first).with('SELECT ProductType,OtherTypeDescription FROM Win32_OperatingSystem')
                                         .and_return(comp)
     Facter::Resolvers::WinOsDescription.instance_variable_set(:@log, logger)
@@ -29,7 +29,7 @@ describe Facter::Resolvers::WinOsDescription do
   end
 
   describe '#resolve' do
-    let(:comp) { double('Win32Ole', ProductType: prod, OtherTypeDescription: type) }
+    let(:comp) { double('Facter::Util::Windows::Win32Ole', ProductType: prod, OtherTypeDescription: type) }
     let(:prod) { 1 }
     let(:type) {}
 
@@ -43,7 +43,7 @@ describe Facter::Resolvers::WinOsDescription do
   end
 
   describe '#resolve when product type is nil' do
-    let(:comp) { double('Win32Ole', ProductType: prod, OtherTypeDescription: type) }
+    let(:comp) { double('Facter::Util::Windows::Win32Ole', ProductType: prod, OtherTypeDescription: type) }
     let(:prod) { nil }
     let(:type) { 'description' }
 

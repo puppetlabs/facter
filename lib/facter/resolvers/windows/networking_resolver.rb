@@ -26,7 +26,7 @@ module Facter
 
             iterate_list(adapter_addresses)
 
-            ::Resolvers::Utils::Networking.expand_main_bindings(@fact_list)
+            Facter::Util::Resolvers::Networking.expand_main_bindings(@fact_list)
 
             @fact_list[fact_name]
           end
@@ -120,13 +120,13 @@ module Facter
           def find_bindings(sock_addr, unicast, addr)
             return unless [NetworkingFFI::AF_INET, NetworkingFFI::AF_INET6].include?(sock_addr[:sa_family])
 
-            ::Resolvers::Utils::Networking.build_binding(addr, unicast[:OnLinkPrefixLength])
+            Facter::Util::Resolvers::Networking.build_binding(addr, unicast[:OnLinkPrefixLength])
           end
 
           def find_primary_interface(sock_addr, name, addr)
             if !@fact_list[:primary_interface] &&
                ([NetworkingFFI::AF_INET, NetworkingFFI::AF_INET6].include?(sock_addr[:sa_family]) &&
-               !::Resolvers::Utils::Networking.ignored_ip_address(addr))
+               !::Facter::Util::Resolvers::Networking.ignored_ip_address(addr))
               @fact_list[:primary_interface] = name.to_s
             end
           end

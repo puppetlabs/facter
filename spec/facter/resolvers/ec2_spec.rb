@@ -8,8 +8,8 @@ describe Facter::Resolvers::Ec2 do
   let(:log_spy) { instance_spy(Facter::Log) }
 
   before do
-    allow(Facter::Resolvers::Utils::Http).to receive(:get_request).with(uri, {}, { session: 5 }).and_return(output)
-    allow(Facter::Resolvers::Utils::Http).to receive(:get_request).with(userdata_uri, {}, { session: 5 }).and_return('')
+    allow(Facter::Util::Resolvers::Http).to receive(:get_request).with(uri, {}, { session: 5 }).and_return(output)
+    allow(Facter::Util::Resolvers::Http).to receive(:get_request).with(userdata_uri, {}, { session: 5 }).and_return('')
     ec2.instance_variable_set(:@log, log_spy)
   end
 
@@ -23,7 +23,7 @@ describe Facter::Resolvers::Ec2 do
     let(:ami_id) { 'some_id_123' }
 
     before do
-      allow(Facter::Resolvers::Utils::Http).to receive(:get_request)
+      allow(Facter::Util::Resolvers::Http).to receive(:get_request)
         .with(ami_uri, {}, { session: 5 }).and_return(ami_id)
     end
 

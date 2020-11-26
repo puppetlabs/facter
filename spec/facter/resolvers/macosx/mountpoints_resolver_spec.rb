@@ -33,8 +33,9 @@ describe Facter::Resolvers::Macosx::Mountpoints do
   end
 
   before do
-    allow(Facter::FilesystemHelper).to receive(:read_mountpoints).and_return([mount])
-    allow(Facter::FilesystemHelper).to receive(:read_mountpoint_stats).with(mount.mount_point).and_return(stat)
+    allow(Facter::Util::Resolvers::FilesystemHelper).to receive(:read_mountpoints).and_return([mount])
+    allow(Facter::Util::Resolvers::FilesystemHelper).to receive(:read_mountpoint_stats)
+      .with(mount.mount_point).and_return(stat)
 
     # mock sys/filesystem methods
     allow(stat).to receive(:bytes_total).and_return(stat.blocks * stat.fragment_size)
@@ -74,7 +75,7 @@ describe Facter::Resolvers::Macosx::Mountpoints do
       end
 
       before do
-        allow(Facter::FilesystemHelper).to \
+        allow(Facter::Util::Resolvers::FilesystemHelper).to \
           receive(:read_mountpoint_stats).and_raise(Sys::Filesystem::Error)
       end
 

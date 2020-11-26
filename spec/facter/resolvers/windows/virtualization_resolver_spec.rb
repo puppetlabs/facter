@@ -4,10 +4,10 @@ describe Facter::Resolvers::Virtualization do
   let(:logger) { instance_spy(Facter::Log) }
   let(:win32ole) { instance_spy('WIN32OLE') }
   let(:win32ole2) { instance_spy('WIN32OLE') }
-  let(:win) { instance_spy('Win32Ole') }
+  let(:win) { instance_spy('Facter::Util::Windows::Win32Ole') }
 
   before do
-    allow(Win32Ole).to receive(:new).and_return(win)
+    allow(Facter::Util::Windows::Win32Ole).to receive(:new).and_return(win)
     allow(win).to receive(:exec_query).with('SELECT Manufacturer,Model,OEMStringArray FROM Win32_ComputerSystem')
                                       .and_return(query_result)
     Facter::Resolvers::Virtualization.instance_variable_set(:@log, logger)

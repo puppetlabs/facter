@@ -4,7 +4,7 @@ module Facter
   module Resolvers
     module Solaris
       class Mountpoints < BaseResolver
-        include Facter::FilesystemHelper
+        include Facter::Util::Resolvers::FilesystemHelper
         init_resolver
 
         class << self
@@ -15,7 +15,7 @@ module Facter
           end
 
           def root_device
-            cmdline = Util::FileHelper.safe_read('/proc/cmdline')
+            cmdline = Facter::Util::FileHelper.safe_read('/proc/cmdline')
             match = cmdline.match(/root=([^\s]+)/)
             match&.captures&.first
           end
@@ -27,27 +27,28 @@ module Facter
             device
           end
 
-          def read_mounts(fact_name) # rubocop:disable Metrics/AbcSize
+          def read_mounts(fact_name) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
             mounts = []
-            FilesystemHelper.read_mountpoints.each do |fs|
+            Facter::Util::Resolvers::FilesystemHelper.read_mountpoints.each do |fs|
               device = compute_device(fs.name)
               filesystem = fs.mount_type
               path = fs.mount_point
               options = fs.options.split(',').map(&:strip)
 
-              stats = FilesystemHelper.read_mountpoint_stats(path)
+              stats = Facter::Util::Resolvers::FilesystemHelper.read_mountpoint_stats(path)
               size_bytes = stats.bytes_total.abs
               available_bytes = stats.bytes_available.abs
 
               used_bytes = stats.bytes_used.abs
               total_bytes = used_bytes + available_bytes
-              capacity = FilesystemHelper.compute_capacity(used_bytes, total_bytes)
+              capacity = Facter::Util::Resolvers::FilesystemHelper.compute_capacity(used_bytes, total_bytes)
 
-              size = Facter::FactsUtils::UnitConverter.bytes_to_human_readable(size_bytes)
-              available = Facter::FactsUtils::UnitConverter.bytes_to_human_readable(available_bytes)
-              used = Facter::FactsUtils::UnitConverter.bytes_to_human_readable(used_bytes)
+              size = Facter::Util::Facts::UnitConverter.bytes_to_human_readable(size_bytes)
+              available = Facter::Util::Facts::UnitConverter.bytes_to_human_readable(available_bytes)
+              used = Facter::Util::Facts::UnitConverter.bytes_to_human_readable(used_bytes)
 
-              mounts << Hash[FilesystemHelper::MOUNT_KEYS.zip(FilesystemHelper::MOUNT_KEYS
+              mounts << Hash[Facter::Util::Resolvers::FilesystemHelper::MOUNT_KEYS
+                             .zip(Facter::Util::Resolvers::FilesystemHelper::MOUNT_KEYS
                 .map { |v| binding.local_variable_get(v) })]
             end
             @fact_list[:mountpoints] = mounts

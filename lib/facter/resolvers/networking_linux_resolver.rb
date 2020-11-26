@@ -12,59 +12,109 @@ module Facter
 
         def post_resolve(fact_name)
           @fact_list.fetch(fact_name) { retrieve_network_info(fact_name) }
-
-          @fact_list[fact_name]
         end
 
         def retrieve_network_info(fact_name)
-          retrieve_interface_info
-          retrieve_interfaces_mac_and_mtu
+          retrieve_interfaces
           retrieve_default_interface
-          ::Resolvers::Utils::Networking.expand_main_bindings(@fact_list)
+          Facter::Util::Resolvers::Networking.expand_main_bindings(@fact_list)
           @fact_list[fact_name]
         end
 
-        def retrieve_interfaces_mac_and_mtu
-          @fact_list[:interfaces].map do |name, info|
-            macaddress = Util::FileHelper.safe_read("/sys/class/net/#{name}/address", nil)
-            info[:mac] = macaddress.strip if macaddress && !macaddress.include?('00:00:00:00:00:00')
-            mtu = Util::FileHelper.safe_read("/sys/class/net/#{name}/mtu", nil)
-            info[:mtu] = mtu.strip.to_i if mtu
-          end
-        end
-
-        def retrieve_interface_info
-          log.debug('retrieve_interface_info')
-          output = Facter::Core::Execution.execute('ip -o address', logger: log)
-          log.debug("ip -o address result is:\n#{output}")
+        def retrieve_interfaces
+          log.debug('retrieve interface info')
+          output = Facter::Core::Execution.execute('ip a', logger: log)
+          log.debug("'ip a' result is:\n#{output}")
 
           interfaces = {}
+          interfaces_raw_data = split_raw_data_by_interfaces(output)
 
-          output.each_line do |ip_line|
-            ip_tokens = ip_line.split(' ')
-
-            log.debug("ip_tokens = #{ip_tokens}")
-            log.debug("interfaces = #{interfaces}")
-            fill_ip_v4_info!(ip_tokens, interfaces)
-            fill_io_v6_info!(ip_tokens, interfaces)
-            find_dhcp!(ip_tokens, interfaces)
+          interfaces_raw_data.each_with_index do |interface_raw_data, index|
+            interface_name, interface_info = extract_interface_info_from(interface_raw_data)
+            interfaces.merge!(interface_info)
+            find_dhcp!(interface_name, index + 1, interfaces)
           end
 
+          log.debug("interfaces = #{interfaces}")
           @fact_list[:interfaces] = interfaces
         end
 
-        def find_dhcp!(tokens, network_info)
-          interface_name = tokens[1]
-          return if !network_info[interface_name] || network_info[interface_name][:dhcp]
+        def split_raw_data_by_interfaces(output)
+          arr = []
+          output.each_line do |line|
+            if line.start_with?(' ')
+              arr[-1] << line.strip
+            else
+              arr << [line.strip]
+            end
+          end
+          arr
+        end
 
-          index = tokens[0].delete(':')
-          file_content = Util::FileHelper.safe_read("/run/systemd/netif/leases/#{index}", nil)
+        def extract_interface_info_from(raw_data)
+          # VLAN names are printed as <VLAN name>@<associated_interface>
+          interface_name = raw_data[0].split(':')[1]&.split('@')&.first&.strip
+
+          mtu = raw_data[0].match(/mtu (\d*)/)&.captures&.first&.to_i
+
+          interfaces = {}
+          interfaces[interface_name] = {}
+          interfaces[interface_name][:mtu] = mtu if mtu
+
+          get_mac_and_bindings(interface_name, interfaces, raw_data)
+          [interface_name, interfaces]
+        end
+
+        def get_mac_and_bindings(interface_name, interfaces, raw_data)
+          raw_data[1..-1].each do |line|
+            if line.include?('inet6')
+              add_binding(interfaces, line, interface_name, false)
+            elsif line.include?('inet')
+              add_binding(interfaces, line, interface_name, true)
+            elsif line.include?('link/ether')
+              interfaces[interface_name][:mac] = line.match(%r{link/ether ([\w:]+)})&.captures&.first&.to_s
+            end
+          end
+        end
+
+        def add_binding(interfaces, line, interface_name, ip_type_v4)
+          ip_v4_regex = %r{[\d\.]+/\d+}
+          ip_v6_regex = %r{[\w::]+/\d+}
+          regex = ip_type_v4 == true ? ip_v4_regex : ip_v6_regex
+
+          binding_key = ip_type_v4 == true ? :bindings : :bindings6
+
+          construct_binding(binding_key, interface_name, interfaces, line, regex)
+        end
+
+        def construct_binding(binding_key, interface_name, interfaces, line, regex)
+          interface_alias = line.match(/#{interface_name}.*/).to_s
+          interface_alias = interface_name if interface_alias.empty?
+          interfaces[interface_alias] = {} if interfaces[interface_alias].nil?
+
+          ip, mask_length = line.match(regex).to_s.split('/')
+          binding = Facter::Util::Resolvers::Networking.build_binding(ip, mask_length)
+          return if binding.nil?
+
+          insert_binding(binding, binding_key, interface_alias, interfaces)
+          insert_binding(binding, binding_key, interface_name, interfaces) if interface_alias != interface_name
+        end
+
+        def insert_binding(binding, binding_key, interface_name, interfaces)
+          interfaces[interface_name][binding_key] = [] if interfaces[interface_name][binding_key].nil?
+          interfaces[interface_name][binding_key] << binding
+        end
+
+        def find_dhcp!(interface_name, index, interfaces)
+          return if !interfaces[interface_name] || interfaces[interface_name][:dhcp]
+
+          file_content = Facter::Util::FileHelper.safe_read("/run/systemd/netif/leases/#{index}", nil)
           dhcp = file_content.match(/SERVER_ADDRESS=(.*)/) if file_content
           if dhcp
-            network_info[interface_name][:dhcp] = dhcp[1]
+            interfaces[interface_name][:dhcp] = dhcp[1]
           else
             alternate_dhcp = retrieve_from_other_directories(interface_name)
-            network_info[interface_name][:dhcp] = alternate_dhcp if alternate_dhcp
+            interfaces[interface_name][:dhcp] = alternate_dhcp if alternate_dhcp
           end
         end
 
@@ -76,7 +126,7 @@ module Facter
             next if lease_files.empty?
 
             lease_files.select do |file|
-              content = Util::FileHelper.safe_read("#{dir}#{file}", nil)
+              content = Facter::Util::FileHelper.safe_read("#{dir}#{file}", nil)
               next unless content =~ /interface.*#{interface_name}/
 
               dhcp = content.match(/dhcp-server-identifier ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/)
@@ -93,52 +143,12 @@ module Facter
           lease_file = files.find { |file| file =~ /internal.*#{interface_name}\.lease/ }
           return unless lease_file
 
-          dhcp = Util::FileHelper.safe_read("/var/lib/NetworkManager/#{lease_file}", nil)
+          dhcp = Facter::Util::FileHelper.safe_read("/var/lib/NetworkManager/#{lease_file}", nil)
 
           return unless dhcp
 
           dhcp = dhcp.match(/SERVER_ADDRESS=(.*)/)
           dhcp[1] if dhcp
-        end
-
-        def fill_ip_v4_info!(ip_tokens, network_info)
-          log.debug('fill_ip_v4_info!')
-          return unless ip_tokens[2].casecmp('inet').zero?
-
-          interface_name, ip4_address, ip4_mask_length = retrieve_name_and_ip_info(ip_tokens)
-
-          log.debug("interface_name = #{interface_name}\n" \
-                      "ip4_address = #{ip4_address}\n" \
-                      "ip4_mask_length = #{ip4_mask_length}")
-
-          binding = ::Resolvers::Utils::Networking.build_binding(ip4_address, ip4_mask_length)
-          return unless binding
-
-          build_network_info_structure!(network_info, interface_name, :bindings)
-
-          network_info[interface_name][:bindings] << binding
-        end
-
-        def retrieve_name_and_ip_info(tokens)
-          interface_name = tokens[1]
-          ip_info = tokens[4] =~ /peer/ ? tokens[5].split('/') : tokens[3].split('/')
-          ip_address = ip_info[0]
-          ip_mask_length = ip_info[1]
-
-          [interface_name, ip_address, ip_mask_length]
-        end
-
-        def fill_io_v6_info!(ip_tokens, network_info)
-          return unless ip_tokens[2].casecmp('inet6').zero?
-
-          interface_name, ip6_address, ip6_mask_length = retrieve_name_and_ip_info(ip_tokens)
-
-          binding = ::Resolvers::Utils::Networking.build_binding(ip6_address, ip6_mask_length)
-
-          build_network_info_structure!(network_info, interface_name, :bindings6)
-
-          network_info[interface_name][:scope6] ||= ip_tokens[5]
-          network_info[interface_name][:bindings6] << binding
         end
 
         def retrieve_default_interface
@@ -148,11 +158,6 @@ module Facter
           default_interface = ip_route_tokens[4]
 
           @fact_list[:primary_interface] = default_interface
-        end
-
-        def build_network_info_structure!(network_info, interface_name, binding)
-          network_info[interface_name] = {} unless network_info.dig(interface_name)
-          network_info[interface_name][binding] = [] unless network_info.dig(interface_name, binding)
         end
       end
     end

@@ -18,7 +18,7 @@ module Facter
           end
 
           def substract_system_uptime_from_ole
-            win = Win32Ole.new
+            win = Facter::Util::Windows::Win32Ole.new
             opsystem = win.return_first('SELECT LocalDateTime,LastBootUpTime FROM Win32_OperatingSystem')
             unless opsystem
               @log.debug 'WMI query returned no results'\

@@ -21,8 +21,9 @@ module Facter
               @fact_list[:total_bytes]     = kilobytes_to_bytes(data.map { |line| line[1].to_i }.inject(:+))
               @fact_list[:used_bytes]      = kilobytes_to_bytes(data.map { |line| line[2].to_i }.inject(:+))
               @fact_list[:available_bytes] = kilobytes_to_bytes(data.map { |line| line[3].to_i }.inject(:+))
-              @fact_list[:capacity] = FilesystemHelper.compute_capacity(@fact_list[:used_bytes],
-                                                                        @fact_list[:total_bytes])
+              @fact_list[:capacity] = Facter::Util::Resolvers::FilesystemHelper
+                                      .compute_capacity(@fact_list[:used_bytes],
+                                                        @fact_list[:total_bytes])
               @fact_list[:encrypted] = data.map { |line| line[0].end_with?('.eli') }.all?
             end
 

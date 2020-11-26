@@ -53,13 +53,13 @@ module Facter
             used_bytes = info[2]
             size_bytes = info[1]
             @fact_list[:mountpoints][info.last].merge!(
-              capacity: FilesystemHelper.compute_capacity(used_bytes, size_bytes),
+              capacity: Facter::Util::Resolvers::FilesystemHelper.compute_capacity(used_bytes, size_bytes),
               available_bytes: available_bytes,
               used_bytes: used_bytes,
               size_bytes: size_bytes,
-              available: FactsUtils::UnitConverter.bytes_to_human_readable(available_bytes),
-              used: FactsUtils::UnitConverter.bytes_to_human_readable(used_bytes),
-              size: FactsUtils::UnitConverter.bytes_to_human_readable(size_bytes)
+              available: Facter::Util::Facts::UnitConverter.bytes_to_human_readable(available_bytes),
+              used: Facter::Util::Facts::UnitConverter.bytes_to_human_readable(used_bytes),
+              size: Facter::Util::Facts::UnitConverter.bytes_to_human_readable(size_bytes)
             )
           end
         end

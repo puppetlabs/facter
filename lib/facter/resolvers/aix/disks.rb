@@ -34,7 +34,7 @@ module Facter
 
             return if stdout.empty?
 
-            info_size = InfoExtractor.extract(stdout, /PP SIZE:|TOTAL PPs:|FREE PPs:|PV STATE:/)
+            info_size = Facter::Util::Aix::InfoExtractor.extract(stdout, /PP SIZE:|TOTAL PPs:|FREE PPs:|PV STATE:/)
 
             return unless info_size['PV STATE']
 
@@ -42,7 +42,7 @@ module Facter
 
             {
               size_bytes: size_bytes,
-              size: Facter::FactsUtils::UnitConverter.bytes_to_human_readable(size_bytes)
+              size: Facter::Util::Facts::UnitConverter.bytes_to_human_readable(size_bytes)
             }
           end
 
@@ -50,9 +50,9 @@ module Facter
             physical_partitions = size_hash['TOTAL PPs'].to_i + size_hash['FREE PPs'].to_i
             size_physical_partition = size_hash['PP SIZE']
             exp = if size_physical_partition[/mega/]
-                    InfoExtractor::MEGABYTES_EXPONENT
+                    Facter::Util::Aix::InfoExtractor::MEGABYTES_EXPONENT
                   else
-                    InfoExtractor::GIGABYTES_EXPONENT
+                    Facter::Util::Aix::InfoExtractor::GIGABYTES_EXPONENT
                   end
             size_physical_partition.to_i * physical_partitions * exp
           end

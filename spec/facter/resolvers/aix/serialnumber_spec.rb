@@ -3,9 +3,9 @@
 describe Facter::Resolvers::Aix::Serialnumber do
   describe '#resolve' do
     before do
-      odm = instance_spy('Facter::ODMQuery')
+      odm = instance_spy('Facter::Util::Aix::ODMQuery')
 
-      allow(Facter::ODMQuery).to receive(:new).and_return(odm)
+      allow(Facter::Util::Aix::ODMQuery).to receive(:new).and_return(odm)
       allow(odm).to receive(:equals).with('name', 'sys0').and_return(odm)
       allow(odm).to receive(:equals).with('attribute', 'systemid')
       allow(odm).to receive(:execute).and_return(result)

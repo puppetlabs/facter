@@ -3,12 +3,12 @@
 describe Facter::Resolvers::Aix::Partitions do
   subject(:resolver) { Facter::Resolvers::Aix::Partitions }
 
-  let(:odm_query_spy) { instance_spy(Facter::ODMQuery) }
+  let(:odm_query_spy) { instance_spy(Facter::Util::Aix::ODMQuery) }
   let(:logger_spy) { instance_spy(Facter::Log) }
 
   before do
     resolver.instance_variable_set(:@log, logger_spy)
-    allow(Facter::ODMQuery).to receive(:new).and_return(odm_query_spy)
+    allow(Facter::Util::Aix::ODMQuery).to receive(:new).and_return(odm_query_spy)
     allow(odm_query_spy).to receive(:equals).with('PdDvLn', 'logical_volume/lvsubclass/lvtype')
     allow(odm_query_spy).to receive(:execute).and_return(result)
   end

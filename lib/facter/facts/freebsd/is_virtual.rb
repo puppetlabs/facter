@@ -6,7 +6,7 @@ module Facts
       FACT_NAME = 'is_virtual'
 
       def initialize
-        @virtual = Facter::VirtualDetector.new
+        @virtual = Facter::Util::Facts::VirtualDetector.new
       end
 
       def call_the_resolver
@@ -18,7 +18,7 @@ module Facts
       private
 
       def check_if_virtual(found_vm)
-        Facter::FactsUtils::PHYSICAL_HYPERVISORS.count(found_vm).zero?
+        Facter::Util::Facts::PHYSICAL_HYPERVISORS.count(found_vm).zero?
       end
     end
   end

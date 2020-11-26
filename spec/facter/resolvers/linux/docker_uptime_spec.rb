@@ -18,7 +18,7 @@ describe Facter::Resolvers::Linux::DockerUptime do
         .with('ps -o etime= -p "1"', logger: log_spy)
         .and_return('20')
 
-      allow(Facter::Resolvers::Utils::UptimeHelper)
+      allow(Facter::Util::Resolvers::UptimeHelper)
         .to receive(:create_uptime_hash)
         .with(20)
         .and_return({ days: 0, hours: 0, seconds: 20, uptime: '0:00 hours' })
@@ -48,7 +48,7 @@ describe Facter::Resolvers::Linux::DockerUptime do
         .with('ps -o etime= -p "1"', logger: log_spy)
         .and_return('10:20')
 
-      allow(Facter::Resolvers::Utils::UptimeHelper)
+      allow(Facter::Util::Resolvers::UptimeHelper)
         .to receive(:create_uptime_hash)
         .with(620)
         .and_return({ days: 0, hours: 0, seconds: 620, uptime: '0:10 hours' })
@@ -78,7 +78,7 @@ describe Facter::Resolvers::Linux::DockerUptime do
         .with('ps -o etime= -p "1"', logger: log_spy)
         .and_return('3:10:20')
 
-      allow(Facter::Resolvers::Utils::UptimeHelper)
+      allow(Facter::Util::Resolvers::UptimeHelper)
         .to receive(:create_uptime_hash)
         .with(11_420)
         .and_return({ days: 0, hours: 3, seconds: 11_420, uptime: '3:10 hours' })
@@ -108,7 +108,7 @@ describe Facter::Resolvers::Linux::DockerUptime do
         .with('ps -o etime= -p "1"', logger: log_spy)
         .and_return('1-3:10:20')
 
-      allow(Facter::Resolvers::Utils::UptimeHelper)
+      allow(Facter::Util::Resolvers::UptimeHelper)
         .to receive(:create_uptime_hash)
         .with(97_820)
         .and_return({ days: 1, hours: 27, seconds: 97_820, uptime: '1 day' })
@@ -138,7 +138,7 @@ describe Facter::Resolvers::Linux::DockerUptime do
         .with('ps -o etime= -p "1"', logger: log_spy)
         .and_return('2-3:10:20')
 
-      allow(Facter::Resolvers::Utils::UptimeHelper)
+      allow(Facter::Util::Resolvers::UptimeHelper)
         .to receive(:create_uptime_hash)
         .with(184_220)
         .and_return({ days: 2, hours: 51, seconds: 184_220, uptime: '2 days' })

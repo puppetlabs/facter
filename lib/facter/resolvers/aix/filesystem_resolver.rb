@@ -14,7 +14,7 @@ module Facter
           end
 
           def read_vtf_file(fact_name)
-            file_content = Util::FileHelper.safe_readlines('/etc/vfs')
+            file_content = Facter::Util::FileHelper.safe_readlines('/etc/vfs')
             return if file_content.empty?
 
             file_content = file_content.map do |line|

@@ -17,7 +17,7 @@ module Facter
         end
 
         def read_fact_from_bios(fact_name)
-          win = Win32Ole.new
+          win = Facter::Util::Windows::Win32Ole.new
 
           bios = win.return_first('SELECT Manufacturer,SerialNumber from Win32_BIOS')
           unless bios

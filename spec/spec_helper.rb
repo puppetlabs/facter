@@ -22,6 +22,7 @@ require 'facter'
 require 'facter/framework/cli/cli'
 require 'facter/framework/cli/cli_launcher'
 
+Dir.glob(File.join('./lib/facter/util', '/**/*/', '*.rb'), &method(:require))
 Dir.glob(File.join('./lib/facter/facts', '/**/*/', '*.rb'), &method(:require))
 Dir.glob(File.join('./lib/facter/resolvers', '/**/*/', '*.rb'), &method(:require))
 

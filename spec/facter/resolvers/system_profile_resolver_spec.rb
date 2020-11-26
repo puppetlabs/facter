@@ -61,7 +61,7 @@ describe Facter::Resolvers::Macosx::SystemProfiler do
 
   context 'when information is obtain from SPHardwareDataType' do
     before do
-      allow(Facter::Resolvers::Macosx::SystemProfileExecutor)
+      allow(Facter::Util::Macosx::SystemProfileExecutor)
         .to receive(:execute)
         .with('SPHardwareDataType')
         .and_return(sp_hardware_data_type_hash)
@@ -122,7 +122,7 @@ describe Facter::Resolvers::Macosx::SystemProfiler do
 
   context 'when information is obtained from SPSoftwareDataType' do
     before do
-      allow(Facter::Resolvers::Macosx::SystemProfileExecutor)
+      allow(Facter::Util::Macosx::SystemProfileExecutor)
         .to receive(:execute)
         .with('SPSoftwareDataType')
         .and_return(sp_software_data_type)
@@ -163,7 +163,7 @@ describe Facter::Resolvers::Macosx::SystemProfiler do
 
   context 'when information is obtained from SPEthernetDataType' do
     before do
-      allow(Facter::Resolvers::Macosx::SystemProfileExecutor)
+      allow(Facter::Util::Macosx::SystemProfileExecutor)
         .to receive(:execute)
         .with('SPEthernetDataType')
         .and_return(sp_ethernet_data_type)

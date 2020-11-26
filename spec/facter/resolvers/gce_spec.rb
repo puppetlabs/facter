@@ -5,7 +5,7 @@ describe Facter::Resolvers::Gce do
   let(:gce_url_headers) { { "Metadata-Flavor": 'Google', "Accept": 'application/json' } }
 
   before do
-    allow(Facter::Resolvers::Utils::Http).to receive(:get_request)
+    allow(Facter::Util::Resolvers::Http).to receive(:get_request)
       .with(gce_metadata_url, gce_url_headers)
       .and_return(http_response_body)
   end

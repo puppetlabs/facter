@@ -4,10 +4,10 @@ describe Facts::Freebsd::IsVirtual do
   describe '#call_the_resolver' do
     subject(:fact) { Facts::Freebsd::IsVirtual.new }
 
-    let(:virtual_detector_double) { instance_spy(Facter::VirtualDetector) }
+    let(:virtual_detector_double) { instance_spy(Facter::Util::Facts::VirtualDetector) }
 
     before do
-      allow(Facter::VirtualDetector).to receive(:new).and_return(virtual_detector_double)
+      allow(Facter::Util::Facts::VirtualDetector).to receive(:new).and_return(virtual_detector_double)
       allow(virtual_detector_double).to receive(:platform).and_return(virtual_value)
     end
 

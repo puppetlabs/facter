@@ -24,7 +24,7 @@ module Facter
         end
 
         def read_os_release_file(fact_name)
-          output = Util::FileHelper.safe_readlines('/etc/os-release')
+          output = Facter::Util::FileHelper.safe_readlines('/etc/os-release')
           return @fact_list[:name] = nil if output.empty?
 
           pairs = []

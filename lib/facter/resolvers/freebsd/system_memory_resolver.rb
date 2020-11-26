@@ -18,7 +18,8 @@ module Facter
             read_available_memory_in_bytes
 
             @fact_list[:used_bytes] = @fact_list[:total_bytes] - @fact_list[:available_bytes]
-            @fact_list[:capacity] = FilesystemHelper.compute_capacity(@fact_list[:used_bytes], @fact_list[:total_bytes])
+            @fact_list[:capacity] = Facter::Util::Resolvers::FilesystemHelper
+                                    .compute_capacity(@fact_list[:used_bytes], @fact_list[:total_bytes])
 
             @fact_list[fact_name]
           end

@@ -18,7 +18,7 @@ module Facter
           end
 
           def read_fips_file(fact_name)
-            file_output = Util::FileHelper.safe_read('/proc/sys/crypto/fips_enabled')
+            file_output = Facter::Util::FileHelper.safe_read('/proc/sys/crypto/fips_enabled')
             @fact_list[:fips_enabled] = file_output.strip == '1'
             @fact_list[fact_name]
           end

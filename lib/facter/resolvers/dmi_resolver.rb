@@ -35,7 +35,7 @@ module Facter
                        product_serial product_uuid]
             return unless File.directory?('/sys/class/dmi')
 
-            file_content = Util::FileHelper.safe_read("/sys/class/dmi/id/#{fact_name}", nil)
+            file_content = Facter::Util::FileHelper.safe_read("/sys/class/dmi/id/#{fact_name}", nil)
             if files.include?(fact_name.to_s) && file_content
               file_content = file_content.strip
               @fact_list[fact_name] = file_content unless file_content.empty?

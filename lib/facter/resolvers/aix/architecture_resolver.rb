@@ -14,10 +14,10 @@ module Facter
         end
 
         def read_architecture(fact_name)
-          require_relative 'utils/odm_query'
+          require 'facter/util/aix/odm_query'
 
           proc_number = read_proc
-          odmquery = ODMQuery.new
+          odmquery = Facter::Util::Aix::ODMQuery.new
           odmquery
             .equals('name', proc_number)
             .equals('attribute', 'type')
@@ -37,7 +37,7 @@ module Facter
         end
 
         def read_proc
-          odmquery = ODMQuery.new
+          odmquery = Facter::Util::Aix::ODMQuery.new
           odmquery
             .equals('PdDvLn', 'processor/sys/proc_rspc')
             .equals('status', '1')
