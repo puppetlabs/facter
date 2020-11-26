@@ -14,7 +14,7 @@ module Facter
           end
 
           def read_serialnumber(fact_name)
-            odmquery = Facter::ODMQuery.new
+            odmquery = Facter::Util::Aix::ODMQuery.new
             odmquery
               .equals('name', 'sys0')
               .equals('attribute', 'systemid')

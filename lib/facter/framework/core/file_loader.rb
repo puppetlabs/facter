@@ -34,8 +34,11 @@ require 'facter/framework/config/fact_groups'
 
 load_dir(['config'])
 
-load_dir(%w[resolvers utils])
-load_dir(%w[resolvers utils networking])
+load_dir(['util'])
+load_dir(%w[util resolvers])
+load_dir(%w[util facts])
+load_dir(%w[util resolvers networking])
+
 load_dir(['resolvers'])
 load_dir(['facts_utils'])
 load_dir(%w[framework core])
@@ -48,12 +51,12 @@ load_dir(%w[framework core fact external])
 load_dir(%w[framework formatters])
 
 os_hierarchy = OsDetector.instance.hierarchy
+os_hierarchy.each { |operating_system| load_dir(['util', operating_system.downcase, '**']) }
 os_hierarchy.each { |operating_system| load_dir(['facts', operating_system.downcase, '**']) }
 os_hierarchy.each { |operating_system| load_dir(['resolvers', operating_system.downcase, '**']) }
 
 require 'facter/custom_facts/core/legacy_facter'
 load_dir(%w[framework utils])
-load_dir(['util'])
 
 require 'facter/framework/core/fact_augmenter'
 require 'facter/framework/parsers/query_parser'

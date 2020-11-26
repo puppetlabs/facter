@@ -184,7 +184,7 @@ module Facter
       def help_header(_args)
         path = File.join(File.dirname(__FILE__), '../../')
 
-        Util::FileHelper.safe_read("#{path}fixtures/facter_help_header")
+        Facter::Util::FileHelper.safe_read("#{path}fixtures/facter_help_header")
       end
 
       IGNORE_OPTIONS = %w[log_level color no_color].freeze

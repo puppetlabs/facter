@@ -51,7 +51,7 @@ module Facts
 
         return unless product_name
 
-        Facter::FactsUtils::HYPERVISORS_HASH.each { |key, value| return value if product_name.include?(key) }
+        Facter::Util::Facts::HYPERVISORS_HASH.each { |key, value| return value if product_name.include?(key) }
 
         nil
       end

@@ -28,9 +28,9 @@ RSpec/FilePath:
     - 'spec/custom_facts/util/normalization_spec.rb'
     - 'spec/custom_facts/util/parser_spec.rb'
     - 'spec/custom_facts/util/resolution_spec.rb'
-    - 'spec/facter/facts_utils/uptime_parser_spec.rb'
-    - 'spec/facter/facts_utils/windows_release_finder_spec.rb'
-    - 'spec/facter/facts_utils/virtual_detector_spec.rb'
+    - 'spec/facter/util/facts/uptime_parser_spec.rb'
+    - 'spec/facter/util/facts/windows_release_finder_spec.rb'
+    - 'spec/facter/util/facts/virtual_detector_spec.rb'
     - 'spec/facter/model/fact_collection_spec.rb'
     - 'spec/facter/model/resolved_fact_spec.rb'
     - 'spec/facter/resolvers/aix/architecture_resolver_spec.rb'
@@ -54,7 +54,7 @@ RSpec/FilePath:
     - 'spec/facter/resolvers/system_profile_resolver_spec.rb'
     - 'spec/facter/resolvers/utils/aix/odm_query_spec.rb'
     - 'spec/facter/resolvers/utils/macosx/filesystem_helper_spec.rb'
-    - 'spec/facter/resolvers/utils/windows/win32ole_spec.rb'
+    - 'spec/facter/util/windows/win32ole_spec.rb'
     - 'spec/facter/resolvers/windows/dmi_bios_resolver_spec.rb'
     - 'spec/facter/resolvers/windows/dmi_computersystem_resolver_spec.rb'
     - 'spec/facter/resolvers/windows/hardware_architecture_resolver_spec.rb'
@@ -104,7 +104,7 @@ RSpec/LeakyConstantDeclaration:
     - 'spec/custom_facts/shared_contexts/platform.rb'
     - 'spec/custom_facts/util/collection_spec.rb'
     - 'spec/facter/resolvers/macosx/mountpoints_resolver_spec.rb'
-    - 'spec/facter/resolvers/utils/windows/network_utils_spec.rb'
+    - 'spec/facter/util/windows/network_utils_spec.rb'
 
 # Offense count: 93
 # Configuration parameters: EnforcedStyle.
@@ -159,7 +159,7 @@ RSpec/MessageSpies:
     - 'spec/facter/facts/windows/processors/physicalcount_spec.rb'
     - 'spec/facter/facts/windows/ruby/platform_spec.rb'
     - 'spec/facter/facts/windows/ruby/sitedir_spec.rb'
-    - 'spec/facter/resolvers/utils/aix/odm_query_spec.rb'
+    - 'spec/facter/util/aix/odm_query_spec.rb'
 
 # Offense count: 26
 RSpec/SubjectStub:
@@ -208,8 +208,8 @@ RSpec/VerifiedDoubles:
     - 'spec/facter/resolvers/freebsd/ffi_helper_spec.rb'
     - 'spec/facter/resolvers/macosx/mountpoints_resolver_spec.rb'
     - 'spec/facter/resolvers/mountpoints_resolver_spec.rb'
-    - 'spec/facter/resolvers/utils/windows/network_utils_spec.rb'
-    - 'spec/facter/resolvers/utils/windows/win32ole_spec.rb'
+    - 'spec/facter/util/windows/network_utils_spec.rb'
+    - 'spec/facter/util/windows/win32ole_spec.rb'
     - 'spec/facter/resolvers/windows/dmi_bios_resolver_spec.rb'
     - 'spec/facter/resolvers/windows/dmi_computersystem_resolver_spec.rb'
     - 'spec/facter/resolvers/windows/hardware_architecture_resolver_spec.rb'

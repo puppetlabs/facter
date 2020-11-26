@@ -4,7 +4,7 @@ describe Facter::Resolvers::Uptime do
   after { Facter::Resolvers::Uptime.invalidate_cache }
 
   describe 'all uptime stats' do
-    before { allow(Facter::UptimeParser).to receive(:uptime_seconds_unix).and_return(86_500) }
+    before { allow(Facter::Util::Facts::UptimeParser).to receive(:uptime_seconds_unix).and_return(86_500) }
 
     it 'returns uptime in days' do
       expect(Facter::Resolvers::Uptime.resolve(:days)).to eq(1)
@@ -20,7 +20,7 @@ describe Facter::Resolvers::Uptime do
 
     context 'when we do not input seconds' do
       it 'returns "uknown" uptime value' do
-        allow(Facter::UptimeParser).to receive(:uptime_seconds_unix).and_return(nil)
+        allow(Facter::Util::Facts::UptimeParser).to receive(:uptime_seconds_unix).and_return(nil)
 
         expect(Facter::Resolvers::Uptime.resolve(:uptime)).to eq('unknown')
       end
@@ -30,7 +30,7 @@ describe Facter::Resolvers::Uptime do
   describe 'uptime text description' do
     context 'when the parsed seconds are less than a day' do
       it 'returns the hours as a text' do
-        allow(Facter::UptimeParser).to receive(:uptime_seconds_unix).and_return(21_660)
+        allow(Facter::Util::Facts::UptimeParser).to receive(:uptime_seconds_unix).and_return(21_660)
 
         expect(Facter::Resolvers::Uptime.resolve(:uptime)).to eq('6:01 hours')
       end
@@ -38,7 +38,7 @@ describe Facter::Resolvers::Uptime do
 
     context 'when the parsed seconds are between 1 and 2 days' do
       it 'returns "1 day" as a text' do
-        allow(Facter::UptimeParser).to receive(:uptime_seconds_unix).and_return(86_500)
+        allow(Facter::Util::Facts::UptimeParser).to receive(:uptime_seconds_unix).and_return(86_500)
 
         expect(Facter::Resolvers::Uptime.resolve(:uptime)).to eq('1 day')
       end
@@ -46,7 +46,7 @@ describe Facter::Resolvers::Uptime do
 
     context 'when the parsed seconds are more than 2 days' do
       it 'returns the number of days as a text' do
-        allow(Facter::UptimeParser).to receive(:uptime_seconds_unix).and_return(186_500)
+        allow(Facter::Util::Facts::UptimeParser).to receive(:uptime_seconds_unix).and_return(186_500)
 
         expect(Facter::Resolvers::Uptime.resolve(:uptime)).to eq('2 days')
       end

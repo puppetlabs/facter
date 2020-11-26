@@ -26,9 +26,9 @@ module Facter
               end
 
               @fact_list = { interfaces: @interfaces } unless @interfaces.empty?
-              @fact_list[:primary_interface] = Utils::Networking::PrimaryInterface.get(@log)
+              @fact_list[:primary_interface] = Facter::Util::Resolvers::Networking::PrimaryInterface.get(@log)
 
-              ::Resolvers::Utils::Networking.expand_main_bindings(@fact_list)
+              Facter::Util::Resolvers::Networking.expand_main_bindings(@fact_list)
             rescue StandardError => e
               @log.log_exception(e)
             end
@@ -41,7 +41,7 @@ module Facter
             add_mac(lifreq)
             add_bindings(lifreq)
             add_mtu(lifreq)
-            @interfaces[lifreq.name][:dhcp] = Utils::Networking::Dhcp.get(lifreq.name, @log)
+            @interfaces[lifreq.name][:dhcp] = Facter::Util::Resolvers::Networking::Dhcp.get(lifreq.name, @log)
           end
 
           def add_mac(lifreq)
@@ -62,7 +62,7 @@ module Facter
             ip = inet_ntop(lifreq, lifreq.ss_family)
             _netmask, netmask_length = load_netmask(lifreq)
 
-            bindings = ::Resolvers::Utils::Networking.build_binding(ip, netmask_length)
+            bindings = Facter::Util::Resolvers::Networking.build_binding(ip, netmask_length)
 
             bindings_key = BINDINGS_KEY[lifreq.ss_family]
             @interfaces[lifreq.name][bindings_key] ||= []
@@ -91,7 +91,7 @@ module Facter
             end
 
             netmask = inet_ntop(netmask_lifreq, lifreq.ss_family)
-            [netmask, ::Resolvers::Utils::Networking.calculate_mask_length(netmask)]
+            [netmask, Facter::Util::Resolvers::Networking.calculate_mask_length(netmask)]
           end
 
           def inet_ntop(lifreq, ss_family)

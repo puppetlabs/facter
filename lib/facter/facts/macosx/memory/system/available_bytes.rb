@@ -11,7 +11,7 @@ module Facts
           def call_the_resolver
             fact_value = Facter::Resolvers::Macosx::SystemMemory.resolve(:available_bytes)
             [Facter::ResolvedFact.new(FACT_NAME, fact_value),
-             Facter::ResolvedFact.new(ALIASES, Facter::FactsUtils::UnitConverter.bytes_to_mb(fact_value), :legacy)]
+             Facter::ResolvedFact.new(ALIASES, Facter::Util::Facts::UnitConverter.bytes_to_mb(fact_value), :legacy)]
           end
         end
       end

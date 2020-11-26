@@ -4,7 +4,7 @@ describe Facter::Resolvers::LoadAverages do
   let(:load_averages) { [0.01, 0.02, 0.03] }
 
   before do
-    allow(Facter::Resolvers::Utils::Ffi::LoadAverages).to receive(:read_load_averages)
+    allow(Facter::Util::Resolvers::Ffi::LoadAverages).to receive(:read_load_averages)
       .and_return(load_averages)
   end
 

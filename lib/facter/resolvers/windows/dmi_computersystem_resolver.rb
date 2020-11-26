@@ -17,7 +17,7 @@ module Facter
         end
 
         def read_fact_from_computer_system(fact_name)
-          win = Win32Ole.new
+          win = Facter::Util::Windows::Win32Ole.new
           computersystem = win.return_first('SELECT Name,UUID FROM Win32_ComputerSystemProduct')
           unless computersystem
             @log.debug 'WMI query returned no results for Win32_ComputerSystemProduct with values Name and UUID.'

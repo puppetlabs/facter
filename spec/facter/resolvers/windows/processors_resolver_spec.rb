@@ -6,9 +6,9 @@ describe Facter::Resolvers::Processors do
   let(:logger) { instance_spy(Facter::Log) }
 
   before do
-    win = double('Win32Ole')
+    win = double('Facter::Util::Windows::Win32Ole')
 
-    allow(Win32Ole).to receive(:new).and_return(win)
+    allow(Facter::Util::Windows::Win32Ole).to receive(:new).and_return(win)
     allow(win).to receive(:exec_query).with('SELECT Name,Architecture,NumberOfLogicalProcessors FROM Win32_Processor')
                                       .and_return(proc)
     resolver.instance_variable_set(:@log, logger)

@@ -5,7 +5,8 @@ describe Facts::Aix::Ssh do
     subject(:fact) { Facts::Aix::Ssh.new }
 
     let(:ssh) do
-      [Facter::Ssh.new(Facter::FingerPrint.new('test', 'test'), 'ecdsa', 'test', 'ecdsa')]
+      [Facter::Util::Resolvers::Ssh.new(Facter::Util::Resolvers::FingerPrint
+        .new('test', 'test'), 'ecdsa', 'test', 'ecdsa')]
     end
     let(:value) do
       { 'ecdsa' => { 'fingerprints' =>

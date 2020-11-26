@@ -18,8 +18,8 @@ module Facter
         end
 
         def read_cgroup(fact_name)
-          output_cgroup = Util::FileHelper.safe_read('/proc/1/cgroup', nil)
-          output_environ = Util::FileHelper.safe_read('/proc/1/environ', nil)
+          output_cgroup = Facter::Util::FileHelper.safe_read('/proc/1/cgroup', nil)
+          output_environ = Facter::Util::FileHelper.safe_read('/proc/1/environ', nil)
           return unless output_cgroup && output_environ
 
           output_docker = %r{docker/(.+)}.match(output_cgroup)
@@ -49,7 +49,7 @@ module Facter
           nspawn = /container=systemd-nspawn/ =~ output_environ
           if nspawn
             vm = 'systemd_nspawn'
-            info = Util::FileHelper.safe_read('/etc/machine-id', nil)
+            info = Facter::Util::FileHelper.safe_read('/etc/machine-id', nil)
           end
           [info ? { 'id' => info.strip } : {}, vm]
         end

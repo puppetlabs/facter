@@ -4,7 +4,7 @@ module Facter
   module Resolvers
     module Macosx
       class Mountpoints < BaseResolver
-        include Facter::FilesystemHelper
+        include Facter::Util::Resolvers::FilesystemHelper
         init_resolver
 
         class << self
@@ -17,7 +17,7 @@ module Facter
           def read_mounts
             mounts = {}
 
-            FilesystemHelper.read_mountpoints.each do |fs|
+            Facter::Util::Resolvers::FilesystemHelper.read_mountpoints.each do |fs|
               device = fs.name
               filesystem = fs.mount_type
               path = fs.mount_point
@@ -35,7 +35,7 @@ module Facter
 
           def read_stats(path)
             begin
-              stats = FilesystemHelper.read_mountpoint_stats(path)
+              stats = Facter::Util::Resolvers::FilesystemHelper.read_mountpoint_stats(path)
               size_bytes = stats.bytes_total
               available_bytes = stats.bytes_available
               used_bytes = size_bytes - available_bytes
@@ -47,10 +47,10 @@ module Facter
               size_bytes: size_bytes,
               used_bytes: used_bytes,
               available_bytes: available_bytes,
-              capacity: FilesystemHelper.compute_capacity(used_bytes, size_bytes),
-              size: Facter::FactsUtils::UnitConverter.bytes_to_human_readable(size_bytes),
-              available: Facter::FactsUtils::UnitConverter.bytes_to_human_readable(available_bytes),
-              used: Facter::FactsUtils::UnitConverter.bytes_to_human_readable(used_bytes)
+              capacity: Facter::Util::Resolvers::FilesystemHelper.compute_capacity(used_bytes, size_bytes),
+              size: Facter::Util::Facts::UnitConverter.bytes_to_human_readable(size_bytes),
+              available: Facter::Util::Facts::UnitConverter.bytes_to_human_readable(available_bytes),
+              used: Facter::Util::Facts::UnitConverter.bytes_to_human_readable(used_bytes)
             }
           end
         end

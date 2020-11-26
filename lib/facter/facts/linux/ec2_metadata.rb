@@ -6,7 +6,7 @@ module Facts
       FACT_NAME = 'ec2_metadata'
 
       def initialize
-        @virtual = Facter::VirtualDetector.new
+        @virtual = Facter::Util::Facts::VirtualDetector.new
       end
 
       def call_the_resolver

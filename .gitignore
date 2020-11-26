@@ -55,3 +55,5 @@ build-iPhoneSimulator/
 .rspec_status
 Gemfile.lock
 Gemfile.local
+acceptance/vendor
+.beaker

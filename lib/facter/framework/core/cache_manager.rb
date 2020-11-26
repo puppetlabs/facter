@@ -181,7 +181,7 @@ cache_format_version is incorrect!")
 
       cache_file_name = File.join(@cache_dir, group_name)
       data = nil
-      file = Util::FileHelper.safe_read(cache_file_name)
+      file = Facter::Util::FileHelper.safe_read(cache_file_name)
       begin
         data = JSON.parse(file) unless file.nil?
       rescue JSON::ParserError

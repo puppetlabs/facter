@@ -24,11 +24,11 @@ module Facter
             ssh_list = []
 
             FILE_NAMES.each do |file_name|
-              output = Util::FileHelper.safe_read(File.join(ssh_dir, file_name))
+              output = Facter::Util::FileHelper.safe_read(File.join(ssh_dir, file_name))
               next if output.empty?
 
               key_type, key = output.split(' ')
-              ssh_list << ::Resolvers::Utils::SshHelper.create_ssh(key_type, key)
+              ssh_list << Facter::Util::Resolvers::SshHelper.create_ssh(key_type, key)
             end
             @fact_list[:ssh] = ssh_list.empty? ? nil : ssh_list
             @fact_list[fact_name]

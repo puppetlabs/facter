@@ -32,7 +32,7 @@ module Facter
         end
 
         def privileged?(xen_type)
-          content = Util::FileHelper.safe_read(XEN_PATH, nil)
+          content = Facter::Util::FileHelper.safe_read(XEN_PATH, nil)
           content&.strip == 'control_d' || xen_type == 'xen0'
         end
 

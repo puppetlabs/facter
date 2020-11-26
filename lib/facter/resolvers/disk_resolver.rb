@@ -25,7 +25,7 @@ module Facter
               @fact_list[:disks].each do |disk, value|
                 file_path = File.join(DIR, disk, file)
 
-                result = Util::FileHelper.safe_read(file_path).strip
+                result = Facter::Util::FileHelper.safe_read(file_path).strip
                 next if result.empty?
 
                 value[key] = case key
@@ -55,7 +55,7 @@ module Facter
           def construct_size(facts, value)
             value = value.to_i * 512
             facts[:size_bytes] = value
-            facts[:size] = Facter::FactsUtils::UnitConverter.bytes_to_human_readable(value)
+            facts[:size] = Facter::Util::Facts::UnitConverter.bytes_to_human_readable(value)
           end
         end
       end

@@ -23,7 +23,7 @@ module Facter
           end
 
           def read_cpuinfo(fact_name)
-            cpuinfo_output = Util::FileHelper.safe_readlines('/proc/cpuinfo')
+            cpuinfo_output = Facter::Util::FileHelper.safe_readlines('/proc/cpuinfo')
             return if cpuinfo_output.empty?
 
             read_processors(cpuinfo_output) # + model names
@@ -65,7 +65,7 @@ module Facter
                .select { |dir| dir =~ /cpu[0-9]+$/ }
                .select { |dir| File.exist?("/sys/devices/system/cpu/#{dir}/topology/physical_package_id") }
                .map do |dir|
-              Util::FileHelper.safe_read("/sys/devices/system/cpu/#{dir}/topology/physical_package_id").strip
+              Facter::Util::FileHelper.safe_read("/sys/devices/system/cpu/#{dir}/topology/physical_package_id").strip
             end
                .uniq.count
           end

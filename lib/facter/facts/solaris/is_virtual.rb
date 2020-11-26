@@ -51,13 +51,13 @@ module Facts
 
         return unless product_name
 
-        Facter::FactsUtils::HYPERVISORS_HASH.each { |key, value| return value if product_name.include?(key) }
+        Facter::Util::Facts::HYPERVISORS_HASH.each { |key, value| return value if product_name.include?(key) }
 
         nil
       end
 
       def check_if_virtual(found_vm)
-        Facter::FactsUtils::PHYSICAL_HYPERVISORS.count(found_vm).zero?
+        Facter::Util::Facts::PHYSICAL_HYPERVISORS.count(found_vm).zero?
       end
     end
   end

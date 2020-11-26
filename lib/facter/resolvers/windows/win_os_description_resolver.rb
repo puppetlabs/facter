@@ -15,7 +15,7 @@ module Facter
         end
 
         def read_from_ole(fact_name)
-          win = Win32Ole.new
+          win = Facter::Util::Windows::Win32Ole.new
           op_sys = win.return_first('SELECT ProductType,OtherTypeDescription FROM Win32_OperatingSystem')
           unless op_sys
             @log.debug 'WMI query returned no results for Win32_OperatingSystem'\

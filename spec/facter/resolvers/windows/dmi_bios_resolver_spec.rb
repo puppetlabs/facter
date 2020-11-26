@@ -4,9 +4,9 @@ describe Facter::Resolvers::DMIBios do
   let(:logger) { instance_spy(Facter::Log) }
 
   before do
-    win = double('Win32Ole')
+    win = double('Facter::Util::Windows::Win32Ole')
 
-    allow(Win32Ole).to receive(:new).and_return(win)
+    allow(Facter::Util::Windows::Win32Ole).to receive(:new).and_return(win)
     allow(win).to receive(:return_first).with('SELECT Manufacturer,SerialNumber from Win32_BIOS').and_return(comp)
     Facter::Resolvers::DMIBios.instance_variable_set(:@log, logger)
   end

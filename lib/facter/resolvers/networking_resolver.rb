@@ -15,7 +15,7 @@ module Facter
         def read_facts(fact_name)
           primary_interface
           interfaces_data
-          ::Resolvers::Utils::Networking.expand_main_bindings(@fact_list)
+          Facter::Util::Resolvers::Networking.expand_main_bindings(@fact_list)
           @fact_list[fact_name]
         end
 
@@ -95,7 +95,7 @@ module Facter
         def create_bindings(ips, masks)
           bindings = []
           ips.zip(masks).each do |ip, mask|
-            bindings << ::Resolvers::Utils::Networking.build_binding(ip, mask)
+            bindings << Facter::Util::Resolvers::Networking.build_binding(ip, mask)
           end
           bindings
         end

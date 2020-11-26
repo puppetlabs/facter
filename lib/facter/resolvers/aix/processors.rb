@@ -17,7 +17,7 @@ module Facter
             @fact_list[:models] = []
             @fact_list[:logical_count] = 0
 
-            odmquery = Facter::ODMQuery.new
+            odmquery = Facter::Util::Aix::ODMQuery.new
             odmquery.equals('class', 'processor')
 
             result = odmquery.execute
@@ -32,7 +32,7 @@ module Facter
           end
 
           def populate_from_cudv(name)
-            odmquery = Facter::ODMQuery.new
+            odmquery = Facter::Util::Aix::ODMQuery.new
             odmquery.equals('PdDvLn', name)
 
             result = odmquery.execute
@@ -45,7 +45,7 @@ module Facter
           end
 
           def query_cuat(name)
-            odmquery = Facter::ODMQuery.new
+            odmquery = Facter::Util::Aix::ODMQuery.new
             odmquery.equals('name', name)
 
             result = odmquery.execute

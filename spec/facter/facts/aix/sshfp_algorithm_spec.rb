@@ -5,8 +5,10 @@ describe Facts::Aix::SshfpAlgorithm do
     subject(:fact) { Facts::Aix::SshfpAlgorithm.new }
 
     let(:ssh) do
-      [Facter::Ssh.new(Facter::FingerPrint.new('sha11', 'sha2561'), 'ecdsa', 'test', 'ecdsa'),
-       Facter::Ssh.new(Facter::FingerPrint.new('sha12', 'sha2562'), 'rsa', 'test', 'rsa')]
+      [Facter::Util::Resolvers::Ssh.new(Facter::Util::Resolvers::FingerPrint
+        .new('sha11', 'sha2561'), 'ecdsa', 'test', 'ecdsa'),
+       Facter::Util::Resolvers::Ssh.new(Facter::Util::Resolvers::FingerPrint
+        .new('sha12', 'sha2562'), 'rsa', 'test', 'rsa')]
     end
     let(:legacy_fact1) { { name: 'ecdsa', value: "sha11\nsha2561" } }
     let(:legacy_fact2) { { name: 'rsa', value: "sha12\nsha2562" } }

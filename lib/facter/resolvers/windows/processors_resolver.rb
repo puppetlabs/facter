@@ -18,7 +18,7 @@ module Facter
         end
 
         def read_fact_from_win32_processor(fact_name)
-          win = Win32Ole.new
+          win = Facter::Util::Windows::Win32Ole.new
           proc = win.exec_query('SELECT Name,Architecture,NumberOfLogicalProcessors FROM Win32_Processor')
           unless proc
             log.debug 'WMI query returned no results'\

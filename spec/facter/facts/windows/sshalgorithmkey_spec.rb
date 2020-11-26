@@ -6,8 +6,10 @@ describe Facts::Windows::Sshalgorithmkey do
 
     context 'when user is privileged' do
       let(:ssh) do
-        [Facter::Ssh.new(Facter::FingerPrint.new('test', 'test'), 'ecdsa', 'test', 'ecdsa'),
-         Facter::Ssh.new(Facter::FingerPrint.new('test', 'test'), 'rsa', 'test', 'rsa')]
+        [Facter::Util::Resolvers::Ssh.new(Facter::Util::Resolvers::FingerPrint
+          .new('test', 'test'), 'ecdsa', 'test', 'ecdsa'),
+         Facter::Util::Resolvers::Ssh.new(Facter::Util::Resolvers::FingerPrint
+          .new('test', 'test'), 'rsa', 'test', 'rsa')]
       end
       let(:legacy_fact1) { { name: 'ecdsa', value: 'test' } }
       let(:legacy_fact2) { { name: 'rsa', value: 'test' } }

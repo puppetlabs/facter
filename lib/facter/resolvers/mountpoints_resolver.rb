@@ -3,7 +3,7 @@
 module Facter
   module Resolvers
     class Mountpoints < BaseResolver
-      include Facter::FilesystemHelper
+      include Facter::Util::Resolvers::FilesystemHelper
 
       init_resolver
 
@@ -17,7 +17,7 @@ module Facter
         end
 
         def root_device
-          cmdline = Util::FileHelper.safe_read('/proc/cmdline')
+          cmdline = Facter::Util::FileHelper.safe_read('/proc/cmdline')
           match = cmdline.match(/root=([^\s]+)/)
           root = match&.captures&.first
 
@@ -45,7 +45,7 @@ module Facter
 
         def read_mounts(fact_name)
           mounts = []
-          FilesystemHelper.read_mountpoints.each do |file_system|
+          Facter::Util::Resolvers::FilesystemHelper.read_mountpoints.each do |file_system|
             mount = {}
             get_mount_data(file_system, mount)
 
@@ -67,16 +67,16 @@ module Facter
         end
 
         def get_mount_sizes(mount)
-          stats = FilesystemHelper.read_mountpoint_stats(mount[:path])
+          stats = Facter::Util::Resolvers::FilesystemHelper.read_mountpoint_stats(mount[:path])
 
           get_bytes_data(mount, stats)
 
           total_bytes = mount[:used_bytes] + mount[:available_bytes]
-          mount[:capacity] = FilesystemHelper.compute_capacity(mount[:used_bytes], total_bytes)
+          mount[:capacity] = Facter::Util::Resolvers::FilesystemHelper.compute_capacity(mount[:used_bytes], total_bytes)
 
-          mount[:size] = Facter::FactsUtils::UnitConverter.bytes_to_human_readable(mount[:size_bytes])
-          mount[:available] = Facter::FactsUtils::UnitConverter.bytes_to_human_readable(mount[:available_bytes])
-          mount[:used] = Facter::FactsUtils::UnitConverter.bytes_to_human_readable(mount[:used_bytes])
+          mount[:size] = Facter::Util::Facts::UnitConverter.bytes_to_human_readable(mount[:size_bytes])
+          mount[:available] = Facter::Util::Facts::UnitConverter.bytes_to_human_readable(mount[:available_bytes])
+          mount[:used] = Facter::Util::Facts::UnitConverter.bytes_to_human_readable(mount[:used_bytes])
         end
 
         def get_bytes_data(mount, stats)
