@@ -312,6 +312,7 @@ module Facter
       log_blocked_facts
 
       resolved_facts = Facter::FactManager.instance.resolve_facts
+      resolved_facts.reject! { |fact| fact.type == :custom && fact.value.nil? }
       Facter::FactCollection.new.build_fact_collection!(resolved_facts)
     end
 
@@ -361,6 +362,7 @@ module Facter
       Options[:show_legacy] = true
       log_blocked_facts
       resolved_facts = Facter::FactManager.instance.resolve_facts(user_queries)
+      resolved_facts.reject! { |fact| fact.type == :custom && fact.value.nil? }
 
       if user_queries.count.zero?
         Facter::FactCollection.new.build_fact_collection!(resolved_facts)
@@ -387,9 +389,8 @@ module Facter
       init_cli_options(cli_options, args)
       logger.info("executed with command line: #{ARGV.drop(1).join(' ')}")
       log_blocked_facts
-      resolved_facts = Facter::FactManager.instance.resolve_facts(args)
+      resolved_facts = resolve_facts_for_user_query(args)
       fact_formatter = Facter::FormatterFactory.build(Facter::Options.get)
-
       status = error_check(resolved_facts)
 
       [fact_formatter.format(resolved_facts), status]
@@ -445,6 +446,14 @@ module Facter
     end
 
     private
+
+    def resolve_facts_for_user_query(user_query)
+      resolved_facts = Facter::FactManager.instance.resolve_facts(user_query)
+      user_queries = resolved_facts.uniq(&:user_query).map(&:user_query)
+      resolved_facts.reject! { |fact| fact.type == :custom && fact.value.nil? } if user_queries.first.empty?
+
+      resolved_facts
+    end
 
     def parse_exception(exception, error_message)
       if exception.is_a?(Exception)
