@@ -109,7 +109,7 @@ module LegacyFacter
 
       def entries
         dirs = @directories.select { |directory| File.directory?(directory) }.map do |directory|
-          Dir.entries(directory).map { |directory_entry| File.join(directory, directory_entry) }
+          Dir.entries(directory).map { |directory_entry| File.join(directory, directory_entry) }.sort.reverse!
         end
         dirs.flatten.select { |f| should_parse?(f) }
       rescue Errno::ENOENT
