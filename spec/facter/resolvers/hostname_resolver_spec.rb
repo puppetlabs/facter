@@ -11,7 +11,7 @@ describe Facter::Resolvers::Hostname do
       allow(Facter::Core::Execution).to receive(:execute).with('hostname -f', logger: log_spy).and_return(host)
       allow(Facter::Util::FileHelper).to receive(:safe_read)
         .with('/etc/resolv.conf')
-        .and_return("nameserver 10.10.0.10\nnameserver 10.10.1.10\nsearch baz\ndomain baz\n")
+        .and_return("nameserver 10.10.0.10\nnameserver 10.10.1.10\nsearch baz\ndomain qux\n")
     end
 
     after do
@@ -39,7 +39,7 @@ describe Facter::Resolvers::Hostname do
 
     context 'when hostname returns host' do
       let(:hostname) { 'foo' }
-      let(:domain) { 'baz' }
+      let(:domain) { 'qux' }
       let(:host) { hostname }
       let(:fqdn) { "#{hostname}.#{domain}" }
 
