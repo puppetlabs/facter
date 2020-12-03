@@ -4,8 +4,9 @@ test_name 'C93827: facter fqdn should return the hostname when its a fully quali
 
   confine :except, :platform => 'windows'
 
-  fqdn = 'foo.bar.example.org'
-  fqdn_long = 'a23456789.b23456789.c23456789.d23456789.e23456789.f23456789.wxyz'
+  fqdn_hostname = 'foo'
+  fqdn_domain = 'bar.example.org'
+  fqdn = "#{fqdn_hostname}.#{fqdn_domain}"
 
   agents.each do |agent|
     orig_hostname = on(agent, 'hostname').stdout.chomp
@@ -17,11 +18,16 @@ test_name 'C93827: facter fqdn should return the hostname when its a fully quali
     end
 
     step "set hostname as #{fqdn}" do
-      on(agent, "hostname #{fqdn}")
       begin
-        Timeout.timeout(20) do
-          until on(agent, 'hostname').stdout =~ /#{fqdn}/
-            sleep(0.25) # on Solaris 11 hostname returns before the hostname is updated
+        if agent['platform'] =~ /^(debian|centos|el|fedora|ubuntu)-/
+          on(agent, "hostname #{fqdn_hostname}")
+          on(agent, "printf '127.0.1.1 #{fqdn} #{fqdn_hostname}\\n' > /etc/hosts")
+        else
+          on(agent, "hostname #{fqdn}")
+          Timeout.timeout(20) do
+            until on(agent, 'hostname').stdout =~ /#{fqdn}/
+              sleep(0.25) # on Solaris 11 hostname returns before the hostname is updated
+            end
           end
         end
       rescue Timeout::Error
@@ -36,12 +42,21 @@ test_name 'C93827: facter fqdn should return the hostname when its a fully quali
     end
   end
 
+  fqdn_long_hostname = 'a23456789'
+  fqdn_long_domain = 'b23456789.c23456789.d23456789.e23456789.f23456789.wxyz'
+  fqdn_long = "#{fqdn_long_hostname}.#{fqdn_long_domain}"
+
   step "long hostname as #{fqdn_long}" do
-    on(agent, "hostname #{fqdn_long}")
     begin
-      Timeout.timeout(20) do
-        until on(agent, 'hostname').stdout =~ /#{fqdn_long}/
-          sleep(0.25) # on Solaris 11 hostname returns before the hostname is updated
+      if agent['platform'] =~ /^(debian|centos|el|fedora|ubuntu)-/
+        on(agent, "hostname #{fqdn_long_hostname}")
+        on(agent, "printf '127.0.1.1 #{fqdn_long} #{fqdn_long_hostname}\\n' > /etc/hosts")
+      else
+        on(agent, "hostname #{fqdn_long}")
+        Timeout.timeout(20) do
+          until on(agent, 'hostname').stdout =~ /#{fqdn_long}/
+            sleep(0.25) # on Solaris 11 hostname returns before the hostname is updated
+          end
         end
       end
     rescue Timeout::Error
