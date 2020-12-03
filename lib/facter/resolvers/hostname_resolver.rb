@@ -13,7 +13,7 @@ module Facter
         end
 
         def retrieve_hostname(fact_name)
-          output = Facter::Core::Execution.execute('hostname', logger: log)
+          output = Facter::Core::Execution.execute('hostname -f', logger: log)
 
           # get domain
           domain = read_domain(output)

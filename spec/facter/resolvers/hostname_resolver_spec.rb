@@ -8,7 +8,7 @@ describe Facter::Resolvers::Hostname do
   describe '#resolve' do
     before do
       hostname_resolver.instance_variable_set(:@log, log_spy)
-      allow(Facter::Core::Execution).to receive(:execute).with('hostname', logger: log_spy).and_return(host)
+      allow(Facter::Core::Execution).to receive(:execute).with('hostname -f', logger: log_spy).and_return(host)
       allow(Facter::Util::FileHelper).to receive(:safe_read)
         .with('/etc/resolv.conf')
         .and_return("nameserver 10.10.0.10\nnameserver 10.10.1.10\nsearch baz\ndomain baz\n")
