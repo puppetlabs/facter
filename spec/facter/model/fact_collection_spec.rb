@@ -55,19 +55,6 @@ describe Facter::FactCollection do
         end
       end
 
-      context 'when fact type is :custom' do
-        let(:fact_name) { 'operatingsystem' }
-        let(:fact_value) { nil }
-        let(:type) { :custom }
-
-        it 'does not add fact to collection' do
-          fact_collection.build_fact_collection!([resolved_fact])
-          expected_hash = {}
-
-          expect(fact_collection).to eq(expected_hash)
-        end
-      end
-
       context 'when fact type is :legacy' do
         context 'when fact name contains dots' do
           let(:fact_name) { 'my.dotted.external.fact.name' }
