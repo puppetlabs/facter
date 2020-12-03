@@ -483,6 +483,10 @@ module Facter
           os_arch                 = 'ppc64le'
           os_hardware             = 'ppc64le'
           processor_model_pattern = // # facter doesn't figure out the processor type on these machines
+        elsif agent['platform'] =~ /aarch64/
+          os_arch                 = 'aarch64'
+          os_hardware             = 'aarch64'
+          processor_model_pattern = // # facter doesn't figure out the processor type on these machines
         else
           os_arch     = 'i386'
           os_hardware = 'i686'
