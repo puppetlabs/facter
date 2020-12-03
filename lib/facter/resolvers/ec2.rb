@@ -50,7 +50,9 @@ module Facter
         end
 
         def get_data_from(url)
-          Facter::Util::Resolvers::Http.get_request(url, {}, { session: determine_session_timeout })
+          headers = {}
+          headers['X-aws-ec2-metadata-token'] = Facter::Util::Resolvers::AwsToken.get if ENV['AWS_IMDSv2']
+          Facter::Util::Resolvers::Http.get_request(url, headers, { session: determine_session_timeout })
         end
 
         def determine_session_timeout
