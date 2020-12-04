@@ -310,6 +310,7 @@ module Facter
     # @api public
     def to_hash
       log_blocked_facts
+      logger.debug("Facter version: #{Facter::VERSION}")
 
       resolved_facts = Facter::FactManager.instance.resolve_facts
       resolved_facts.reject! { |fact| fact.type == :custom && fact.value.nil? }
@@ -388,6 +389,7 @@ module Facter
     def to_user_output(cli_options, *args)
       init_cli_options(cli_options, args)
       logger.info("executed with command line: #{ARGV.drop(1).join(' ')}")
+      logger.debug("Facter version: #{Facter::VERSION}")
       log_blocked_facts
       resolved_facts = resolve_facts_for_user_query(args)
       fact_formatter = Facter::FormatterFactory.build(Facter::Options.get)
