@@ -17,8 +17,7 @@ module Facter
     end
 
     def resolve_facts(user_query = [])
-      loaded_facts = @fact_loader.load(Options.get)
-      searched_facts = QueryParser.parse(user_query, loaded_facts)
+      searched_facts = parse_user_query(user_query)
 
       cache_manager = Facter::CacheManager.new
       searched_facts, cached_facts = cache_manager.resolve_facts(searched_facts)
@@ -32,6 +31,7 @@ module Facter
 
       FactFilter.new.filter_facts!(resolved_facts)
 
+      log_resolved_facts(resolved_facts)
       resolved_facts
     end
 
@@ -47,6 +47,12 @@ module Facter
 
     private
 
+    def parse_user_query(user_query)
+      loaded_facts = @fact_loader.load(Options.get)
+
+      QueryParser.parse(user_query, loaded_facts)
+    end
+
     def override_core_facts(core_facts, custom_facts)
       return core_facts unless custom_facts
 
@@ -59,6 +65,12 @@ module Facter
 
     def root_fact_name(fact)
       fact.name.split('.').first
+    end
+
+    def log_resolved_facts(resolved_facts)
+      resolved_facts.each do |fact|
+        @log.debug("fact \"#{fact.name}\" has resolved to: #{fact.value}") unless fact.value.nil?
+      end
     end
   end
 end
