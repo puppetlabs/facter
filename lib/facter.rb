@@ -261,6 +261,26 @@ module Facter
       nil
     end
 
+    # Enables/Disables external facts.
+    # @param enable_external [boolean]
+    #
+    #  @return nil
+    #
+    # @api public
+    def load_external(enable_external)
+      # enable_external param needs negation because behind the scene
+      # no_external_facts= method is negating the parameter again.
+      Options[:no_external_facts] = !enable_external
+
+      if enable_external
+        logger.debug('Facter.load_external(true) called. External facts will be loaded')
+      else
+        logger.debug('Facter.load_external(false) called. External facts will NOT be loaded')
+      end
+
+      nil
+    end
+
     # Register directories to be searched for custom facts. The registered directories
     #   must be absolute paths or they will be ignored.
     # @param dirs [Array<String>] An array of searched directories
