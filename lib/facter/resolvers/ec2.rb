@@ -18,9 +18,14 @@ module Facter
         end
 
         def read_facts(fact_name)
-          @fact_list[:metadata] = {}
-          query_for_metadata(EC2_METADATA_ROOT_URL, @fact_list[:metadata])
-          @fact_list[:userdata] = get_data_from(EC2_USERDATA_ROOT_URL).strip
+          @fact_list[:metadata] = ENV['FACTER_ec2_metadata']
+
+          unless @fact_list[:metadata]
+            @fact_list[:metadata] = {}
+            query_for_metadata(EC2_METADATA_ROOT_URL, @fact_list[:metadata])
+          end
+
+          @fact_list[:userdata] = ENV['FACTER_ec2_userdata'] || get_data_from(EC2_USERDATA_ROOT_URL).strip
           @fact_list[fact_name]
         end
 

@@ -47,4 +47,24 @@ describe Facter::Resolvers::Ec2 do
       expect(ec2.resolve(:userdata)).to eq('')
     end
   end
+
+  context 'when env vars set' do
+    before do
+      ENV['FACTER_ec2_metadata'] = 'generic_metadata'
+      ENV['FACTER_ec2_userdata'] = 'generic_userdata'
+    end
+
+    after do
+      ENV['FACTER_ec2_metadata'] = nil
+      ENV['FACTER_ec2_userdata'] = nil
+    end
+
+    it 'returns ec2 metadata' do
+      expect(ec2.resolve(:metadata)).to eq('generic_metadata')
+    end
+
+    it 'returns ec2 userdata' do
+      expect(ec2.resolve(:userdata)).to eq('generic_userdata')
+    end
+  end
 end
