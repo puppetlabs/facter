@@ -288,6 +288,22 @@ describe Facter do
         expect(json_fact_formatter).to have_received(:format).with([])
       end
     end
+
+    context 'when no facts are returned' do
+      let(:type) { :custom }
+      let(:fact_value) { nil }
+      let(:fact_user_query) { '' }
+      let(:expected_json_output) { {} }
+
+      before do
+        allow(fact_manager_spy).to receive(:resolve_facts).and_return([])
+        allow(json_fact_formatter).to receive(:format).with([]).and_return(expected_json_output)
+      end
+
+      it 'does not raise exceptions' do
+        expect { Facter.to_user_output({}, '') }.not_to raise_error
+      end
+    end
   end
 
   describe '#value' do

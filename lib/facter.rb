@@ -471,8 +471,9 @@ module Facter
 
     def resolve_facts_for_user_query(user_query)
       resolved_facts = Facter::FactManager.instance.resolve_facts(user_query)
-      user_queries = resolved_facts.uniq(&:user_query).map(&:user_query)
-      resolved_facts.reject! { |fact| fact.type == :custom && fact.value.nil? } if user_queries.first.empty?
+      user_querie = resolved_facts.uniq(&:user_query).map(&:user_query).first
+
+      resolved_facts.reject! { |fact| fact.type == :custom && fact.value.nil? } if user_querie&.empty?
 
       resolved_facts
     end
