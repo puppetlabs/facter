@@ -142,10 +142,12 @@ module Facter
         end
 
         def retrieve_default_interface
-          output = Facter::Core::Execution.execute('ip route get 1', logger: log)
+          output = Facter::Core::Execution.execute('ip route show default', logger: log)
 
-          ip_route_tokens = output.each_line.first.strip.split(' ')
-          default_interface = ip_route_tokens[4]
+          default_interface = nil
+          output.each_line do |line|
+            default_interface = line.strip.split(' ')[4] if line.start_with?('default')
+          end
 
           @fact_list[:primary_interface] = default_interface
         end

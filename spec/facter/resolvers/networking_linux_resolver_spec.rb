@@ -13,7 +13,7 @@ describe Facter::Resolvers::NetworkingLinux do
         .with('ip -o address', logger: log_spy)
         .and_return(ip_command)
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('ip route get 1', logger: log_spy)
+        .with('ip route show default', logger: log_spy)
         .and_return(load_fixture('ip_route_get_1_linux').read)
       allow(Facter::Core::Execution).to receive(:execute)
         .with('ip link show ens160', logger: log_spy)
@@ -177,7 +177,7 @@ describe Facter::Resolvers::NetworkingLinux do
         networking_linux.resolve(:interfaces)
 
         expect(Facter::Core::Execution).to have_received(:execute)
-          .with('ip route get 1', logger: log_spy).once
+          .with('ip route show default', logger: log_spy).once
       end
     end
 
@@ -188,7 +188,7 @@ describe Facter::Resolvers::NetworkingLinux do
         networking_linux.resolve(:interfaces)
 
         expect(Facter::Core::Execution).to have_received(:execute)
-          .with('ip route get 1', logger: log_spy).twice
+          .with('ip route show default', logger: log_spy).twice
       end
     end
 
