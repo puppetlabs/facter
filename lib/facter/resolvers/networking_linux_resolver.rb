@@ -35,7 +35,7 @@ module Facter
             find_dhcp!(interface_name, index + 1, interfaces)
           end
 
-          log.debug("interfaces = #{interfaces}")
+          log.debug("Extracted interfaces data\n#{interfaces}")
           @fact_list[:interfaces] = interfaces
         end
 
@@ -52,7 +52,7 @@ module Facter
         end
 
         def extract_interface_info_from(raw_data)
-          # VLAN names are printed as <VLAN name>@<associated_interface>
+          # VLAN names are printed as <VLAN name>@<associated_interface>, so we do an additional split after `@`
           interface_name = raw_data[0].split(':')[1]&.split('@')&.first&.strip
 
           mtu = raw_data[0].match(/mtu (\d*)/)&.captures&.first&.to_i
@@ -103,11 +103,13 @@ module Facter
         def insert_binding(binding, binding_key, interface_name, interfaces)
           interfaces[interface_name][binding_key] = [] if interfaces[interface_name][binding_key].nil?
           interfaces[interface_name][binding_key] << binding
+          log.debug("Adding to interface #{interface_name}, binding:\n#{binding}")
         end
 
         def find_dhcp!(interface_name, index, interfaces)
           return if !interfaces[interface_name] || interfaces[interface_name][:dhcp]
 
+          log.debug("Get DHCP for interface #{interface_name}")
           file_content = Facter::Util::FileHelper.safe_read("/run/systemd/netif/leases/#{index}", nil)
           dhcp = file_content.match(/SERVER_ADDRESS=(.*)/) if file_content
           if dhcp
@@ -153,6 +155,7 @@ module Facter
 
         def retrieve_default_interface
           output = Facter::Core::Execution.execute('ip route get 1', logger: log)
+          log.debug("'ip route get 1' result is:\n#{output}")
 
           return if output.nil? || output.empty?
 

@@ -5,6 +5,7 @@ test_name 'networking facts with vlans' do
   confine :except, :platform => 'aix'
   confine :except, :platform => 'osx'
   confine :except, :platform => 'solaris'
+  confine :except, :platform => 'amazon' # unable to create VLANs on Amazon 6
 
   #
   # This test is intended to ensure that networking facts resolve vlans
@@ -38,6 +39,13 @@ test_name 'networking facts with vlans' do
   end
 
   agents.each do |agent|
+    operating_system = fact_on(agent, 'operatingsystem')
+    release = fact_on(agent, 'operatingsystemrelease')
+
+    if operating_system == 'Amazon' && release == '2017.03'
+      skip_test 'Not able to create VLANs on Amazon 6'
+    end
+
     interface = fact_on(agent, 'networking.primary')
 
     step "Add two vlans" do
