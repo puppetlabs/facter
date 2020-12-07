@@ -8,7 +8,7 @@ describe Facter::Resolvers::Hostname do
   describe '#resolve' do
     before do
       hostname_resolver.instance_variable_set(:@log, log_spy)
-      allow(Facter::Core::Execution).to receive(:execute).with('hostname', logger: log_spy).and_return(host)
+      allow(Socket).to receive(:gethostname).and_return(host)
       allow(Facter::Util::FileHelper).to receive(:safe_read)
         .with('/etc/resolv.conf')
         .and_return("nameserver 10.10.0.10\nnameserver 10.10.1.10\nsearch baz\ndomain baz\n")
@@ -43,6 +43,10 @@ describe Facter::Resolvers::Hostname do
       let(:host) { hostname }
       let(:fqdn) { "#{hostname}.#{domain}" }
 
+      before do
+        allow(Socket).to receive(:getaddrinfo).and_return(domain)
+      end
+
       it 'detects hostname' do
         expect(hostname_resolver.resolve(:hostname)).to eql(hostname)
       end
@@ -66,9 +70,11 @@ describe Facter::Resolvers::Hostname do
 
     context 'when /etc/resolve.conf is inaccessible' do
       let(:host) { 'foo' }
+      let(:domain) { '' }
 
       before do
         allow(Facter::Util::FileHelper).to receive(:safe_read).with('/etc/resolv.conf').and_return('')
+        allow(Socket).to receive(:getaddrinfo).and_return(domain)
       end
 
       it 'detects that domain is nil' do
