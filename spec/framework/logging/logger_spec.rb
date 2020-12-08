@@ -240,7 +240,7 @@ describe Logger do
     it 'writes exception message without --trace option' do
       log.log_exception(exception)
 
-      expect(multi_logger_double).to have_received(:error).with("Class - #{colorize('Test exception', Facter::RED)}\n")
+      expect(multi_logger_double).to have_received(:error).with("Class - #{colorize('Test exception', Facter::RED)}")
     end
 
     it 'writes exception message and backtrace with --trace option' do
@@ -251,7 +251,7 @@ describe Logger do
 
       expect(multi_logger_double)
         .to have_received(:error)
-        .with("Class - #{colorize('Test exception', Facter::RED)}\nbacktrace:1")
+        .with("Class - #{colorize("Test exception\nbacktrace:1", Facter::RED)}")
     end
   end
 end
