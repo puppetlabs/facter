@@ -19,7 +19,7 @@ module Facter
         def retrieve_network_info(fact_name)
           retrieve_interface_info
           retrieve_interfaces_mac_and_mtu
-          retrieve_default_interface
+          retrieve_primary_interface
           Facter::Util::Resolvers::Networking.expand_main_bindings(@fact_list)
           @fact_list[fact_name]
         end
@@ -141,13 +141,13 @@ module Facter
           network_info[interface_name][:bindings6] << binding
         end
 
-        def retrieve_default_interface
-          output = Facter::Core::Execution.execute('ip route get 1', logger: log)
+        def retrieve_primary_interface
+          primary_helper = Facter::Util::Resolvers::Networking::PrimaryInterface
+          primary_interface = primary_helper.read_from_proc_route
+          primary_interface ||= primary_helper.read_from_ip_route
+          primary_interface ||= primary_helper.find_in_interfaces(@fact_list[:interfaces])
 
-          ip_route_tokens = output.each_line.first.strip.split(' ')
-          default_interface = ip_route_tokens[4]
-
-          @fact_list[:primary_interface] = default_interface
+          @fact_list[:primary_interface] = primary_interface
         end
 
         def build_network_info_structure!(network_info, interface_name, binding)

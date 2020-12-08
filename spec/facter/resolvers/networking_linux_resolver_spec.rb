@@ -23,6 +23,8 @@ describe Facter::Resolvers::NetworkingLinux do
         .with('/run/systemd/netif/leases/1', nil).and_return(nil)
       allow(Facter::Util::FileHelper).to receive(:safe_read)
         .with('/run/systemd/netif/leases/2', nil).and_return(load_fixture('dhcp_lease').read)
+      allow(Facter::Util::FileHelper).to receive(:safe_read)
+        .with('/proc/net/route', '').and_return(load_fixture('proc_net_route').read)
 
       allow(File).to receive(:readable?).with('/var/lib/dhclient/').and_return(true)
       allow(Dir).to receive(:entries).with('/var/lib/dhclient/').and_return(['dhclient.lo.leases', 'dhclient.leases'])
@@ -177,7 +179,7 @@ describe Facter::Resolvers::NetworkingLinux do
         networking_linux.resolve(:interfaces)
 
         expect(Facter::Core::Execution).to have_received(:execute)
-          .with('ip route get 1', logger: log_spy).once
+          .with('ip -o address', logger: log_spy).once
       end
     end
 
@@ -188,7 +190,7 @@ describe Facter::Resolvers::NetworkingLinux do
         networking_linux.resolve(:interfaces)
 
         expect(Facter::Core::Execution).to have_received(:execute)
-          .with('ip route get 1', logger: log_spy).twice
+          .with('ip -o address', logger: log_spy).twice
       end
     end
 
