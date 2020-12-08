@@ -3,6 +3,7 @@
 describe Facter::ExternalFactLoader do
   let(:collection) { double(LegacyFacter::Util::Collection) }
   let(:external_fact) { Facter::Util::Fact.new('external_fact', options: { fact_type: :external }) }
+  let(:custom_fact) { Facter::Util::Fact.new('custom_fact', options: { fact_type: :custom }) }
 
   before do
     allow(LegacyFacter).to receive(:collection).and_return(collection)
@@ -13,7 +14,7 @@ describe Facter::ExternalFactLoader do
   describe '#custom_facts' do
     context 'when one custom fact is loaded' do
       before do
-        allow(collection).to receive(:custom_facts).and_return(['custom_fact'])
+        allow(collection).to receive(:custom_facts).and_return({ 'custom_fact' => custom_fact })
         allow(Facter::Options).to receive(:custom_dir?).and_return(true)
         allow(Facter::Options).to receive(:custom_dir).and_return(['custom_fact_dir'])
       end

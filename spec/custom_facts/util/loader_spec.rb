@@ -160,7 +160,7 @@ describe LegacyFacter::Util::Loader do
 
       loader.load(:testing)
 
-      expect(LegacyFacter).to have_received(:add).with('testing', { fact_type: :external })
+      expect(LegacyFacter).to have_received(:add).with('testing', { fact_type: :external, is_env: true })
     end
 
     it 'loads any files in the search path with names matching the fact name' do

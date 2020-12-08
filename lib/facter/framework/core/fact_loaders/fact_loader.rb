@@ -24,10 +24,26 @@ module Facter
       @internal_facts = load_internal_facts(options)
       @external_facts = load_external_facts(options)
 
+      filter_env_facts
+
       @facts = @internal_facts + @external_facts
     end
 
     private
+
+    def filter_env_facts
+      env_fact_names = @external_facts.select { |fact| fact.is_env == true }.map(&:name)
+      return unless env_fact_names.any?
+
+      @internal_facts.delete_if do |fact|
+        if env_fact_names.include?(fact.name)
+          @log.debug("Reading #{fact.name} fact from environment variable")
+          true
+        else
+          false
+        end
+      end
+    end
 
     def load_internal_facts(options)
       @log.debug('Loading internal facts')
