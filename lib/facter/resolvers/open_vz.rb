@@ -15,9 +15,7 @@ module Facter
         end
 
         def check_proc_vz(fact_name)
-          if !Dir.exist?('/proc/vz') || !File.executable?('/proc/lve/list') || Dir.entries('/proc/vz').count.equal?(2)
-            return
-          end
+          return if !Dir.exist?('/proc/vz') || File.file?('/proc/lve/list') || Dir.entries('/proc/vz').count.equal?(2)
 
           @fact_list[:vm] = read_proc_status
           @fact_list[fact_name]
