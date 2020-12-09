@@ -1,8 +1,0 @@
-2: ens160: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP group default qlen 1000
-    link/ether 00:50:56:9a:ec:fb brd ff:ff:ff:ff:ff:ff
-    inet 10.16.122.163/20 brd 10.16.127.255 scope global dynamic ens160
-       valid_lft 471sec preferred_lft 471sec
-    inet 10.16.123.117/20 brd 10.16.127.255 scope global secondary ens160
-       valid_lft forever preferred_lft forever
-    inet6 fe80::250:56ff:fe9a:ecfb/64 scope link
-       valid_lft forever preferred_lft forever
