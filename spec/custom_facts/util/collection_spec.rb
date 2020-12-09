@@ -352,7 +352,7 @@ describe LegacyFacter::Util::Collection do
       end
 
       it 'returns my_fact custom fact' do
-        expect(collection.custom_facts.first).to eq(:my_fact)
+        expect(collection.custom_facts.first[0]).to eq(:my_fact)
       end
     end
 
@@ -375,7 +375,7 @@ describe LegacyFacter::Util::Collection do
       end
 
       it 'loads the new fact' do
-        expect(collection.custom_facts.first). to eq(:new_fact)
+        expect(collection.custom_facts.first[0]). to eq(:new_fact)
       end
     end
 
@@ -398,7 +398,7 @@ describe LegacyFacter::Util::Collection do
       end
 
       it 'loads the new fact' do
-        expect(collection.custom_facts.first). to eq(:new_fact)
+        expect(collection.custom_facts.first[0]). to eq(:new_fact)
       end
     end
   end
