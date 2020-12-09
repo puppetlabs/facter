@@ -42,7 +42,12 @@ module Facter
         end
 
         def retrieve_with_addrinfo(host)
-          name = Socket.getaddrinfo(host, 0, Socket::AF_UNSPEC, Socket::SOCK_STREAM, nil, Socket::AI_CANONNAME)[0]
+          begin
+            name = Socket.getaddrinfo(host, 0, Socket::AF_UNSPEC, Socket::SOCK_STREAM, nil, Socket::AI_CANONNAME)[0]
+          rescue StandardError => e
+            @log.debug("Socket.getaddrinfo failed to retrieve fqdn for hostname #{host} with: #{e}")
+            return
+          end
           return if name.nil? || name.empty? || host == name[2]
 
           name[2]
