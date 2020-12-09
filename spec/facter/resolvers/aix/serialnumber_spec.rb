@@ -32,7 +32,7 @@ describe Facter::Resolvers::Aix::Serialnumber do
     end
 
     context 'when fails to retrieve fact' do
-      let(:result) { nil }
+      let(:result) { '' }
 
       it 'detects serialnumber as nil' do
         expect(Facter::Resolvers::Aix::Serialnumber.resolve(:serialnumber)).to be(nil)

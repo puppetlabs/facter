@@ -100,10 +100,10 @@ module Facter
     end
 
     def log_exception(exception)
-      msg = colorize(exception.message, RED) + "\n"
-      msg += exception.backtrace.join("\n") if Options[:trace]
+      msg = exception.message
+      msg += "\n" + exception.backtrace.join("\n") if Options[:trace]
 
-      @@logger.error(@class_name + ' - ' + msg)
+      error(msg, true)
     end
 
     private
