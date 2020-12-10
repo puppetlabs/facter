@@ -190,16 +190,21 @@ describe Facter do
   end
 
   describe '#to_hash' do
+    before do
+      allow(Hash).to receive(:[]).with(fact_collection_spy).and_return({})
+      allow(Hash).to receive(:[]).with(empty_fact_collection).and_return({})
+    end
+
     it 'returns one resolved fact' do
       mock_fact_manager(:resolve_facts, [os_fact])
 
-      expect(Facter.to_hash).to eq(fact_collection_spy)
+      expect(Facter.to_hash).to eq({})
     end
 
     it 'return no resolved facts' do
       mock_fact_manager(:resolve_facts, [])
 
-      expect(Facter.to_hash).to eq(empty_fact_collection)
+      expect(Facter.to_hash).to eq({})
     end
 
     context 'when custom fact with nil value' do
