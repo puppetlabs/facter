@@ -8,7 +8,7 @@ describe Facter::Util::Resolvers::Http do
     let(:uri) { URI.parse(url) }
     let(:http_spy) { instance_spy(Net::HTTP) }
     let(:http_get_spy) { instance_spy(Net::HTTP::Get) }
-    let(:response_spy) { instance_spy(Net::HTTPResponse) }
+    let(:response_spy) { instance_spy(Net::HTTPOK) }
     let(:log_spy) { instance_spy(Facter::Log) }
 
     before do
@@ -44,10 +44,11 @@ describe Facter::Util::Resolvers::Http do
     end
 
     context 'when http get request has error code' do
-      let(:log_message) { 'Request failed with error code 404' }
+      let(:log_message) { 'Request to api/url failed with error code 404' }
 
       before do
         allow(response_spy).to receive(:code).and_return(404)
+        allow(response_spy).to receive(:uri).and_return('api/url')
       end
 
       it_behaves_like 'logs error and output is empty string'

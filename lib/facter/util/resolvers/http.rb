@@ -27,6 +27,10 @@ module Facter
             make_request(url, headers, timeouts, 'GET')
           end
 
+          def put_request(url, headers = {}, timeouts = {})
+            make_request(url, headers, timeouts, 'PUT')
+          end
+
           private
 
           def make_request(url, headers, timeouts, request_type)
@@ -37,8 +41,10 @@ module Facter
             request = request_obj(headers, uri, request_type)
 
             # Make the request
-            resp = http.request(request)
-            response_code_valid?(resp.code.to_i) ? resp.body : ''
+            response = http.request(request)
+            response.uri = url
+
+            successful_response?(response) ? response.body : ''
           rescue StandardError => e
             @log.debug("Trying to connect to #{url} but got: #{e.message}")
             ''
@@ -52,14 +58,15 @@ module Facter
           end
 
           def request_obj(headers, parsed_url, request_type)
-            return Net::HTTP::Get.new(parsed_url.request_uri, headers) if request_type == 'GET'
-
-            raise StandardError("Unknown http request type: #{request_type}")
+            Module.const_get("Net::HTTP::#{request_type.capitalize}").new(parsed_url.request_uri, headers)
           end
 
-          def response_code_valid?(http_code)
-            @log.debug("Request failed with error code #{http_code}") unless http_code.equal?(200)
-            http_code.equal?(200)
+          def successful_response?(response)
+            success = response.code.to_i.equal?(200)
+
+            @log.debug("Request to #{response.uri} failed with error code #{response.code}") unless success
+
+            success
           end
         end
       end
