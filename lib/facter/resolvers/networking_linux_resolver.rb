@@ -29,6 +29,7 @@ module Facter
           mtu_and_indexes = interfaces_mtu_and_index
           retrieve_interface_info(mtu_and_indexes)
           add_info_from_routing_table
+          retrieve_primary_interface
           Facter::Util::Resolvers::Networking.expand_main_bindings(@fact_list)
           @fact_list[fact_name]
         end
@@ -39,7 +40,7 @@ module Facter
           output.each_line do |line|
             next unless line.include?('mtu')
 
-            mtu = line.match(/mtu (\d+)/)&.captures&.first.to_i
+            mtu = line.match(/mtu (\d+)/)&.captures&.first&.to_i
             index_tokens = line.split(':')
             index = index_tokens[0].strip
             # vlans are displayed as <vlan_name>@<physical_interface>
@@ -64,17 +65,16 @@ module Facter
               mtu = mtu_and_indexes.dig(interface.name, 1)
               interfaces[interface.name][:mtu] = mtu unless mtu.nil?
             end
-            next if interface.addr.nil? || interface.netmask.nil?
 
-            begin
-              # ipv6 ips are retrieved as <ip>%<interface_name>
-              ip = interface.addr.ip_address.split('%').first if interface.addr.ip?
-              netmask = interface.netmask.ip_address
-              add_binding(interfaces, interface.name, ip, netmask, interface.addr.ipv4?)
-            rescue SocketError => e
-              next
+            if !interface.addr.nil? && !interface.netmask.nil?
+              begin
+                # ipv6 ips are retrieved as <ip>%<interface_name>
+                ip = interface.addr.ip_address.split('%').first if interface.addr.ip?
+                netmask = interface.netmask.ip_address
+                add_binding(interfaces, interface.name, ip, netmask, interface.addr.ipv4?)
+              rescue SocketError => e
+              end
             end
-
             find_dhcp!(interface.name, mtu_and_indexes, interfaces)
           end
 
@@ -85,8 +85,10 @@ module Facter
           mac = get_bonded_interface_mac(interface.name)
           if mac.nil?
             if Socket.const_defined? :PF_LINK
-              mac = interface.addr&.getnameinfo.first #sometimes it returns localhost, ip but mac also
+              mac = interface.addr&.getnameinfo&.first #sometimes it returns localhost, ip but mac also
             elsif Socket.const_defined? :PF_PACKET
+              return if interface.addr.nil? || interface.addr.inspect_sockaddr.nil?
+
               mac = interface.addr&.inspect_sockaddr[/hwaddr=([\h:]+)/, 1]
             end
           end
@@ -236,6 +238,16 @@ module Facter
           dhcp = dhcp.match(/SERVER_ADDRESS=(.*)/)
           dhcp[1] if dhcp
         end
+
+        def retrieve_primary_interface
+          primary_helper = Facter::Util::Resolvers::Networking::PrimaryInterface
+          primary_interface = primary_helper.read_from_proc_route
+          primary_interface ||= primary_helper.read_from_ip_route
+          primary_interface ||= primary_helper.find_in_interfaces(@fact_list[:interfaces])
+
+          @fact_list[:primary_interface] = primary_interface
+        end
+
       end
     end
   end

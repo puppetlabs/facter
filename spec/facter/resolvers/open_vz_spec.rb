@@ -4,7 +4,7 @@ describe Facter::Resolvers::OpenVz do
   subject(:openvz_resolver) { Facter::Resolvers::OpenVz }
 
   let(:vz_dir) { true }
-  let(:list_executable) { true }
+  let(:list_executable) { false }
 
   after do
     openvz_resolver.invalidate_cache
@@ -12,7 +12,7 @@ describe Facter::Resolvers::OpenVz do
 
   before do
     allow(Dir).to receive(:exist?).with('/proc/vz').and_return(vz_dir)
-    allow(File).to receive(:executable?).with('/proc/lve/list').and_return(list_executable)
+    allow(File).to receive(:file?).with('/proc/lve/list').and_return(list_executable)
     allow(Dir).to receive(:entries).with('/proc/vz').and_return(vz_dir_entries)
   end
 

@@ -112,7 +112,7 @@ describe Facter::InternalFactManager do
 
         expect(logger_double)
           .to have_received(:error)
-          .with("Facter::InternalFactManager - #{colorize('error_message', Facter::RED)}\nbacktrace")
+          .with("Facter::InternalFactManager - #{colorize("error_message\nbacktrace", Facter::RED)}")
       end
 
       it 'logs error message as error without --trace option' do
@@ -120,7 +120,7 @@ describe Facter::InternalFactManager do
 
         expect(logger_double)
           .to have_received(:error)
-          .with("Facter::InternalFactManager - #{colorize('error_message', Facter::RED)}\n")
+          .with("Facter::InternalFactManager - #{colorize('error_message', Facter::RED)}")
       end
     end
   end

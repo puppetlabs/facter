@@ -81,5 +81,17 @@ describe Facter::Resolvers::Hostname do
         expect(hostname_resolver.resolve(:domain)).to be(nil)
       end
     end
+
+    context 'when getaddrinfo throws exception' do
+      let(:host) { 'foo' }
+
+      before do
+        allow(Socket).to receive(:getaddrinfo).and_raise('socket exception')
+      end
+
+      it 'detects domain from resolv.conf' do
+        expect(hostname_resolver.resolve(:domain)).to eq('baz')
+      end
+    end
   end
 end

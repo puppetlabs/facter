@@ -143,7 +143,7 @@ module LegacyFacter
           # match it.
           next if fact && (env_name != fact)
 
-          LegacyFacter.add(Regexp.last_match(1), fact_type: :external) do
+          LegacyFacter.add(Regexp.last_match(1), fact_type: :external, is_env: true) do
             has_weight 1_000_000
             setcode { value }
           end

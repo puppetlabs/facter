@@ -115,8 +115,7 @@ module LegacyFacter
         internal_loader.load_all unless @loaded
         @loaded = true
 
-        custom_facts = @facts.select { |_k, v| v.options[:fact_type] == :custom }
-        @custom_facts = Facter::Utils.deep_copy(custom_facts.keys)
+        @custom_facts = @facts.select { |_k, v| v.options[:fact_type] == :custom }
       end
 
       def load(name)

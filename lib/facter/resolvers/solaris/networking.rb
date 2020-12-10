@@ -26,7 +26,7 @@ module Facter
               end
 
               @fact_list = { interfaces: @interfaces } unless @interfaces.empty?
-              @fact_list[:primary_interface] = Facter::Util::Resolvers::Networking::PrimaryInterface.get(@log)
+              @fact_list[:primary_interface] = Facter::Util::Resolvers::Networking::PrimaryInterface.read_from_route
 
               Facter::Util::Resolvers::Networking.expand_main_bindings(@fact_list)
             rescue StandardError => e

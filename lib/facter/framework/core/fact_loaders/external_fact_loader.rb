@@ -21,8 +21,9 @@ module Facter
 
       custom_facts_to_load = LegacyFacter.collection.custom_facts
 
-      custom_facts_to_load&.each do |custom_fact_name|
-        loaded_fact = LoadedFact.new(custom_fact_name.to_s, nil, :custom)
+      custom_facts_to_load&.each do |k, v|
+        loaded_fact = LoadedFact.new(k.to_s, nil, :custom)
+        loaded_fact.is_env = v.options[:is_env] if v.options[:is_env]
         custom_facts << loaded_fact
       end
 
@@ -37,6 +38,7 @@ module Facter
       external_facts_to_load&.each do |k, v|
         loaded_fact = LoadedFact.new(k.to_s, nil, :external)
         loaded_fact.file = v.options[:file]
+        loaded_fact.is_env = v.options[:is_env]
         external_facts << loaded_fact
       end
 

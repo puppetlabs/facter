@@ -18,6 +18,11 @@ describe Facter::FactLoader do
     end
     let(:loaded_fact_custom_fact) { instance_spy(Facter::LoadedFact, name: 'custom_fact', klass: nil, type: :custom) }
 
+    let(:loaded_env_custom_fact) do
+      instance_spy(Facter::LoadedFact, name: 'os.name', klass: nil,
+                                       type: :external, is_env: true)
+    end
+
     before do
       Singleton.__init__(Facter::FactLoader)
 
@@ -120,6 +125,19 @@ describe Facter::FactLoader do
       loaded_facts1 = Facter::FactLoader.instance.load(options)
       loaded_facts2 = Facter::FactLoader.instance.load(options)
       expect(loaded_facts1).to eq(loaded_facts2)
+    end
+
+    it 'env facts ovveride core facts' do
+      options = { external_facts: true }
+
+      allow(internal_fact_loader_double).to receive(:core_facts).and_return([loaded_fact_os_name])
+      allow(external_fact_loader_double).to receive(:custom_facts).and_return([])
+      allow(external_fact_loader_double).to receive(:external_facts).and_return([loaded_env_custom_fact])
+
+      loaded_facts = Facter::FactLoader.instance.load(options)
+      expect(loaded_facts).to be_an_instance_of(Array).and contain_exactly(
+        loaded_env_custom_fact
+      )
     end
   end
 end

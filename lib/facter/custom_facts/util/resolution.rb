@@ -110,7 +110,7 @@ module Facter
       #
       # @api private
       def options(options)
-        accepted_options = %i[name value timeout weight fact_type file]
+        accepted_options = %i[name value timeout weight fact_type file is_env]
 
         accepted_options.each do |option_name|
           instance_variable_set("@#{option_name}", options.delete(option_name)) if options.key?(option_name)
