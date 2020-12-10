@@ -3,6 +3,8 @@
 describe Facter::Resolvers::NetworkingLinux do
   subject(:networking_linux) { Facter::Resolvers::NetworkingLinux }
 
+  before { pending }
+
   let(:log_spy) { instance_spy(Facter::Log) }
   let(:ip_command) { load_fixture('ip_a_linux').read }
 

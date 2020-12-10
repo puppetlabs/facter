@@ -173,7 +173,16 @@ module Facter
       end
 
       def sort_by_weight(resolutions)
-        resolutions.sort { |a, b| b <=> a }
+        # sort resolutions:
+        # - descending by weight
+        # - multiple facts have the same weight but different types, the :external fact take precedence
+        # - multiple facts with the same weight and type, the order is preserved.
+        # note: sort_by is  slower than .sort
+        # we cannot use .sort because it is not stable: https://bugs.ruby-lang.org/issues/1089
+
+        # solution from: https://bugs.ruby-lang.org/issues/1089#note-10
+        idx = 0
+        resolutions.sort_by { |x| [-x.weight, (x.fact_type == :external ? 0 : 1), idx += 1] }
       end
 
       def find_first_real_value(resolutions)

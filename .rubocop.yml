@@ -6,6 +6,7 @@ AllCops:
   Exclude:
     - acceptance/**/*
     - vendor/**/*
+    - lib/facter/resolvers/networking_linux_resolver.rb
 
 require:
   - rubocop-performance
@@ -93,6 +94,8 @@ Metrics/ClassLength:
     - 'lib/facter/framework/core/cache_manager.rb'
     - 'install.rb'
     - 'scripts/generate_changelog.rb'
+    - 'lib/facter/resolvers/solaris/networking.rb'
+
 
 Naming/AccessorMethodName:
   Exclude:

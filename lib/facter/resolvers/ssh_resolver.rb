@@ -27,7 +27,8 @@ module Facter
               next unless file_content
 
               key_type, key = file_content.split(' ')
-              ssh_list << Facter::Util::Resolvers::SshHelper.create_ssh(key_type, key)
+              ssh = Facter::Util::Resolvers::SshHelper.create_ssh(key_type, key)
+              ssh_list << ssh if ssh
             end
           end
           @fact_list[:ssh] = ssh_list

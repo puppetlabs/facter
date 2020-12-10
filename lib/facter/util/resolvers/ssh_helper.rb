@@ -14,6 +14,8 @@ module Facter
 
           def create_ssh(key_type, key)
             key_name = SSH_NAME[key_type]
+            return unless key_name
+
             decoded_key = Base64.decode64(key)
             ssh_fp = SSH_FINGERPRINT[key_name]
             sha1 = "SSHFP #{ssh_fp} 1 #{Digest::SHA1.new.update(decoded_key)}"

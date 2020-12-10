@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative 'ffi/ffi.rb'
-
 module Facter
   module Resolvers
     module Solaris
@@ -25,8 +24,13 @@ module Facter
                 obtain_info_for_interface(lifreq)
               end
 
-              @fact_list = { interfaces: @interfaces } unless @interfaces.empty?
               @fact_list[:primary_interface] = Facter::Util::Resolvers::Networking::PrimaryInterface.read_from_route
+
+              unless @interfaces.empty?
+                @fact_list = { interfaces: @interfaces }
+                @fact_list[:primary_interface] ||=
+                  Facter::Util::Resolvers::Networking::PrimaryInterface.find_in_interfaces(@interfaces)
+              end
 
               Facter::Util::Resolvers::Networking.expand_main_bindings(@fact_list)
             rescue StandardError => e

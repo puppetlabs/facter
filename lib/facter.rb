@@ -334,7 +334,8 @@ module Facter
 
       resolved_facts = Facter::FactManager.instance.resolve_facts
       resolved_facts.reject! { |fact| fact.type == :custom && fact.value.nil? }
-      Facter::FactCollection.new.build_fact_collection!(resolved_facts)
+      collection = Facter::FactCollection.new.build_fact_collection!(resolved_facts)
+      Hash[collection]
     end
 
     # Check whether printing stack trace is enabled

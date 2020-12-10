@@ -43,6 +43,7 @@ module Facter
                   return route[ROUTE_TABLE_MAPPING['Iface']]
                 end
               end
+
               nil
             end
 
@@ -64,7 +65,9 @@ module Facter
                   return iface_name unless Facter::Util::Resolvers::Networking.ignored_ip_address(binding[:address])
                 end
 
-                interface[:bindings6]&.each do |binding|
+                next unless interface[:bindings6]
+
+                interface[:bindings6].each do |binding|
                   return iface_name unless Facter::Util::Resolvers::Networking.ignored_ip_address(binding[:address])
                 end
               end
