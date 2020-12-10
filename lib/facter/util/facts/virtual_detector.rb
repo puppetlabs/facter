@@ -8,7 +8,7 @@ module Facter
           @log = Facter::Log.new(self)
         end
 
-        def platform # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+        def platform
           fact_value = check_docker_lxc || check_dmi || check_freebsd || check_gce || retrieve_from_virt_what
           fact_value ||= check_vmware || check_open_vz || check_vserver || check_xen || check_other_facts
           fact_value ||= check_lspci || 'physical'

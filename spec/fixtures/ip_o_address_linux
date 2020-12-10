@@ -1,5 +1,0 @@
-1: lo    inet 127.0.0.1/8 scope host lo\       valid_lft forever preferred_lft forever
-1: lo    inet6 ::1/128 scope host \       valid_lft forever preferred_lft forever
-2: ens160    inet 10.16.119.155/20 brd 10.16.127.255 scope global dynamic ens160\       valid_lft 732sec preferred_lft 732sec
-2: ens160    inet 10.16.127.70/20 brd 10.16.127.255 scope global secondary ens160\       valid_lft forever preferred_lft forever
-2: ens160    inet6 fe80::250:56ff:fe9a:8481/64 scope link \       valid_lft forever preferred_lft forever
