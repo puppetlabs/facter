@@ -1,0 +1,8 @@
+   route to: default
+destination: default
+       mask: default
+    gateway: 10.16.112.1
+  interface: net0
+      flags: <UP,GATEWAY,DONE,STATIC>
+ recvpipe  sendpipe  ssthresh    rtt,ms rttvar,ms  hopcount      mtu     expire
+       0         0         0         0         0         0      1500         0
