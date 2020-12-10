@@ -13,16 +13,19 @@ module Facter
         end
 
         def read_facts(fact_name)
-          primary_interface
           interfaces_data
+          primary_interface
           Facter::Util::Resolvers::Networking.expand_main_bindings(@fact_list)
           @fact_list[fact_name]
         end
 
         def primary_interface
-          result = Facter::Core::Execution.execute('route -n get default', logger: log)
+          primary_helper = Facter::Util::Resolvers::Networking::PrimaryInterface
+          primary_interface ||= primary_helper.read_from_route
 
-          @fact_list[:primary_interface] = result.match(/interface: (.+)/)&.captures&.first
+          primary_interface ||= primary_helper.find_in_interfaces(@fact_list[:interfaces])
+
+          @fact_list[:primary_interface] = primary_interface
         end
 
         def interfaces_data

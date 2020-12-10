@@ -93,6 +93,8 @@ Metrics/ClassLength:
     - 'lib/facter/framework/core/cache_manager.rb'
     - 'install.rb'
     - 'scripts/generate_changelog.rb'
+    - 'lib/facter/resolvers/solaris/networking.rb'
+
 
 Naming/AccessorMethodName:
   Exclude:

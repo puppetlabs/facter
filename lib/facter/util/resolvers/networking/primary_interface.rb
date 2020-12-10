@@ -43,6 +43,8 @@ module Facter
                   return route[ROUTE_TABLE_MAPPING['Iface']]
                 end
               end
+
+              nil
             end
 
             def read_from_ip_route
@@ -59,9 +61,11 @@ module Facter
 
             def find_in_interfaces(interfaces)
               interfaces.each do |iface_name, interface|
-                interface[:bindings].each do |binding|
+                interface[:bindings]&.each do |binding|
                   return iface_name unless Facter::Util::Resolvers::Networking.ignored_ip_address(binding[:address])
                 end
+
+                next unless interface[:bindings6]
 
                 interface[:bindings6].each do |binding|
                   return iface_name unless Facter::Util::Resolvers::Networking.ignored_ip_address(binding[:address])

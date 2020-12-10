@@ -74,6 +74,10 @@ module Facter
             ipaddr.to_i.to_s(2).count('1')
           end
 
+          def format_mac_address(address)
+            address.split('.').map { |e| format('%<mac_address>02s', mac_address: e) }.join(':').tr(' ', '0')
+          end
+
           private
 
           def expand_interfaces(interfaces)
