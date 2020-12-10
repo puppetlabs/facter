@@ -8,8 +8,9 @@ describe Facter::Resolvers::Networking do
   describe '#resolve' do
     before do
       networking.instance_variable_set(:@log, log_spy)
-      allow(Facter::Core::Execution).to receive(:execute).with('route -n get default', logger: log_spy)
-                                                         .and_return(primary)
+      allow(Facter::Util::Resolvers::Networking::PrimaryInterface)
+        .to receive(:read_from_route)
+        .and_return(primary)
       allow(Facter::Core::Execution).to receive(:execute).with('ifconfig -a', logger: log_spy).and_return(interfaces)
       allow(Facter::Core::Execution)
         .to receive(:execute).with('ipconfig getoption en0 server_identifier', logger: log_spy).and_return(dhcp)
@@ -25,7 +26,7 @@ describe Facter::Resolvers::Networking do
 
     let(:interfaces) { load_fixture('ifconfig_mac').read }
     let(:dhcp) { '192.168.143.1 ' }
-    let(:primary) { load_fixture('osx_route').read }
+    let(:primary) { 'en0' }
 
     it 'detects primary interface' do
       expect(networking.resolve(:primary_interface)).to eq('en0')
@@ -127,10 +128,10 @@ describe Facter::Resolvers::Networking do
     end
 
     context 'when primary interface could not be retrieved' do
-      let(:primary) { 'invalid output' }
+      let(:primary) { nil }
 
-      it 'returns primary interface as nil' do
-        expect(networking.resolve(:primary_interface)).to be(nil)
+      it 'returns primary interface as from interfaces' do
+        expect(networking.resolve(:primary_interface)).to eq('en0')
       end
     end
 

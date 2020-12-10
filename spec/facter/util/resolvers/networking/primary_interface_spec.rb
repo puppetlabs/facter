@@ -22,12 +22,26 @@ describe Facter::Util::Resolvers::Networking::PrimaryInterface do
 
   describe '#read_from_proc_route' do
     before do
-      allow(Facter::Util::FileHelper).to receive(:safe_read).with('/proc/net/route', '') \
-                                                            .and_return(load_fixture('proc_net_route'))
+      allow(Facter::Util::FileHelper)
+        .to receive(:safe_read)
+        .with('/proc/net/route', '') \
+        .and_return(output)
     end
 
-    it 'parses output /proc/net/route file' do
-      expect(primary_interface.read_from_proc_route).to eq('ens160')
+    context 'when proc net route has output' do
+      let(:output) { load_fixture('proc_net_route').read }
+
+      it 'parses output /proc/net/route file' do
+        expect(primary_interface.read_from_proc_route).to eq('ens160')
+      end
+    end
+
+    context 'when proc net route has no output' do
+      let(:output) { load_fixture('proc_net_route_empty').read }
+
+      it 'parses output /proc/net/route file' do
+        expect(primary_interface.read_from_proc_route).to eq(nil)
+      end
     end
   end
 
