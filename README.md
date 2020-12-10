@@ -1,4 +1,4 @@
-# facter-ng
+# facter
 
 [![Gem Version](https://badge.fury.io/rb/facter.svg)](https://badge.fury.io/rb/facter)
 [<img src="https://img.shields.io/badge/slack-puppet--dev-brightgreen?logo=slack">](https://puppetcommunity.slack.com/messages/C0W1X7ZAL)
