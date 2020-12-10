@@ -96,4 +96,33 @@ describe Facter::Resolvers::SshResolver do
       end
     end
   end
+
+  describe 'invalid files' do
+    let(:paths) { %w[/etc/ssh /usr/local/etc/ssh /etc /usr/local/etc /etc/opt/ssh] }
+    let(:file_names) { %w[ssh_host_rsa_key.pub ssh_host_ecdsa_key.pub ssh_host_ed25519_key.pub] }
+
+    before do
+      paths.each { |path| allow(File).to receive(:directory?).with(path).and_return(false) unless path == '/etc' }
+      allow(File).to receive(:directory?).with('/etc').and_return(true)
+
+      allow(Facter::Util::FileHelper).to receive(:safe_read)
+        .with('/etc/ssh_host_ecdsa_key.pub', nil).and_return('invalid key')
+      allow(Facter::Util::FileHelper).to receive(:safe_read)
+        .with('/etc/ssh_host_dsa_key.pub', nil).and_return(nil)
+      allow(Facter::Util::FileHelper).to receive(:safe_read)
+        .with('/etc/ssh_host_rsa_key.pub', nil).and_return(nil)
+      allow(Facter::Util::FileHelper).to receive(:safe_read)
+        .with('/etc/ssh_host_ed25519_key.pub', nil).and_return(nil)
+    end
+
+    after do
+      Facter::Resolvers::SshResolver.invalidate_cache
+    end
+
+    context 'when reading invalid ssh key' do
+      it 'returns empty array' do
+        expect(Facter::Resolvers::SshResolver.resolve(:ssh)).to eq([])
+      end
+    end
+  end
 end
