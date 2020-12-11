@@ -27,7 +27,7 @@ module Facter
               @fact_list[:primary_interface] = Facter::Util::Resolvers::Networking::PrimaryInterface.read_from_route
 
               unless @interfaces.empty?
-                @fact_list = { interfaces: @interfaces }
+                @fact_list[:interfaces] = @interfaces
                 @fact_list[:primary_interface] ||=
                   Facter::Util::Resolvers::Networking::PrimaryInterface.find_in_interfaces(@interfaces)
               end
@@ -45,7 +45,9 @@ module Facter
             add_mac(lifreq)
             add_bindings(lifreq)
             add_mtu(lifreq)
-            @interfaces[lifreq.name][:dhcp] = Facter::Util::Resolvers::Networking::Dhcp.get(lifreq.name, @log)
+
+            dhcp = Facter::Util::Resolvers::Networking::Dhcp.get(lifreq.name, @log)
+            @interfaces[lifreq.name][:dhcp] = dhcp if dhcp
           end
 
           def add_mac(lifreq)
