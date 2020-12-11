@@ -177,12 +177,20 @@ module Facter
         # - descending by weight
         # - multiple facts have the same weight but different types, the :external fact take precedence
         # - multiple facts with the same weight and type, the order is preserved.
-        # note: sort_by is  slower than .sort
+        # note: sort_by with index is slower than .sort
         # we cannot use .sort because it is not stable: https://bugs.ruby-lang.org/issues/1089
-
         # solution from: https://bugs.ruby-lang.org/issues/1089#note-10
+
+        # rubocop:disable Style/NestedTernaryOperator
         idx = 0
-        resolutions.sort_by { |x| [-x.weight, (x.fact_type == :external ? 0 : 1), idx += 1] }
+        resolutions.sort_by do |x|
+          [
+            -x.weight,
+            x.respond_to?(:fact_type) ? x.fact_type == :external ? 0 : 1 : 1,
+            idx += 1
+          ]
+        end
+        # rubocop:enable Style/NestedTernaryOperator
       end
 
       def find_first_real_value(resolutions)
