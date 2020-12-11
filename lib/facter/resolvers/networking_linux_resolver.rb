@@ -83,14 +83,18 @@ module Facter
 
         def extract_mac_address(interface)
           mac = get_bonded_interface_mac(interface.name)
-          if mac.nil?
-            if Socket.const_defined? :PF_LINK
-              mac = interface.addr&.getnameinfo&.first #sometimes it returns localhost, ip but mac also
-            elsif Socket.const_defined? :PF_PACKET
-              return if interface.addr.nil? || interface.addr.inspect_sockaddr.nil?
+          begin
+            if mac.nil?
+              if Socket.const_defined? :PF_LINK
+                mac = interface.addr&.getnameinfo&.first #sometimes it returns localhost, ip but mac also
+              elsif Socket.const_defined? :PF_PACKET
+                return if interface.addr.nil? || interface.addr.inspect_sockaddr.nil?
 
-              mac = interface.addr&.inspect_sockaddr[/hwaddr=([\h:]+)/, 1]
+                mac = interface.addr&.inspect_sockaddr[/hwaddr=([\h:]+)/, 1]
+              end
             end
+          rescue StandardError => e
+            log.debug("Could not read mac, got #{e}")
           end
           mac if !mac.nil? && mac != '00:00:00:00:00:00' && mac =~ /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/
         end
