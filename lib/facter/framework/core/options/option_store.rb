@@ -26,7 +26,7 @@ module Facter
     @config_file_external_dir = []
     @default_external_dir = []
     @fact_groups = {}
-    @sequential = false
+    @sequential = true
     @ttls = []
     @block_list = []
     @color = true
@@ -192,7 +192,7 @@ module Facter
         @fact_groups = {}
         @block_list = {}
         @color = true
-        @sequential = false
+        @sequential = true
         @ttls = []
         @trace = false
         @timing = false

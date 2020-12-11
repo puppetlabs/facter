@@ -36,7 +36,7 @@ describe Facter::OptionStore do
         config_file_external_dir: [],
         default_external_dir: [],
         fact_groups: {},
-        sequential: false,
+        sequential: true,
         block_list: {},
         color: true,
         trace: false,
