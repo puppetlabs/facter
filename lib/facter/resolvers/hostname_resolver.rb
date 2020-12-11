@@ -48,7 +48,7 @@ module Facter
             @log.debug("Socket.getaddrinfo failed to retrieve fqdn for hostname #{host} with: #{e}")
             return
           end
-          return if name.nil? || name.empty? || host == name[2]
+          return if name.nil? || name.empty? || host == name[2] || name[2] == name[3]
 
           name[2]
         end
