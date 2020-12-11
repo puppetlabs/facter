@@ -9,8 +9,9 @@ module Facter
             def get(interface_name, log = nil)
               dhcpinfo_command = Facter::Core::Execution.which('dhcpinfo') || '/sbin/dhcpinfo'
               result = Facter::Core::Execution.execute("#{dhcpinfo_command} -i #{interface_name} ServerID", logger: log)
+              result.chomp!
 
-              result.chomp
+              result.empty? ? nil : result
             end
           end
         end
