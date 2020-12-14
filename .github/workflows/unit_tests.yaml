@@ -26,7 +26,8 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
       - run: gem update bundler
       - run: bundle install --jobs 3 --retry 3
-      - run: bundle exec rake spec
+      - run: bundle exec rspec --order random
+      - run: bundle exec rspec --order random spec/integration --tag integration
 
   windows_unit_tests:
     runs-on: windows-2019
@@ -40,4 +41,5 @@ jobs:
           ruby-version: 2.7
       - run: gem update bundler
       - run: bundle install --jobs 3 --retry 3
-      - run: bundle exec rake spec
+      - run: bundle exec rspec --order random
+      - run: bundle exec rspec --order random spec/integration --tag integration

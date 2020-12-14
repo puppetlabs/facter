@@ -7,8 +7,6 @@ ROOT_DIR = Pathname.new(File.expand_path('..', __dir__)) unless defined?(ROOT_DI
 ENV['RACK_ENV'] = 'test'
 
 require 'bundler/setup'
-require 'coveralls'
-Coveralls.wear!
 
 require 'open3'
 require 'thor'
@@ -26,18 +24,23 @@ Dir.glob(File.join('./lib/facter/util', '/**/*/', '*.rb'), &method(:require))
 Dir.glob(File.join('./lib/facter/facts', '/**/*/', '*.rb'), &method(:require))
 Dir.glob(File.join('./lib/facter/resolvers', '/**/*/', '*.rb'), &method(:require))
 
-# Configure SimpleCov
-SimpleCov.start do
-  track_files 'lib/**/*.rb'
-  add_filter 'spec'
+# Only run simplecov if we run all tests
+if ARGV.grep(%r{spec/}).empty?
+  require 'simplecov'
+
+  # Configure SimpleCov
+  SimpleCov.start do
+    track_files 'lib/**/*.rb'
+    add_filter 'spec'
+  end
+
+  default_coverage = 90
+  SimpleCov.minimum_coverage ENV['COVERAGE'] || default_coverage
 end
 
 def colorize(str, color)
   "#{color}#{str}#{Facter::RESET}"
 end
-
-default_coverage = 90
-SimpleCov.minimum_coverage ENV['COVERAGE'] || default_coverage
 
 # Configure RSpec
 RSpec.configure do |config|

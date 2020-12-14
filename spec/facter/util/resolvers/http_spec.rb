@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'net/http'
+
 describe Facter::Util::Resolvers::Http do
   subject(:http) { Facter::Util::Resolvers::Http }
 
