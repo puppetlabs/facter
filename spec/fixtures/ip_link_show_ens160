@@ -1,0 +1,2 @@
+2: ens160: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP mode DEFAULT group default qlen 1000
+    link/ether 00:50:56:9a:51:af brd ff:ff:ff:ff:ff:ff

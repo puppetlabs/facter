@@ -1,0 +1,2 @@
+4: eth2: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc fq_codel master bond0 state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:29:dc:a5 brd ff:ff:ff:ff:ff:ff

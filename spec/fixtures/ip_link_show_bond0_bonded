@@ -1,0 +1,2 @@
+6: bond0: <BROADCAST,MULTICAST,MASTER,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:29:dc:a5 brd ff:ff:ff:ff:ff:ff

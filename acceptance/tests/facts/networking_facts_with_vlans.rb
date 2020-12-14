@@ -5,7 +5,6 @@ test_name 'networking facts with vlans' do
   confine :except, :platform => 'aix'
   confine :except, :platform => 'osx'
   confine :except, :platform => 'solaris'
-  confine :except, :platform => 'amazon' # unable to create VLANs on Amazon 6
 
   #
   # This test is intended to ensure that networking facts resolve vlans

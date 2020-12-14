@@ -60,13 +60,13 @@ test_name 'networking facts with secondary ip' do
 
     networking_facts = JSON.parse(on(agent, facter('networking --json')).stdout)
 
-    step "Check unlabeled secondary interface is not found" do
+    step "Check labeled secondary interfaces are found" do
       expected_interfaces(interface, 2).each do |fact_tokens, regex|
         assert_match(regex, networking_facts.dig(*fact_tokens).to_s)
       end
     end
 
-    step "Check secondary interfaces are inside the bindings of the primary interface" do
+    step "Check unlabeled secondary interface is inside the bindings of the primary interface" do
       expected_bindings(interface, 2).each do |fact_tokens, regex|
         assert_match(regex, networking_facts.dig(*fact_tokens).to_s)
       end
