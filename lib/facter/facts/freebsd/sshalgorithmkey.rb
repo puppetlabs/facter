@@ -8,7 +8,7 @@ module Facts
 
       def call_the_resolver
         facts = []
-        result = Facter::Resolvers::SshResolver.resolve(:ssh)
+        result = Facter::Resolvers::Ssh.resolve(:ssh)
         result.each { |ssh| facts << Facter::ResolvedFact.new("ssh#{ssh.name.to_sym}key", ssh.key, :legacy) }
         facts
       end

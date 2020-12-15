@@ -14,13 +14,13 @@ describe Facts::Aix::SshfpAlgorithm do
     let(:legacy_fact2) { { name: 'rsa', value: "sha12\nsha2562" } }
 
     before do
-      allow(Facter::Resolvers::SshResolver).to \
+      allow(Facter::Resolvers::Ssh).to \
         receive(:resolve).with(:ssh).and_return(ssh)
     end
 
-    it 'calls Facter::Resolvers::SshResolver' do
+    it 'calls Facter::Resolvers::Ssh' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::SshResolver).to have_received(:resolve).with(:ssh)
+      expect(Facter::Resolvers::Ssh).to have_received(:resolve).with(:ssh)
     end
 
     it 'returns a list of resolved facts' do

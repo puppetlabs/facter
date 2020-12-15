@@ -16,13 +16,13 @@ describe Facts::Aix::Ssh do
     end
 
     before do
-      allow(Facter::Resolvers::SshResolver).to \
+      allow(Facter::Resolvers::Ssh).to \
         receive(:resolve).with(:ssh).and_return(ssh)
     end
 
-    it 'calls Facter::Resolvers::SshResolver' do
+    it 'calls Facter::Resolvers::Ssh' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::SshResolver).to have_received(:resolve).with(:ssh)
+      expect(Facter::Resolvers::Ssh).to have_received(:resolve).with(:ssh)
     end
 
     it 'returns a resolved fact' do

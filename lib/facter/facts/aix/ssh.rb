@@ -16,7 +16,7 @@ module Facts
       end
 
       def resolver_data
-        Facter::Resolvers::SshResolver.resolve(:ssh)
+        Facter::Resolvers::Ssh.resolve(:ssh)
       end
 
       def create_ssh_fact(ssh)
