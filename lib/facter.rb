@@ -3,9 +3,9 @@
 require 'pathname'
 require_relative 'util/api_debugger' if ENV['API_DEBUG']
 
-require 'facter/version'
-require 'facter/framework/core/file_loader'
-require 'facter/framework/core/options/options_validator'
+require_relative 'facter/version'
+require_relative 'facter/framework/core/file_loader'
+require_relative 'facter/framework/core/options/options_validator'
 
 module Facter
   class ResolveCustomFactError < StandardError; end
@@ -24,7 +24,7 @@ module Facter
     #
     # @api private
     def resolve(args_as_string)
-      require 'facter/framework/cli/cli_launcher'
+      require_relative 'facter/framework/cli/cli_launcher'
 
       args = args_as_string.split(' ')
 

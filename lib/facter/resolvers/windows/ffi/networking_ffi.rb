@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require 'facter/resolvers/windows/ffi/ffi'
-require 'facter/resolvers/windows/ffi/network_utils'
-require 'facter/resolvers/windows/ffi/ip_adapter_addresses_lh'
+require_relative '../../../../facter/resolvers/windows/ffi/ffi'
+require_relative '../../../../facter/resolvers/windows/ffi/network_utils'
+require_relative '../../../../facter/resolvers/windows/ffi/ip_adapter_addresses_lh'
 
 module NetworkingFFI
   extend FFI::Library

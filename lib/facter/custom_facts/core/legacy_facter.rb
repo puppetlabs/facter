@@ -18,7 +18,7 @@
 
 require 'pathname'
 
-require 'facter/custom_facts/core/file_loader'
+require_relative '../../../facter/custom_facts/core/file_loader'
 
 # Functions as a hash of 'facts' about your system system, such as MAC
 # address, IP address, architecture, etc.

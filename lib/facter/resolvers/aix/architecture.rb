@@ -14,7 +14,7 @@ module Facter
         end
 
         def read_architecture(fact_name)
-          require 'facter/util/aix/odm_query'
+          require_relative '../../../facter/util/aix/odm_query'
 
           proc_number = read_proc
           odmquery = Facter::Util::Aix::ODMQuery.new

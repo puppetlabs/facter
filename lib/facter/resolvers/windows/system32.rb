@@ -15,7 +15,7 @@ module Facter
         end
 
         def retrieve_windows_binaries_path
-          require 'facter/resolvers/windows/ffi/system32_ffi'
+          require_relative '../../../facter/resolvers/windows/ffi/system32_ffi'
 
           windows_path = ENV['SystemRoot']
 

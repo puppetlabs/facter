@@ -16,7 +16,7 @@ module Facter
         end
 
         def find_username
-          require 'facter/resolvers/windows/ffi/identity_ffi'
+          require_relative '../../../facter/resolvers/windows/ffi/identity_ffi'
 
           size_ptr = FFI::MemoryPointer.new(:win32_ulong, 1)
           IdentityFFI::GetUserNameExW(NAME_SAM_COMPATIBLE, FFI::Pointer::NULL, size_ptr)

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'facter/config'
+require_relative '../../../facter/config'
 
 module Facter
   class OsHierarchy
