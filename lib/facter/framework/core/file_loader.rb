@@ -15,7 +15,10 @@ def load_dir(*dirs)
   return unless Dir.exist?(folder_path.tr('*', ''))
 
   files_to_require = Dir.glob(File.join(folder_path, '*.rb')).reject { |file| file =~ %r{/ffi/} }
-  files_to_require.each(&method(:require))
+  files_to_require.each do |file|
+    rpath = file[File.dirname(__FILE__).length+1..-1]
+    require_relative rpath
+  end
 end
 
 load_dir(%w[framework core options])
