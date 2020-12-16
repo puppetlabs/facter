@@ -6,7 +6,7 @@ module Facts
       FACT_NAME = 'ssh'
 
       def call_the_resolver
-        result = Facter::Resolvers::SshResolver.resolve(:ssh)
+        result = Facter::Resolvers::Ssh.resolve(:ssh)
         ssh_facts = {}
         result.each { |ssh| ssh_facts.merge!(create_ssh_fact(ssh)) }
         Facter::ResolvedFact.new(FACT_NAME, ssh_facts)

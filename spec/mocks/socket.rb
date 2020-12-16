@@ -16,4 +16,6 @@ class AddrInfo
   def ipv4?; end
 
   def getnameinfo; end
+
+  def inspect_sockaddr; end
 end

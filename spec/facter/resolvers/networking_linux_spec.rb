@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 def ifaddr_obj(name, ip, mac, netmask, ipv4_type)
-  addr_info = instance_spy(AddrInfo, getnameinfo: [mac], ip_address: ip, ip?: true, ipv4?: ipv4_type)
+  addr_info = instance_spy(AddrInfo, getnameinfo: [mac], inspect_sockaddr: "hwaddr=#{mac}",
+                                     ip_address: ip, ip?: true, ipv4?: ipv4_type)
   netmask = instance_spy(AddrInfo, ip_address: netmask)
   instance_spy(Ifaddr, name: name, addr: addr_info, netmask: netmask)
 end
@@ -26,6 +27,7 @@ describe Facter::Resolvers::NetworkingLinux do
       allow(Facter::Core::Execution).to receive(:execute)
         .with('ip link show', logger: log_spy).and_return(load_fixture('ip_link_show').read)
       allow(Socket).to receive(:getifaddrs).and_return(ifaddrs)
+      allow(Socket).to receive(:const_defined?).with(:PF_LINK).and_return(true)
       allow(Facter::Core::Execution).to receive(:execute)
         .with('ip link show ens160', logger: log_spy).and_return(load_fixture('ip_link_show_ens160').read)
       allow(Facter::Core::Execution).to receive(:execute)
@@ -292,6 +294,23 @@ describe Facter::Resolvers::NetworkingLinux do
       end
     end
 
+    context 'when the defined constant is Socket::PF_PACKET, not PF_LINK' do
+      let(:ifaddrs) do
+        [
+          ifaddr_obj('ens160', '10.16.119.155', '00:50:56:9a:61:46', '255.255.240.0', true)
+        ]
+      end
+
+      before do
+        allow(Socket).to receive(:const_defined?).with(:PF_LINK).and_return(false)
+        allow(Socket).to receive(:const_defined?).with(:PF_PACKET).and_return(true)
+      end
+
+      it 'manages to retrieve mac for ens160' do
+        expect(networking_linux.resolve(:interfaces)['ens160'][:mac]).to eq('00:50:56:9a:61:46')
+      end
+    end
+
     context 'when Ifaddr.addr throws an error' do
       before do
         allow(ifaddrs[4]).to receive(:addr).and_raise(SocketError)
@@ -385,7 +404,7 @@ describe Facter::Resolvers::NetworkingLinux do
             allow(addr_returned_object).to receive(:inspect_sockaddr) do
               double.tap do |inspect_sockaddr_obj|
                 allow(inspect_sockaddr_obj).to receive(:nil?).and_return(false)
-                allow(inspect_sockaddr_obj).to receive(:[]).with(/hwaddr=([\h:]+)/, 1).and_raise(SocketError)
+                allow(inspect_sockaddr_obj).to receive(:match).with(/hwaddr=([\h:]+)/).and_raise(SocketError)
               end
             end
             allow(addr_returned_object).to receive(:ip?).and_return(true)
@@ -434,27 +453,33 @@ describe Facter::Resolvers::NetworkingLinux do
       end
     end
 
-    context 'when primary interface can not be read from /proc/net/route' do
+    context 'when asking for primary interface' do
       before do
+        Facter::Util::Resolvers::Networking::PrimaryInterface.instance_variable_set(:@log, log_spy)
         allow(Facter::Util::FileHelper).to receive(:safe_read).with('/proc/net/route', '').and_return('')
-        allow(Facter::Core::Execution).to receive(:execute)
-          .with('ip route show default', logger: log_spy).and_return(load_fixture('ip_route_show_default').read)
+        allow(Facter::Core::Execution).to receive(:which).with('ip').and_return('ip available')
       end
 
-      it 'returns primary interface' do
-        expect(networking_linux.resolve(:primary_interface)).to eq('ens160')
-      end
-    end
+      context 'when primary interface can not be read from /proc/net/route' do
+        before do
+          allow(Facter::Core::Execution).to receive(:execute)
+            .with('ip route show default', logger: log_spy).and_return(load_fixture('ip_route_show_default').read)
+        end
 
-    context 'when primary interface can not be read' do
-      before do
-        allow(Facter::Util::FileHelper).to receive(:safe_read).with('/proc/net/route', '').and_return('')
-        allow(Facter::Core::Execution).to receive(:execute)
-          .with('ip route show default', logger: log_spy).and_return(nil)
+        it 'returns primary interface' do
+          expect(networking_linux.resolve(:primary_interface)).to eq('ens160')
+        end
       end
 
-      it 'returns primary interface as the first not ignored ip' do
-        expect(networking_linux.resolve(:primary_interface)).to eq('ens160')
+      context 'when primary interface can not be read' do
+        before do
+          allow(Facter::Core::Execution).to receive(:execute)
+            .with('ip route show default', logger: log_spy).and_return('some invalid output')
+        end
+
+        it 'returns primary interface as the first not ignored ip' do
+          expect(networking_linux.resolve(:primary_interface)).to eq('ens160')
+        end
       end
     end
   end

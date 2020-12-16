@@ -85,11 +85,11 @@ Metrics/ClassLength:
   Exclude:
     - 'lib/facter/resolvers/partitions.rb'
     - 'lib/facter/custom_facts/util/fact.rb'
-    - 'lib/facter/resolvers/windows/networking_resolver.rb'
+    - 'lib/facter/resolvers/windows/networking.rb'
     - 'lib/facter/custom_facts/util/collection.rb'
     - 'lib/facter/framework/core/options/option_store.rb'
     - 'lib/facter/framework/cli/cli.rb'
-    - 'lib/facter/resolvers/networking_linux_resolver.rb'
+    - 'lib/facter/resolvers/networking_linux.rb'
     - 'lib/facter/framework/core/cache_manager.rb'
     - 'install.rb'
     - 'scripts/generate_changelog.rb'

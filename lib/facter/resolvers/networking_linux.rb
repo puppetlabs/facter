@@ -119,13 +119,17 @@ module Facter
           if Socket.const_defined? :PF_LINK
             ifaddr.addr&.getnameinfo&.first # sometimes it returns localhost or ip
           elsif Socket.const_defined? :PF_PACKET
-            return if ifaddr.addr.nil? || ifaddr.addr.inspect_sockaddr.nil?
+            return if ifaddr.addr.nil?
 
-            result = ifaddr.addr&.inspect_sockaddr
-            result.match(/hwaddr=([\h:]+)/)&.captures&.first
+            search_mac_in_sockaddr(ifaddr)
           end
         rescue StandardError => e
           log.debug("Could not read mac, got #{e}")
+        end
+
+        def search_mac_in_sockaddr(ifaddr)
+          result = ifaddr.addr.inspect_sockaddr
+          result&.match(/hwaddr=([\h:]+)/)&.captures&.first
         end
 
         def mtu(ifaddr, interfaces, mtu_and_indexes)
@@ -224,7 +228,7 @@ module Facter
           search_systemd_netif_leases(interface_data, index_and_mtu)
           search_dhclient_leases(interface_data, interface_name)
           search_internal_leases(interface_data, interface_name)
-          search_dhcpcd_command(interface_data, interface_name)
+          search_with_dhcpcd_command(interface_data, interface_name)
         end
 
         def search_systemd_netif_leases(interface_data, index_and_mtu)
@@ -270,7 +274,7 @@ module Facter
           interface_data[:dhcp] = dhcp[1] if dhcp
         end
 
-        def search_dhcpcd_command(interface_data, interface_name)
+        def search_with_dhcpcd_command(interface_data, interface_name)
           return unless interface_data[:dhcp].nil?
 
           output = Facter::Core::Execution.execute("dhcpcd -U #{interface_name}", logger: log)

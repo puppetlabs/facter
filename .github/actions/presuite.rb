@@ -86,6 +86,10 @@ end
 def install_facter
   message('OVERWRITE FACTER FROM PUPPET AGENT')
 
+  # clean facter directory
+  FileUtils.rm_r(facter_lib_path)
+  FileUtils.mkdir(facter_lib_path)
+
   Dir.chdir('../') do
     run("\'#{puppet_ruby}\' install.rb --bindir=\'#{puppet_puppet_bin_dir}\' " \
     "--sitelibdir=\'#{facter_lib_path.gsub('facter', '')}\'")
