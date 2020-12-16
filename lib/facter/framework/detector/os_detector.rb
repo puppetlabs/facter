@@ -45,6 +45,7 @@ class OsDetector
     if hierarchy.empty?
       @log.debug("Could not detect hierarchy using os identifier: #{identifier} , trying with family")
 
+      # https://www.commandlinux.com/man-page/man5/os-release.5.html
       detect_family.to_s.split.each do |family|
         hierarchy = @os_hierarchy.construct_hierarchy(family)
         return hierarchy unless hierarchy.empty?

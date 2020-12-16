@@ -8,8 +8,10 @@ module Facts
         ALIASES = 'osfamily'
 
         def call_the_resolver
-          fact_value = Facter::Resolvers::OsRelease.resolve(:id_like)
-          fact_value ||= Facter::Resolvers::OsRelease.resolve(:id)
+          id = Facter::Resolvers::OsRelease.resolve(:id_like)
+          id ||= Facter::Resolvers::OsRelease.resolve(:id)
+
+          fact_value = Facter::Util::Facts.discover_family(id)
 
           [Facter::ResolvedFact.new(FACT_NAME, fact_value.capitalize),
            Facter::ResolvedFact.new(ALIASES, fact_value.capitalize, :legacy)]
