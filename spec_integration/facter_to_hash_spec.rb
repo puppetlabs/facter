@@ -1,33 +1,33 @@
 # frozen_string_literal: true
 
-require_relative 'helper'
+require_relative 'integration_helper'
 
-describe Facter, :integration do
+describe Facter do
   context 'when calling facter cli' do
     context 'with no user query' do
       it 'returns no stderr' do
-        _, err, = IntegrationHelper.facter_exec
+        _, err, = IntegrationHelper.exec_facter
 
-        expect(err).to be_empty
+        expect(err).not_to match(/ERROR Facter/)
       end
 
       it 'returns 0 exit code' do
-        _, _, status = IntegrationHelper.facter_exec
+        _, _, status = IntegrationHelper.exec_facter
 
         expect(status.exitstatus).to eq(0)
       end
 
       it 'returns valid output' do
-        out, = IntegrationHelper.facter_exec
+        out, = IntegrationHelper.exec_facter
 
-        root_facts = ['memory => {', 'mountpoints =>', 'networking => {',
+        root_facts = ['memory => {', 'networking => {',
                       'os => {', 'path =>', 'processors => {']
 
         expect(out).to include(*root_facts)
       end
 
       it 'returns valid json output' do
-        out, = IntegrationHelper.facter_exec('-j')
+        out, = IntegrationHelper.exec_facter('-j')
 
         expect do
           JSON.parse(out)
@@ -37,31 +37,31 @@ describe Facter, :integration do
 
     context 'with user query' do
       it 'returns fqdn' do
-        out, = IntegrationHelper.facter_exec('fqdn')
+        out, = IntegrationHelper.exec_facter('fqdn')
 
         expect(out).not_to be_empty
       end
 
       it 'returns ip' do
-        out, = IntegrationHelper.facter_exec('ipaddress')
+        out, = IntegrationHelper.exec_facter('ipaddress')
 
         expect(out).to match(/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/)
       end
 
       it 'returns ipaddress6' do
-        out, = IntegrationHelper.facter_exec('ipaddress6')
+        out, = IntegrationHelper.exec_facter('ipaddress6')
 
         expect(out).to match(/([a-z0-9]{1,4}:{1,2})+[a-z0-9]{1,4}/)
       end
 
       it 'returns hostname' do
-        out, = IntegrationHelper.facter_exec('hostname')
+        out, = IntegrationHelper.exec_facter('hostname')
 
         expect(out).not_to be_empty
       end
 
       it 'returns domain', if: IntegrationHelper.jruby? do
-        out, = IntegrationHelper.facter_exec('domain')
+        out, = IntegrationHelper.exec_facter('domain')
 
         expect(out).not_to be_empty
       end

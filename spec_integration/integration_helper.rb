@@ -4,7 +4,7 @@ require 'open3'
 
 class IntegrationHelper
   class << self
-    def facter_exec(*args)
+    def exec_facter(*args)
       cmd = %w[bundle exec facter].concat(args)
       Open3.capture3(*cmd)
     end

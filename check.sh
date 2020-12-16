@@ -6,7 +6,7 @@ echo "<------------- Running unit tests ------------->"
 bundle exec rspec --order random
 
 echo "<------------- Running integration tests ------------->"
-bundle exec rspec --order random spec/integration --tag integration
+bundle exec rspec --default-path spec_integration --order random
 
 echo "<------------- Running rubocop ------------->"
 bundle exec rubocop --parallel
