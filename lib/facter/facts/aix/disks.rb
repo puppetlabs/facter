@@ -4,7 +4,7 @@ module Facts
   module Aix
     class Disks
       FACT_NAME = 'disks'
-      ALIASES = %w[blockdevices blockdevice_.*_size'].freeze
+      ALIASES = %w[blockdevices blockdevice_.*_size].freeze
 
       def call_the_resolver
         facts = []

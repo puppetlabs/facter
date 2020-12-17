@@ -4,7 +4,7 @@ module Facts
   module Solaris
     class Disks
       FACT_NAME = 'disks'
-      ALIASES = %w[blockdevices blockdevice_.*_size blockdevice_.*_vendor'].freeze
+      ALIASES = %w[blockdevices blockdevice_.*_size blockdevice_.*_vendor].freeze
 
       def call_the_resolver
         facts = []
