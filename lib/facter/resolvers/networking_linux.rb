@@ -30,6 +30,7 @@ module Facter
           retrieve_interfaces_with_socket(mtu_and_indexes)
           add_info_from_routing_table
           retrieve_primary_interface
+          retrieve_primary6_interface
           Facter::Util::Resolvers::Networking.expand_main_bindings(@fact_list)
           @fact_list[fact_name]
         end
@@ -289,6 +290,13 @@ module Facter
           primary_interface ||= primary_helper.find_in_interfaces(@fact_list[:interfaces])
 
           @fact_list[:primary_interface] = primary_interface
+        end
+
+        def retrieve_primary6_interface
+          primary_helper = Facter::Util::Resolvers::Networking::PrimaryInterface
+          primary6_interface = primary_helper.read_from_ip6_route
+
+          @fact_list[:primary6_interface] = primary6_interface
         end
       end
     end
