@@ -19,6 +19,7 @@ module Facter
             add_info_from_socket_reader
             add_info_from_routing_table
             retrieve_primary_interface
+            retrieve_primary6_interface
             Facter::Util::Resolvers::Networking.expand_main_bindings(@fact_list)
             add_flags
             @fact_list[fact_name]

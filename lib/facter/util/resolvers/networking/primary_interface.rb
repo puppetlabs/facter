@@ -56,6 +56,16 @@ module Facter
               primary_interface
             end
 
+            def read_from_ip6_route
+              return if Facter::Core::Execution.which('ip').nil?
+
+              ip_command_output = Facter::Core::Execution.execute('ip -json -6 route show default', logger: @log)
+              return if ip_command_output.nil? || ip_command_output.empty?
+
+              require 'json'
+              JSON.parse(ip_command_output).first['dev']
+            end
+
             def find_in_interfaces(interfaces)
               interfaces.each do |iface_name, interface|
                 interface[:bindings]&.each do |binding|
