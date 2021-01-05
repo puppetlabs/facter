@@ -8,6 +8,14 @@ ENV['RACK_ENV'] = 'test'
 
 require 'bundler/setup'
 
+require 'simplecov'
+
+# Configure SimpleCov
+SimpleCov.start do
+  track_files 'lib/**/*.rb'
+  add_filter 'spec'
+end
+
 require 'open3'
 require 'thor'
 require 'fileutils'
@@ -24,19 +32,8 @@ Dir.glob(File.join('./lib/facter/util', '/**/*/', '*.rb'), &method(:require))
 Dir.glob(File.join('./lib/facter/facts', '/**/*/', '*.rb'), &method(:require))
 Dir.glob(File.join('./lib/facter/resolvers', '/**/*/', '*.rb'), &method(:require))
 
-# Only run simplecov if we run all tests
-if ARGV.grep(%r{spec/}).empty?
-  require 'simplecov'
-
-  # Configure SimpleCov
-  SimpleCov.start do
-    track_files 'lib/**/*.rb'
-    add_filter 'spec'
-  end
-
-  default_coverage = 90
-  SimpleCov.minimum_coverage ENV['COVERAGE'] || default_coverage
-end
+default_coverage = 90
+SimpleCov.minimum_coverage ENV['COVERAGE'] || default_coverage
 
 def colorize(str, color)
   "#{color}#{str}#{Facter::RESET}"
