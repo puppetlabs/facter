@@ -27,6 +27,7 @@ jobs:
       - run: gem update bundler
       - run: bundle install --jobs 3 --retry 3
       - run: bundle exec rake spec
+      - run: bundle exec rake spec_integration
 
   windows_unit_tests:
     runs-on: windows-2019
@@ -41,3 +42,4 @@ jobs:
       - run: gem update bundler
       - run: bundle install --jobs 3 --retry 3
       - run: bundle exec rake spec
+      - run: bundle exec rake spec_integration

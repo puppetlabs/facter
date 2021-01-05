@@ -2,11 +2,14 @@
 
 set -e
 
-# run unit tests
-rspec --order random
+echo "<------------- Running unit tests ------------->"
+bundle exec rspec --order random
 
-# run linting
-rubocop --parallel
+echo "<------------- Running integration tests ------------->"
+bundle exec rspec --default-path spec_integration --order random
+
+echo "<------------- Running rubocop ------------->"
+bundle exec rubocop --parallel
 
 # It will be disabled untill we rewrite it's rules
 # rubycritic --no-browser -f console

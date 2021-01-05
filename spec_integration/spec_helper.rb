@@ -14,33 +14,11 @@ require 'fileutils'
 
 require_relative '../lib/facter/resolvers/base_resolver'
 
-Dir[ROOT_DIR.join('spec/mocks/*.rb')].sort.each { |file| require file }
-
 require 'facter'
 require 'facter/framework/cli/cli'
 require 'facter/framework/cli/cli_launcher'
 
-Dir.glob(File.join('./lib/facter/util', '/**/*/', '*.rb'), &method(:require))
-Dir.glob(File.join('./lib/facter/facts', '/**/*/', '*.rb'), &method(:require))
-Dir.glob(File.join('./lib/facter/resolvers', '/**/*/', '*.rb'), &method(:require))
-
-# Only run simplecov if we run all tests
-if ARGV.grep(%r{spec/}).empty?
-  require 'simplecov'
-
-  # Configure SimpleCov
-  SimpleCov.start do
-    track_files 'lib/**/*.rb'
-    add_filter 'spec'
-  end
-
-  default_coverage = 90
-  SimpleCov.minimum_coverage ENV['COVERAGE'] || default_coverage
-end
-
-def colorize(str, color)
-  "#{color}#{str}#{Facter::RESET}"
-end
+require './lib/facter/framework/core/file_loader'
 
 # Configure RSpec
 RSpec.configure do |config|
