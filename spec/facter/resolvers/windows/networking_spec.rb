@@ -197,6 +197,8 @@ describe Facter::Resolvers::Windows::Networking do
           scope6: 'link'
         }
       end
+      let(:reg) { instance_spy('Win32::Registry::HKEY_LOCAL_MACHINE') }
+      let(:domain) { 'my_domain' }
 
       before do
         allow(IpAdapterAddressesLh).to receive(:read_list).with(adapter_address).and_yield(adapter)
@@ -207,8 +209,16 @@ describe Facter::Resolvers::Windows::Networking do
         allow(IpAdapterUnicastAddressLH).to receive(:new).with(ptr).and_return(unicast)
         allow(NetworkUtils).to receive(:find_mac_address).with(adapter).and_return('00:50:56:9A:F8:6B')
         allow(IpAdapterAddressesLh).to receive(:new).with(ptr).and_return(adapter)
-        allow(dns_ptr).to receive(:read_wide_string_without_length).and_return('10.122.0.2')
+        allow(dns_ptr).to receive(:read_wide_string_without_length).and_return('')
         allow(friendly_name_ptr).to receive(:read_wide_string_without_length).and_return('Ethernet0')
+
+        allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open)
+          .with('SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters')
+          .and_yield(reg)
+        allow(reg).to receive(:each)
+          .and_yield('Domain', domain)
+        allow(reg).to receive(:[]).with('Domain').and_return(domain)
+        allow(reg).to receive(:close)
       end
 
       it 'returns interface' do
@@ -225,6 +235,10 @@ describe Facter::Resolvers::Windows::Networking do
           }
         }
         expect(resolver.resolve(:interfaces)).to eql(result)
+      end
+
+      it 'returns domain' do
+        expect(resolver.resolve(:domain)).to eql(domain)
       end
     end
   end

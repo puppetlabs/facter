@@ -54,6 +54,18 @@ describe Facts::Windows::Networking::Fqdn do
       end
     end
 
+    context 'when domain is empty string' do
+      let(:domain_name) { '' }
+      let(:hostname) { 'hostname' }
+      let(:value) { hostname }
+
+      it 'returns hostname as fqdn without a trailing dot' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+          contain_exactly(an_object_having_attributes(name: 'networking.fqdn', value: value),
+                          an_object_having_attributes(name: 'fqdn', value: value, type: :legacy))
+      end
+    end
+
     context 'when hostname is empty' do
       let(:domain_name) { 'domain' }
       let(:hostname) { '' }
