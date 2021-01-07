@@ -12,7 +12,7 @@ module Facts
           hostname = Facter::Resolvers::Hostname.resolve(:hostname)
           return Facter::ResolvedFact.new(FACT_NAME, nil) if !hostname || hostname.empty?
 
-          fact_value = [hostname, domain].compact.join('.')
+          fact_value = domain && !domain.empty? ? [hostname, domain].compact.join('.') : hostname
 
           [Facter::ResolvedFact.new(FACT_NAME, fact_value), Facter::ResolvedFact.new(ALIASES, fact_value, :legacy)]
         end
