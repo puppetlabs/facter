@@ -26,6 +26,7 @@ describe Facter::OptionStore do
         user_query: [],
         strict: false,
         json: false,
+        hocon: false,
         cache: true,
         yaml: false,
         puppet: false,
