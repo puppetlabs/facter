@@ -39,9 +39,6 @@ After cloning the project, run `bundle install` to install all dependencies.
 You can run facter by executing `./bin/facter`.
 The command will output all the facts that facter detected for the current os.
 
-In order to generate a fact, we can use the rake task `rake 'create_fact[<os>,<fact_name>]'` e.g. `rake 'create_fact[ubuntu,facterversion]'`
-When generating a fact, the unit test for that fact is also generated. Facts should call on or more resolvers in order to obtain the data they need.
-
 The implementation can be validated locally by running the `./check.sh` script.
 
 ## Goals - fast, easy, compatible
