@@ -1,2 +1,1 @@
-10.16.112.0/20 dev ens160 proto kernel scope link src 10.16.124.1
 default via 10.16.112.1 dev ens160
