@@ -6,7 +6,6 @@ AllCops:
   Exclude:
     - acceptance/**/*
     - vendor/**/*
-    - lib/facter/resolvers/networking_linux.rb
 
 require:
   - rubocop-performance
