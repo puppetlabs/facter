@@ -34,6 +34,7 @@ module Facter
     @timing = false
     @external_dir = []
     @custom_dir = []
+    @hocon = false
 
     class << self
       attr_reader :debug, :verbose, :log_level, :show_legacy,
@@ -42,7 +43,7 @@ module Facter
       attr_accessor :config, :user_query, :strict, :json,
                     :cache, :yaml, :puppet, :ttls, :block, :cli, :config_file_custom_dir,
                     :config_file_external_dir, :default_external_dir, :fact_groups,
-                    :block_list, :color, :trace, :sequential, :timing
+                    :block_list, :color, :trace, :sequential, :timing, :hocon
 
       attr_writer :external_dir
 
@@ -171,6 +172,7 @@ module Facter
         @ruby = true
         @user_query = []
         @json = false
+        @hocon = false
         @cache = true
         @yaml = false
         @puppet = false
