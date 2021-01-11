@@ -381,7 +381,6 @@ module Facter
     # @api public
     def values(options, user_queries)
       init_cli_options(options, user_queries)
-      Options[:show_legacy] = true
       log_blocked_facts
       resolved_facts = Facter::FactManager.instance.resolve_facts(user_queries)
       resolved_facts.reject! { |fact| fact.type == :custom && fact.value.nil? }
