@@ -43,6 +43,8 @@ module Facter
         @used_resolution_weight = 0
 
         @value = nil
+
+        @log = Facter::Log.new(self)
       end
 
       # Adds a new {Facter::Util::Resolution resolution}.  This requires a
@@ -201,9 +203,25 @@ module Facter
             break
           end
           @used_resolution_weight = resolve.weight
-          return value unless value.nil?
+          next if value.nil?
+
+          log_fact_path(resolve)
+
+          return value
         end
         nil
+      end
+
+      def log_fact_path(resolve)
+        fact_type, resolved_from = if resolve.instance_of?(Facter::Core::Aggregate)
+                                     ['aggregate', resolve.instance_variable_get(:@aggregate).source_location[0]]
+                                   elsif resolve.fact_type == :external
+                                     ['external', resolve.file]
+                                   else
+                                     ['custom', resolve.last_evaluated]
+                                   end
+
+        @log.debug("#{fact_type} fact #{resolve.fact.name} got resolved from: #{resolved_from}")
       end
 
       def announce_when_no_suitable_resolution(resolutions)
