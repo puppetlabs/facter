@@ -8,7 +8,7 @@ module Facts
 
       def call_the_resolver
         resolved_facts = []
-        interfaces = Facter::Resolvers::NetworkingLinux.resolve(:interfaces)
+        interfaces = Facter::Resolvers::Linux::Networking.resolve(:interfaces)
 
         interfaces&.each do |interface_name, info|
           if info[:scope6]

@@ -8,7 +8,7 @@ module Facts
         ALIASES = 'netmask6'
 
         def call_the_resolver
-          fact_value = Facter::Resolvers::NetworkingLinux.resolve(:netmask6)
+          fact_value = Facter::Resolvers::Linux::Networking.resolve(:netmask6)
 
           [Facter::ResolvedFact.new(FACT_NAME, fact_value), Facter::ResolvedFact.new(ALIASES, fact_value, :legacy)]
         end

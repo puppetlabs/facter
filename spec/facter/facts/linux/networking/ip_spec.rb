@@ -7,12 +7,12 @@ describe Facts::Linux::Networking::Ip do
     let(:value) { '10.16.122.163' }
 
     before do
-      allow(Facter::Resolvers::NetworkingLinux).to receive(:resolve).with(:ip).and_return(value)
+      allow(Facter::Resolvers::Linux::Networking).to receive(:resolve).with(:ip).and_return(value)
     end
 
     it 'calls Facter::Resolvers::NetworkingLinux with ip' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::NetworkingLinux).to have_received(:resolve).with(:ip)
+      expect(Facter::Resolvers::Linux::Networking).to have_received(:resolve).with(:ip)
     end
 
     it 'returns ipaddress fact' do

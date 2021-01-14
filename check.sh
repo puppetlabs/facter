@@ -11,5 +11,5 @@ bundle exec rspec --default-path spec_integration --order random
 echo "<------------- Running rubocop ------------->"
 bundle exec rubocop --parallel
 
-# It will be disabled untill we rewrite it's rules
+# It will be disabled until we rewrite it's rules
 # rubycritic --no-browser -f console

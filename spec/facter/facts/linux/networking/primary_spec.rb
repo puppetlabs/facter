@@ -7,12 +7,12 @@ describe Facts::Linux::Networking::Primary do
     let(:value) { 'ens160' }
 
     before do
-      allow(Facter::Resolvers::NetworkingLinux).to receive(:resolve).with(:primary_interface).and_return(value)
+      allow(Facter::Resolvers::Linux::Networking).to receive(:resolve).with(:primary_interface).and_return(value)
     end
 
     it 'calls Facter::Resolvers::NetworkingLinux' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::NetworkingLinux).to have_received(:resolve).with(:primary_interface)
+      expect(Facter::Resolvers::Linux::Networking).to have_received(:resolve).with(:primary_interface)
     end
 
     it 'returns networking.primary fact' do

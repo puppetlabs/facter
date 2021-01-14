@@ -89,7 +89,6 @@ Metrics/ClassLength:
     - 'lib/facter/custom_facts/util/collection.rb'
     - 'lib/facter/framework/core/options/option_store.rb'
     - 'lib/facter/framework/cli/cli.rb'
-    - 'lib/facter/resolvers/networking_linux.rb'
     - 'lib/facter/framework/core/cache_manager.rb'
     - 'install.rb'
     - 'scripts/generate_changelog.rb'
@@ -171,10 +170,10 @@ Style/ModuleFunction:
     - 'lib/facter/custom_facts/core/logging.rb'
 
 Style/HashEachMethods:
-  Enabled: false  # not implemted in ruby 2.3
+  Enabled: false  # not implemented in ruby 2.3
 
 Style/HashTransformKeys:
-  Enabled: false  # not implemted in ruby 2.3
+  Enabled: false  # not implemented in ruby 2.3
 
 Style/HashTransformValues:
-  Enabled: false  # not implemted in ruby 2.3
+  Enabled: false  # not implemented in ruby 2.3
