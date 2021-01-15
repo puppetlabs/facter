@@ -9,6 +9,10 @@
 module Facter
   module Util
     class Fact
+      # The location from where fact is resolved
+      # @return [String]
+      attr_reader :location
+
       # The name of the fact
       # @return [String]
       attr_reader :name
@@ -58,6 +62,10 @@ module Facter
       # @api private
       def add(options = {}, &block)
         @options = Facter::Utils.deep_copy(@options.merge(options))
+
+        @location = options[:file]
+        @location ||= block.source_location if block_given?
+
         define_resolution(nil, options, &block)
       end
 
@@ -213,15 +221,8 @@ module Facter
       end
 
       def log_fact_path(resolve)
-        fact_type, resolved_from = if resolve.instance_of?(Facter::Core::Aggregate)
-                                     ['aggregate', resolve.instance_variable_get(:@aggregate).source_location[0]]
-                                   elsif resolve.fact_type == :external
-                                     ['external', resolve.file]
-                                   else
-                                     ['custom', resolve.last_evaluated]
-                                   end
-
-        @log.debug("#{fact_type} fact #{resolve.fact.name} got resolved from: #{resolved_from}")
+        fact = resolve.fact
+        @log.debug("#{resolve.fact_type} fact #{fact.name} got resolved from: #{fact.location}")
       end
 
       def announce_when_no_suitable_resolution(resolutions)
