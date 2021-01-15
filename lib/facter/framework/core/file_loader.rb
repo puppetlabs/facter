@@ -22,18 +22,18 @@ def load_dir(*dirs)
 end
 
 load_dir(%w[framework core options])
-require_relative '../../../facter/framework/core/options'
-require_relative '../../../facter/framework/logging/logger_helper'
-require_relative '../../../facter/framework/logging/logger'
+require_relative 'options'
+require_relative '../logging/logger_helper'
+require_relative '../logging/logger'
 
-require_relative '../../../facter/util/file_helper'
+require_relative '../../util/file_helper'
 
-require_relative '../../../facter/resolvers/base_resolver'
-require_relative '../../../facter/framework/detector/os_hierarchy'
-require_relative '../../../facter/framework/detector/os_detector'
+require_relative '../../resolvers/base_resolver'
+require_relative '../detector/os_hierarchy'
+require_relative '../detector/os_detector'
 
-require_relative '../../../facter/framework/config/config_reader'
-require_relative '../../../facter/framework/config/fact_groups'
+require_relative '../config/config_reader'
+require_relative '../config/fact_groups'
 
 load_dir(['config'])
 
@@ -58,8 +58,8 @@ os_hierarchy.each { |operating_system| load_dir(['util', operating_system.downca
 os_hierarchy.each { |operating_system| load_dir(['facts', operating_system.downcase, '**']) }
 os_hierarchy.each { |operating_system| load_dir(['resolvers', operating_system.downcase, '**']) }
 
-require_relative '../../../facter/custom_facts/core/legacy_facter'
+require_relative '../../custom_facts/core/legacy_facter'
 load_dir(%w[framework utils])
 
-require_relative '../../../facter/framework/core/fact_augmenter'
-require_relative '../../../facter/framework/parsers/query_parser'
+require_relative 'fact_augmenter'
+require_relative '../../framework/parsers/query_parser'
