@@ -54,6 +54,20 @@ describe Facter::FactGroups do
       end
     end
 
+    context 'with blocked `legacy` group' do
+      before do
+        stub_const('Facter::Config::FACT_GROUPS', 'legacy' => %w[legacy_fact1 legacy_fact2])
+        allow(config_reader).to receive(:block_list).and_return(%w[legacy])
+      end
+
+      # legacy facts are excluded because they are blocked by another mechanism that takes into account the fact's type
+      it 'excludes legacy facts' do
+        blk_list = fact_groups.new
+
+        expect(blk_list.blocked_facts).to be_empty
+      end
+    end
+
     context 'without block_list' do
       before do
         allow(config_reader).to receive(:block_list).and_return([])
