@@ -7,6 +7,8 @@ describe Facter::Resolvers::Windows::Networking do
     let(:logger) { instance_spy(Facter::Log) }
     let(:size_ptr) { instance_spy(FFI::MemoryPointer) }
     let(:adapter_address) { instance_spy(FFI::MemoryPointer) }
+    let(:reg) { instance_spy('Win32::Registry::HKEY_LOCAL_MACHINE') }
+    let(:domain) { '' }
 
     before do
       allow(FFI::MemoryPointer).to receive(:new)
@@ -17,6 +19,14 @@ describe Facter::Resolvers::Windows::Networking do
       allow(NetworkingFFI).to receive(:GetAdaptersAddresses)
         .with(NetworkingFFI::AF_UNSPEC, 14, FFI::Pointer::NULL, adapter_address, size_ptr)
         .and_return(error_code)
+
+      allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open)
+        .with('SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters')
+        .and_yield(reg)
+      allow(reg).to receive(:each)
+        .and_yield('Domain', domain)
+      allow(reg).to receive(:[]).with('Domain').and_return(domain)
+      allow(reg).to receive(:close)
 
       resolver.instance_variable_set(:@log, logger)
     end
@@ -40,6 +50,10 @@ describe Facter::Resolvers::Windows::Networking do
         resolver.resolve(:interfaces)
 
         expect(logger).to have_received(:debug).with('Unable to retrieve networking facts!')
+      end
+
+      it 'returns nil for domain' do
+        expect(resolver.resolve(:domain)).to be(nil)
       end
     end
 
@@ -99,7 +113,7 @@ describe Facter::Resolvers::Windows::Networking do
         allow(IpAdapterUnicastAddressLH).to receive(:new).with(ptr).and_return(unicast)
         allow(NetworkUtils).to receive(:find_mac_address).with(adapter).and_return('00:50:56:9A:F8:6B')
         allow(friendly_name_ptr).to receive(:read_wide_string_without_length).and_return('Ethernet0')
-        allow(dns_ptr).to receive(:read_wide_string_without_length).and_return('10.122.0.2')
+        allow(dns_ptr).to receive(:read_wide_string_without_length).and_return('domain')
       end
 
       it 'returns interfaces' do
@@ -111,6 +125,10 @@ describe Facter::Resolvers::Windows::Networking do
           }
         }
         expect(resolver.resolve(:interfaces)).to eql(expected)
+      end
+
+      it 'returns domain' do
+        expect(resolver.resolve(:domain)).to eq('domain')
       end
 
       it 'returns nil for mtu fact as primary interface is nil' do
@@ -197,7 +215,6 @@ describe Facter::Resolvers::Windows::Networking do
           scope6: 'link'
         }
       end
-      let(:reg) { instance_spy('Win32::Registry::HKEY_LOCAL_MACHINE') }
       let(:domain) { 'my_domain' }
 
       before do
@@ -211,14 +228,6 @@ describe Facter::Resolvers::Windows::Networking do
         allow(IpAdapterAddressesLh).to receive(:new).with(ptr).and_return(adapter)
         allow(dns_ptr).to receive(:read_wide_string_without_length).and_return('')
         allow(friendly_name_ptr).to receive(:read_wide_string_without_length).and_return('Ethernet0')
-
-        allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open)
-          .with('SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters')
-          .and_yield(reg)
-        allow(reg).to receive(:each)
-          .and_yield('Domain', domain)
-        allow(reg).to receive(:[]).with('Domain').and_return(domain)
-        allow(reg).to receive(:close)
       end
 
       it 'returns interface' do
