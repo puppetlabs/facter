@@ -19,6 +19,10 @@ def load_dir(*dirs)
     f = Pathname.new(file)
     cleaned = f.cleanpath
     short = cleaned.to_s.gsub 'C:/Program Files/Puppet Labs/Bolt', 'C:/PROGRA~1/PUPPET~1/Bolt'
+
+    puts short
+    puts Pathname.new(cleaned).relative_path_from(Pathname.new(File.dirname(__FILE__)))
+
     require_relative short
   end
 end
