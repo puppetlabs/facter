@@ -83,6 +83,8 @@ module Facter
     def block_facts(facts, options)
       blocked_facts = options[:blocked_facts] || []
 
+      facts.reject! { |fact| fact.type == :legacy } if options[:block_list]&.include?('legacy')
+
       reject_list_core, reject_list_legacy = construct_reject_lists(blocked_facts, facts)
 
       facts = facts.reject do |fact|
