@@ -17,10 +17,11 @@ module Facter
             speed = speed.to_i
             return if !speed || speed.zero?
 
-            prefix = { 3 => 'k', 6 => 'M', 9 => 'G', 12 => 'T' }
+            prefix = { 0 => '', 3 => 'k', 6 => 'M', 9 => 'G', 12 => 'T' }
             power = Math.log10(speed).floor
-            validated_speed = power.zero? ? speed.to_f : speed.fdiv(10**power)
-            format('%<displayed_speed>.2f', displayed_speed: validated_speed).to_s + ' ' + prefix[power] + 'Hz'
+            display_power = power - power % 3
+            validated_speed = power.zero? ? speed.to_f : speed.fdiv(10**display_power)
+            format('%<displayed_speed>.2f', displayed_speed: validated_speed).to_s + ' ' + prefix[display_power] + 'Hz'
           end
 
           def bytes_to_human_readable(bytes)
