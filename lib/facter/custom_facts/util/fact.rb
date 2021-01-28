@@ -37,7 +37,7 @@ module Facter
       def initialize(name, options = {})
         @name = name.to_s.downcase.intern
 
-        @options = Facter::Utils.deep_copy(options)
+        @options = options.dup
         extract_ldapname_option!(options)
 
         @ldapname ||= @name.to_s
@@ -61,7 +61,7 @@ module Facter
       #
       # @api private
       def add(options = {}, &block)
-        @options = Facter::Utils.deep_copy(@options.merge(options))
+        @options = @options.merge(options)
 
         @location = options[:file]
         @location ||= block.source_location if block_given?
