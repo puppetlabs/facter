@@ -34,6 +34,14 @@ describe Facter::Util::Facts::UnitConverter do
       expect(converter.hertz_to_human_readable(2_300_000_000)).to eql('2.30 GHz')
     end
 
+    it 'converts to MHz' do
+      expect(converter.hertz_to_human_readable(800_000_000)).to eql('800.00 MHz')
+    end
+
+    it 'handles small-ish number correctly' do
+      expect(converter.hertz_to_human_readable(42)).to eql('42.00 Hz')
+    end
+
     it 'converts to Hz even if argument is string' do
       expect(converter.hertz_to_human_readable('2400')).to eql('2.40 kHz')
     end

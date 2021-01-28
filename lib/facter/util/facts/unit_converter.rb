@@ -17,10 +17,9 @@ module Facter
             speed = speed.to_i
             return if !speed || speed.zero?
 
-            prefix = { 3 => 'k', 6 => 'M', 9 => 'G', 12 => 'T' }
-            power = Math.log10(speed).floor
-            validated_speed = power.zero? ? speed.to_f : speed.fdiv(10**power)
-            format('%<displayed_speed>.2f', displayed_speed: validated_speed).to_s + ' ' + prefix[power] + 'Hz'
+            validated_speed, metric_prefix = determine_metric_prefix(speed)
+
+            format('%<displayed_speed>.2f', displayed_speed: validated_speed).to_s + ' ' + metric_prefix + 'Hz'
           end
 
           def bytes_to_human_readable(bytes)
@@ -53,6 +52,14 @@ module Facter
 
             converted_number = bytes if multiple == 'bytes'
             [converted_number, multiple]
+          end
+
+          def determine_metric_prefix(num)
+            metric_prefix = { 0 => '', 3 => 'k', 6 => 'M', 9 => 'G', 12 => 'T' }
+            power = Math.log10(num).floor
+            display_exponent = power - power % 3
+            coefficient = power.zero? ? num.to_f : num.fdiv(10**display_exponent)
+            [coefficient, metric_prefix[display_exponent]]
           end
         end
       end
