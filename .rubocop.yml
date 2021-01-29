@@ -31,6 +31,8 @@ Metrics/MethodLength:
     - 'lib/facter/resolvers/bsd/ffi/ffi_helper.rb'
     - 'install.rb'
     - 'scripts/generate_changelog.rb'
+    - 'lib/facter/resolvers/aix/ffi/ffi_helper.rb'
+
 
 Metrics/ModuleLength:
   Max: 100
@@ -38,6 +40,7 @@ Metrics/ModuleLength:
     - 'lib/facter.rb'
     - 'agent/lib/facter-ng.rb'
     - 'lib/facter/config.rb'
+    - 'lib/facter/resolvers/aix/ffi/ffi_helper.rb'
 
 Metrics/BlockLength:
   Exclude:
@@ -62,6 +65,7 @@ Metrics/AbcSize:
     - 'lib/facter/resolvers/bsd/ffi/ffi_helper.rb'
     - 'install.rb'
     - 'scripts/generate_changelog.rb'
+    - 'lib/facter/resolvers/aix/ffi/ffi_helper.rb'
 
 Metrics/PerceivedComplexity:
   Exclude:
@@ -70,6 +74,7 @@ Metrics/PerceivedComplexity:
     - 'lib/facter/custom_facts/core/execution/windows.rb'
     - 'lib/facter/custom_facts/core/execution/posix.rb'
     - 'install.rb'
+    - 'lib/facter/resolvers/aix/ffi/ffi_helper.rb'
 
 Metrics/CyclomaticComplexity:
   Exclude:
@@ -80,6 +85,7 @@ Metrics/CyclomaticComplexity:
     - 'lib/facter/framework/detector/os_detector.rb'
     - 'install.rb'
     - 'scripts/generate_changelog.rb'
+    - 'lib/facter/resolvers/aix/ffi/ffi_helper.rb'
 
 Metrics/ClassLength:
   Exclude:
@@ -94,7 +100,6 @@ Metrics/ClassLength:
     - 'install.rb'
     - 'scripts/generate_changelog.rb'
     - 'lib/facter/resolvers/solaris/networking.rb'
-
 
 Naming/AccessorMethodName:
   Exclude:

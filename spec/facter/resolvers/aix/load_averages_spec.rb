@@ -4,7 +4,7 @@ describe Facter::Resolvers::Aix::LoadAverages do
   let(:load_averages) { [0.01, 0.02, 0.03] }
 
   before do
-    allow(Facter::Aix::FfiHelper).to receive(:read_load_averages)
+    allow(Facter::Resolvers::Aix::FfiHelper).to receive(:read_load_averages)
       .and_return(load_averages)
   end
 
