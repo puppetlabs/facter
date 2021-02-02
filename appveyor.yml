@@ -25,7 +25,7 @@ init:
 install:
     # Minimize environment polution; previously we were linking against the wrong OpenSSL DLLs.
     # Include Ruby and Powershell for unit tests.
-  - SET PATH=C:\tools\pl-build-tools\bin;C:\tools\mingw64\bin;C:\ProgramData\chocolatey\bin;C:\Ruby22-x64\bin;C:\Program Files\7-Zip;C:\Windows\system32;C:\Windows;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Program Files\gettext-iconv
+  - SET PATH=C:\tools\pl-build-tools\bin;C:\tools\mingw64\bin;C:\ProgramData\chocolatey\bin;C:\Ruby26-x64\bin;C:\Program Files\7-Zip;C:\Windows\system32;C:\Windows;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Program Files\gettext-iconv
   - ps: rm -r C:\OpenSSL-Win64
   - bundle install --jobs 4 --retry 2 --gemfile=lib/Gemfile --quiet
 
