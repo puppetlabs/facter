@@ -477,16 +477,16 @@ namespace facter { namespace ruby {
         if (_collection.empty()) {
             bool include_ruby_facts = true;
             _collection.add_default_facts(include_ruby_facts);
+            if (_load_external && !_external_facts_loaded) {
+                _collection.add_external_facts(_external_search_paths);
+                _external_facts_loaded = true;
+            }
             auto const& ruby = api::instance();
             _collection.add_environment_facts([&](string const& name) {
                 // Create a fact and explicitly set the value
                 // We honor environment variables above custom fact resolutions
                 ruby.to_native<fact>(create_fact(ruby.utf8_value(name)))->value(to_ruby(_collection[name]));
             });
-        }
-        if (_load_external && !_external_facts_loaded) {
-                _collection.add_external_facts(_external_search_paths);
-                _external_facts_loaded = true;
         }
         return _collection;
     }
