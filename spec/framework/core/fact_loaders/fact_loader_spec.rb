@@ -127,7 +127,7 @@ describe Facter::FactLoader do
       expect(loaded_facts1).to eq(loaded_facts2)
     end
 
-    it 'env facts ovveride core facts' do
+    it 'env facts override core facts' do
       options = { external_facts: true }
 
       allow(internal_fact_loader_double).to receive(:core_facts).and_return([loaded_fact_os_name])
@@ -138,6 +138,24 @@ describe Facter::FactLoader do
       expect(loaded_facts).to be_an_instance_of(Array).and contain_exactly(
         loaded_env_custom_fact
       )
+    end
+
+    context 'when blocking legacy group' do
+      before do
+        facts_to_load = [loaded_fact_os_name_legacy]
+
+        allow(internal_fact_loader_double).to receive(:core_facts).and_return(facts_to_load)
+        allow(external_fact_loader_double).to receive(:custom_facts).and_return([])
+        allow(external_fact_loader_double).to receive(:external_facts).and_return([])
+      end
+
+      let(:options) { { block_list: 'legacy' } }
+
+      it 'blocks legacy facts' do
+        loaded_facts = Facter::FactLoader.instance.load(options)
+
+        expect(loaded_facts).to be_empty
+      end
     end
   end
 end

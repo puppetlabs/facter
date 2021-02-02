@@ -120,6 +120,23 @@ describe Facter::ConfigReader do
       end
     end
 
+    context 'with invalid config file' do
+      let(:config) { 'some corrupt information' }
+      let(:log) { instance_spy(Facter::Log) }
+
+      before do
+        allow(Facter::Log).to receive(:new).and_return(log)
+        allow(Hocon).to receive(:load).and_raise(StandardError)
+        allow(log).to receive(:warn)
+      end
+
+      it 'loggs a warning' do
+        config_reader.init
+
+        expect(log).to have_received(:warn).with(/Facter failed to read config file/)
+      end
+    end
+
     context 'with global section in config file' do
       let(:config) { { 'global' => 'global_config' } }
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 test_name 'ttls configured custom facts files creates cache file and reads cache file' do
   tag 'risk:high'
 
@@ -29,11 +31,23 @@ test_name 'ttls configured custom facts files creates cache file and reads cache
       agent.rm_rf(config_file)
     end
 
-    step "calling one fact from the cached group will cache only that fact" do
+    step 'calling one fact from the cached group will cache only that fact' do
       output = on(agent, facter('system_uptime.seconds'))
 
       seconds = output.stdout.strip.to_i
-      expected = { "system_uptime.seconds" => seconds, "cache_format_version" => 1 }
+      expected = { 'system_uptime.seconds' => seconds, 'cache_format_version' => 1 }
+
+      stdout = agent.cat("#{cache_folder}/uptime")
+      cache_content = JSON.parse(stdout)
+
+      assert_equal(expected, cache_content)
+    end
+
+    step 'calling a different fact from the cached group will cache only that fact' do
+      output = on(agent, facter('system_uptime.days'))
+
+      days = output.stdout.strip.to_i
+      expected = { 'system_uptime.days' => days, 'cache_format_version' => 1 }
 
       stdout = agent.cat("#{cache_folder}/uptime")
       cache_content = JSON.parse(stdout)
@@ -56,42 +70,36 @@ test_name 'ttls configured custom facts files creates cache file and reads cache
     #   assert_equal(expected, cache_content)
     # end
 
-    step "calling facter without a query will cache the entire group" do
+    step 'calling facter without a query will cache the entire group' do
       _output = on(agent, facter)
 
       stdout = agent.cat("#{cache_folder}/uptime")
       cache_content = JSON.parse(stdout)
-      ["system_uptime.days",
-        "uptime_days",
-        "system_uptime.hours",
-        "uptime_hours",
-        "system_uptime.seconds",
-        "uptime_seconds",
-        "system_uptime.uptime",
-        "uptime",
-        "cache_format_version"].each do |key|
-
-          assert_equal(true, cache_content.has_key?(key))
-        end
+      ['system_uptime.days',
+       'uptime_days',
+       'system_uptime.hours',
+       'uptime_hours',
+       'system_uptime.seconds',
+       'uptime_seconds',
+       'system_uptime.uptime',
+       'uptime',
+       'cache_format_version'].each do |key|
+        assert_equal(true, cache_content.key?(key))
+      end
     end
 
-    step "calling a single fact fron the cached group will not overwrite the file" do
-      _output = on(agent, facter('system_uptime.seconds'))
+    operating_system = fact_on(agent, 'operatingsystem')
 
-      stdout = agent.cat("#{cache_folder}/uptime")
-      cache_content = JSON.parse(stdout)
-      ["system_uptime.days",
-        "uptime_days",
-        "system_uptime.hours",
-        "uptime_hours",
-        "system_uptime.seconds",
-        "uptime_seconds",
-        "system_uptime.uptime",
-        "uptime",
-        "cache_format_version"].each do |key|
-
-          assert_equal(true, cache_content.has_key?(key))
-        end
+    # rubocop:disable Style/Next
+    if operating_system == 'Ubuntu'
+      step 'check file info to verify that it did not change' do
+        output1 = on(agent, "stat -c %Y #{cache_folder}/uptime")
+        on(agent, facter)
+        on(agent, facter('system_uptime'))
+        output2 = on(agent, "stat -c %Y #{cache_folder}/uptime")
+        assert_equal(output1.stdout, output2.stdout)
+      end
     end
+    # rubocop:enable Style/Next
   end
 end

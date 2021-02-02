@@ -33,9 +33,16 @@ module Facter
 
       def refresh_config(config_path)
         @conf = File.readable?(config_path) ? Hocon.load(config_path) : {}
+      rescue StandardError => e
+        log.warn("Facter failed to read config file #{config_path} with the following error: #{e.message}")
+        @conf = {}
       end
 
       private
+
+      def log
+        @log ||= Log.new(self)
+      end
 
       def default_path
         os = OsDetector.instance.identifier

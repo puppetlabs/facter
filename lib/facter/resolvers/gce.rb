@@ -11,7 +11,7 @@ module Facter
       class << self
         private
 
-        def post_resolve(fact_name)
+        def post_resolve(fact_name, _options)
           log.debug('reading Gce metadata')
           @fact_list.fetch(fact_name) { read_facts(fact_name) }
         end

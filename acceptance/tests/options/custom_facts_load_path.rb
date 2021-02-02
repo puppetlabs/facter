@@ -30,6 +30,8 @@ EOM
       create_remote_file(agent, custom_fact, content)
 
       teardown do
+        load_path_facter_dir = "\"#{load_path_facter_dir}\"" if agent.is_cygwin?
+
         agent.rm_rf(load_path_facter_dir)
       end
 

@@ -12,5 +12,13 @@ class IntegrationHelper
     def jruby?
       RUBY_PLATFORM == 'java'
     end
+
+    def create_file(path, content)
+      dir = File.dirname(path)
+      FileUtils.mkdir_p(dir)
+      File.write(path, content)
+
+      File.expand_path(path)
+    end
   end
 end

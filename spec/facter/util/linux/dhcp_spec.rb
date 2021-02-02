@@ -32,21 +32,30 @@ describe Facter::Util::Linux::Dhcp do
     end
 
     context 'when dhcp is available in the internal leases' do
-      # missing fixture for internal.<interface_name>.lease file
+      let(:network_manager_files) do
+        %w[NetworkManager-intern.conf
+           secret_key
+           internal-fdgh45-345356fg-dfg-dsfge5er4-sdfghgf45ty-lo.lease
+           timestamps
+           NetworkManager.state
+           seen-bssids]
+      end
+
       before do
         allow(Facter::Util::FileHelper).to receive(:safe_read).with('/run/systemd/netif/leases/1', nil).and_return(nil)
         allow(File).to receive(:readable?).with('/var/lib/dhclient/').and_return(false)
         allow(File).to receive(:readable?).with('/var/lib/dhcp/').and_return(false)
         allow(File).to receive(:readable?).with('/var/lib/dhcp3/').and_return(false)
         allow(File).to receive(:readable?).with('/var/lib/NetworkManager/').and_return(true)
-        allow(Dir).to receive(:entries).with('/var/lib/NetworkManager/').and_return(['internal.lo.lease'])
+        allow(Dir).to receive(:entries).with('/var/lib/NetworkManager/').and_return(network_manager_files)
         allow(Facter::Util::FileHelper).to receive(:safe_read)
-          .with('/var/lib/NetworkManager/internal.lo.lease', nil).and_return('SERVER_ADDRESS=10.32.22.9')
+          .with('/var/lib/NetworkManager/internal-fdgh45-345356fg-dfg-dsfge5er4-sdfghgf45ty-lo.lease', nil)
+          .and_return(load_fixture('dhcp_internal_lease').read)
         allow(File).to receive(:readable?).with('/var/db/').and_return(false)
       end
 
       it 'returns dhcp ip' do
-        expect(dhcp_search.dhcp('lo', 1, log_spy)).to eq('10.32.22.9')
+        expect(dhcp_search.dhcp('lo', 1, log_spy)).to eq('35.32.82.9')
       end
     end
 

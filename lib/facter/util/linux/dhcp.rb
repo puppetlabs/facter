@@ -15,7 +15,7 @@ module Facter
             @log = logger
             @log.debug("Get DHCP for interface #{interface_name}")
 
-            dhcp = search_systemd_netif_leases(interface_index)
+            dhcp = search_systemd_netif_leases(interface_index, interface_name)
             dhcp ||= search_dhclient_leases(interface_name)
             dhcp ||= search_internal_leases(interface_name)
             dhcp ||= search_with_dhcpcd_command(interface_name)
@@ -24,8 +24,10 @@ module Facter
 
           private
 
-          def search_systemd_netif_leases(index)
+          def search_systemd_netif_leases(index, interface_name)
             return if index.nil?
+
+            @log.debug("Attempt to get DHCP for interface #{interface_name}, from systemd/netif/leases")
 
             file_content = Facter::Util::FileHelper.safe_read("/run/systemd/netif/leases/#{index}", nil)
             dhcp = file_content.match(/SERVER_ADDRESS=(.*)/) if file_content
@@ -33,6 +35,8 @@ module Facter
           end
 
           def search_dhclient_leases(interface_name)
+            @log.debug("Attempt to get DHCP for interface #{interface_name}, from dhclient leases")
+
             DIRS.each do |dir|
               next unless File.readable?(dir)
 
@@ -54,8 +58,10 @@ module Facter
           def search_internal_leases(interface_name)
             return unless File.readable?('/var/lib/NetworkManager/')
 
+            @log.debug("Attempt to get DHCP for interface #{interface_name}, from NetworkManager leases")
+
             files = Dir.entries('/var/lib/NetworkManager/').reject { |dir| dir =~ /^\.+$/ }
-            lease_file = files.find { |file| file =~ /internal\.*#{interface_name}\.lease/ }
+            lease_file = files.find { |file| file =~ /internal.*#{interface_name}\.lease/ }
             return unless lease_file
 
             dhcp = Facter::Util::FileHelper.safe_read("/var/lib/NetworkManager/#{lease_file}", nil)
@@ -67,6 +73,8 @@ module Facter
           end
 
           def search_with_dhcpcd_command(interface_name)
+            @log.debug("Attempt to get DHCP for interface #{interface_name}, from dhcpcd command")
+
             output = Facter::Core::Execution.execute("dhcpcd -U #{interface_name}", logger: @log)
             dhcp = output.match(/dhcp_server_identifier='(.*)'/)
             dhcp[1] if dhcp

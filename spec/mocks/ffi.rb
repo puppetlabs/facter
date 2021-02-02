@@ -31,7 +31,9 @@ module FFI
 
     def GetAdaptersAddresses(*); end
 
-    def getkerninfo(*); end
+    def getkerninfo(*)
+      0
+    end
 
     def getloadavg(*); end
 
@@ -62,6 +64,8 @@ module FFI
     def write_uint32(); end
 
     def read_uint32(); end
+
+    def self.size; end
   end
 
   class MemoryPointer
@@ -72,6 +76,12 @@ module FFI
     def to_ptr; end
 
     def [](*); end
+
+    def write_int(*); end
+
+    def read_int; end
+
+    def self.size; end
   end
 
   class Struct

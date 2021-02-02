@@ -24,6 +24,13 @@ module Facter
       # @api public
       attr_reader :name
 
+      # @!attribute [r] fact_type
+      #
+      # @return [Symbol] The fact type of the aggregate resolution
+      #
+      # @api private
+      attr_reader :fact_type
+
       # @!attribute [r] deps
       #
       # @return [LegacyFacter::Core::DirectedGraph]

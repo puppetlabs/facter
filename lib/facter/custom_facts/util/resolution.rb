@@ -51,7 +51,7 @@ module Facter
       # @return [Facter::Util::Fact] Associated fact with this resolution.
       #
       # @api private
-      attr_reader :fact
+      attr_reader :fact, :last_evaluated, :file
 
       # Create a new resolution mechanism.
       #

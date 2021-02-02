@@ -9,6 +9,10 @@
 module Facter
   module Util
     class Fact
+      # The location from where fact is resolved
+      # @return [String]
+      attr_reader :location
+
       # The name of the fact
       # @return [String]
       attr_reader :name
@@ -33,7 +37,7 @@ module Facter
       def initialize(name, options = {})
         @name = name.to_s.downcase.intern
 
-        @options = Facter::Utils.deep_copy(options)
+        @options = options.dup
         extract_ldapname_option!(options)
 
         @ldapname ||= @name.to_s
@@ -43,6 +47,8 @@ module Facter
         @used_resolution_weight = 0
 
         @value = nil
+
+        @log = Facter::Log.new(self)
       end
 
       # Adds a new {Facter::Util::Resolution resolution}.  This requires a
@@ -55,7 +61,11 @@ module Facter
       #
       # @api private
       def add(options = {}, &block)
-        @options = Facter::Utils.deep_copy(@options.merge(options))
+        @options = @options.merge(options)
+
+        @location = options[:file]
+        @location ||= block.source_location if block_given?
+
         define_resolution(nil, options, &block)
       end
 
@@ -201,9 +211,18 @@ module Facter
             break
           end
           @used_resolution_weight = resolve.weight
-          return value unless value.nil?
+          next if value.nil?
+
+          log_fact_path(resolve)
+
+          return value
         end
         nil
+      end
+
+      def log_fact_path(resolve)
+        fact = resolve.fact
+        @log.debug("#{resolve.fact_type} fact #{fact.name} got resolved from: #{fact.location}")
       end
 
       def announce_when_no_suitable_resolution(resolutions)

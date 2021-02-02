@@ -10,7 +10,7 @@ module Facter
         class << self
           private
 
-          def post_resolve(fact_name)
+          def post_resolve(fact_name, _options)
             @fact_list.fetch(fact_name) { read_network_information(fact_name) }
           end
 
@@ -24,11 +24,11 @@ module Facter
 
             return unless (adapter_addresses = get_adapter_addresses(size_ptr, adapter_addresses, flags))
 
+            retrieve_domain_from_registry
+
             iterate_list(adapter_addresses)
 
             Facter::Util::Resolvers::Networking.expand_main_bindings(@fact_list)
-
-            retrieve_domain_from_registry if !@fact_list[:domain] || @fact_list[:domain].empty?
 
             @fact_list[fact_name]
           end
@@ -71,7 +71,11 @@ module Facter
                 adapter_address = IpAdapterAddressesLh.new(adapter_address[:Next])
                 next
               end
-              @fact_list[:domain] ||= adapter_address[:DnsSuffix].read_wide_string_without_length
+
+              if !@fact_list[:domain] || @fact_list[:domain].empty?
+                @fact_list[:domain] = adapter_address[:DnsSuffix].read_wide_string_without_length
+              end
+
               name = adapter_address[:FriendlyName].read_wide_string_without_length
               net_interface[name] = build_interface_info(adapter_address, name)
             end

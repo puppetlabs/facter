@@ -24,6 +24,9 @@ module Facter
       fact_list = []
 
       @block_list.each do |group_name|
+        # legacy is a special group and does not need to be broken into facts
+        next if group_name == 'legacy'
+
         facts_for_block = @groups[group_name]
 
         fact_list += facts_for_block || [group_name]

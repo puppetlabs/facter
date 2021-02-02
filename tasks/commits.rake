@@ -6,7 +6,7 @@ task(:commits) do
   # in the branch targeted for a PR. This is accomplished by using the
   # TRAVIS_COMMIT_RANGE environment variable, which is present in travis CI and
   # populated with the range of commits the PR contains. If not available, this
-  # falls back to `master..HEAD` as a next best bet as `master` is unlikely to
+  # falls back to `main..HEAD` as a next best bet as `main` is unlikely to
   # ever be absent.
   commit_range = 'HEAD^..HEAD'
   puts "Checking commits #{commit_range}"

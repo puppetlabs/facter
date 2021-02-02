@@ -21,12 +21,12 @@ top of things.
 ## Making Changes
 
 * Create a topic branch from where you want to base your work.
-  * This is usually the master branch.
+  * This is usually the `main` branch.
   * Once merged, your work will be automatically promoted to the other release
     streams when our internal CI passes.
-  * To quickly create a topic branch based on master, run `git checkout -b
-    fix/master/my_contribution master`. Please avoid working directly on the
-    `master` branch.
+  * To quickly create a topic branch based on main, run `git checkout -b
+    fix/main/my_contribution main`. Please avoid working directly on the
+    `main` branch.
 * Make commits of logical units.
 * Check for unnecessary whitespace with `git diff --check` before committing.
 * Make sure your commit messages are in the proper format. We use the [50/72 rule](https://git-scm.com/book/en/v2/Distributed-Git-Contributing-to-a-Project) in commit messages.

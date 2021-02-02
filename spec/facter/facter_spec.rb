@@ -365,10 +365,10 @@ describe Facter do
         expect(Facter.values({}, ['os.name'])).to eq(result)
       end
 
-      it 'sets show_legacy to true' do
+      it 'show_legacy is false by default' do
         Facter.values({}, [])
 
-        expect(Facter::Options[:show_legacy]).to be true
+        expect(Facter::Options[:show_legacy]).to be false
       end
 
       it 'logs blocked facts' do

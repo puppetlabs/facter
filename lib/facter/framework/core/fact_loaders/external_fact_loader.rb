@@ -10,10 +10,6 @@ module Facter
       @external_facts = load_external_facts
     end
 
-    def all_facts
-      @all_facts ||= Utils.deep_copy(custom_facts + external_facts)
-    end
-
     private
 
     def load_custom_facts

@@ -12,10 +12,6 @@ module Facter
       end
     end
 
-    def self.deep_copy(obj)
-      Marshal.load(Marshal.dump(obj))
-    end
-
     def self.split_user_query(user_query)
       queries = user_query.split('.')
       queries.map! { |query| query =~ /^[0-9]+$/ ? query.to_i : query }

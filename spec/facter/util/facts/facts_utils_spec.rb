@@ -44,4 +44,60 @@ describe Facter::Util::Facts do
       expect(facts_util.discover_family('Mandriva')).to eq('Mandrake')
     end
   end
+
+  describe '#release_hash_from_string' do
+    it 'returns full release' do
+      expect(facts_util.release_hash_from_string('6.2')['full']).to eq('6.2')
+    end
+
+    it 'returns major release' do
+      expect(facts_util.release_hash_from_string('6.2')['major']).to eq('6')
+    end
+
+    it 'returns valid minor release' do
+      expect(facts_util.release_hash_from_string('6.2.1')['minor']).to eq('2')
+    end
+
+    it 'returns minor release as nil' do
+      expect(facts_util.release_hash_from_string('6')['minor']).to be_nil
+    end
+
+    it 'returns nil if data is nil' do
+      expect(facts_util.release_hash_from_string(nil)).to be_nil
+    end
+  end
+
+  describe '#release_hash_from_matchdata' do
+    let(:match_data) do
+      'RELEASE=4.3' =~ /^RELEASE=(\d+.\d+.*)/
+      Regexp.last_match
+    end
+
+    it 'returns full release' do
+      expect(facts_util.release_hash_from_matchdata(match_data)['full']).to eq('4.3')
+    end
+
+    it 'returns major release' do
+      expect(facts_util.release_hash_from_matchdata(match_data)['major']).to eq('4')
+    end
+
+    it 'returns valid minor release' do
+      expect(facts_util.release_hash_from_matchdata(match_data)['minor']).to eq('3')
+    end
+
+    it 'returns nil if data is nil' do
+      expect(facts_util.release_hash_from_matchdata(nil)).to be_nil
+    end
+
+    context 'when minor version is unavailable' do
+      let(:match_data) do
+        'RELEASE=4' =~ /^RELEASE=(\d+)/
+        Regexp.last_match
+      end
+
+      it 'returns minor release as nil' do
+        expect(facts_util.release_hash_from_matchdata(match_data)['minor']).to be_nil
+      end
+    end
+  end
 end
