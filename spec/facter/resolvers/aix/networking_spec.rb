@@ -4,6 +4,13 @@ describe Facter::Resolvers::Aix::Networking do
   subject(:networking_resolver) { Facter::Resolvers::Aix::Networking }
 
   let(:log_spy) { instance_spy(Facter::Log) }
+  let(:ffi_interfaces) do
+    {
+      'en0' => { bindings: [{ address: '10.32.77.1', netmask: '255.255.255.0', network: '10.32.77.0' }] },
+      'lo0' => { bindings: [{ address: '127.0.0.1', netmask: '255.0.0.0', network: '127.0.0.0' }],
+                 bindings6: [{ address: '::1', netmask: '::', network: '::', scope6: 'host' }] }
+    }
+  end
 
   before do
     networking_resolver.instance_variable_set(:@log, log_spy)
@@ -14,6 +21,8 @@ describe Facter::Resolvers::Aix::Networking do
     allow(Facter::Core::Execution).to receive(:execute)
       .with('netstat -in', logger: log_spy)
       .and_return(netstat_in)
+
+    allow(Facter::Resolvers::Aix::FfiHelper).to receive(:read_interfaces).and_return(ffi_interfaces)
   end
 
   after do
@@ -25,8 +34,8 @@ describe Facter::Resolvers::Aix::Networking do
     let(:netstat_rn) { load_fixture('netstat_rn').read }
     let(:interfaces) do
       {
-        'en0' => { bindings: [{ address: '10.32.77.40', netmask: '255.255.255.0', network: '10.32.77.0' }],
-                   ip: '10.32.77.40', mac: '0a:c6:24:39:41:03', mtu: 1500, netmask: '255.255.255.0',
+        'en0' => { bindings: [{ address: '10.32.77.1', netmask: '255.255.255.0', network: '10.32.77.0' }],
+                   ip: '10.32.77.1', mac: '0a:c6:24:39:41:03', mtu: 1500, netmask: '255.255.255.0',
                    network: '10.32.77.0' },
         'lo0' => { bindings: [{ address: '127.0.0.1', netmask: '255.0.0.0', network: '127.0.0.0' }],
                    bindings6: [{ address: '::1', netmask: '::', network: '::', scope6: 'host' }], ip: '127.0.0.1',
@@ -34,6 +43,7 @@ describe Facter::Resolvers::Aix::Networking do
                    network6: '::', scope6: 'host' }
       }
     end
+
     let(:primary) { 'en0' }
 
     it 'returns primary interface' do
@@ -62,7 +72,7 @@ describe Facter::Resolvers::Aix::Networking do
     end
 
     it 'returns interfaces fact' do
-      expect(networking_resolver.resolve(:interfaces)).to be_an_instance_of(Hash).and contain_exactly
+      expect(networking_resolver.resolve(:interfaces)).to eq(ffi_interfaces)
     end
 
     it 'returns mtu fact' do

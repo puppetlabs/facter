@@ -17,7 +17,7 @@ module Facter
             @fact_list[:interfaces] = {}
             output = Facter::Core::Execution.execute('netstat -rn', logger: log)
             output = output.each_line.select { |line| (line =~ /\s\s[0-9]+.[0-9]+.[0-9]+.[0-9]+|\s\s.*:[0-9a-f]+/) }
-            extract_interfaces(output)
+            @fact_list[:interfaces] = load_interfaces
 
             populate_with_mtu_and_mac!(@fact_list[:interfaces])
             get_primary_interface_info(output)
@@ -26,21 +26,8 @@ module Facter
           end
 
           def get_primary_interface_info(output)
-            primary_interface_info = output.find { |line| line =~ /=>/ }&.split(' ')
+            primary_interface_info = output.find { |line| line =~ /default/ }&.split(' ')
             @fact_list[:primary_interface] = primary_interface_info[5] if primary_interface_info
-          end
-
-          def extract_interfaces(netstat_output)
-            netstat_output.each do |line|
-              next if line =~ /default/
-
-              info = line.split("\s")
-              mask_length = info[0].match(%r{/([0-9]+)|%([0-9]+)})
-              next unless mask_length
-
-              is_ipv4 = info[1] =~ /[0-9]+.[0-9]+.[0-9]+.[0-9]+/
-              build_bindings(info[5], info[1], mask_length[1] || mask_length[2], is_ipv4)
-            end
           end
 
           def build_bindings(name, ip, mask_length, is_ipv4)
@@ -68,6 +55,12 @@ module Facter
 
           def format_mac_address(address)
             address.split('.').map { |e| format('%<mac_address>02s', mac_address: e) }.join(':').tr(' ', '0')
+          end
+
+          def load_interfaces
+            require_relative 'ffi/ffi_helper'
+
+            FfiHelper.read_interfaces
           end
         end
       end
