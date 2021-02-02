@@ -21,6 +21,7 @@ EOM
       create_remote_file(agent, custom_fact, content)
 
       teardown do
+        facterlib_dir = "\"#{facterlib_dir}\"" if agent.is_cygwin?
         agent.rm_rf(facterlib_dir)
       end
 

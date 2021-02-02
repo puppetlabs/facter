@@ -37,8 +37,9 @@ EOM
 
       teardown do
         load_path_facter_dir = "\"#{load_path_facter_dir}\"" if agent.is_cygwin?
-
         agent.rm_rf(load_path_facter_dir)
+
+        config_dir = "\"#{config_dir}\"" if agent.is_cygwin?
         agent.rm_rf(config_dir)
       end
 

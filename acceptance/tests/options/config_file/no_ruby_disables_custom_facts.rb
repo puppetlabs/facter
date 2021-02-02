@@ -39,6 +39,7 @@ EOM
           create_remote_file(agent, custom_fact, custom_fact_content)
 
           teardown do
+            custom_dir = "\"#{custom_dir}\"" if agent.is_cygwin?
             agent.rm_rf(custom_dir)
           end
 

@@ -32,7 +32,8 @@ EOM
         create_remote_file(agent, custom_fact, content)
 
         teardown do
-          agent.rm_rf(custom_fact)
+          custom_dir = "\"#{custom_dir}\"" if agent.is_cygwin?
+          agent.rm_rf(custom_dir)
         end
 
         on(agent, facter('--no-ruby custom_fact', :environment => { 'FACTERLIB' => custom_dir })) do
