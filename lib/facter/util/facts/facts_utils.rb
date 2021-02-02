@@ -24,6 +24,23 @@ module Facter
           FAMILY_HASH.each { |key, array_value| return key if array_value.any? { |os_flavour| os =~ /#{os_flavour}/i } }
           os
         end
+
+        def release_hash_from_string(output)
+          return unless output
+
+          versions = output.split('.')
+          {}.tap do |release|
+            release['full'] = output
+            release['major'] = versions[0]
+            release['minor'] = versions[1] if versions[1]
+          end
+        end
+
+        def release_hash_from_matchdata(data)
+          return if data.nil? || data[1].nil?
+
+          release_hash_from_string(data[1].to_s)
+        end
       end
     end
   end

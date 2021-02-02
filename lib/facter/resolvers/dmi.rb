@@ -25,7 +25,7 @@ module Facter
 
           private
 
-          def post_resolve(fact_name)
+          def post_resolve(fact_name, _options)
             @fact_list.fetch(fact_name) { read_facts(fact_name) }
           end
 

@@ -20,10 +20,10 @@ module Facter
         Facter::SessionCache.subscribe(self)
       end
 
-      def self.resolve(fact_name)
+      def self.resolve(fact_name, options = {})
         @semaphore.synchronize do
           subscribe_to_manager
-          post_resolve(fact_name)
+          post_resolve(fact_name, options)
 
           cache_nil_for_unresolved_facts(fact_name)
         end
@@ -40,8 +40,8 @@ module Facter
         @fact_list[fact_name]
       end
 
-      def self.post_resolve(_fact_name)
-        raise NotImplementedError, "You must implement post_resolve(fact_name) method in #{name}"
+      def self.post_resolve(_fact_name, _options)
+        raise NotImplementedError, "You must implement post_resolve(fact_name, options) method in #{name}"
       end
     end
   end
