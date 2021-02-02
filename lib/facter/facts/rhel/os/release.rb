@@ -21,14 +21,7 @@ module Facts
           version = Facter::Resolvers::RedHatRelease.resolve(:version)
           version ||= Facter::Resolvers::OsRelease.resolve(:version_id)
 
-          return unless version
-
-          versions = version.split('.')
-          fact_value = {}
-          fact_value['full'] = version
-          fact_value['major'] = versions[0]
-          fact_value['minor'] = versions[1] if versions[1]
-          fact_value
+          Facter::Util::Facts.release_hash_from_string(version)
         end
       end
     end

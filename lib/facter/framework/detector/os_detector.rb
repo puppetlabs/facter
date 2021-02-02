@@ -64,7 +64,14 @@ class OsDetector
     Facter::Resolvers::OsRelease.resolve(:id_like)
   end
 
+  def detect_based_on_release_file
+    @identifier = :devuan if File.readable?('/etc/devuan_version')
+  end
+
   def detect_distro
+    detect_based_on_release_file
+    return @identifier if @identifier
+
     [Facter::Resolvers::OsRelease,
      Facter::Resolvers::RedHatRelease,
      Facter::Resolvers::SuseRelease].each do |resolver|

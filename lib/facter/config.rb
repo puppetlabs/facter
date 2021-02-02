@@ -7,10 +7,13 @@ module Facter
         {
           'Linux' => [
             {
-              'Debian' => %w[
-                Elementary
-                Ubuntu
-                Raspbian
+              'Debian' => [
+                'Elementary',
+                { 'Ubuntu' => [
+                  'Linuxmint'
+                ] },
+                'Raspbian',
+                'Devuan'
               ]
             },
             {
@@ -20,13 +23,23 @@ module Facter
                 Centos
                 Ol
                 Scientific
+                Meego
+                Oel
+                Ovs
               ]
             },
             {
-              'Sles' => [
-                'Opensuse'
+              'Sles' => %w[
+                Opensuse
+                Sled
               ]
-            }
+            },
+            'Gentoo',
+            'Alpine',
+            'Photon',
+            'Slackware',
+            'Mageia',
+            'Openwrt'
           ]
         },
         {

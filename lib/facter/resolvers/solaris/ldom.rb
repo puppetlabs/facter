@@ -31,7 +31,7 @@ module Facter
         class << self
           private
 
-          def post_resolve(fact_name)
+          def post_resolve(fact_name, _options)
             @fact_list.fetch(fact_name) { call_virtinfo(fact_name) }
           end
 

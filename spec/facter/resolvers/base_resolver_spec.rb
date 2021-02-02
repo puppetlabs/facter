@@ -6,7 +6,7 @@ describe Facter::Resolvers::BaseResolver do
     Class.new(Facter::Resolvers::BaseResolver) do
       init_resolver
 
-      def self.post_resolve(fact_name)
+      def self.post_resolve(fact_name, _options)
         @fact_list[fact_name] = 'value'
         @fact_list
       end
@@ -70,7 +70,7 @@ describe Facter::Resolvers::BaseResolver do
       it 'calls the post_resolve method' do
         resolver.resolve(fact)
 
-        expect(resolver).to have_received(:post_resolve).with(fact)
+        expect(resolver).to have_received(:post_resolve).with(fact, {})
       end
     end
 
@@ -106,7 +106,7 @@ describe Facter::Resolvers::BaseResolver do
       resolver.resolve('my_fact')
       resolver.cache_nil_for_unresolved_facts('my_fact')
 
-      expect(resolver.post_resolve('my_fact')).to eq({ 'my_fact' => 'value' })
+      expect(resolver.post_resolve('my_fact', {})).to eq({ 'my_fact' => 'value' })
     end
   end
 
@@ -114,9 +114,9 @@ describe Facter::Resolvers::BaseResolver do
     let(:resolver) { Class.new(Facter::Resolvers::BaseResolver) }
 
     it 'raises NotImplementedError error' do
-      expect { resolver.post_resolve(fact) }.to \
+      expect { resolver.post_resolve(fact, {}) }.to \
         raise_error(NotImplementedError,
-                    'You must implement post_resolve(fact_name) method in ')
+                    'You must implement post_resolve(fact_name, options) method in ')
     end
   end
 end
