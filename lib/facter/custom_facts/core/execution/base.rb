@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'popen3'
+
 module Facter
   module Core
     module Execution
@@ -70,8 +72,7 @@ module Facter
             opts = { 'LC_ALL' => 'C', 'LANG' => 'C' }
             require 'timeout'
             @log.debug("Executing command: #{command}")
-            out, stderr = Open3.popen3(opts, command.to_s) do |_, stdout, stderr, wait_thr|
-              pid = wait_thr.pid
+            out, stderr = Popen3.popen3e(opts, command.to_s) do |_, stdout, stderr, pid|
               stdout_messages = +''
               stderr_messages = +''
               out_reader = Thread.new { stdout.read }
