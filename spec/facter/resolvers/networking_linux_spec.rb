@@ -23,7 +23,9 @@ describe Facter::Resolvers::NetworkingLinux do
 
   describe '#resolve' do
     before do
+      Facter::Util::Resolvers::Networking::PrimaryInterface.instance_variable_set(:@log, log_spy)
       networking_linux.instance_variable_set(:@log, log_spy)
+
       allow(Facter::Core::Execution).to receive(:execute)
         .with('ip link show', logger: log_spy).and_return(load_fixture('ip_link_show').read)
       allow(Socket).to receive(:getifaddrs).and_return(ifaddrs)
@@ -35,7 +37,12 @@ describe Facter::Resolvers::NetworkingLinux do
       allow(Facter::Core::Execution).to receive(:execute)
         .with('ip route show', logger: log_spy).and_return(load_fixture('ip_route_show').read)
       allow(Facter::Core::Execution).to receive(:execute)
+        .with('ip route show default', logger: log_spy).and_return(load_fixture('ip_route_show_default').read)
+      allow(Facter::Core::Execution).to receive(:execute)
         .with('ip -6 route show', logger: log_spy).and_return(load_fixture('ip_-6_route_show').read)
+      allow(Facter::Core::Execution).to receive(:execute)
+        .with('ip -json -6 route show default', logger: log_spy)
+        .and_return(load_fixture('ip_-json_-6_route_show_default').read)
       allow(Facter::Util::FileHelper).to receive(:safe_read).with('/run/systemd/netif/leases/1', nil).and_return(nil)
       allow(Facter::Util::FileHelper).to receive(:safe_read)
         .with('/run/systemd/netif/leases/2', nil).and_return(load_fixture('dhcp_lease').read)
@@ -98,6 +105,10 @@ describe Facter::Resolvers::NetworkingLinux do
 
     it 'returns the primary interface' do
       expect(networking_linux.resolve(:primary_interface)).to eq('ens160')
+    end
+
+    it 'returns the primary6 interface' do
+      expect(networking_linux.resolve(:primary6_interface)).to eq('ens3')
     end
 
     context 'when caching' do
@@ -458,6 +469,13 @@ describe Facter::Resolvers::NetworkingLinux do
         Facter::Util::Resolvers::Networking::PrimaryInterface.instance_variable_set(:@log, log_spy)
         allow(Facter::Util::FileHelper).to receive(:safe_read).with('/proc/net/route', '').and_return('')
         allow(Facter::Core::Execution).to receive(:which).with('ip').and_return('ip available')
+        allow(Facter::Core::Execution).to receive(:execute)
+          .with('ip -json -6 route show default', logger: log_spy)
+          .and_return(load_fixture('ip_-json_-6_route_show_default').read)
+      end
+
+      it 'returns primary6 interface' do
+        expect(networking_linux.resolve(:primary6_interface)).to eq('ens3')
       end
 
       context 'when primary interface can not be read from /proc/net/route' do
