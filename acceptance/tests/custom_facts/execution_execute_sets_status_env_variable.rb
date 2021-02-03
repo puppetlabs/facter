@@ -1,6 +1,9 @@
 test_name "(FACT-2934) Facter::Core::Execution sets $?" do
   tag 'risk:high'
 
+  confine :except, :platform => /osx/ # rubocop:disable Style/HashSyntax
+  confine :except, :platform => /solaris/ # rubocop:disable Style/HashSyntax
+
   agents.each do |agent|
     command = if agent['platform'] =~/windows/
                 'cmd /c exit 1'
