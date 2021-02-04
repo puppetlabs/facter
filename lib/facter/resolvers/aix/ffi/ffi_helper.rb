@@ -96,6 +96,7 @@ module Facter
 
               if addresses[FFI::RTAX_NETMASK][:sa_len] && addresses[FFI::RTAX_IFA][:sa_len]
                 network = address_to_string(addresses[FFI::RTAX_IFA], addresses[FFI::RTAX_NETMASK])
+                network = '::' if network == '::1'
               end
 
               bindings = family == FFI::AF_INET ? :bindings : :bindings6
