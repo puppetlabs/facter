@@ -156,18 +156,20 @@ module Facter
       puts cache_groups
     end
 
-    desc '--puppet, -p', '(NOT SUPPORTED)Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.'
+    desc '--puppet, -p', '(DEPRECATED) Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.'
     map ['--puppet', '-p'] => :puppet
     def puppet(*args)
-      log = Log.new(self)
-      log.warn('`facter --puppet` and `facter -p` are no longer supported, use `puppet facts show` instead')
-      log.warn('the output does not contain puppet facts!')
-
-      output, status = Facter.to_user_output(@options, *args)
-      puts output
-
-      status = 1 if Facter::Log.errors?
-      exit status
+      output = `puppet facts show #{args.join(' ')}`
+      formatter = Facter::FormatterFactory.build
+      data = JSON.parse(output)
+      if data.values.count == 1
+        puts data.values.first
+      else
+        puts formatter.format_raw_hash(data)
+      end
+    rescue StandardError => e
+      warn "Failed to collect facts: #{e.message}"
+      exit(1)
     end
 
     desc 'help', 'Help for all arguments'

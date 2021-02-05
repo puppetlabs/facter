@@ -18,6 +18,14 @@ module Facter
       format_for_single_user_query(user_queries.first, resolved_facts)
     end
 
+    def format_raw_hash(fact_collection)
+      pretty_json = hash_to_facter_format(fact_collection)
+
+      pretty_json = remove_enclosing_accolades(pretty_json)
+      pretty_json = remove_comma_and_quotation(pretty_json)
+      handle_newlines(pretty_json)
+    end
+
     private
 
     def format_for_no_query(resolved_facts)

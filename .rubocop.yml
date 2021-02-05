@@ -62,6 +62,7 @@ Metrics/AbcSize:
     - 'lib/facter/custom_facts/core/execution/windows.rb'
     - 'lib/facter/custom_facts/core/execution/base.rb'
     - 'lib/facter/custom_facts/core/resolvable.rb'
+    - 'lib/facter/framework/cli/cli.rb'
     - 'lib/facter/resolvers/bsd/ffi/ffi_helper.rb'
     - 'install.rb'
     - 'scripts/generate_changelog.rb'
