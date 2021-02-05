@@ -44,6 +44,27 @@ module Facter
       end
     end
 
+    def puppet_facts
+      require 'puppet'
+
+      # don't allow puppet logger to be injected in Facter
+      Options[:allow_external_loggers] = false
+
+      Puppet.initialize_settings
+      $LOAD_PATH << Puppet[:libdir] unless $LOAD_PATH.include?(Puppet[:libdir])
+      Facter.reset
+      Facter.search_external([Puppet[:pluginfactdest]])
+      if Puppet.respond_to? :initialize_facts
+        Puppet.initialize_facts
+      else
+        Facter.add(:puppetversion) do
+          setcode { Puppet.version.to_s }
+        end
+      end
+    rescue LoadError => e
+      logger.error("Could not load puppet gem, got #{e}")
+    end
+
     # Alias method for Facter.fact()
     # @param name [string] fact name
     #

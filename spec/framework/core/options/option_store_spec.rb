@@ -43,7 +43,8 @@ describe Facter::OptionStore do
         trace: false,
         timing: false,
         external_dir: [],
-        custom_dir: []
+        custom_dir: [],
+        allow_external_loggers: true
       )
     end
   end
