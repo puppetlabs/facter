@@ -4,7 +4,7 @@ describe Facts::Linux::Ipaddress6Interfaces do
   subject(:fact) { Facts::Linux::Ipaddress6Interfaces.new }
 
   before do
-    allow(Facter::Resolvers::NetworkingLinux).to receive(:resolve).with(:interfaces).and_return(interfaces)
+    allow(Facter::Resolvers::Linux::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
   end
 
   describe '#call_the_resolver' do
@@ -12,7 +12,7 @@ describe Facts::Linux::Ipaddress6Interfaces do
 
     it 'calls Facter::Resolvers::NetworkingLinux' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::NetworkingLinux).to have_received(:resolve).with(:interfaces)
+      expect(Facter::Resolvers::Linux::Networking).to have_received(:resolve).with(:interfaces)
     end
 
     it 'returns legacy facts with names ipaddress6_<interface_name>' do

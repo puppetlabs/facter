@@ -7,12 +7,12 @@ describe Facts::Linux::Networking::Mtu do
     let(:value) { 1500 }
 
     before do
-      allow(Facter::Resolvers::NetworkingLinux).to receive(:resolve).with(:mtu).and_return(value)
+      allow(Facter::Resolvers::Linux::Networking).to receive(:resolve).with(:mtu).and_return(value)
     end
 
     it 'calls Facter::Resolvers::NetworkingLinux with mtu' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::NetworkingLinux).to have_received(:resolve).with(:mtu)
+      expect(Facter::Resolvers::Linux::Networking).to have_received(:resolve).with(:mtu)
     end
 
     it 'return mtu fact' do

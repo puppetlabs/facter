@@ -7,12 +7,12 @@ describe Facts::Linux::Networking::Ip6 do
     let(:value) { 'fe80::5989:97ff:75ae:dae7' }
 
     before do
-      allow(Facter::Resolvers::NetworkingLinux).to receive(:resolve).with(:ip6).and_return(value)
+      allow(Facter::Resolvers::Linux::Networking).to receive(:resolve).with(:ip6).and_return(value)
     end
 
     it 'calls Facter::Resolvers::NetworkingLinux with ip6' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::NetworkingLinux).to have_received(:resolve).with(:ip6)
+      expect(Facter::Resolvers::Linux::Networking).to have_received(:resolve).with(:ip6)
     end
 
     it 'returns ipv6 address fact' do
