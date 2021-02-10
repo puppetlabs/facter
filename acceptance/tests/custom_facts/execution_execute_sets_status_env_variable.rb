@@ -1,12 +1,11 @@
 test_name "(FACT-2934) Facter::Core::Execution sets $?" do
   tag 'risk:high'
 
-  confine :except, :platform => /osx/ # rubocop:disable Style/HashSyntax
-  confine :except, :platform => /solaris/ # rubocop:disable Style/HashSyntax
-
   agents.each do |agent|
-    command = if agent['platform'] =~/windows/
+    command = if agent['platform'] =~ /windows/
                 'cmd /c exit 1'
+              elsif agent['platform'] =~ /solaris/ || agent['platform'] =~ /osx/
+                `which bash`.chomp + " -c 'exit 1'"
               else
                 `which false`.chomp
               end
@@ -14,12 +13,11 @@ test_name "(FACT-2934) Facter::Core::Execution sets $?" do
     content = <<-EOM
     Facter.add(:foo) do
       setcode do
-         Facter::Util::Resolution.exec('#{command}')
+         Facter::Util::Resolution.exec("#{command}")
          "#{command} exited with code: %{status}" % {status: $?.exitstatus}
       end
     end
     EOM
-
 
     fact_dir = agent.tmpdir('facter')
     fact_file = File.join(fact_dir, 'test_facts.rb')
