@@ -6,13 +6,14 @@ module Facts
       module Distro
         class Id
           FACT_NAME = 'os.distro.id'
-          ALIASES = 'lsbdistid'
 
           def call_the_resolver
-            fact_value = Facter::Resolvers::LsbRelease.resolve(:distributor_id)
-
-            [Facter::ResolvedFact.new(FACT_NAME, fact_value),
-             Facter::ResolvedFact.new(ALIASES, fact_value, :legacy)]
+            fact_value = if Facter::Resolvers::OsRelease.resolve(:version_id).start_with?('12')
+                           'SUSE LINUX'
+                         else
+                           'SUSE'
+                         end
+            Facter::ResolvedFact.new(FACT_NAME, fact_value)
           end
         end
       end

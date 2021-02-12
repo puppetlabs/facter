@@ -4,21 +4,22 @@ describe Facts::Sles::Os::Distro::Description do
   describe '#call_the_resolver' do
     subject(:fact) { Facts::Sles::Os::Distro::Description.new }
 
-    let(:value) { 'CentOS Linux release 7.2.1511 (Core)' }
+    let(:value) { 'SUSE Linux Enterprise Server 15' }
 
     before do
-      allow(Facter::Resolvers::LsbRelease).to receive(:resolve).with(:description).and_return(value)
+      allow(Facter::Resolvers::OsRelease).to receive(:resolve)
+        .with(:pretty_name).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::LsbRelease' do
+    it 'calls Facter::Resolvers::OsRelease' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::LsbRelease).to have_received(:resolve).with(:description)
+      expect(Facter::Resolvers::OsRelease).to have_received(:resolve)
+        .with(:pretty_name)
     end
 
     it 'returns release fact' do
-      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
-        contain_exactly(an_object_having_attributes(name: 'os.distro.description', value: value),
-                        an_object_having_attributes(name: 'lsbdistdescription', value: value, type: :legacy))
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'os.distro.description', value: value)
     end
   end
 end

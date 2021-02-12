@@ -4,38 +4,56 @@ describe Facts::Sles::Os::Distro::Release do
   describe '#call_the_resolver' do
     subject(:fact) { Facts::Sles::Os::Distro::Release.new }
 
-    let(:value) { '7.2.1511' }
-    let(:release) { { 'full' => '7.2.1511', 'major' => '7', 'minor' => '2' } }
-
     before do
-      allow(Facter::Resolvers::LsbRelease).to receive(:resolve).with(:release).and_return(value)
+      allow(Facter::Resolvers::OsRelease).to receive(:resolve)
+        .with(:version_id)
+        .and_return(value)
     end
 
-    it 'calls Facter::Resolvers::LsbRelease' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::LsbRelease).to have_received(:resolve).with(:release)
-    end
+    context 'when version has .' do
+      let(:value) { '12.1' }
+      let(:release) { { 'full' => '12.1', 'major' => '12', 'minor' => '1' } }
 
-    it 'returns release fact' do
-      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
-        contain_exactly(an_object_having_attributes(name: 'os.distro.release', value: release),
-                        an_object_having_attributes(name: 'lsbdistrelease', value: value, type: :legacy),
-                        an_object_having_attributes(name: 'lsbmajdistrelease',
-                                                    value: release['major'], type: :legacy),
-                        an_object_having_attributes(name: 'lsbminordistrelease',
-                                                    value: release['minor'], type: :legacy))
-    end
-
-    context 'when lsb_release is not installed' do
-      let(:value) { nil }
-
-      before do
-        allow(Facter::Resolvers::LsbRelease).to receive(:resolve).with(:release).and_return(value)
+      it 'calls Facter::Resolvers::OsRelease with version_id' do
+        fact.call_the_resolver
+        expect(Facter::Resolvers::OsRelease).to have_received(:resolve)
+          .with(:version_id)
       end
 
-      it 'returns release fact' do
-        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact)
-          .and have_attributes(name: 'os.distro.release', value: value)
+      it 'returns operating system name fact' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+          contain_exactly(an_object_having_attributes(name: 'os.distro.release', value: release),
+                          an_object_having_attributes(name: 'lsbdistrelease',
+                                                      value: release['full'], type: :legacy),
+                          an_object_having_attributes(name: 'lsbmajdistrelease',
+                                                      value: release['major'], type: :legacy),
+                          an_object_having_attributes(name: 'lsbminordistrelease',
+                                                      value: release['minor'], type: :legacy))
+      end
+    end
+
+    context 'when version is simple' do
+      let(:value) { '15' }
+      let(:release) { { 'full' => '15', 'major' => '15', 'minor' => nil } }
+
+      before do
+        allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:version_id).and_return(value)
+      end
+
+      it 'calls Facter::Resolvers::OsRelease with version' do
+        fact.call_the_resolver
+        expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:version_id)
+      end
+
+      it 'returns operating system name fact' do
+        expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+          contain_exactly(an_object_having_attributes(name: 'os.distro.release', value: release),
+                          an_object_having_attributes(name: 'lsbdistrelease',
+                                                      value: release['full'], type: :legacy),
+                          an_object_having_attributes(name: 'lsbmajdistrelease',
+                                                      value: release['major'], type: :legacy),
+                          an_object_having_attributes(name: 'lsbminordistrelease',
+                                                      value: release['minor'], type: :legacy))
       end
     end
   end
