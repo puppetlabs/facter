@@ -9,20 +9,21 @@ module Facts
           ALIASES = %w[lsbdistrelease lsbmajdistrelease lsbminordistrelease].freeze
 
           def call_the_resolver
-            fact_value = Facter::Resolvers::LsbRelease.resolve(:release)
-            return Facter::ResolvedFact.new(FACT_NAME, nil) unless fact_value
+            version = determine_release_version
 
-            versions = fact_value.split('.')
-            release = {
-              'full' => fact_value,
-              'major' => versions[0],
-              'minor' => versions[1]
-            }
+            return Facter::ResolvedFact.new(FACT_NAME, nil) unless version
 
-            [Facter::ResolvedFact.new(FACT_NAME, release),
-             Facter::ResolvedFact.new(ALIASES[0], fact_value, :legacy),
-             Facter::ResolvedFact.new(ALIASES[1], versions[0], :legacy),
-             Facter::ResolvedFact.new(ALIASES[2], versions[1], :legacy)]
+            [Facter::ResolvedFact.new(FACT_NAME, version),
+             Facter::ResolvedFact.new(ALIASES[0], version['full'], :legacy),
+             Facter::ResolvedFact.new(ALIASES[1], version['major'], :legacy),
+             Facter::ResolvedFact.new(ALIASES[2], version['minor'], :legacy)]
+          end
+
+          def determine_release_version
+            version = Facter::Resolvers::RedHatRelease.resolve(:version)
+            version ||= Facter::Resolvers::OsRelease.resolve(:version_id)
+
+            Facter::Util::Facts.release_hash_from_string(version)
           end
         end
       end

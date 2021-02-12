@@ -6,6 +6,8 @@ module Facter
       # :name
       # :version
       # :codename
+      # :description
+      # :distributor_id
 
       init_resolver
 
@@ -26,28 +28,42 @@ module Facter
         end
 
         def build_fact_list(output)
+          @fact_list[:description] = output.strip
           output_strings = output.split('release')
           output_strings.map!(&:strip)
-          version_codename = output_strings[1].split(' ')
 
-          @fact_list[:name] = name(output_strings[0])
-          @fact_list[:version] = version_codename[0]&.strip
-
-          codename = version_codename[1]&.strip
-          @fact_list[:codename] = codename ? codename.gsub(/[()]/, '') : nil
-
+          @fact_list[:codename] = codename(output)
+          @fact_list[:distributor_id] = distributor_id(output_strings[0])
+          @fact_list[:name] = release_name(output_strings[0])
+          @fact_list[:version] = version(output_strings)
           @fact_list[:identifier] = identifier(@fact_list[:name])
         end
 
-        def name(name)
-          name.strip.split(' ')[0..1].join
+        def release_name(value)
+          value.split.reject { |el| el.casecmp('linux').zero? }[0..1].join
         end
 
-        def identifier(name)
-          identifier = name.strip.downcase
-          identifier = 'rhel' if @fact_list[:name].strip.casecmp('Red Hat Enterprise Linux')
+        def identifier(value)
+          identifier = value.downcase
+          identifier = 'rhel' if @fact_list[:name].casecmp('Red Hat Enterprise Linux')
 
           identifier
+        end
+
+        def codename(value)
+          matched_data = value.match(/.*release.*(\(.*\)).*/)
+          return unless matched_data
+
+          codename = (matched_data[1] || '').gsub(/\(|\)/, '')
+          codename.empty? ? nil : codename
+        end
+
+        def version(value)
+          value[1].split.first
+        end
+
+        def distributor_id(value)
+          value.split.reject { |el| el.casecmp('linux').zero? }.join
         end
       end
     end

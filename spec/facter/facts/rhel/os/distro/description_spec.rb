@@ -7,18 +7,19 @@ describe Facts::Rhel::Os::Distro::Description do
     let(:value) { 'CentOS Linux release 7.2.1511 (Core)' }
 
     before do
-      allow(Facter::Resolvers::LsbRelease).to receive(:resolve).with(:description).and_return(value)
+      allow(Facter::Resolvers::RedHatRelease).to receive(:resolve)
+        .with(:description).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::LsbRelease' do
+    it 'calls Facter::Resolvers::RedHatRelease' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::LsbRelease).to have_received(:resolve).with(:description)
+      expect(Facter::Resolvers::RedHatRelease).to have_received(:resolve)
+        .with(:description)
     end
 
     it 'returns release fact' do
-      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
-        contain_exactly(an_object_having_attributes(name: 'os.distro.description', value: value),
-                        an_object_having_attributes(name: 'lsbdistdescription', value: value, type: :legacy))
+      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+        have_attributes(name: 'os.distro.description', value: value)
     end
   end
 end
