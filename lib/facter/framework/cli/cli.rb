@@ -156,7 +156,7 @@ module Facter
       puts cache_groups
     end
 
-    desc '--puppet, -p', '(NOT SUPPORTED)Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.'
+    desc '--puppet, -p', 'Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.'
     map ['--puppet', '-p'] => :puppet
     def puppet(*args)
       Facter.puppet_facts
