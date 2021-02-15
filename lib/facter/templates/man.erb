@@ -20,6 +20,14 @@ OPTIONS
 
 <% end -%>
 
+<% @Facter::Cli.commands.select { |_k, command_class| command_class.instance_of?(Thor::Command) }.each do |_, command| -%>
+  * `<%= command.usage %>`:
+
+    <%= command.description %>
+
+
+<% end -%>
+
 FILES
 -----
 <em>/etc/puppetlabs/facter/facter.conf</em>

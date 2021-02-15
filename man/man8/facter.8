@@ -1,7 +1,7 @@
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "FACTER" "8" "July 2020" "Puppet, Inc." "Facter manual"
+.TH "FACTER" "8" "February 2021" "Puppet, Inc." "Facter manual"
 .
 .SH "NAME"
 \fBfacter\fR
@@ -25,6 +25,12 @@ Many of the command line options can also be set via the HOCON config file\. Thi
 .
 .IP
 Enable color output\.
+.
+.TP
+\fB\-\-no\-color\fR:
+.
+.IP
+Disable color output\.
 .
 .TP
 \fB\-c\fR, \fB\-\-config\fR:
@@ -63,18 +69,6 @@ Output in Hocon format\.
 Output in JSON format\.
 .
 .TP
-\fB\-\-list\-block\-groups\fR:
-.
-.IP
-List the names of all blockable fact groups\.
-.
-.TP
-\fB\-\-list\-cache\-groups\fR:
-.
-.IP
-List the names of all cacheable fact groups\.
-.
-.TP
 \fB\-l\fR, \fB\-\-log\-level\fR:
 .
 .IP
@@ -105,7 +99,7 @@ Disable custom facts\.
 Disable external facts\.
 .
 .TP
-\fB\-\-ruby\fR:
+\fB\-\-no\-ruby\fR:
 .
 .IP
 Disable loading Ruby, facts requiring Ruby, and custom facts\.
@@ -141,10 +135,40 @@ Output in YAML format\.
 Enable more aggressive error reporting\.
 .
 .TP
-\fB\-p\fR, \fB\-\-puppet\fR:
+\fB\-t\fR, \fB\-\-timing\fR:
+.
+.IP
+Show how much time it took to resolve each fact
+.
+.TP
+\fB\-\-sequential\fR:
+.
+.IP
+Resolve facts sequentially
+.
+.TP
+\fB\-\-list\-block\-groups\fR:
+.
+.IP
+List block groups
+.
+.TP
+\fB\-\-list\-cache\-groups\fR:
+.
+.IP
+List cache groups
+.
+.TP
+\fB\-\-puppet, \-p\fR:
 .
 .IP
 Load the Puppet libraries, thus allowing Facter to load Puppet\-specific facts\.
+.
+.TP
+\fBhelp\fR:
+.
+.IP
+Help for all arguments
 .
 .SH "FILES"
 \fI/etc/puppetlabs/facter/facter\.conf\fR
