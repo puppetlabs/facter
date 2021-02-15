@@ -124,10 +124,19 @@ module Facter
           os_name = 'Amazon'
           # This parses: VERSION_ID="2017.09"
           os_version = on(agent, 'grep VERSION_ID /etc/os-release | cut --delimiter=\" --fields=2 | cut --delimiter=. --fields=1').stdout.chomp
+          os_distro_description = /Amazon Linux( AMI)? release (\d )?(\()?#{os_version}(\))?/
+          os_distro_id = /^Amazon(AMI)?$/
+          os_distro_release_full = /#{os_version}(\.\d+)?/
         when /centos/
           os_name = 'CentOS'
+          os_distro_description = /CentOS( Linux)? release #{os_version}\.\d+(\.\d+)? \(\w+\)/
+          os_distro_id = 'CentOS'
+          os_distro_release_full = /#{os_version}\.\d+/
         else
           os_name = 'RedHat'
+          os_distro_description = /Red Hat Enterprise Linux( Server)? release #{os_version}\.\d+ \(\w+\)/
+          os_distro_id = /^RedHatEnterprise(Server)?$/
+          os_distro_release_full = /#{os_version}\.\d+/
         end
         if agent['platform'] =~ /x86_64/
           os_arch                 = 'x86_64'
@@ -143,24 +152,29 @@ module Facter
           processor_model_pattern = /(Intel\(R\).*)|(AMD.*)/
         end
 
-        expected_facts = {
-          'os.architecture' => os_arch,
-          'os.family' => 'RedHat',
-          'os.hardware' => os_hardware,
-          'os.name' => os_name,
-          'os.release.full' => /#{os_version}(\.\d+)?(\.\d+)?/,
-          'os.release.major' => os_version,
-          'os.release.minor' => /(\d+)?/,
-          'processors.count' => /[1-9]/,
-          'processors.physicalcount' => /[1-9]/,
-          'processors.isa' => os_hardware,
-          'processors.models' => processor_model_pattern,
-          'kernel' => 'Linux',
-          'kernelrelease' => /\d+\.\d+\.\d+/,
-          'kernelversion' => /\d+\.\d+/,
-          'kernelmajversion' => /\d+\.\d+/
-        }
-        expected_facts
+        {}.tap do |expected_facts|
+          expected_facts['os.architecture'] = os_arch
+          expected_facts['os.distro.codename'] = /\w+/
+          expected_facts['os.distro.description'] = os_distro_description
+          expected_facts['os.distro.id'] = os_distro_id
+          expected_facts['os.distro.release.full'] = os_distro_release_full
+          expected_facts['os.distro.release.major'] = os_version
+          expected_facts['os.distro.release.minor'] = /\d/ if os_version != '2' # Amazon Linux 2
+          expected_facts['os.family'] = 'RedHat'
+          expected_facts['os.hardware'] = os_hardware
+          expected_facts['os.name'] = os_name
+          expected_facts['os.release.full'] = /#{os_version}(\.\d+)?(\.\d+)?/
+          expected_facts['os.release.major'] = os_version
+          expected_facts['os.release.minor'] = /(\d+)?/
+          expected_facts['processors.count'] = /[1-9]/
+          expected_facts['processors.physicalcount'] = /[1-9]/
+          expected_facts['processors.isa'] = os_hardware
+          expected_facts['processors.models'] = processor_model_pattern
+          expected_facts['kernel'] = 'Linux'
+          expected_facts['kernelrelease'] = /\d+\.\d+\.\d+/
+          expected_facts['kernelversion'] = /\d+\.\d+/
+          expected_facts['kernelmajversion'] = /\d+\.\d+/
+        end
       end
 
       # fedora
@@ -181,6 +195,11 @@ module Facter
 
         expected_facts = {
           'os.architecture' => os_arch,
+          'os.distro.codename' => /\w+/,
+          'os.distro.description' => /Fedora release #{os_version} \(\w+( \w+)?\)/,
+          'os.distro.id' => 'Fedora',
+          'os.distro.release.full' => os_version,
+          'os.distro.release.major' => os_version,
           'os.family' => 'RedHat',
           'os.hardware' => os_hardware,
           'os.name' => 'Fedora',
@@ -252,6 +271,12 @@ module Facter
 
         expected_facts = {
           'os.architecture' => os_arch,
+          'os.distro.codename' => /\w+/,
+          'os.distro.description' => /SUSE Linux Enterprise Server/,
+          'os.distro.id' => /^SUSE( LINUX)?$/,
+          'os.distro.release.full' => /#{os_version}\.\d+/,
+          'os.distro.release.major' => os_version,
+          'os.distro.release.minor' => /\d/,
           'os.family' => 'Suse',
           'os.hardware' => os_hardware,
           'os.name' => 'SLES',

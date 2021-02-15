@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Facts
-  module Rhel
+  module Amzn
     module Os
       module Distro
         class Release
@@ -20,7 +20,7 @@ module Facts
           end
 
           def determine_release_version
-            version = Facter::Resolvers::RedHatRelease.resolve(:version)
+            version = Facter::Resolvers::ReleaseFromFirstLine.resolve(:release, release_file: '/etc/system-release')
             version ||= Facter::Resolvers::OsRelease.resolve(:version_id)
 
             Facter::Util::Facts.release_hash_from_string(version)

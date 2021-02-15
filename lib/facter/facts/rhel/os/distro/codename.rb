@@ -6,13 +6,11 @@ module Facts
       module Distro
         class Codename
           FACT_NAME = 'os.distro.codename'
-          ALIASES = 'lsbdistcodename'
 
           def call_the_resolver
-            fact_value = Facter::Resolvers::LsbRelease.resolve(:codename)
+            fact_value = Facter::Resolvers::RedHatRelease.resolve(:codename)
 
-            [Facter::ResolvedFact.new(FACT_NAME, fact_value),
-             Facter::ResolvedFact.new(ALIASES, fact_value, :legacy)]
+            Facter::ResolvedFact.new(FACT_NAME, fact_value)
           end
         end
       end
