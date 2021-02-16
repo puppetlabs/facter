@@ -13,7 +13,7 @@ describe Facter::FactFilter do
         end
 
         it 'filters hash value inside fact' do
-          Facter::FactFilter.new.filter_facts!([resolved_fact])
+          Facter::FactFilter.new.filter_facts!([resolved_fact], [resolved_fact.user_query])
           expect(resolved_fact.value).to eq('18')
         end
       end
@@ -28,7 +28,7 @@ describe Facter::FactFilter do
         end
 
         it 'filters hash value inside fact' do
-          Facter::FactFilter.new.filter_facts!([resolved_fact])
+          Facter::FactFilter.new.filter_facts!([resolved_fact], [resolved_fact.user_query])
           expect(resolved_fact.value).to eq('value_1')
         end
       end
@@ -44,27 +44,32 @@ describe Facter::FactFilter do
       end
 
       it 'filters string value inside fact' do
-        Facter::FactFilter.new.filter_facts!([resolved_fact])
+        Facter::FactFilter.new.filter_facts!([resolved_fact], [resolved_fact.user_query])
         expect(resolved_fact.value).to eq('value_1')
       end
     end
 
-    context 'with legacy fact that should be blocked' do
+    context 'when legacy facts are blocked' do
       let(:fact_value) { 'value_1' }
       let(:resolved_fact) { Facter::ResolvedFact.new('my_fact', fact_value, :legacy) }
 
       before do
-        resolved_fact.user_query = ''
-        resolved_fact.filter_tokens = []
-        allow(Facter::Options).to receive(:[]).with(:blocked_facts).and_return(['my_fact'])
-        allow(Facter::Options).to receive(:[]).with(:show_legacy).and_return(true)
-        allow(Facter::Options).to receive(:[]).with(:user_query).and_return('')
+        allow(Facter::Options).to receive(:[])
+        allow(Facter::Options).to receive(:[]).with(:show_legacy).and_return(false)
       end
 
       it 'filters blocked legacy facts' do
         fact_filter_input = [resolved_fact]
-        Facter::FactFilter.new.filter_facts!(fact_filter_input)
+        Facter::FactFilter.new.filter_facts!(fact_filter_input, [])
         expect(fact_filter_input).to eq([])
+      end
+
+      context 'when user_query is provided' do
+        it 'does not filter out the requested fact' do
+          fact_filter_input = [resolved_fact]
+          result = Facter::FactFilter.new.filter_facts!([resolved_fact], ['my_fact'])
+          expect(result).to eql(fact_filter_input)
+        end
       end
     end
   end
@@ -76,7 +81,7 @@ describe Facter::FactFilter do
     resolved_fact.user_query = 'os.release.arry.1.val2'
     resolved_fact.filter_tokens = ['arry', 1, 'val2']
 
-    Facter::FactFilter.new.filter_facts!([resolved_fact])
+    Facter::FactFilter.new.filter_facts!([resolved_fact], [resolved_fact.user_query])
 
     expect(resolved_fact.value).to eq('val3')
   end

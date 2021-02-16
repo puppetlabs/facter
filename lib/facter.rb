@@ -27,21 +27,24 @@ module Facter
       require 'facter/framework/cli/cli_launcher'
 
       args = args_as_string.split(' ')
-
       Facter::OptionsValidator.validate(args)
       processed_arguments = CliLauncher.prepare_arguments(args, nil)
-
       cli = Facter::Cli.new([], processed_arguments)
+      cli_options = cli.options.dup
 
-      if cli.args.include?(:version)
-        cli.invoke(:version, [])
-      elsif cli.args.include?('--list-cache-groups')
-        cli.invoke(:list_cache_groups, [])
-      elsif cli.args.include?('--list-block-groups')
-        cli.invoke(:list_block_groups, [])
-      else
-        cli.invoke(:arg_parser)
+      # config file options
+      config_file = cli_options.delete(:config)
+      if config_file
+        Facter::OptionStore.set(:config, config_file)
+        Facter::ConfigFileOptions.init(config_file)
+        Facter::Options.store(ConfigFileOptions.get)
       end
+
+      # user provided options
+      cli_options[:show_legacy] ||= false
+      Facter::Options.store(cli_options)
+
+      queried_facts(cli.args)
     end
 
     def puppet_facts
@@ -390,29 +393,6 @@ module Facter
       @already_searched[user_query]&.value
     end
 
-    # Gets the values for multiple facts.
-    #
-    # @param options [Hash] parameters for the fact - attributes
-    #   of {Facter::Util::Fact} and {Facter::Util::Resolution} can be
-    #   supplied here
-    # @param user_queries [Array] the fact names
-    #
-    # @return [FactCollection] hash with fact names and values
-    #
-    # @api public
-    def values(options, user_queries)
-      init_cli_options(options, user_queries)
-      log_blocked_facts
-      resolved_facts = Facter::FactManager.instance.resolve_facts(user_queries)
-      resolved_facts.reject! { |fact| fact.type == :custom && fact.value.nil? }
-
-      if user_queries.count.zero?
-        Facter::FactCollection.new.build_fact_collection!(resolved_facts)
-      else
-        FormatterHelper.retrieve_facts_to_display_for_user_query(user_queries, resolved_facts)
-      end
-    end
-
     # Returns Facter version
     #
     # @return [String] Current version
@@ -428,7 +408,7 @@ module Facter
     #
     # @api private
     def to_user_output(cli_options, *args)
-      init_cli_options(cli_options, args)
+      init_cli_options(cli_options)
       logger.info("executed with command line: #{ARGV.drop(1).join(' ')}")
       logger.debug("Facter version: #{Facter::VERSION}")
       log_blocked_facts
@@ -490,6 +470,18 @@ module Facter
 
     private
 
+    def queried_facts(user_query)
+      log_blocked_facts
+      resolved_facts = Facter::FactManager.instance.resolve_facts(user_query)
+      resolved_facts.reject! { |fact| fact.type == :custom && fact.value.nil? }
+
+      if user_query.count.zero?
+        Facter::FactCollection.new.build_fact_collection!(resolved_facts)
+      else
+        FormatterHelper.retrieve_facts_to_display_for_user_query(user_query, resolved_facts)
+      end
+    end
+
     def resolve_facts_for_user_query(user_query)
       resolved_facts = Facter::FactManager.instance.resolve_facts(user_query)
       user_querie = resolved_facts.uniq(&:user_query).map(&:user_query).first
@@ -516,9 +508,9 @@ module Facter
       @logger ||= Log.new(self)
     end
 
-    def init_cli_options(options, args)
+    def init_cli_options(options)
       options = options.map { |(k, v)| [k.to_sym, v] }.to_h
-      Facter::Options.init_from_cli(options, args)
+      Facter::Options.init_from_cli(options)
     end
 
     def add_fact_to_searched_facts(user_query, value)

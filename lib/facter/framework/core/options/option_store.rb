@@ -13,7 +13,6 @@ module Facter
     @ruby = true
     @external_facts = true
     @config = nil
-    @user_query = []
     @strict = false
     @json = false
     @cache = true
@@ -41,7 +40,7 @@ module Facter
       attr_reader :debug, :verbose, :log_level, :show_legacy,
                   :custom_facts, :blocked_facts, :ruby, :external_facts
 
-      attr_accessor :config, :user_query, :strict, :json,
+      attr_accessor :config, :strict, :json,
                     :cache, :yaml, :puppet, :ttls, :block, :cli, :config_file_custom_dir,
                     :config_file_external_dir, :default_external_dir, :fact_groups,
                     :block_list, :color, :trace, :sequential, :timing, :hocon, :allow_external_loggers
@@ -171,7 +170,6 @@ module Facter
         @log_level = :warn
         @show_legacy = true
         @ruby = true
-        @user_query = []
         @json = false
         @hocon = false
         @cache = true

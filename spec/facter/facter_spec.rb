@@ -63,128 +63,14 @@ describe Facter do
     let(:cli_double) { instance_spy(Facter::Cli) }
 
     before do
-      allow(Facter::Cli).to receive(:new).and_return(cli_double)
-      allow(Facter::OptionsValidator).to receive(:validate)
-      allow(CliLauncher).to receive(:prepare_arguments)
+      allow(Facter).to receive(:queried_facts)
     end
 
-    context 'when --version argument' do
-      before do
-        allow(cli_double).to receive(:args).and_return([:version])
-      end
+    context 'when user query and options in arguments' do
+      it 'calls queried_facts' do
+        Facter.resolve('os --show-legacy')
 
-      it 'invokes version' do
-        Facter.resolve('--version')
-
-        expect(cli_double).to have_received(:invoke).with(:version, [])
-      end
-
-      it 'does not invoke list_block_groups' do
-        Facter.resolve('--version')
-
-        expect(cli_double).not_to have_received(:invoke).with(:list_block_groups, [])
-      end
-
-      it 'does not invoke list_cache_groups' do
-        Facter.resolve('--version')
-
-        expect(cli_double).not_to have_received(:invoke).with(:list_cache_groups)
-      end
-
-      it 'does not invoke arg_parser' do
-        Facter.resolve('--version')
-
-        expect(cli_double).not_to have_received(:invoke).with(:arg_parser)
-      end
-    end
-
-    context 'when --list-cache-groups argument' do
-      before do
-        allow(cli_double).to receive(:args).and_return(['--list-cache-groups'])
-      end
-
-      it 'noes not invokes version' do
-        Facter.resolve('--version')
-
-        expect(cli_double).not_to have_received(:invoke).with(:version, [])
-      end
-
-      it 'invokes list_cache_groups' do
-        Facter.resolve('--list-cache-groups')
-
-        expect(cli_double).to have_received(:invoke).with(:list_cache_groups, [])
-      end
-
-      it 'does not invoke list_block_groups' do
-        Facter.resolve('--version')
-
-        expect(cli_double).not_to have_received(:invoke).with(:list_block_groups, [])
-      end
-
-      it 'does not invoke arg_parser' do
-        Facter.resolve('--version')
-
-        expect(cli_double).not_to have_received(:invoke).with(:arg_parser)
-      end
-    end
-
-    context 'when list_block_groups argument' do
-      before do
-        allow(cli_double).to receive(:args).and_return(['--list-block-groups'])
-      end
-
-      it 'noes not invokes version' do
-        Facter.resolve('--version')
-
-        expect(cli_double).not_to have_received(:invoke).with(:version, [])
-      end
-
-      it 'does not invokes list_cache_groups' do
-        Facter.resolve('--list-cache-groups')
-
-        expect(cli_double).not_to have_received(:invoke).with(:list_cache_groups, [])
-      end
-
-      it 'invoke list_block_groups' do
-        Facter.resolve('--version')
-
-        expect(cli_double).to have_received(:invoke).with(:list_block_groups, [])
-      end
-
-      it 'does not invoke arg_parser' do
-        Facter.resolve('--version')
-
-        expect(cli_double).not_to have_received(:invoke).with(:arg_parser)
-      end
-    end
-
-    context 'when only user query and options in arguments' do
-      before do
-        allow(cli_double).to receive(:args).and_return([:arg_parser])
-      end
-
-      it 'noes not invokes version' do
-        Facter.resolve('--version')
-
-        expect(cli_double).not_to have_received(:invoke).with(:version, [])
-      end
-
-      it 'does not invokes list_cache_groups' do
-        Facter.resolve('--list-cache-groups')
-
-        expect(cli_double).not_to have_received(:invoke).with(:list_cache_groups, [])
-      end
-
-      it 'does not invoke list_block_groups' do
-        Facter.resolve('--version')
-
-        expect(cli_double).not_to have_received(:invoke).with(:list_block_groups, [])
-      end
-
-      it 'invoke arg_parser' do
-        Facter.resolve('--version')
-
-        expect(cli_double).to have_received(:invoke).with(:arg_parser)
+        expect(Facter).to have_received(:queried_facts).with(['os'])
       end
     end
   end
@@ -336,79 +222,6 @@ describe Facter do
         mock_collection(:value, 'Ubuntu')
 
         expect(Facter.value('os.name')).to eq('Ubuntu')
-      end
-    end
-  end
-
-  describe '#values' do
-    context 'when one or more user queries' do
-      let(:result) { { 'os.name' => 'Darwin' } }
-
-      before do
-        allow(Facter::FormatterHelper)
-          .to receive(:retrieve_facts_to_display_for_user_query)
-          .with(['os.name'], [os_fact])
-          .and_return(result)
-
-        mock_fact_manager(:resolve_facts, [os_fact])
-      end
-
-      it 'calls FormatterHelper' do
-        Facter.values({}, ['os.name'])
-
-        expect(Facter::FormatterHelper)
-          .to have_received(:retrieve_facts_to_display_for_user_query)
-          .with(['os.name'], [os_fact])
-      end
-
-      it 'returns hash with os.name fact' do
-        expect(Facter.values({}, ['os.name'])).to eq(result)
-      end
-
-      it 'show_legacy is false by default' do
-        Facter.values({}, [])
-
-        expect(Facter::Options[:show_legacy]).to be false
-      end
-
-      it 'logs blocked facts' do
-        allow(Facter::Options).to receive(:[]).with(:block_list).and_return(['os'])
-
-        Facter.values({}, [])
-
-        expect(logger).to have_received(:debug).with('blocking collection of os facts')
-      end
-    end
-
-    context 'when no user query' do
-      before do
-        mock_fact_manager(:resolve_facts, [os_fact])
-      end
-
-      it 'calls Facter::FactCollection' do
-        Facter.values({}, [])
-
-        expect(fact_collection_spy).to have_received(:build_fact_collection!).with([os_fact])
-      end
-
-      it 'returns hash with os.name fact' do
-        expect(Facter.values({}, [])).to eq(fact_collection_spy)
-      end
-    end
-
-    context 'when custom fact with nill value' do
-      let(:type) { :custom }
-      let(:fact_value) { nil }
-      let(:fact_user_query) { '' }
-
-      before do
-        mock_fact_manager(:resolve_facts, [os_fact])
-      end
-
-      it 'calls Facter::FactCollection with no facts' do
-        Facter.values({}, [])
-
-        expect(fact_collection_spy).to have_received(:build_fact_collection!).with([])
       end
     end
   end
