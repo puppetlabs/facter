@@ -78,6 +78,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/ruby/simple_resolution.cc"
     "src/util/scoped_file.cc"
     "src/util/string.cc"
+    "src/util/cli.cc"
     "src/util/config/config.cc"
     "src/util/yaml.cc"
 )
