@@ -187,6 +187,8 @@ module Facter
         end
         release_string = on(agent, 'cat /etc/*-release').stdout.downcase
         case release_string
+          when /almalinux/
+            os_name = 'AlmaLinux'
           when /amazon/
             os_name = 'Amazon'
             # This parses: VERSION_ID="2017.09"
