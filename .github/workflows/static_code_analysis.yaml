@@ -1,0 +1,61 @@
+---
+name: Static Code Analysis
+
+on:
+  push:
+    branches: [ 3.x ]
+  pull_request:
+    branches: [ 3.x ]
+
+jobs:
+  static_code_analysis:
+    name: ${{ matrix.task }}
+    strategy:
+      matrix:
+        task: [ 'cpplint', 'cppcheck' ]
+
+    runs-on: 'ubuntu-18.04'
+    steps:
+      - name: Checkout current PR code
+        uses: actions/checkout@v2
+
+      - name: Install required dependencies
+        run: |
+          docker pull gcr.io/cpp-projects/cpp-ci:1
+
+          docker run -v ${PWD}:/facter gcr.io/cpp-projects/cpp-ci:1 /bin/bash -c "
+          apk add --no-cache openjdk8 ruby ruby-dev &&
+          export JAVA_HOME=/usr/lib/jvm/default-jvm"
+
+          (docker commit $(docker ps -lq) | cut -c8-) > ~/.docker_image_id
+
+      - name: Install the latest release of leatherman
+        run: |
+          docker run -v ${PWD}:/facter $(cat ~/.docker_image_id) /bin/bash -c "
+          wget https://github.com/puppetlabs/leatherman/releases/latest/download/leatherman-dynamic.tar.gz &&
+          tar xzvf leatherman-dynamic.tar.gz --strip 1 -C /"
+
+          (docker commit $(docker ps -lq) | cut -c8-) > ~/.docker_image_id
+
+      - name: Install the latest release of cpp-hocon
+        run: |
+          docker run -v ${PWD}:/facter $(cat ~/.docker_image_id) /bin/bash -c "
+          wget https://github.com/puppetlabs/cpp-hocon/releases/latest/download/cpp-hocon-dynamic.tar.gz &&
+          tar xzvf cpp-hocon-dynamic.tar.gz --strip 1 -C /"
+
+          (docker commit $(docker ps -lq) | cut -c8-) > ~/.docker_image_id
+
+      - name: Prepare facter environment
+        run: |
+          docker run -v ${PWD}:/facter $(cat ~/.docker_image_id) /bin/bash -c "
+          cd /facter &&
+          cmake . -DENABLE_CXX_WERROR=OFF &&
+          mkdir dest"
+
+          (docker commit $(docker ps -lq) | cut -c8-) > ~/.docker_image_id
+
+      - name: Run ${{ matrix.task }}
+        run: |
+          docker run -v ${PWD}:/facter $(cat ~/.docker_image_id) /bin/bash -c "
+          cd /facter &&
+          make ${{ matrix.task }} DESTDIR=/facter/dest VERBOSE=1 -j2"

@@ -1,5 +1,10 @@
 Facter 4
 ============
+
+[![Unit Tests](https://github.com/puppetlabs/facter/actions/workflows/tests.yaml/badge.svg)](https://github.com/puppetlabs/facter/actions/workflows/tests.yaml)
+
+[![Static code analysis](https://github.com/puppetlabs/facter/actions/workflows/static_code_analysis.yaml/badge.svg)](https://github.com/puppetlabs/facter/actions/workflows/static_code_analysis.yaml)
+
 Facter 4 is the newest version of Facter that is written in Ruby and compatible with Facter 3. Currenly Facter 4 is maintained on [4.x branch]( https://github.com/puppetlabs/facter/tree/4.x)
 
 Native Facter

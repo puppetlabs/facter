@@ -1,0 +1,120 @@
+---
+name: Unit Tests
+
+on:
+  push:
+    branches: [ 3.x ]
+  pull_request:
+    branches: [ 3.x ]
+
+jobs:
+  unit_tests:
+    name: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ 'windows-2016', 'ubuntu-18.04' ]
+    
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout current PR code
+        uses: actions/checkout@v2
+
+      - name: Install required dependencies
+        run: |
+          if('${{ runner.os }}' -eq 'Windows')
+          {
+            choco install --no-progress -y wget
+            choco install --no-progress -y mingw-w64 -Version 5.2.0 -source https://www.myget.org/F/puppetlabs
+            choco install --no-progress -y cmake -Version 3.2.2 -source https://www.myget.org/F/puppetlabs
+            choco install --no-progress -y gettext -Version 0.19.6 -source https://www.myget.org/F/puppetlabs
+            choco install --no-progress -y pl-toolchain-x64 -Version 2015.12.01.1 -source https://www.myget.org/F/puppetlabs
+            choco install --no-progress -y pl-boost-x64 -Version 1.58.0.2 -source https://www.myget.org/F/puppetlabs
+            choco install --no-progress -y pl-openssl-x64 -Version 1.0.24.1 -source https://www.myget.org/F/puppetlabs
+            choco install --no-progress -y pl-curl-x64 -Version 7.46.0.1 -source https://www.myget.org/F/puppetlabs
+            choco install --no-progress -y pl-yaml-cpp-x64 -Version 0.5.1.2 -source https://www.myget.org/F/puppetlabs
+          }
+          elseif('${{ runner.os }}' -eq 'Linux')
+          {
+            docker pull gcr.io/cpp-projects/cpp-ci:1
+
+            docker run -v ${PWD}:/facter gcr.io/cpp-projects/cpp-ci:1 /bin/bash -c "
+            apk add --no-cache openjdk8 ruby ruby-dev &&
+            export JAVA_HOME=/usr/lib/jvm/default-jvm"
+
+            (docker commit $(docker ps -lq) | cut -c8-) > ~/.docker_image_id
+          } 
+        shell: pwsh
+
+      - name: Install the latest release of leatherman
+        run: |
+          if('${{ runner.os }}' -eq 'Windows')
+          {
+            wget "https://github.com/puppetlabs/leatherman/releases/latest/download/leatherman.7z" -O"$env:temp\leatherman.7z"
+            7z.exe x $env:temp\leatherman.7z -oC:\tools | FIND /V "ing "
+          }
+          elseif('${{ runner.os }}' -eq 'Linux')
+          {
+            docker run -v ${PWD}:/facter $(cat ~/.docker_image_id) /bin/bash -c "
+            wget https://github.com/puppetlabs/leatherman/releases/latest/download/leatherman-dynamic.tar.gz &&
+            tar xzvf leatherman-dynamic.tar.gz --strip 1 -C /"
+
+            (docker commit $(docker ps -lq) | cut -c8-) > ~/.docker_image_id
+          }
+        shell: pwsh
+
+      - name: Install the latest release of cpp-hocon
+        run: |
+          if('${{ runner.os }}' -eq 'Windows')
+          {
+            wget "https://github.com/puppetlabs/cpp-hocon/releases/latest/download/cpp-hocon.7z" -O"$env:temp\cpp-hocon.7z"
+            7z.exe x $env:temp\cpp-hocon.7z -oC:\tools | FIND /V "ing "
+          }
+          elseif('${{ runner.os }}' -eq 'Linux')
+          {
+            docker run -v ${PWD}:/facter $(cat ~/.docker_image_id) /bin/bash -c "
+            wget https://github.com/puppetlabs/cpp-hocon/releases/latest/download/cpp-hocon-dynamic.tar.gz &&
+            tar xzvf cpp-hocon-dynamic.tar.gz --strip 1 -C /"
+
+            (docker commit $(docker ps -lq) | cut -c8-) > ~/.docker_image_id
+          }
+        shell: pwsh
+
+
+      - name: Prepare facter environment
+        run: |
+          if('${{ runner.os }}' -eq 'Windows')
+          {
+            gem install bundler
+            bundle install --jobs 4 --retry 2 --gemfile=lib/Gemfile --quiet
+            
+            $env:path="C:\tools\pl-build-tools\bin;C:\tools\mingw64\bin;C:\ProgramData\chocolatey\bin;C:\Program Files\7-Zip;C:\Windows\system32;C:\Windows;C:\Windows\System32\WindowsPowerShell\v1.0;C:\Program Files\gettext-iconv"
+            cmake -G "MinGW Makefiles" -DCMAKE_TOOLCHAIN_FILE="C:\tools\pl-build-tools\pl-build-toolchain.cmake" -DCMAKE_PREFIX_PATH="C:\tools\leatherman;C:\tools\cpp-hocon" -DCMAKE_INSTALL_PREFIX="C:\Program Files\FACTER" -DBOOST_STATIC=ON .
+
+            mingw32-make install
+          }
+          elseif('${{ runner.os }}' -eq 'Linux')
+          {
+            docker run -v ${PWD}:/facter $(cat ~/.docker_image_id) /bin/bash -c "
+            cd /facter &&
+            cmake -DCMAKE_BUILD_TYPE=Debug -DCOVERALLS=ON . -DENABLE_CXX_WERROR=OFF &&
+            mkdir dest"
+
+            (docker commit $(docker ps -lq) | cut -c8-) > ~/.docker_image_id
+          }
+        shell: pwsh
+
+      - name: Run unit tests
+        run: |
+          if('${{ runner.os }}' -eq 'Windows')
+          {
+            ctest -V 2>&1 | %{ if ($_ -is [System.Management.Automation.ErrorRecord]) { $_ | c++filt } else { $_ } }
+          }
+          elseif('${{ runner.os }}' -eq 'Linux')
+          {
+            docker run -v ${PWD}:/facter $(cat ~/.docker_image_id) /bin/bash -c "
+            cd /facter &&
+            mkdir coverage &&
+            make all test install ARGS=-V DESTDIR=/facter/dest VERBOSE=1 -j2 &&
+            { coveralls --gcov-options '\-lp' -r . -b . -e src -e vendor --dump ./coverage/lcov.info || true; }"
+          }
+        shell: pwsh
