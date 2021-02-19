@@ -44,6 +44,12 @@ module Facter
       end
     end
 
+    # Method used by cli to set puppet paths
+    # in order to retrieve puppet custom and external facts
+    #
+    # @return nil
+    #
+    # @api private
     def puppet_facts
       require 'puppet'
 
@@ -110,10 +116,10 @@ module Facter
       nil
     end
 
-    # Gets the value for a core fact, external or custom facts are
-    #   not returned with this call. Returns `nil` if no such fact exists.
+    # Retrieves the value of a core fact. External or custom facts are
+    # not returned with this call. Returns `nil` if no such fact exists.
     #
-    # @return [FactCollection] hash with fact names and values
+    # @return [FactCollection] A hash with fact names and values
     #
     # @api private
     def core_value(user_query)
@@ -198,14 +204,29 @@ module Facter
       Facter::Options[:debug] = debug_bool
     end
 
+    # Enable sequential resolving of facts
+    #
+    # @return [bool]
+    #
+    # @api public
     def enable_sequential
       Facter::Options[:sequential] = true
     end
 
+    # Disable sequential resolving of facts
+    #
+    # @return [bool]
+    #
+    # @api public
     def disable_sequential
       Facter::Options[:sequential] = false
     end
 
+    # Check if facts are resolved sequentially or not
+    #
+    # @return [bool]
+    #
+    # @api public
     def sequential?
       Facter::Options[:sequential]
     end
@@ -343,10 +364,10 @@ module Facter
       Options.custom_dir
     end
 
-    # Gets a hash mapping fact names to their values
-    # The hash contains core facts, legacy facts, custom facts and external facts (all facts that can be resolved).
+    # Retrieves a fact's value. Returns `nil` if no such fact exists.
     #
-    # @return [FactCollection] hash with fact names and values
+    # @param user_query [String] the fact name
+    # @return [String] the value of the fact, or nil if no fact is found
     #
     # @api public
     def to_hash
@@ -454,7 +475,7 @@ module Facter
       nil
     end
 
-    # Returns a list with the names of all solved facts
+    # Returns a list with the names of all resolved facts
     # @return [Array] the list with all the fact names
     #
     # @api public

@@ -53,6 +53,15 @@ module Facter
       # @api private
       attr_reader :fact
 
+      # Create a new aggregated resolution mechanism.
+      #
+      # @param name [String] The name of the resolution.
+      # @param fact [Facter::Fact] The fact to which this
+      #             resolution will be added.
+      #
+      # @return [Facter::Util::Resolution] The created resolution
+      #
+      # @api private
       def initialize(name, fact)
         @name = name
         @fact = fact
