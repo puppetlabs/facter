@@ -59,6 +59,17 @@ module LegacyFacter
         @on_flush_block&.call
       end
 
+      # Resolves the fact's value or loggs an error if the value
+      # couldn't be resolved.
+      #
+      # @raise Facter::ResolveCustomFactError if an error was raised
+      # (except Timeout::Error or Narmalization::NarmalizationError
+      # in which case an error message is logged and the execution
+      # isn't suspended).
+      #
+      # @return value (hash, string, int, array, etc) or nil
+      #
+      # @api private
       def value
         result = nil
 
