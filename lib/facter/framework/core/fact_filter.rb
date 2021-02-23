@@ -5,8 +5,8 @@ module Facter
   # e.g. os.release.major is the user query, os.release is the fact
   # and major is the filter criteria inside tha fact
   class FactFilter
-    def filter_facts!(searched_facts)
-      filter_legacy_facts!(searched_facts)
+    def filter_facts!(searched_facts, user_query)
+      filter_legacy_facts!(searched_facts) if user_query.empty?
       filter_blocked_legacy_facts!(searched_facts)
 
       searched_facts.each do |fact|
@@ -32,7 +32,7 @@ module Facter
     end
 
     def filter_legacy_facts!(resolved_facts)
-      return unless !Options[:show_legacy] && Options[:user_query].empty?
+      return if Options[:show_legacy]
 
       resolved_facts.reject!(&:legacy?)
     end

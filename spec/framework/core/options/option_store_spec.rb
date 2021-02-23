@@ -23,7 +23,6 @@ describe Facter::OptionStore do
         ruby: true,
         external_facts: true,
         config: nil,
-        user_query: [],
         strict: false,
         json: false,
         hocon: false,

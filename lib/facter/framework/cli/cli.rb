@@ -134,9 +134,9 @@ module Facter
 
     desc '--list-block-groups', 'List block groups'
     map ['--list-block-groups'] => :list_block_groups
-    def list_block_groups(*args)
+    def list_block_groups
       options = @options.map { |(k, v)| [k.to_sym, v] }.to_h
-      Facter::Options.init_from_cli(options, args)
+      Facter::Options.init_from_cli(options)
 
       block_groups = Facter::FactGroups.new.groups.to_yaml.lines[1..-1].join
       block_groups.gsub!(/:\s*\n/, "\n")
@@ -146,9 +146,9 @@ module Facter
 
     desc '--list-cache-groups', 'List cache groups'
     map ['--list-cache-groups'] => :list_cache_groups
-    def list_cache_groups(*args)
+    def list_cache_groups
       options = @options.map { |(k, v)| [k.to_sym, v] }.to_h
-      Facter::Options.init_from_cli(options, args)
+      Facter::Options.init_from_cli(options)
 
       cache_groups = Facter::FactGroups.new.groups.to_yaml.lines[1..-1].join
       cache_groups.gsub!(/:\s*\n/, "\n")

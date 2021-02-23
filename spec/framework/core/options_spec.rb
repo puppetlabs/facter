@@ -27,20 +27,6 @@ describe Facter::Options do
       expect(option_store).to have_received(:show_legacy=).with(false)
     end
 
-    context 'with user_query' do
-      it 'calls OptionStore with user_query when sent' do
-        Facter::Options.init_from_cli({}, 'os')
-
-        expect(option_store).to have_received(:user_query=).with('os')
-      end
-
-      it 'calls OptionStore with user_query with nil' do
-        Facter::Options.init_from_cli
-
-        expect(option_store).to have_received(:user_query=).with(nil)
-      end
-    end
-
     context 'with config_file' do
       let(:config_file_opts) { { 'debug' => true, 'ruby' => true } }
 
