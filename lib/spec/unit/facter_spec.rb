@@ -134,10 +134,14 @@ describe Facter do
   end
 
   describe '.load_external' do
+    before :each do
+      Facter.reset
+    end
+
     context 'when set to false' do
       it 'skips resolving external facts' do
         Facter.search_external([
-          File.expand_path('../../../lib/tests/fixtures/facts/external/yaml'),
+          File.expand_path('../../../lib/tests/fixtures/facts/external/yaml', File.dirname(__FILE__)),
         ])
         Facter.load_external(false);
         facts = Facter.to_hash
@@ -148,11 +152,49 @@ describe Facter do
     context 'when set to true' do
       it 'resolves external facts' do
         Facter.search_external([
-          File.expand_path('../../../lib/tests/fixtures/facts/external/yaml'),
+          File.expand_path('../../../lib/tests/fixtures/facts/external/yaml', File.dirname(__FILE__)),
         ])
         Facter.load_external(true);
         facts = Facter.to_hash
-        expect(facts['yaml_fact1'] == "foo")
+        expect(facts['yaml_fact1']).to eq('foo')
+      end
+    end
+  end
+
+  describe '.resolve' do
+    before :each do
+      Facter.reset
+    end
+
+    it 'resolves external facts' do
+      Facter.search_external([
+        File.expand_path('../../../lib/tests/fixtures/facts/external/yaml', File.dirname(__FILE__)),
+      ])
+      output = Facter.resolve('yaml_fact1')
+      expect(output['yaml_fact1']).to eq('foo')
+    end
+
+    it 'resolves custom facts' do
+      Facter.search(File.expand_path('../../../lib/tests/fixtures/ruby/custom_dir', File.dirname(__FILE__)))
+      output = Facter.resolve('sometest')
+      expect(output['sometest']).to be_a(String)
+    end
+
+    it 'returns all facts if no query is provided' do
+      expect(Facter.resolve('')).not_to be_empty
+    end
+
+    it 'returns only the queried facts if a query is provided' do
+      expect(Facter.resolve('os uptime').keys).to eq(['os', 'uptime'])
+    end
+
+    context 'with legacy facts' do
+      it 'includes legacy facts if called with --show-legacy' do
+        expect(Facter.resolve('--show-legacy')['osfamily']).not_to be_nil
+      end
+
+      it 'does not include legacy facts by default' do
+        expect(Facter.resolve('')['osfamily']).to be_nil
       end
     end
   end

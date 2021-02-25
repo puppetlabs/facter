@@ -57,7 +57,7 @@ namespace facter { namespace ruby {
         /**
          * Resolves all custom facts.
          */
-        void resolve_facts();
+        void resolve_facts(boost::program_options::variables_map extra_opts = new boost::program_options::variables_map);
 
         /**
          * Clears the facts.
@@ -110,6 +110,7 @@ namespace facter { namespace ruby {
         static leatherman::ruby::VALUE ruby_add(int argc, leatherman::ruby::VALUE* argv, leatherman::ruby::VALUE self);
         static leatherman::ruby::VALUE ruby_define_fact(int argc, leatherman::ruby::VALUE* argv, leatherman::ruby::VALUE self);
         static leatherman::ruby::VALUE ruby_value(leatherman::ruby::VALUE self, leatherman::ruby::VALUE name);
+        static leatherman::ruby::VALUE ruby_resolve(leatherman::ruby::VALUE self, leatherman::ruby::VALUE options_as_string);
         static leatherman::ruby::VALUE ruby_fact(leatherman::ruby::VALUE self, leatherman::ruby::VALUE name);
         static leatherman::ruby::VALUE ruby_debug(leatherman::ruby::VALUE self, leatherman::ruby::VALUE message);
         static leatherman::ruby::VALUE ruby_debugonce(leatherman::ruby::VALUE self, leatherman::ruby::VALUE message);

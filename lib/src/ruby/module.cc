@@ -4,6 +4,7 @@
 #include <internal/ruby/simple_resolution.hpp>
 #include <facter/facts/collection.hpp>
 #include <facter/logging/logging.hpp>
+#include <facter/util/cli.hpp>
 #include <facter/util/config.hpp>
 #include <facter/version.h>
 #include <facter/export.h>
@@ -30,12 +31,14 @@ using leatherman::locale::_;
 using namespace std;
 using namespace facter::facts;
 using namespace facter::util::config;
+using namespace facter::util::cli;
 using namespace leatherman::execution;
 using namespace leatherman::file_util;
 using namespace leatherman::util;
 using namespace boost::filesystem;
 using namespace leatherman::logging;
 using namespace leatherman::ruby;
+namespace po = boost::program_options;
 
 namespace facter { namespace ruby {
 
@@ -257,6 +260,7 @@ namespace facter { namespace ruby {
         ruby.rb_define_singleton_method(_self, "flush", RUBY_METHOD_FUNC(ruby_flush), 0);
         ruby.rb_define_singleton_method(_self, "list", RUBY_METHOD_FUNC(ruby_list), 0);
         ruby.rb_define_singleton_method(_self, "to_hash", RUBY_METHOD_FUNC(ruby_to_hash), 0);
+        ruby.rb_define_singleton_method(_self, "resolve", RUBY_METHOD_FUNC(ruby_resolve), 1);
         ruby.rb_define_singleton_method(_self, "each", RUBY_METHOD_FUNC(ruby_each), 0);
         ruby.rb_define_singleton_method(_self, "clear", RUBY_METHOD_FUNC(ruby_clear), 0);
         ruby.rb_define_singleton_method(_self, "reset", RUBY_METHOD_FUNC(ruby_reset), 0);
@@ -349,7 +353,7 @@ namespace facter { namespace ruby {
         _loaded_all = true;
     }
 
-    void module::resolve_facts()
+    void module::resolve_facts(boost::program_options::variables_map extra_opts)
     {
         // Before we do anything, call facts to ensure the collection is populated
         facts();
@@ -359,7 +363,16 @@ namespace facter { namespace ruby {
         auto const& ruby = api::instance();
         LOG_DEBUG(_("loading external fact directories from config file"));
         boost::program_options::variables_map vm;
-        auto hocon_conf = load_default_config_file();
+
+        // Check for non-default config file location
+        hocon::shared_config hocon_conf;
+        if (extra_opts.count("config")) {
+            string conf_dir = extra_opts["config"].as<string>();
+            hocon_conf = load_config_from(conf_dir);
+        } else {
+            hocon_conf = load_default_config_file();
+        }
+
         load_fact_groups_settings(hocon_conf, vm);
         vector<string> cached_custom_facts_list;
         if (vm.count(cached_custom_facts)) {
@@ -559,6 +572,49 @@ namespace facter { namespace ruby {
                 ruby.rb_funcall_passing_block(fact_self, ruby.rb_intern("instance_eval"), 0, nullptr);
             }
             return fact_self;
+        });
+    }
+
+    VALUE module::ruby_resolve(VALUE self, VALUE args_as_string)
+    {
+        return safe_eval("Facter.resolve", [&]() {
+            auto const& ruby = api::instance();
+            module* instance = from_self(self);
+
+            // Prepend program name to the args string to imitate how argv works
+            std::string args_string = "facter " + ruby.to_string(args_as_string);
+            std::vector<std::string> args;
+            boost::split(args, args_string, boost::is_any_of(" "), boost::token_compress_on);
+
+            // Convert vector<string> to char** for the command line parser
+            std::vector<char *> ptr_list;
+            for (std::size_t i = 0; i != args.size(); ++i) {
+                ptr_list.push_back(&args.at(i)[0]);
+            }
+
+            char **arr = &ptr_list[0];
+            po::variables_map extra_opts;
+            po::options_description visible_options = get_visible_options();
+            load_cli_options(extra_opts, visible_options, args.size(), arr);
+
+            instance->resolve_facts(extra_opts);
+
+            volatile VALUE hash = ruby.rb_hash_new();
+            if (extra_opts.count("query") && !ruby.to_string(args_as_string).empty()) {
+                set<string> queries = sanitize_cli_queries(extra_opts["query"].as<vector<string>>());
+                for (auto const& query : queries) {
+                    ruby.rb_hash_aset(hash, ruby.utf8_value(query), instance->to_ruby(instance->facts().query(query)));
+                }
+            } else {
+                instance->facts().each([&](string const &name, value const *val) {
+                    if (!extra_opts.count("show-legacy") && val->hidden()) {
+                        return true;
+                    }
+                    ruby.rb_hash_aset(hash, ruby.utf8_value(name), instance->to_ruby(val));
+                    return true;
+                });
+            }
+            return hash;
         });
     }
 
