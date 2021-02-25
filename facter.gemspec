@@ -8,6 +8,7 @@ Gem::Specification.new do |spec|
   spec.version       = '4.0.51'
   spec.authors       = ['Puppet']
   spec.email         = ['team-nw@puppet.com']
+  spec.homepage      = 'https://github.com/puppetlabs/facter'
 
   spec.summary       = 'New version of Facter'
   spec.description   = 'New version of Facter'
