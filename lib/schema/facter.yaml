@@ -55,6 +55,17 @@ augeasversion:
     resolution: |
         All platforms: query augparse for the augeas version.
 
+az_metadata:
+    type: map
+    description: |
+        Return the Microsoft Azure instance metadata.
+        Please see the [Microsoft Azure instance metadata documentation](http://https://docs.microsoft.com/en-us/azure/virtual-machines/windows/instance-metadata-service) for the contents of this fact.
+    resolution: |
+        Azure: query the Azure metadata endpoint and parse the response.
+    caveats: |
+        All platforms: `libfacter` must be built with `libcurl` support.
+    validate: false
+
 blockdevices:
     type: string
     hidden: true
