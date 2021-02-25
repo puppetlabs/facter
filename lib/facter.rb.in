@@ -39,7 +39,11 @@ module Facter
       # Facter requires the extra inclusion of puppet/bin as the libfacter.so
       # lib requires libraries and executables from that directory
       if '${WIN32}' == '1'
-        ENV['PATH'] = "#{File.join(facter_dir, 'bin')}#{File::PATH_SEPARATOR}#{File.join(facter_dir, '../puppet/bin')}#{File::PATH_SEPARATOR}#{ENV['PATH']}"
+        puppet_bin_dir = "#{File.join(facter_dir, '../puppet/bin')}#{File::PATH_SEPARATOR}"
+        bin_dir = "#{File.join(facter_dir, 'bin')}#{File::PATH_SEPARATOR}"
+
+        ENV['PATH'] = "#{puppet_bin_dir}#{ENV['PATH']}" unless ENV['PATH'].include? puppet_bin_dir
+        ENV['PATH'] = "#{bin_dir}#{ENV['PATH']}" unless ENV['PATH'].include? bin_dir
       end
       require "#{facter_dir}/${LIBFACTER_INSTALL_DESTINATION}/libfacter.so"
     rescue LoadError
