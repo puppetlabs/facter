@@ -85,6 +85,7 @@ namespace facter { namespace facts { namespace linux {
         if (is_regular_file(release_file::redhat, ec)) {
             static vector<tuple<boost::regex, string>> const regexs {
                 make_tuple(boost::regex("(?i)centos"),                        string(os::centos)),
+                make_tuple(boost::regex("(?i)AlmaLinux"),                     string(os::almalinux)),
                 make_tuple(boost::regex("(?i)scientific linux CERN"),         string(os::scientific_cern)),
                 make_tuple(boost::regex("(?i)scientific linux release"),      string(os::scientific)),
                 make_tuple(boost::regex("(?im)^cloudlinux"),                  string(os::cloud_linux)),
@@ -225,6 +226,7 @@ namespace facter { namespace facts { namespace linux {
             { string(os::redhat),                   string(os_family::redhat) },
             { string(os::fedora),                   string(os_family::redhat) },
             { string(os::centos),                   string(os_family::redhat) },
+            { string(os::almalinux),                string(os_family::redhat) },
             { string(os::scientific),               string(os_family::redhat) },
             { string(os::scientific_cern),          string(os_family::redhat) },
             { string(os::ascendos),                 string(os_family::redhat) },
@@ -265,6 +267,7 @@ namespace facter { namespace facts { namespace linux {
     {
         // Map of release files that contain a "release X.X.X" on the first line
         static map<string, string> const release_files = {
+                { string(os::almalinux),                string(release_file::redhat) },
                 { string(os::amazon),                   string(release_file::amazon) },
                 { string(os::centos),                   string(release_file::redhat) },
                 { string(os::redhat),                   string(release_file::redhat) },

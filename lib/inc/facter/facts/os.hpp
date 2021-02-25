@@ -26,6 +26,10 @@ namespace facter { namespace facts {
          */
         constexpr static char const* fedora = "Fedora";
         /**
+         * The AlmaLinux operating system.
+         */
+        constexpr static char const* almalinux = "AlmaLinux";
+        /**
          * The Scientific Linux operating system.
          */
         constexpr static char const* scientific = "Scientific";
