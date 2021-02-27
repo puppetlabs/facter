@@ -9,7 +9,13 @@ module Facter
         init_resolver
 
         DIR = '/sys/block'
-        FILE_PATHS = { model: 'device/model', size: 'size', vendor: 'device/vendor', type: 'queue/rotational' }.freeze
+        FILE_PATHS = { model: 'device/model',
+                       size: 'size',
+                       vendor: 'device/vendor',
+                       type: 'queue/rotational',
+                       sn: 'false',
+                       wwn: 'false'
+                     }.freeze
 
         class << self
           private
@@ -25,7 +31,19 @@ module Facter
               @fact_list[:disks].each do |disk, value|
                 file_path = File.join(DIR, disk, file)
 
-                result = Facter::Util::FileHelper.safe_read(file_path).strip
+                if file == 'false'
+                  value[key] = case key
+                               when :sn
+                                 result = Facter::Core::Execution.execute("lsblk -dn -o serial /dev/#{disk}", {on_fail: "", time_limit: 1}).strip
+                                 next if result.empty?
+                               when :wwn
+                                 result = Facter::Core::Execution.execute("lsblk -dn -o wwn /dev/#{disk}", {on_fail: "", time_limit: 1}).strip
+                                 next if result.empty?
+                               end
+                else
+                  result = Facter::Util::FileHelper.safe_read(file_path).strip
+                end
+
                 next if result.empty?
 
                 value[key] = case key
