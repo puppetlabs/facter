@@ -616,6 +616,11 @@ namespace facter { namespace facts {
         constexpr static char const* solaris_zones = "solaris_zones";
 
         /**
+         * The fact for Azure metadata.
+         */
+        constexpr static char const* az_metadata = "az_metadata";
+
+        /**
          * The fact for EC2 metadata.
          */
         constexpr static char const* ec2_metadata = "ec2_metadata";

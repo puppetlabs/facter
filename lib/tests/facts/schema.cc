@@ -13,6 +13,7 @@
 
 // Include all base resolvers here
 #include <internal/facts/resolvers/augeas_resolver.hpp>
+#include <internal/facts/resolvers/az_resolver.hpp>
 #include <internal/facts/resolvers/disk_resolver.hpp>
 #include <internal/facts/resolvers/dmi_resolver.hpp>
 #include <internal/facts/resolvers/ec2_resolver.hpp>
@@ -495,6 +496,7 @@ void add_all_facts(collection& facts)
     facts.add("facterversion", make_value<string_value>("version"));
     facts.add("aio_agent_version", make_value<string_value>(""));
     facts.add(make_shared<augeas_resolver>());
+    facts.add(fact::az_metadata, make_value<map_value>());
     facts.add(make_shared<disk_resolver>());
     facts.add(make_shared<dmi_resolver>());
     facts.add(make_shared<filesystem_resolver>());
