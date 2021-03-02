@@ -320,6 +320,17 @@ domain:
         POSIX platforms: use the `getaddrinfo` function to retrieve the network domain.
         Windows: query the registry to retrieve the network domain; falls back to the primary interface's domain if not set in the registry.
 
+az_metadata:
+    type: map
+    description: |
+        Return the Microsoft Azure instance metadata.
+        Please see the [Microsoft Azure instance metadata documentation](http://https://docs.microsoft.com/en-us/azure/virtual-machines/windows/instance-metadata-service) for the contents of this fact.
+    resolution: |
+        Azure: query the Azure metadata endpoint and parse the response.
+    caveats: |
+        All platforms: `libfacter` must be built with `libcurl` support.
+    validate: false
+
 ec2_metadata:
     type: map
     description: |

@@ -38,6 +38,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/facts/map_value.cc"
     "src/facts/resolver.cc"
     "src/facts/resolvers/augeas_resolver.cc"
+    "src/facts/resolvers/az_resolver.cc"
     "src/facts/resolvers/disk_resolver.cc"
     "src/facts/resolvers/dmi_resolver.cc"
     "src/facts/resolvers/ec2_resolver.cc"

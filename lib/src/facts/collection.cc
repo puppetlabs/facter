@@ -11,6 +11,7 @@
 #include <internal/facts/resolvers/hypervisors_resolver.hpp>
 #include <internal/facts/resolvers/ruby_resolver.hpp>
 #include <internal/facts/resolvers/path_resolver.hpp>
+#include <internal/facts/resolvers/az_resolver.hpp>
 #include <internal/facts/resolvers/ec2_resolver.hpp>
 #include <internal/facts/resolvers/gce_resolver.hpp>
 #include <internal/facts/resolvers/augeas_resolver.hpp>
@@ -693,6 +694,7 @@ namespace facter { namespace facts {
             add(make_shared<resolvers::ruby_resolver>());
         }
         add(make_shared<resolvers::path_resolver>());
+        add(make_shared<resolvers::az_resolver>());
         add(make_shared<resolvers::ec2_resolver>());
         add(make_shared<resolvers::gce_resolver>());
         add(make_shared<resolvers::augeas_resolver>());
