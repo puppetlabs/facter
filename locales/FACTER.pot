@@ -6,7 +6,7 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: FACTER 3.14.13\n"
+"Project-Id-Version: FACTER 3.14.17\n"
 "Report-Msgid-Bugs-To: docs@puppet.com\n"
 "POT-Creation-Date: \n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -71,137 +71,6 @@ msgstr ""
 #. log
 #: exe/facter.cc
 msgid "requested queries: %1%."
-msgstr ""
-
-#: exe/facter.cc
-msgid "Enable color output."
-msgstr ""
-
-#: exe/facter.cc
-msgid "The location of the config file."
-msgstr ""
-
-#: exe/facter.cc
-msgid "A directory to use for custom facts."
-msgstr ""
-
-#: exe/facter.cc
-msgid "Enable debug output."
-msgstr ""
-
-#: exe/facter.cc
-msgid "A directory to use for external facts."
-msgstr ""
-
-#: exe/facter.cc
-msgid "Print this help message."
-msgstr ""
-
-#: exe/facter.cc
-msgid "Output in JSON format."
-msgstr ""
-
-#: exe/facter.cc
-msgid "List the names of all blockable fact groups."
-msgstr ""
-
-#: exe/facter.cc
-msgid "List the names of all cacheable fact groups."
-msgstr ""
-
-#: exe/facter.cc
-msgid ""
-"Set logging level.\n"
-"Supported levels are: none, trace, debug, info, warn, error, and fatal."
-msgstr ""
-
-#: exe/facter.cc
-msgid "Disable fact blocking."
-msgstr ""
-
-#: exe/facter.cc
-msgid "Disable loading and refreshing facts from the cache"
-msgstr ""
-
-#: exe/facter.cc
-msgid "Disable color output."
-msgstr ""
-
-#: exe/facter.cc
-msgid "Disable custom facts."
-msgstr ""
-
-#: exe/facter.cc
-msgid "Disable external facts."
-msgstr ""
-
-#: exe/facter.cc
-msgid "Disable loading Ruby, facts requiring Ruby, and custom facts."
-msgstr ""
-
-#: exe/facter.cc
-msgid ""
-"Load the Puppet libraries, thus allowing Facter to load Puppet-specific "
-"facts."
-msgstr ""
-
-#: exe/facter.cc
-msgid "Show legacy facts when querying all facts."
-msgstr ""
-
-#: exe/facter.cc
-msgid "Enable backtraces for custom facts."
-msgstr ""
-
-#: exe/facter.cc
-msgid "Enable verbose (info) output."
-msgstr ""
-
-#: exe/facter.cc
-msgid "Print the version and exit."
-msgstr ""
-
-#: exe/facter.cc
-msgid "Output in YAML format."
-msgstr ""
-
-#: exe/facter.cc
-msgid "Enable more aggressive error reporting."
-msgstr ""
-
-#: exe/facter.cc
-msgid "color and no-color options conflict: please specify only one."
-msgstr ""
-
-#: exe/facter.cc
-msgid "json and yaml options conflict: please specify only one."
-msgstr ""
-
-#: exe/facter.cc
-msgid ""
-"no-external-facts and external-dir options conflict: please specify only one."
-msgstr ""
-
-#: exe/facter.cc
-msgid ""
-"no-custom-facts and custom-dir options conflict: please specify only one."
-msgstr ""
-
-#: exe/facter.cc
-msgid ""
-"debug, verbose, and log-level options conflict: please specify only one."
-msgstr ""
-
-#: exe/facter.cc
-msgid "no-ruby and custom-dir options conflict: please specify only one."
-msgstr ""
-
-#: exe/facter.cc
-msgid "puppet and no-custom-facts options conflict: please specify only one."
-msgstr ""
-
-#: exe/facter.cc
-msgid "puppet and no-ruby options conflict: please specify only one."
 msgstr ""
 
 #: exe/facter.cc
@@ -1047,9 +916,44 @@ msgid "failure executing {1}: {2}"
 msgstr ""
 
 #. debug
+#: lib/src/facts/resolvers/az_resolver.cc
+msgid "not running under a Azure instance."
+msgstr ""
+
+#. info
+#: lib/src/facts/resolvers/az_resolver.cc
+msgid ""
+"Azure instance metadata fact is unavailable: facter was built without "
+"libcurl support."
+msgstr ""
+
+#. debug
+#: lib/src/facts/resolvers/az_resolver.cc
+msgid "querying Azure metadata."
+msgstr ""
+
+#. debug
+#: lib/src/facts/resolvers/az_resolver.cc
 #: lib/src/facts/resolvers/ec2_resolver.cc
 #: lib/src/facts/resolvers/gce_resolver.cc
 msgid "request for {1} returned a status code of {2}."
+msgstr ""
+
+#. error
+#: lib/src/facts/resolvers/az_resolver.cc
+msgid "failed to parse Azure metadata: {1}."
+msgstr ""
+
+#. debug
+#: lib/src/facts/resolvers/az_resolver.cc
+msgid ""
+"Azure instance metadata fact is unavailable: not running under an Azure "
+"instance or Azure is not responding in a timely manner."
+msgstr ""
+
+#. error
+#: lib/src/facts/resolvers/az_resolver.cc
+msgid "Azure metadata request failed: {1}"
 msgstr ""
 
 #. info
@@ -1680,6 +1584,137 @@ msgstr ""
 
 #: lib/src/ruby/simple_resolution.cc
 msgid "a block is unexpected when passing a String"
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "color and no-color options conflict: please specify only one."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "json and yaml options conflict: please specify only one."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid ""
+"no-external-facts and external-dir options conflict: please specify only one."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid ""
+"no-custom-facts and custom-dir options conflict: please specify only one."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid ""
+"debug, verbose, and log-level options conflict: please specify only one."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "no-ruby and custom-dir options conflict: please specify only one."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "puppet and no-custom-facts options conflict: please specify only one."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "puppet and no-ruby options conflict: please specify only one."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "Enable color output."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "The location of the config file."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "A directory to use for custom facts."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "Enable debug output."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "A directory to use for external facts."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "Print this help message."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "Output in JSON format."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "List the names of all blockable fact groups."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "List the names of all cacheable fact groups."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid ""
+"Set logging level.\n"
+"Supported levels are: none, trace, debug, info, warn, error, and fatal."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "Disable fact blocking."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "Disable loading and refreshing facts from the cache"
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "Disable color output."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "Disable custom facts."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "Disable external facts."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "Disable loading Ruby, facts requiring Ruby, and custom facts."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid ""
+"Load the Puppet libraries, thus allowing Facter to load Puppet-specific "
+"facts."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "Show legacy facts when querying all facts."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "Enable backtraces for custom facts."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "Enable verbose (info) output."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "Print the version and exit."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "Output in YAML format."
+msgstr ""
+
+#: lib/src/util/cli.cc
+msgid "Enable more aggressive error reporting."
 msgstr ""
 
 #: lib/src/util/freebsd/geom.cc
