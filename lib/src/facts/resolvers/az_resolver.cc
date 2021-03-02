@@ -246,7 +246,7 @@ namespace facter { namespace facts { namespace resolvers {
             }
         } catch (lth_curl::http_request_exception& ex) {
             LOG_DEBUG("Azure instance metadata fact is unavailable: not running under an Azure instance or Azure is not responding in a timely manner.");
-            LOG_TRACE("EC2 metadata request failed: {1}", ex.what());
+            LOG_TRACE("Azure metadata request failed: {1}", ex.what());
             return;
         } catch (runtime_error& ex) {
             LOG_ERROR("Azure metadata request failed: {1}", ex.what());
