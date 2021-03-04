@@ -126,7 +126,7 @@ RSpec/DescribedClass:
   EnforcedStyle: explicit
 
 RSpec/NestedGroups:
-  Max: 5
+  Max: 6
 
 Style/Documentation:
   Enabled: false
