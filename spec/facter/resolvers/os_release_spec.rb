@@ -118,24 +118,4 @@ describe Facter::Resolvers::OsRelease do
       expect(result).to eq('OracleLinux')
     end
   end
-
-  context 'when on CentOS Stream' do
-    let(:os_release_content) { load_fixture('os_release_centos_stream').readlines }
-
-    it 'returns os NAME' do
-      result = Facter::Resolvers::OsRelease.resolve(:name)
-
-      expect(result).to eq('CentOSStream')
-    end
-  end
-
-  context 'when on CentOS' do
-    let(:os_release_content) { load_fixture('os_release_centos').readlines }
-
-    it 'returns os NAME' do
-      result = Facter::Resolvers::OsRelease.resolve(:name)
-
-      expect(result).to eq('CentOS')
-    end
-  end
 end
