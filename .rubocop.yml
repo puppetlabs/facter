@@ -68,6 +68,7 @@ Metrics/AbcSize:
     - 'lib/facter/resolvers/aix/ffi/ffi_helper.rb'
     - 'lib/facter/custom_facts/core/execution/popen3.rb'
     - 'lib/facter.rb'
+    - 'lib/facter/framework/parsers/query_parser.rb'
 
 Metrics/PerceivedComplexity:
   Exclude:
