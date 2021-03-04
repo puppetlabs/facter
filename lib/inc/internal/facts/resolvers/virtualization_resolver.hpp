@@ -64,13 +64,6 @@ namespace facter { namespace facts { namespace resolvers {
         virtual std::string get_hypervisor(collection& facts) = 0;
 
         /**
-         * Gets the name of the cloud provider.
-         * @param facts The fact collection that is resolving facts.
-         * @return Returns the name of the cloud provider or empty string if no cloud provider.
-         */
-        virtual std::string get_cloud_provider(collection& facts);
-
-        /**
          * Determines if the given hypervisor is considered to be virtual.
          * @param hypervisor The hypervisor to check.
          * @return Returns true if the hypervisor is virtual or false if it is physical.

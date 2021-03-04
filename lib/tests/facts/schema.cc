@@ -14,6 +14,7 @@
 // Include all base resolvers here
 #include <internal/facts/resolvers/augeas_resolver.hpp>
 #include <internal/facts/resolvers/az_resolver.hpp>
+#include <internal/facts/resolvers/cloud_resolver.hpp>
 #include <internal/facts/resolvers/disk_resolver.hpp>
 #include <internal/facts/resolvers/dmi_resolver.hpp>
 #include <internal/facts/resolvers/ec2_resolver.hpp>
@@ -57,6 +58,15 @@ struct augeas_resolver : resolvers::augeas_resolver
     virtual string get_version() override
     {
         return "1.1.0";
+    }
+};
+
+struct cloud_resolver : resolvers::cloud_resolver
+{
+ protected:
+    virtual string get_azure(collection& facts) override
+    {
+        return "azure";
     }
 };
 
@@ -412,11 +422,6 @@ protected:
         // The xen fact only resolves if virtualization is xen_privileged.
         return vm::xen_privileged;
     }
-
-    virtual string get_cloud_provider(collection& facts) override
-    {
-        return "azure";
-    }
 };
 
 struct xen_resolver : resolvers::xen_resolver
@@ -497,6 +502,7 @@ void add_all_facts(collection& facts)
     facts.add("aio_agent_version", make_value<string_value>(""));
     facts.add(make_shared<augeas_resolver>());
     facts.add(fact::az_metadata, make_value<map_value>());
+    facts.add(make_shared<cloud_resolver>());
     facts.add(make_shared<disk_resolver>());
     facts.add(make_shared<dmi_resolver>());
     facts.add(make_shared<filesystem_resolver>());
