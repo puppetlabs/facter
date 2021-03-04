@@ -10,40 +10,42 @@ describe Facts::Linux::Lsbdistrelease do
       end
 
       context 'when version_id is retrieved successful' do
-        let(:value) { '18.04' }
-        let(:value_final) { { 'full' => '18.04', 'major' => '18', 'minor' => '04' } }
+        context 'when version consists of only major' do
+          let(:value) { '10' }
+          let(:value_final) { { 'full' => '10', 'major' => '10', 'minor' => nil } }
 
-        it 'calls Facter::Resolvers::LsbRelease with :name' do
-          fact.call_the_resolver
-          expect(Facter::Resolvers::LsbRelease).to have_received(:resolve).with(:release)
+          it 'calls Facter::Resolvers::LsbRelease with :name' do
+            fact.call_the_resolver
+            expect(Facter::Resolvers::LsbRelease).to have_received(:resolve).with(:release)
+          end
+
+          it 'returns release fact' do
+            expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+              contain_exactly(an_object_having_attributes(name: 'lsbdistrelease', value: value, type: :legacy),
+                              an_object_having_attributes(name: 'lsbmajdistrelease',
+                                                          value: value_final['major'], type: :legacy),
+                              an_object_having_attributes(name: 'lsbminordistrelease',
+                                                          value: value_final['minor'], type: :legacy))
+          end
         end
 
-        it 'returns release fact' do
-          expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
-            contain_exactly(an_object_having_attributes(name: 'lsbdistrelease', value: value, type: :legacy),
-                            an_object_having_attributes(name: 'lsbmajdistrelease',
-                                                        value: value_final['major'], type: :legacy),
-                            an_object_having_attributes(name: 'lsbminordistrelease',
-                                                        value: value_final['minor'], type: :legacy))
-        end
-      end
+        context 'when versin consists of both major and minor' do
+          let(:value) { '10.08' }
+          let(:value_final) { { 'full' => '10.08', 'major' => '10', 'minor' => '08' } }
 
-      context 'when Debian 10' do
-        let(:value) { '10' }
-        let(:value_final) { { 'full' => '10', 'major' => '10', 'minor' => nil } }
+          it 'calls Facter::Resolvers::LsbRelease with :name' do
+            fact.call_the_resolver
+            expect(Facter::Resolvers::LsbRelease).to have_received(:resolve).with(:release)
+          end
 
-        it 'calls Facter::Resolvers::LsbRelease with :name' do
-          fact.call_the_resolver
-          expect(Facter::Resolvers::LsbRelease).to have_received(:resolve).with(:release)
-        end
-
-        it 'returns release fact' do
-          expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
-            contain_exactly(an_object_having_attributes(name: 'lsbdistrelease', value: value, type: :legacy),
-                            an_object_having_attributes(name: 'lsbmajdistrelease',
-                                                        value: value_final['major'], type: :legacy),
-                            an_object_having_attributes(name: 'lsbminordistrelease',
-                                                        value: value_final['minor'], type: :legacy))
+          it 'returns release fact' do
+            expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+              contain_exactly(an_object_having_attributes(name: 'lsbdistrelease', value: value, type: :legacy),
+                              an_object_having_attributes(name: 'lsbmajdistrelease',
+                                                          value: value_final['major'], type: :legacy),
+                              an_object_having_attributes(name: 'lsbminordistrelease',
+                                                          value: value_final['minor'], type: :legacy))
+          end
         end
       end
 
