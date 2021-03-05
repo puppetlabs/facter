@@ -199,14 +199,14 @@ describe Facter do
 
   describe '#value' do
     it 'returns a value' do
-      mock_fact_manager(:resolve_facts, [os_fact])
+      mock_fact_manager(:resolve_fact, [os_fact])
       mock_collection(:value, 'Ubuntu')
 
       expect(Facter.value('os.name')).to eq('Ubuntu')
     end
 
     it 'return no value' do
-      mock_fact_manager(:resolve_facts, [])
+      mock_fact_manager(:resolve_fact, [])
       mock_collection(:value, nil)
 
       expect(Facter.value('os.name')).to be nil
@@ -218,7 +218,7 @@ describe Facter do
       let(:fact_user_query) { '' }
 
       it 'returns the custom fact' do
-        mock_fact_manager(:resolve_facts, [os_fact])
+        mock_fact_manager(:resolve_fact, [os_fact])
         mock_collection(:value, 'Ubuntu')
 
         expect(Facter.value('os.name')).to eq('Ubuntu')
@@ -228,20 +228,20 @@ describe Facter do
 
   describe '#fact' do
     it 'returns a fact' do
-      mock_fact_manager(:resolve_facts, [os_fact])
+      mock_fact_manager(:resolve_fact, [os_fact])
       mock_collection(:value, 'Ubuntu')
 
       expect(Facter.fact('os.name')).to be_instance_of(Facter::ResolvedFact).and have_attributes(value: 'Ubuntu')
     end
 
     it 'can be interpolated' do
-      mock_fact_manager(:resolve_facts, [os_fact])
+      mock_fact_manager(:resolve_fact, [os_fact])
       mock_collection(:value, 'Ubuntu')
       expect("#{Facter.fact('os.name')}-test").to eq('Ubuntu-test')
     end
 
     it 'returns no value' do
-      mock_fact_manager(:resolve_facts, [])
+      mock_fact_manager(:resolve_fact, [])
       mock_collection(:value, nil, key_error)
 
       expect(Facter.fact('os.name')).to be_nil
@@ -249,7 +249,7 @@ describe Facter do
 
     context 'when there is a resolved fact with type nil' do
       before do
-        allow(fact_manager_spy).to receive(:resolve_facts).and_return([missing_fact])
+        allow(fact_manager_spy).to receive(:resolve_fact).and_return([missing_fact])
         allow(fact_collection_spy).to receive(:build_fact_collection!).with([]).and_return(empty_fact_collection)
         allow(fact_collection_spy).to receive(:value).and_raise(KeyError)
       end
@@ -271,7 +271,7 @@ describe Facter do
       let(:fact_user_query) { '' }
 
       it 'returns the custom fact' do
-        mock_fact_manager(:resolve_facts, [os_fact])
+        mock_fact_manager(:resolve_fact, [os_fact])
         mock_collection(:value, 'Ubuntu')
 
         expect(Facter.fact('os.name'))
@@ -283,14 +283,14 @@ describe Facter do
 
   describe '#[]' do
     it 'returns a fact' do
-      mock_fact_manager(:resolve_facts, [os_fact])
+      mock_fact_manager(:resolve_fact, [os_fact])
       mock_collection(:value, 'Ubuntu')
 
       expect(Facter['os.name']).to be_instance_of(Facter::ResolvedFact).and(having_attributes(value: 'Ubuntu'))
     end
 
     it 'return no value' do
-      mock_fact_manager(:resolve_facts, [])
+      mock_fact_manager(:resolve_fact, [])
       mock_collection(:value, nil, key_error)
 
       expect(Facter['os.name']).to be_nil
@@ -302,7 +302,7 @@ describe Facter do
       let(:fact_user_query) { '' }
 
       it 'returns the custom fact' do
-        mock_fact_manager(:resolve_facts, [os_fact])
+        mock_fact_manager(:resolve_fact, [os_fact])
         mock_collection(:value, 'Ubuntu')
 
         expect(Facter['os.name'])

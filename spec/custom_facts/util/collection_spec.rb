@@ -15,6 +15,7 @@ describe LegacyFacter::Util::Collection do
 
   before do
     Singleton.__init__(Facter::FactManager)
+    Singleton.__init__(Facter::FactLoader)
   end
 
   it 'delegates its load_all method to its loader' do

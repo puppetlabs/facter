@@ -4,6 +4,10 @@ describe Facter::ClassDiscoverer do
   describe '#discover_classes' do
     let(:result) { [Facts::Windows::NetworkInterfaces, Facts::Windows::FipsEnabled] }
 
+    before do
+      Singleton.__init__(Facter::ClassDiscoverer)
+    end
+
     it 'loads all classes' do
       allow(Module).to receive(:const_get).with('Facts::Windows').and_return(Facts::Windows)
       allow(Facts::Windows).to receive(:constants).and_return(%i[NetworkInterfaces FipsEnabled])
