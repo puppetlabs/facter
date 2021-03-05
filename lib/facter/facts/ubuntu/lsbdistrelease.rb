@@ -15,8 +15,8 @@ module Facts
         version = fact_value.split('.')
 
         [Facter::ResolvedFact.new(FACT_NAME, fact_value, :legacy),
-         Facter::ResolvedFact.new(ALIASES[0], version[0], :legacy),
-         Facter::ResolvedFact.new(ALIASES[1], version[1], :legacy)]
+         Facter::ResolvedFact.new(ALIASES[0], "#{version[0]}.#{version[1]}", :legacy),
+         Facter::ResolvedFact.new(ALIASES[1], version[2], :legacy)]
       end
     end
   end
