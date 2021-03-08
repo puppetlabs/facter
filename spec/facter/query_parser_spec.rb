@@ -103,5 +103,25 @@ describe Facter::QueryParser do
         )
       end
     end
+
+    context 'when root structured fact is overwritten' do
+      let(:query_list) { ['os.name'] }
+      let(:loaded_facts) do
+        [
+          instance_double(
+            Facter::LoadedFact, name: 'os.name', klass: 'Facter::Ubuntu::Os::Name', type: :core, file: nil
+          ),
+          instance_double(Facter::LoadedFact, name: 'os', klass: nil, type: :custom, file: nil)
+        ]
+      end
+
+      it 'returns the toplevel fact' do
+        matched_facts = Facter::QueryParser.parse(query_list, loaded_facts)
+
+        expect(matched_facts).to be_an_instance_of(Array).and \
+          contain_exactly(an_instance_of(Facter::SearchedFact)
+          .and(having_attributes(name: 'os', fact_class: nil, type: :custom)))
+      end
+    end
   end
 end

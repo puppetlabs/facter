@@ -69,12 +69,19 @@ module Facter
         resolvable_fact_list = []
 
         loaded_fact_hash.each do |loaded_fact|
-          query_fact = query_tokens[query_token_range].join('.')
+          # return the fact if toplevel namespace is found in the first query token
+          # eg. query: 'os.name' and loaded_fact_hash contains a fact with 'os' name
+          # it will construt and return the 'os' fact
+          if loaded_fact.name == query_tokens[0]
+            resolvable_fact_list = [construct_loaded_fact(query_tokens, query_token_range, loaded_fact)]
+          else
+            query_fact = query_tokens[query_token_range].join('.')
 
-          next unless found_fact?(loaded_fact.name, query_fact)
+            next unless found_fact?(loaded_fact.name, query_fact)
 
-          searched_fact = construct_loaded_fact(query_tokens, query_token_range, loaded_fact)
-          resolvable_fact_list << searched_fact
+            searched_fact = construct_loaded_fact(query_tokens, query_token_range, loaded_fact)
+            resolvable_fact_list << searched_fact
+          end
         end
 
         @log.debug "List of resolvable facts: #{resolvable_fact_list.inspect}"
