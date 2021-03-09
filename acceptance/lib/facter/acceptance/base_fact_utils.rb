@@ -199,6 +199,8 @@ module Facter
             os_name = 'OracleLinux'
           when /scientific/
             os_name = 'Scientific'
+          when /rocky/
+            os_name = 'Rocky'
           else
             os_name = 'RedHat'
         end
