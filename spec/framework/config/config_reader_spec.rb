@@ -19,6 +19,10 @@ describe Facter::ConfigReader do
       context 'with os linux' do
         let(:os) { :linux }
 
+        before do
+          stub_const('RUBY_PLATFORM', 'linux')
+        end
+
         it 'calls refresh_config with linux path' do
           config_reader.init
           expect(File).to have_received(:readable?).with(linux_default_path)
@@ -28,9 +32,26 @@ describe Facter::ConfigReader do
       context 'with os windows' do
         let(:os) { :windows }
 
+        before do
+          stub_const('RUBY_PLATFORM', 'windows')
+        end
+
         it 'calls refresh_config with windows path' do
           config_reader.init
           expect(File).to have_received(:readable?).with(windows_default_path)
+        end
+      end
+
+      context 'with JRUBY' do
+        let(:os) { :linux }
+
+        before do
+          stub_const('RUBY_PLATFORM', 'java')
+        end
+
+        it 'load no config' do
+          config_reader.init
+          expect(File).to have_received(:readable?).with('')
         end
       end
     end

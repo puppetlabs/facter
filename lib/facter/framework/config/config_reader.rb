@@ -45,6 +45,8 @@ module Facter
       end
 
       def default_path
+        return '' if RUBY_PLATFORM == 'java'
+
         os = OsDetector.instance.identifier
 
         windows_path = File.join('C:', 'ProgramData', 'PuppetLabs', 'facter', 'etc', 'facter.conf')
