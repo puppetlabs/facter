@@ -336,7 +336,6 @@ msgstr ""
 
 #. debug
 #: lib/src/facts/bsd/networking_resolver.cc
-#: lib/src/facts/linux/virtualization_resolver.cc
 msgid "searching \"{1}\" for dhclient lease files."
 msgstr ""
 
@@ -752,16 +751,6 @@ msgid ""
 msgstr ""
 
 #. debug
-#: lib/src/facts/linux/virtualization_resolver.cc
-msgid "reading \"{1}\" for dhclient lease azure information."
-msgstr ""
-
-#. debug
-#: lib/src/facts/linux/virtualization_resolver.cc
-msgid "found azure option in \"{1}\" lease file."
-msgstr ""
-
-#. debug
 #: lib/src/facts/map_value.cc
 msgid "null value cannot be added to map."
 msgstr ""
@@ -954,6 +943,11 @@ msgstr ""
 #. error
 #: lib/src/facts/resolvers/az_resolver.cc
 msgid "Azure metadata request failed: {1}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/resolvers/cloud_resolver.cc
+msgid "resolving cloud fact"
 msgstr ""
 
 #. info
