@@ -186,7 +186,7 @@ chassistype:
 
 cloud:
     type: map
-    description: Information about the cloud instance of the node. This is currently only populated on Linux nodes running in Microsoft Azure.
+    description: Information about the cloud instance of the node. This is currently only populated on nodes running in Microsoft Azure.
     elements:
         provider:
             type: string

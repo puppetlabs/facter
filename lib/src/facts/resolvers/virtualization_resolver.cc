@@ -16,8 +16,7 @@ namespace facter { namespace facts { namespace resolvers {
             "virtualization",
             {
                 fact::virtualization,
-                fact::is_virtual,
-                fact::cloud
+                fact::is_virtual
             })
     {
     }
@@ -28,11 +27,6 @@ namespace facter { namespace facts { namespace resolvers {
 
         facts.add(fact::is_virtual, make_value<boolean_value>(data.is_virtual));
         facts.add(fact::virtualization, make_value<string_value>(data.hypervisor));
-        if (!data.cloud.provider.empty()) {
-            auto cloud = make_value<map_value>();
-            cloud->add("provider", make_value<string_value>(data.cloud.provider));
-            facts.add(fact::cloud, move(cloud));
-        }
     }
 
     data virtualization_resolver::collect_data(collection& facts)
@@ -44,17 +38,9 @@ namespace facter { namespace facts { namespace resolvers {
             hypervisor = "physical";
         }
 
-        auto cloud_provider = get_cloud_provider(facts);
         data.is_virtual = is_virtual(hypervisor);
         data.hypervisor = hypervisor;
-        data.cloud.provider = cloud_provider;
         return data;
-    }
-
-    string virtualization_resolver::get_cloud_provider(collection& facts)
-    {
-        // Default implementation for other resolvers.
-        return "";
     }
 
     bool virtualization_resolver::is_virtual(string const& hypervisor)
