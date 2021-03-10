@@ -95,17 +95,37 @@ describe LegacyFacter::Util::Normalization do
     end
   end
 
-  [1, 1.0, true, false, nil].each do |val|
-    it "accepts #{val.inspect}:#{val.class}" do
-      expect(normalization.normalize(val)).to eq(val)
-    end
-  end
+  describe '.normalize' do
+    context 'when Time object' do
+      it 'returns a string in an ISO 8601 format' do
+        value = Time.utc(2020)
+        expected = '2020-01-01T00:00:00Z'
 
-  [Object.new, Set.new].each do |val|
-    it "rejects #{val.inspect}:#{val.class}" do
-      expect do
-        normalization.normalize(val)
-      end.to raise_error(LegacyFacter::Util::Normalization::NormalizationError, /Expected .*but was #{val.class}/)
+        expect(normalization.normalize(value)).to eq(expected)
+      end
+    end
+
+    context 'when Date object' do
+      it 'returns a string in an ISO 8601 format' do
+        value = Date.new(2020)
+        expected = '2020-01-01'
+
+        expect(normalization.normalize(value)).to eq(expected)
+      end
+    end
+
+    [1, 1.0, true, false, nil, :symbol].each do |val|
+      it "accepts #{val.inspect}:#{val.class}" do
+        expect(normalization.normalize(val)).to eq(val)
+      end
+    end
+
+    [Object.new, Set.new].each do |val|
+      it "rejects #{val.inspect}:#{val.class}" do
+        expect do
+          normalization.normalize(val)
+        end.to raise_error(LegacyFacter::Util::Normalization::NormalizationError, /Expected .*but was #{val.class}/)
+      end
     end
   end
 end
