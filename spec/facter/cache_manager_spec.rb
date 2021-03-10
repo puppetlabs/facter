@@ -27,13 +27,17 @@ describe Facter::CacheManager do
   let(:fact_groups) { instance_spy(Facter::FactGroups) }
   let(:os_fact) { { ttls: 60, group: 'operating system' } }
   let(:external_fact) { { ttls: 60, group: 'ext_file.txt' } }
+  let(:logger) { instance_spy(Facter::Log) }
 
   before do
+    allow(File).to receive(:readable?).and_call_original
+    allow(File).to receive(:directory?).and_call_original
     allow(LegacyFacter::Util::Config).to receive(:facts_cache_dir).and_return(cache_dir)
     allow(Facter::FactGroups).to receive(:new).and_return(fact_groups)
     allow(Facter::Options).to receive(:[]).with(:debug).and_return(false)
     allow(Facter::Options).to receive(:[])
     allow(Facter::Options).to receive(:[]).with(:ttls).and_return([])
+    allow(Facter::Log).to receive(:new).and_return(logger)
   end
 
   describe '#resolve_facts' do
@@ -126,6 +130,24 @@ describe Facter::CacheManager do
           an_instance_of(Facter::ResolvedFact).and(having_attributes(name: 'my_external_fact', value: 'ext_fact',
                                                                      type: :file))
         )
+      end
+
+      context 'when file cannot be deleted' do
+        let(:cache_file) { File.join(cache_dir, 'ext_file.txt') }
+
+        it 'logs warn if it cannot delete' do
+          allow(fact_groups).to receive(:get_fact).with('ext_file.txt').and_return(external_fact)
+          allow(File).to receive(:readable?).with(cache_file_name).and_return(false)
+          allow(Facter::Util::FileHelper).to receive(:safe_read).with(cache_file)
+                                                                .and_return(cached_external_fact)
+          allow(JSON).to receive(:parse).with(cached_external_fact).and_raise(JSON::ParserError)
+          allow(File).to receive(:readable?).with(cache_file).and_return(true)
+          allow(File).to receive(:mtime).with(File.join(cache_dir, 'ext_file.txt')).and_return(Time.now)
+          allow(File).to receive(:delete).with(cache_file).and_raise(Errno::EACCES)
+
+          cache_manager.resolve_facts([searched_external_fact])
+          expect(logger).to have_received(:warn)
+        end
       end
     end
 
