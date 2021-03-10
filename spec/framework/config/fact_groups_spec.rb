@@ -99,9 +99,11 @@ describe Facter::FactGroups do
   end
 
   describe '#get_group_ttls' do
+    let(:ttls) { ['operating system' => '30 minutes'] }
+
     before do
       stub_const('Facter::Config::FACT_GROUPS', 'operating system' => %w[os os.name])
-      allow(config_reader).to receive(:ttls).and_return(['operating system' => '30 minutes'])
+      allow(config_reader).to receive(:ttls).and_return(ttls)
     end
 
     it 'returns group' do
@@ -110,6 +112,29 @@ describe Facter::FactGroups do
 
     it 'returns nil' do
       expect(fg.get_group_ttls('memory')).to be_nil
+    end
+
+    context 'when ttls has hour instead of hour' do
+      let(:ttls) { ['operating system' => '1 hour', 'memory' => '1 day', 'hostname' => '30 invalid_unit'] }
+      let(:logger) { instance_spy(Facter::Log) }
+
+      before do
+        allow(Facter::Log).to receive(:new).and_return(logger)
+      end
+
+      it 'logs an error message' do
+        fg.get_group_ttls('hostname')
+        expect(logger).to have_received(:error).with('Could not parse time unit invalid_unit'\
+                                                      ' (try second(s), minute(s), hour(s) or day(s))').twice
+      end
+
+      it 'returns os ttl in seconds' do
+        expect(fg.get_group_ttls('operating system')).to eq(3600)
+      end
+
+      it 'returns memory ttl in seconds' do
+        expect(fg.get_group_ttls('memory')).to eq(86_400)
+      end
     end
   end
 end
