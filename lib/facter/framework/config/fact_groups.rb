@@ -7,7 +7,10 @@ module Facter
     attr_accessor :groups_ttls
     attr_reader :groups, :block_list, :facts_ttls
 
-    STRING_TO_SECONDS = { 'seconds' => 1, 'minutes' => 60, 'hours' => 3600, 'days' => 3600 * 24 }.freeze
+    STRING_TO_SECONDS = { 'seconds' => 1, 'second' => 1,
+                          'minutes' => 60, 'minute' => 60,
+                          'hours' => 3600, 'hour' => 3600,
+                          'days' => 3600 * 24, 'day' => 3600 * 24 }.freeze
 
     def initialize
       @groups = Facter::Config::FACT_GROUPS.dup
@@ -103,7 +106,14 @@ module Facter
 
     def ttls_to_seconds(ttls)
       duration, unit = ttls.split(' ', 2)
-      duration.to_i * STRING_TO_SECONDS[unit]
+      seconds = STRING_TO_SECONDS[unit]
+      if seconds
+        duration.to_i * seconds
+      else
+        log = Log.new(self)
+        log.error("Could not parse time unit #{unit} (try second(s), minute(s), hour(s) or day(s))")
+        nil
+      end
     end
   end
 end
