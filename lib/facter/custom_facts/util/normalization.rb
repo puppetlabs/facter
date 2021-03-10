@@ -16,8 +16,6 @@ module LegacyFacter
       # @return [void]
       def normalize(value)
         case value
-        when Integer, Float, TrueClass, FalseClass, NilClass, Symbol, Date
-          value
         when String
           normalize_string(value)
         when Array
@@ -25,7 +23,7 @@ module LegacyFacter
         when Hash
           normalize_hash(value)
         else
-          raise NormalizationError, "Expected #{value} to be one of #{VALID_TYPES.inspect}, but was #{value.class}"
+          value
         end
       end
 

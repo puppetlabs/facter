@@ -196,6 +196,22 @@ describe Facter::Util::Fact do
         having_attributes(value: '1', used_resolution_weight: 1)
       )
     end
+
+    [
+      222,
+      'test string',
+      Time.now,
+      Date.new(2020),
+      StandardError.new('test')
+    ].each do |value|
+      it 'returns ruby objects' do
+        fact.add do
+          setcode { value }
+        end
+
+        expect(fact.value.class).to eq value.class
+      end
+    end
   end
 
   describe '#flush' do

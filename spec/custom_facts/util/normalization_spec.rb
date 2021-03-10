@@ -95,17 +95,9 @@ describe LegacyFacter::Util::Normalization do
     end
   end
 
-  [1, 1.0, true, false, nil].each do |val|
+  [1, 1.0, true, false, nil, Object.new, Set.new].each do |val|
     it "accepts #{val.inspect}:#{val.class}" do
       expect(normalization.normalize(val)).to eq(val)
-    end
-  end
-
-  [Object.new, Set.new].each do |val|
-    it "rejects #{val.inspect}:#{val.class}" do
-      expect do
-        normalization.normalize(val)
-      end.to raise_error(LegacyFacter::Util::Normalization::NormalizationError, /Expected .*but was #{val.class}/)
     end
   end
 end
