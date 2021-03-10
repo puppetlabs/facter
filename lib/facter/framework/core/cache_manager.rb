@@ -209,7 +209,11 @@ cache_format_version is incorrect!")
     def delete_cache(group_name)
       cache_file_name = File.join(@cache_dir, group_name)
 
-      File.delete(cache_file_name) if File.readable?(cache_file_name)
+      begin
+        File.delete(cache_file_name) if File.readable?(cache_file_name)
+      rescue Errno::EACCES => e
+        @log.warn("Could not delete cache: #{e.message}")
+      end
     end
   end
 end
