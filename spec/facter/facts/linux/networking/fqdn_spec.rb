@@ -7,12 +7,12 @@ describe Facts::Linux::Networking::Fqdn do
     let(:value) { 'host.domain' }
 
     before do
-      allow(Facter::Resolvers::Hostname).to receive(:resolve).with(:fqdn).and_return(value)
+      allow(Facter::Resolvers::Linux::Hostname).to receive(:resolve).with(:fqdn).and_return(value)
     end
 
     it 'calls Facter::Resolvers::Hostname' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Hostname).to have_received(:resolve).with(:fqdn)
+      expect(Facter::Resolvers::Linux::Hostname).to have_received(:resolve).with(:fqdn)
     end
 
     it 'returns fqdn fact' do
