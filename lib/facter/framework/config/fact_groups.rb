@@ -7,10 +7,15 @@ module Facter
     attr_accessor :groups_ttls
     attr_reader :groups, :block_list, :facts_ttls
 
-    STRING_TO_SECONDS = { 'seconds' => 1, 'second' => 1,
-                          'minutes' => 60, 'minute' => 60,
-                          'hours' => 3600, 'hour' => 3600,
-                          'days' => 3600 * 24, 'day' => 3600 * 24 }.freeze
+    STRING_TO_SECONDS = { 'ns' => 1.fdiv(1_000_000_000), 'nanos' => 1.fdiv(1_000_000_000),
+                          'nanoseconds' => 1.fdiv(1_000_000_000),
+                          'us' => 1.fdiv(1_000_000), 'micros' => 1.fdiv(1_000_000), 'microseconds' => 1.fdiv(1_000_000),
+                          '' => 1.fdiv(1000), 'ms' => 1.fdiv(1000), 'milis' => 1.fdiv(1000),
+                          'milliseconds' => 1.fdiv(1000),
+                          's' => 1, 'seconds' => 1,
+                          'm' => 60, 'minutes' => 60,
+                          'h' => 3600, 'hours' => 3600,
+                          'd' => 3600 * 24, 'days' => 3600 * 24 }.freeze
 
     def initialize
       @groups = Facter::Config::FACT_GROUPS.dup
@@ -106,14 +111,22 @@ module Facter
 
     def ttls_to_seconds(ttls)
       duration, unit = ttls.split(' ', 2)
+      unit = '' if duration && !unit
+      unit = append_s(unit)
       seconds = STRING_TO_SECONDS[unit]
       if seconds
-        duration.to_i * seconds
+        (duration.to_i * seconds).to_i
       else
         log = Log.new(self)
-        log.error("Could not parse time unit #{unit} (try second(s), minute(s), hour(s) or day(s))")
+        log.error("Could not parse time unit #{unit} (try #{STRING_TO_SECONDS.keys.reject(&:empty?).join(', ')})")
         nil
       end
+    end
+
+    def append_s(unit)
+      return unit + 's' if unit.length > 2 && unit[-1] != 's'
+
+      unit
     end
   end
 end
