@@ -8,7 +8,7 @@ module Facts
         ALIASES = 'fqdn'
 
         def call_the_resolver
-          fact_value = Facter::Resolvers::Hostname.resolve(:fqdn)
+          fact_value = Facter::Resolvers::Linux::Hostname.resolve(:fqdn)
 
           [Facter::ResolvedFact.new(FACT_NAME, fact_value), Facter::ResolvedFact.new(ALIASES, fact_value, :legacy)]
         end
