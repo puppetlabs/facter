@@ -253,23 +253,6 @@ module Facter
       self
     end
 
-    # Returns a fact object by name.  If you use this, you still have to
-    # call {Facter::Util::Fact#value `value`} on it to retrieve the actual
-    # value.
-    #
-    # @param user_query [String] the name of the fact
-    #
-    # @return [Facter::Util::Fact, nil] The fact object, or nil if no fact
-    #   is found.
-    #
-    # @api public
-    def fact(user_query)
-      user_query = user_query.to_s
-      resolve_fact(user_query)
-
-      @already_searched[user_query]
-    end
-
     # Reset search paths for custom and external facts
     # If config file is set custom and external facts will be reloaded
     #
@@ -411,7 +394,25 @@ module Facter
     def value(user_query)
       user_query = user_query.to_s
       resolve_fact(user_query)
+
       @already_searched[user_query]&.value
+    end
+
+    # Returns a fact object by name.  If you use this, you still have to
+    # call {Facter::Util::Fact#value `value`} on it to retrieve the actual
+    # value.
+    #
+    # @param user_query [String] the name of the fact
+    #
+    # @return [Facter::Util::Fact, nil] The fact object, or nil if no fact
+    #   is found.
+    #
+    # @api public
+    def fact(user_query)
+      user_query = user_query.to_s
+      resolve_fact(user_query)
+
+      @already_searched[user_query]
     end
 
     # Returns Facter version
@@ -545,7 +546,7 @@ module Facter
     # @return [ResolvedFact]
     def resolve_fact(user_query)
       user_query = user_query.to_s
-      resolved_facts = Facter::FactManager.instance.resolve_facts([user_query])
+      resolved_facts = Facter::FactManager.instance.resolve_fact(user_query)
       # we must make a distinction between custom facts that return nil and nil facts
       # Nil facts should not be packaged as ResolvedFacts! (add_fact_to_searched_facts packages facts)
       resolved_facts = resolved_facts.reject { |fact| fact.type == :nil }

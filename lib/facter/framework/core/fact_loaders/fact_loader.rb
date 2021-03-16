@@ -11,38 +11,21 @@ module Facter
 
       @internal_facts = []
       @external_facts = []
+      @custom_facts = []
       @facts = []
+
+      @internal_loader ||= InternalFactLoader.new
+      @external_fact_loader ||= ExternalFactLoader.new
     end
 
     def load(options)
-      @internal_loader ||= InternalFactLoader.new
-      @external_fact_loader ||= ExternalFactLoader.new
-
-      @facts = []
-      @external_facts = []
-
       @internal_facts = load_internal_facts(options)
       @external_facts = load_external_facts(options)
+      @custom_facts = load_custom_facts(options)
 
       filter_env_facts
 
-      @facts = @internal_facts + @external_facts
-    end
-
-    private
-
-    def filter_env_facts
-      env_fact_names = @external_facts.select { |fact| fact.is_env == true }.map(&:name)
-      return unless env_fact_names.any?
-
-      @internal_facts.delete_if do |fact|
-        if env_fact_names.include?(fact.name)
-          @log.debug("Reading #{fact.name} fact from environment variable")
-          true
-        else
-          false
-        end
-      end
+      @facts = @internal_facts + @external_facts + @custom_facts
     end
 
     def load_internal_facts(options)
@@ -60,23 +43,43 @@ module Facter
       block_facts(internal_facts, options)
     end
 
+    def load_custom_fact(options, fact_name)
+      return [] unless options[:custom_facts]
+
+      custom_facts = @external_fact_loader.load_fact(fact_name)
+      block_facts(custom_facts, options)
+    end
+
+    def load_custom_facts(options)
+      return [] unless options[:custom_facts]
+
+      @log.debug('Loading custom facts')
+      custom_facts = @external_fact_loader.custom_facts
+      block_facts(custom_facts, options)
+    end
+
     def load_external_facts(options)
+      return [] unless options[:external_facts]
+
       @log.debug('Loading external facts')
-      external_facts = []
+      external_facts = @external_fact_loader.external_facts
+      block_facts(external_facts, options)
+    end
 
-      if options[:custom_facts]
-        @log.debug('Loading custom facts')
-        external_facts += @external_fact_loader.custom_facts
+    private
+
+    def filter_env_facts
+      env_fact_names = @external_facts.select { |fact| fact.is_env == true }.map(&:name)
+      return unless env_fact_names.any?
+
+      @internal_facts.delete_if do |fact|
+        if env_fact_names.include?(fact.name)
+          @log.debug("Reading #{fact.name} fact from environment variable")
+          true
+        else
+          false
+        end
       end
-
-      external_facts = block_facts(external_facts, options)
-
-      if options[:external_facts]
-        @log.debug('Loading external facts')
-        external_facts += @external_fact_loader.external_facts
-      end
-
-      external_facts
     end
 
     def block_facts(facts, options)

@@ -106,6 +106,11 @@ module LegacyFacter
         @loaded = false
       end
 
+      def custom_fact(fact_name)
+        internal_loader.load(fact_name)
+        @custom_facts = @facts.select { |_k, v| v.options[:fact_type] == :custom }
+      end
+
       # Builds a hash of custom facts
       def custom_facts
         return @custom_facts if @valid_custom_facts
