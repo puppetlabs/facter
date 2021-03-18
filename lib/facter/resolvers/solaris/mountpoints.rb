@@ -14,23 +14,26 @@ module Facter
             @fact_list.fetch(fact_name) { read_mounts(fact_name) }
           end
 
-          def root_device
-            cmdline = Facter::Util::FileHelper.safe_read('/proc/cmdline')
-            match = cmdline.match(/root=([^\s]+)/)
-            match&.captures&.first
-          end
-
-          def compute_device(device)
-            # If the "root" device, lookup the actual device from the kernel options
-            # This is done because not all systems symlink /dev/root
-            device = root_device if device == '/dev/root'
-            device
+          def exclude_auto_home_mounts!
+            @mounts.reject! do |mount|
+              parent = mount[:path].rpartition('/').first
+              @auto_home_paths.include?(parent)
+            end
           end
 
           def read_mounts(fact_name) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
-            mounts = []
+            @mounts = []
+            @auto_home_paths = []
+
             Facter::Util::Resolvers::FilesystemHelper.read_mountpoints.each do |fs|
-              device = compute_device(fs.name)
+              if fs.name == 'auto_home'
+                @auto_home_paths << fs.mount_point
+                next
+              end
+
+              next if fs.mount_type == 'autofs'
+
+              device = fs.name
               filesystem = fs.mount_type
               path = fs.mount_point
               options = fs.options.split(',').map(&:strip)
@@ -47,11 +50,14 @@ module Facter
               available = Facter::Util::Facts::UnitConverter.bytes_to_human_readable(available_bytes)
               used = Facter::Util::Facts::UnitConverter.bytes_to_human_readable(used_bytes)
 
-              mounts << Hash[Facter::Util::Resolvers::FilesystemHelper::MOUNT_KEYS
-                             .zip(Facter::Util::Resolvers::FilesystemHelper::MOUNT_KEYS
+              @mounts << Hash[Facter::Util::Resolvers::FilesystemHelper::MOUNT_KEYS
+                              .zip(Facter::Util::Resolvers::FilesystemHelper::MOUNT_KEYS
                 .map { |v| binding.local_variable_get(v) })]
             end
-            @fact_list[:mountpoints] = mounts
+
+            exclude_auto_home_mounts!
+
+            @fact_list[:mountpoints] = @mounts
             @fact_list[fact_name]
           end
         end
