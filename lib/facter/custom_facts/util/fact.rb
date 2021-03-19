@@ -246,7 +246,7 @@ module Facter
           end
         else
           case resolution_type
-          when :simple
+          when :simple, :structured
             resolve = Facter::Util::Resolution.new(resolution_name, self)
           when :aggregate
             resolve = Facter::Core::Aggregate.new(resolution_name, self)

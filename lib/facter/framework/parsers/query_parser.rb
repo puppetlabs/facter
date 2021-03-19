@@ -41,7 +41,9 @@ module Facter
       def no_user_query(loaded_facts)
         searched_facts = []
         loaded_facts.each do |loaded_fact|
-          searched_facts << SearchedFact.new(loaded_fact.name, loaded_fact.klass, [], '', loaded_fact.type)
+          sf = SearchedFact.new(loaded_fact.name, loaded_fact.klass, [], '', loaded_fact.type)
+          sf.options = loaded_fact.options
+          searched_facts << sf
         end
         searched_facts
       end
@@ -108,6 +110,7 @@ module Facter
         type = loaded_fact.type
         sf = SearchedFact.new(fact_name, klass_name, filter_tokens, user_query, type)
         sf.file = loaded_fact.file
+        sf.options = loaded_fact.options
 
         sf
       end

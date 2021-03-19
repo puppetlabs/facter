@@ -17,9 +17,12 @@ module Facter
       self
     end
 
-    def value(*keys)
-      keys.reduce(self) do |memo, key|
-        memo.fetch(key.to_s)
+    def value(user_query)
+      fetch(user_query) do
+        split_user_query = Facter::Utils.split_user_query(user_query)
+        split_user_query.reduce(self) do |memo, key|
+          memo.fetch(key.to_s)
+        end
       end
     end
 
@@ -37,19 +40,36 @@ module Facter
       self
     end
 
-    private
-
     def bury_fact(fact)
       split_fact_name = extract_fact_name(fact)
       bury(*split_fact_name + fact.filter_tokens << fact.value)
     rescue NoMethodError
+      log_exception(fact)
+    end
+
+    private
+
+    def bury_custom_flat(fact)
+      bury(*[fact.name] + fact.filter_tokens << fact.value)
+    end
+
+    def log_exception(fact)
       @log.error("#{fact.type.to_s.capitalize} fact `#{fact.name}` cannot be added to collection."\
           ' The format of this fact is incompatible with other'\
           " facts that belong to `#{fact.name.split('.').first}` group")
     end
 
     def extract_fact_name(fact)
-      fact.type == :legacy ? [fact.name] : fact.name.split('.')
+      case fact.type
+      when :legacy
+        [fact.name]
+      when :custom
+        fact.options[:type] == :structured ? fact.name.split('.') : [fact.name]
+      when :external
+        Options[:structured_external_facts] == true ? fact.name.split('.') : [fact.name]
+      else
+        fact.name.split('.')
+      end
     end
   end
 end
