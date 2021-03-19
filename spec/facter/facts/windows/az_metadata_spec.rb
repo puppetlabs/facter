@@ -4,10 +4,7 @@ describe Facts::Windows::AzMetadata do
   describe '#call_the_resolver' do
     subject(:fact) { Facts::Windows::AzMetadata.new }
 
-    let(:virtual_detector_double) { instance_spy(Facter::Util::Facts::VirtualDetector) }
-
     before do
-      allow(Facter::Util::Facts::VirtualDetector).to receive(:new).and_return(virtual_detector_double)
       allow(Facter::Resolvers::Az).to receive(:resolve).with(:metadata).and_return(value)
     end
 
@@ -15,7 +12,7 @@ describe Facts::Windows::AzMetadata do
       let(:value) { nil }
 
       before do
-        allow(virtual_detector_double).to receive(:platform).and_return(nil)
+        allow(Facter::Resolvers::Virtualization).to receive(:resolve).with(:virtual).and_return(nil)
       end
 
       it 'returns az metadata fact as nil' do
@@ -33,7 +30,7 @@ describe Facts::Windows::AzMetadata do
       let(:value) { { 'info' => 'value' } }
 
       before do
-        allow(virtual_detector_double).to receive(:platform).and_return('hyperv')
+        allow(Facter::Resolvers::Virtualization).to receive(:resolve).with(:virtual).and_return('hyperv')
       end
 
       context 'when on Azure' do
