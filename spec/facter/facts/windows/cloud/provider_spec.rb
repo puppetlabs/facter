@@ -4,16 +4,10 @@ describe Facts::Windows::Cloud::Provider do
   describe '#call_the_resolver' do
     subject(:fact) { Facts::Windows::Cloud::Provider.new }
 
-    let(:virtual_detector) { instance_spy(Facter::Util::Facts::VirtualDetector) }
-
-    before do
-      allow(Facter::Util::Facts::VirtualDetector).to receive(:new).and_return(virtual_detector)
-    end
-
     context 'when on hyperv' do
       before do
         allow(Facter::Resolvers::Az).to receive(:resolve).with(:metadata).and_return(value)
-        allow(virtual_detector).to receive(:platform).and_return('hyperv')
+        allow(Facter::Resolvers::Virtualization).to receive(:resolve).with(:virtual).and_return('hyperv')
       end
 
       context 'when az_metadata exists' do
@@ -37,7 +31,7 @@ describe Facts::Windows::Cloud::Provider do
 
     context 'when on a physical machine' do
       before do
-        allow(virtual_detector).to receive(:platform).and_return(nil)
+        allow(Facter::Resolvers::Virtualization).to receive(:resolve).with(:virtual).and_return(nil)
       end
 
       it 'returns nil' do
