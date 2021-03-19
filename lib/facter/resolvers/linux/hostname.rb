@@ -19,7 +19,6 @@ module Facter
 
           def retrieve_info(fact_name)
             require 'socket'
-            require 'facter/util/resolvers/ffi/hostname'
 
             output = retrieving_hostname
             return nil unless output
@@ -40,6 +39,8 @@ module Facter
           def retrieving_hostname
             output = Socket.gethostname
             if !output || output.empty? || output['0.0.0.0']
+              require 'facter/util/resolvers/ffi/hostname'
+
               output = Facter::Util::Resolvers::Ffi::Hostname.getffihostname
             end
 
@@ -70,6 +71,8 @@ module Facter
           end
 
           def retrieve_fqdn_for_host_with_ffi(host)
+            require 'facter/util/resolvers/ffi/hostname'
+
             fqdn = Facter::Util::Resolvers::Ffi::Hostname.getffiaddrinfo(host)
             log.debug("FFI getaddrinfo was called and it retrieved: #{fqdn}")
             fqdn
