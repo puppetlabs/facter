@@ -20,8 +20,8 @@ module Facter
 
     def load(options)
       @internal_facts = load_internal_facts(options)
-      @external_facts = load_external_facts(options)
       @custom_facts = load_custom_facts(options)
+      @external_facts = load_external_facts(options)
 
       filter_env_facts
 
