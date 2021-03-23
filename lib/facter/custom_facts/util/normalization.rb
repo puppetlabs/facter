@@ -5,7 +5,10 @@ module LegacyFacter
     module Normalization
       class NormalizationError < StandardError; end
 
-      VALID_TYPES = [Integer, Float, TrueClass, FalseClass, NilClass, Symbol, String, Array, Hash].freeze
+      # load Date and Time classes
+      require 'time'
+
+      VALID_TYPES = [Integer, Float, TrueClass, FalseClass, NilClass, Symbol, String, Array, Hash, Date, Time].freeze
 
       module_function
 
@@ -16,8 +19,10 @@ module LegacyFacter
       # @return [void]
       def normalize(value)
         case value
-        when Integer, Float, TrueClass, FalseClass, NilClass, Symbol, Date
+        when Integer, Float, TrueClass, FalseClass, NilClass, Symbol
           value
+        when Date, Time
+          value.iso8601
         when String
           normalize_string(value)
         when Array
