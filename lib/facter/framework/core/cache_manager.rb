@@ -116,28 +116,13 @@ cache_format_version is incorrect!")
       true
     end
 
-    def extract_fact_name(fact)
-      case fact.type
-      when :legacy
-        [fact.name]
-      when :custom
-        fact.options[:type] == :structured ? fact.name.split('.') : [fact.name]
-      when :external
-        Options[:structured_external_facts] == true ? fact.name.split('.') : [fact.name]
-      else
-        fact.name.split('.')
-      end
-    end
-
     def create_facts(searched_fact, data)
       if searched_fact.type == :file
         resolve_external_fact(searched_fact, data)
       else
         return unless data[searched_fact.name]
 
-        # structured
-        name = extract_fact_name(searched_fact)
-        rf = Facter::ResolvedFact.new(searched_fact.name, data.dig(*name), searched_fact.type,
+        rf = Facter::ResolvedFact.new(searched_fact.name, data[searched_fact.name], searched_fact.type,
                                       searched_fact.user_query, searched_fact.filter_tokens)
         rf.options = searched_fact.options
         [rf]
@@ -170,8 +155,8 @@ cache_format_version is incorrect!")
 
       return unless fact_cache_enabled?(fact_name)
 
-      @groups[group_name] ||= FactCollection.new
-      @groups[group_name].bury_fact(fact)
+      @groups[group_name] ||= {}
+      @groups[group_name][fact.name] = fact.value
     end
 
     def write_cache

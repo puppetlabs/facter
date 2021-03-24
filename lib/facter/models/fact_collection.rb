@@ -40,14 +40,14 @@ module Facter
       self
     end
 
+    private
+
     def bury_fact(fact)
       split_fact_name = extract_fact_name(fact)
       bury(*split_fact_name + fact.filter_tokens << fact.value)
     rescue NoMethodError
       log_exception(fact)
     end
-
-    private
 
     def bury_custom_flat(fact)
       bury(*[fact.name] + fact.filter_tokens << fact.value)
