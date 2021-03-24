@@ -17,7 +17,7 @@ module Facter
             @fact_list.fetch(fact_name) { calculate_system_uptime(fact_name) }
           end
 
-          def substract_system_uptime_from_ole
+          def subtract_system_uptime_from_ole
             win = Facter::Util::Windows::Win32Ole.new
             opsystem = win.return_first('SELECT LocalDateTime,LastBootUpTime FROM Win32_OperatingSystem')
             unless opsystem
@@ -35,33 +35,14 @@ module Facter
           end
 
           def calculate_system_uptime(fact_name)
-            seconds = substract_system_uptime_from_ole.to_i if substract_system_uptime_from_ole
+            seconds = subtract_system_uptime_from_ole&.to_i
             if !seconds || seconds.negative?
               @log.debug 'Unable to determine system uptime!'
               return
             end
 
-            hours = seconds / 3600
-            days = hours / 24
-
-            result = { seconds: seconds, hours: hours, days: days }
-
-            result[:uptime] = determine_uptime(result)
-            build_fact_list(result)
-
+            @fact_list = Facter::Util::Resolvers::UptimeHelper.create_uptime_hash(seconds)
             @fact_list[fact_name]
-          end
-
-          def determine_uptime(result_hash)
-            minutes = (result_hash[:seconds] - result_hash[:hours] * 3600) / 60
-
-            if result_hash[:days].zero?
-              "#{result_hash[:hours]}:#{minutes} hours"
-            elsif result_hash[:days] == 1
-              "#{result_hash[:days]} day"
-            else
-              "#{result_hash[:days]} days"
-            end
           end
 
           def build_fact_list(system_uptime)
