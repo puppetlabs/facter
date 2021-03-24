@@ -33,7 +33,7 @@ module Facter
 
           return if Libc.getkerninfo(KINFO_READ | KINFO_GET_AVENRUN, averages, averages_size, 0).negative?
 
-          averages.read_array_of_long_long(3).map { |x| (x / 65_536.0).round(5) }
+          averages.read_array_of_long_long(3).map { |x| (x / 65_536.0) }
         end
 
         def self.read_interfaces
