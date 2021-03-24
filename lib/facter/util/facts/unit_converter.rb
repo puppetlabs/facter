@@ -19,7 +19,7 @@ module Facter
 
             validated_speed, metric_prefix = determine_metric_prefix(speed)
 
-            format('%<displayed_speed>.2f', displayed_speed: validated_speed).to_s + ' ' + metric_prefix + 'Hz'
+            format('%<displayed_speed>.2f', displayed_speed: validated_speed.round(2)).to_s + ' ' + metric_prefix + 'Hz'
           end
 
           def bytes_to_human_readable(bytes)

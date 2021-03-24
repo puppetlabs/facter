@@ -45,6 +45,18 @@ describe Facter::Util::Facts::UnitConverter do
     it 'converts to Hz even if argument is string' do
       expect(converter.hertz_to_human_readable('2400')).to eql('2.40 kHz')
     end
+
+    it 'rounds down when 3rd decimal is lower than 5' do
+      expect(converter.hertz_to_human_readable(2_363_000_000)).to eql('2.36 GHz')
+    end
+
+    it 'rounds up when 3rd decimal is equal with 5' do
+      expect(converter.hertz_to_human_readable(2_365_000_000)).to eql('2.37 GHz')
+    end
+
+    it 'rounds up when 3rd decimal is greater than 5' do
+      expect(converter.hertz_to_human_readable(2_367_000_000)).to eql('2.37 GHz')
+    end
   end
 
   describe '#bytes_to_human_readable' do
