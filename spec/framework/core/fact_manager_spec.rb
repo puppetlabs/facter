@@ -4,6 +4,7 @@ describe Facter::FactManager do
   let(:internal_manager) { instance_spy(Facter::InternalFactManager) }
   let(:external_manager) { instance_spy(Facter::ExternalFactManager) }
   let(:cache_manager) { instance_spy(Facter::CacheManager) }
+  let(:fact_loader) { instance_double(Facter::FactLoader) }
   let(:logger) { instance_spy(Facter::Log) }
 
   def stub_query_parser(withs, returns)
@@ -31,6 +32,7 @@ describe Facter::FactManager do
     allow(Facter::InternalFactManager).to receive(:new).and_return(internal_manager)
     allow(Facter::ExternalFactManager).to receive(:new).and_return(external_manager)
     allow(Facter::CacheManager).to receive(:new).and_return(cache_manager)
+    allow(Facter::FactLoader).to receive(:new).and_return(fact_loader)
   end
 
   describe '#resolve_facts' do
@@ -99,7 +101,7 @@ describe Facter::FactManager do
       context 'when is found in custom_dir/fact_name.rb' do
         before do
           # mock custom_fact_by_filename to return resolved_fact
-          allow(Facter::FactLoader.instance).to receive(:load_custom_fact).and_return(loaded_facts)
+          allow(fact_loader).to receive(:load_custom_fact).and_return(loaded_facts)
           stub_query_parser([[user_query], loaded_facts], searched_facts)
           stub_internal_manager(searched_facts, [resolved_fact])
           stub_external_manager(searched_facts, [resolved_fact])
@@ -137,20 +139,21 @@ describe Facter::FactManager do
       context 'when is not found in custom_dir/fact_name.rb' do
         before do
           # mock custom_fact_by_filename to return nil
-          allow(Facter::FactLoader.instance).to receive(:load_custom_fact).and_return([])
+          allow(fact_loader).to receive(:load_custom_fact).and_return([])
           stub_query_parser([[user_query], []], [])
           stub_external_manager(searched_facts, [])
           stub_cache_manager([], [])
 
           # mock core_or_external_fact to return nil
-          allow(Facter::FactLoader.instance).to receive(:load_internal_facts).and_return([])
+          allow(fact_loader).to receive(:load_internal_facts).and_return([])
+          allow(fact_loader).to receive(:load_external_facts).and_return([])
           stub_query_parser([[user_query], []], [])
           stub_internal_manager([], [])
           stub_external_manager([], [])
           stub_cache_manager([], [])
 
           # mock all_custom_facts to return resolved_fact
-          allow(Facter::FactLoader.instance).to receive(:load_custom_facts).and_return(loaded_facts)
+          allow(fact_loader).to receive(:load_custom_facts).and_return(loaded_facts)
           stub_query_parser([[user_query], loaded_facts], searched_facts)
           stub_external_manager(searched_facts, [resolved_fact])
           stub_cache_manager(searched_facts, [])
@@ -187,7 +190,7 @@ describe Facter::FactManager do
       context 'when fact is cached' do
         before do
           # mock custom_fact_by_filename to return cached_fact
-          allow(Facter::FactLoader.instance).to receive(:load_custom_fact).and_return(loaded_facts)
+          allow(fact_loader).to receive(:load_custom_fact).and_return(loaded_facts)
           stub_query_parser([[user_query], loaded_facts], searched_facts)
           stub_internal_manager(searched_facts, [])
           stub_external_manager(searched_facts, [])
@@ -204,16 +207,29 @@ describe Facter::FactManager do
 
     context 'with core fact' do
       let(:user_query) { 'os.name' }
-      let(:os) { 'os' }
       let(:os_klass) { instance_double(Facts::Linux::Os::Name) }
+      let(:bool_klass) { instance_double(Facts::Linux::FipsEnabled) }
+      let(:nil_klass) { instance_double(Facts::Linux::Virtual) }
       let(:core_fact) { instance_double(Facter::LoadedFact, name: 'os.name', klass: os_klass, type: :core) }
-      let(:loaded_facts) { [core_fact] }
+      let(:bool_core_fact) { instance_double(Facter::LoadedFact, name: 'fips_enabled', klass: bool_klass, type: :core) }
+      let(:nil_core_fact) { instance_double(Facter::LoadedFact, name: 'virtual', klass: nil_klass, type: :core) }
+      let(:loaded_facts) { [core_fact, bool_core_fact, nil_core_fact] }
 
       let(:searched_facts) do
         [
           instance_double(
             Facter::SearchedFact,
-            name: os, fact_class: os_klass, filter_tokens: [],
+            name: 'os', fact_class: os_klass, filter_tokens: [],
+            user_query: '', type: :core
+          ),
+          instance_double(
+            Facter::SearchedFact,
+            name: 'fips_enabled', fact_class: bool_klass, filter_tokens: [],
+            user_query: '', type: :core
+          ),
+          instance_double(
+            Facter::SearchedFact,
+            name: 'virtual', fact_class: nil_klass, filter_tokens: [],
             user_query: '', type: :core
           )
         ]
@@ -223,13 +239,14 @@ describe Facter::FactManager do
 
       before do
         # mock custom_fact_by_filename to return nil
-        allow(Facter::FactLoader.instance).to receive(:load_custom_fact).and_return([])
+        allow(fact_loader).to receive(:load_custom_fact).and_return([])
         stub_query_parser([[user_query], []], [])
         stub_external_manager(searched_facts, [])
         stub_cache_manager([], [])
 
         # mock core_or_external_fact to return the core resolved_fact
-        allow(Facter::FactLoader.instance).to receive(:load_internal_facts).and_return(loaded_facts)
+        allow(fact_loader).to receive(:load_internal_facts).and_return(loaded_facts)
+        allow(fact_loader).to receive(:load_external_facts).and_return([])
         stub_query_parser([[user_query], loaded_facts], searched_facts)
         stub_internal_manager(searched_facts, [resolved_fact])
         stub_external_manager([], [])
@@ -262,6 +279,31 @@ describe Facter::FactManager do
 
         expect(resolved_facts).to eql([resolved_fact])
       end
+
+      context 'when nil' do
+        let(:user_query) { 'virtual' }
+        let(:resolved_fact) { mock_resolved_fact('virtual', nil, '', [], :core) }
+
+        before do
+          # mock all custom facts to return []
+          allow(fact_loader).to receive(:load_custom_facts).and_return([])
+        end
+
+        it 'does not resolve fact' do
+          resolved_facts = Facter::FactManager.instance.resolve_fact(user_query)
+          expect(resolved_facts).to be_empty
+        end
+      end
+
+      context 'when boolean false' do
+        let(:user_query) { 'fips_enabled' }
+        let(:resolved_fact) { mock_resolved_fact('fips_enabled', false, '', [], :core) }
+
+        it 'resolves fact to false' do
+          resolved_facts = Facter::FactManager.instance.resolve_fact(user_query)
+          expect(resolved_facts.first.value).to be(false)
+        end
+      end
     end
 
     context 'with non existent fact' do
@@ -274,20 +316,21 @@ describe Facter::FactManager do
 
       before do
         # mock custom_fact_by_filename to return nil
-        allow(Facter::FactLoader.instance).to receive(:load_custom_fact).and_return([])
+        allow(fact_loader).to receive(:load_custom_fact).and_return([])
         stub_query_parser([[user_query], []], [])
         stub_external_manager([], [])
         stub_cache_manager([], [])
 
         # mock core_or_external_fact to return nil
-        allow(Facter::FactLoader.instance).to receive(:load_internal_facts).and_return([])
+        allow(fact_loader).to receive(:load_internal_facts).and_return([])
+        allow(fact_loader).to receive(:load_external_facts).and_return([])
         stub_query_parser([[user_query], []], [])
         stub_internal_manager([], [])
         stub_external_manager([], [])
         stub_cache_manager([], [])
 
         # mock all_custom_facts to return nil
-        allow(Facter::FactLoader.instance).to receive(:load_custom_facts).and_return([])
+        allow(fact_loader).to receive(:load_custom_facts).and_return([])
         stub_query_parser([[user_query], []], [])
         stub_external_manager([], [])
         stub_cache_manager([], [])
@@ -338,8 +381,9 @@ describe Facter::FactManager do
     let(:resolved_fact) { mock_resolved_fact('os', 'Ubuntu', '', []) }
 
     it 'resolves all core facts' do
-      allow(Facter::FactLoader.instance).to receive(:load_internal_facts).and_return(loaded_facts)
-      allow(Facter::FactLoader.instance).to receive(:internal_facts).and_return(loaded_facts)
+      allow(fact_loader).to receive(:load_internal_facts).and_return(loaded_facts)
+      allow(fact_loader).to receive(:internal_facts).and_return(loaded_facts)
+      allow(fact_loader).to receive(:load_external_facts).and_return([])
 
       stub_query_parser([user_query, loaded_facts], [searched_fact])
       stub_internal_manager([searched_fact], [resolved_fact])

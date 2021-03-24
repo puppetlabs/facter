@@ -104,7 +104,7 @@ module Facter
       resolved_facts = override_core_facts(core_facts, resolved_facts)
       resolved_facts = resolved_facts.concat(cached_facts)
 
-      resolved_facts if resolved_facts.map(&:value).any?
+      resolved_facts unless resolved_facts.map(&:value).compact.empty?
     end
 
     def all_custom_facts
