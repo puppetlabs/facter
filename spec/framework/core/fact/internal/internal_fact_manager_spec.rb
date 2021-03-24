@@ -10,7 +10,7 @@ describe Facter::InternalFactManager do
       resolved_fact = mock_resolved_fact('os', 'Debian', nil, [])
       allow(os_name_class_spy).to receive(:new).and_return(os_name_instance_spy)
       allow(os_name_instance_spy).to receive(:call_the_resolver).and_return(resolved_fact)
-      searched_fact = instance_spy(Facter::SearchedFact, name: 'os', fact_class: os_name_class_spy, filter_tokens: [],
+      searched_fact = instance_spy(Facter::SearchedFact, name: 'os', klass: os_name_class_spy, filter_tokens: [],
                                                          user_query: '', type: :core)
 
       resolved_facts = internal_fact_manager.resolve_facts([searched_fact])
@@ -24,7 +24,7 @@ describe Facter::InternalFactManager do
       resolved_fact = mock_resolved_fact('network_Ethernet0', '192.168.5.121', nil, [], :legacy)
       allow(networking_interface_class_spy).to receive(:new).and_return(windows_networking_interface)
       allow(windows_networking_interface).to receive(:call_the_resolver).and_return(resolved_fact)
-      searched_fact = instance_spy(Facter::SearchedFact, name: 'network_.*', fact_class: networking_interface_class_spy,
+      searched_fact = instance_spy(Facter::SearchedFact, name: 'network_.*', klass: networking_interface_class_spy,
                                                          filter_tokens: [], user_query: '', type: :core)
 
       resolved_facts = internal_fact_manager.resolve_facts([searched_fact])
@@ -34,7 +34,7 @@ describe Facter::InternalFactManager do
 
     context 'when resolved fact is of type nil' do
       let(:searched_fact) do
-        instance_spy(Facter::SearchedFact, name: 'missing_fact', fact_class: nil,
+        instance_spy(Facter::SearchedFact, name: 'missing_fact', klass: nil,
                                            filter_tokens: [], user_query: '', type: :nil)
       end
       let(:resolved_fact) { instance_spy(Facter::ResolvedFact) }
@@ -57,11 +57,11 @@ describe Facter::InternalFactManager do
         allow(os_name_class_spy).to receive(:new).and_return(os_name_instance_spy)
         allow(os_name_instance_spy).to receive(:call_the_resolver).and_return(resolved_fact)
 
-        searched_fact = instance_spy(Facter::SearchedFact, name: 'os.name', fact_class: os_name_class_spy,
+        searched_fact = instance_spy(Facter::SearchedFact, name: 'os.name', klass: os_name_class_spy,
                                                            filter_tokens: [], user_query: '', type: :core)
 
         searched_fact_with_alias = instance_spy(Facter::SearchedFact, name: 'operatingsystem',
-                                                                      fact_class: os_name_class_spy, filter_tokens: [],
+                                                                      klass: os_name_class_spy, filter_tokens: [],
                                                                       user_query: '', type: :core)
 
         internal_fact_manager.resolve_facts([searched_fact, searched_fact_with_alias])
@@ -76,7 +76,7 @@ describe Facter::InternalFactManager do
       let(:searched_fact) do
         instance_spy(Facter::SearchedFact,
                      name: 'os',
-                     fact_class: os_name_class_spy,
+                     klass: os_name_class_spy,
                      filter_tokens: [],
                      user_query: '',
                      type: :core)

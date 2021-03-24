@@ -2,15 +2,18 @@
 
 module Facter
   class ResolvedFact
-    attr_reader :name, :type
-    attr_accessor :user_query, :filter_tokens, :value, :file, :options
+    extend Forwardable
+    def_delegators :@fact_attributes, :user_query, :filter_tokens, :structured
+    def_delegators :@fact_attributes, :user_query=, :filter_tokens=, :structured=
 
-    def initialize(name, value = '', type = :core, user_query = nil, filter_tokens = [])
+    attr_reader :name, :type
+    attr_accessor :value, :file, :options
+
+    def initialize(name, value, type = :core, fact_attributes = NullFactAttributes.new)
       @name = name
       @value = Utils.deep_stringify_keys(value)
       @type = type
-      @user_query = user_query
-      @filter_tokens = filter_tokens
+      @fact_attributes = fact_attributes
     end
 
     def legacy?

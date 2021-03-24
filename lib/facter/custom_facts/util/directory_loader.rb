@@ -43,7 +43,7 @@ module LegacyFacter
       def load(collection)
         weight = @weight
 
-        searched_facts, cached_facts = load_directory_entries(collection)
+        searched_facts, cached_facts = load_directory_entries
 
         load_cached_facts(collection, cached_facts, weight)
 
@@ -52,7 +52,7 @@ module LegacyFacter
 
       private
 
-      def load_directory_entries(_collection)
+      def load_directory_entries
         cm = Facter::CacheManager.new
         facts = []
         entries.each do |file|
@@ -63,13 +63,22 @@ module LegacyFacter
             Facter.log_exception(Exception.new("Caching is enabled for group \"#{basename}\" while "\
               'there are at least two external facts files with the same filename'))
           else
-            searched_fact = Facter::SearchedFact.new(basename, nil, [], nil, :file)
-            searched_fact.file = file
-            facts << searched_fact
+            facts << build_searched_fact(basename, file)
           end
         end
 
         cm.resolve_facts(facts)
+      end
+
+      def build_searched_fact(basename, file)
+        fact_attributes = Facter::FactAttributes.new(
+          user_query: nil,
+          filter_tokens: [],
+          structured: false
+        )
+        searched_fact = Facter::SearchedFact.new(basename, nil, :file, fact_attributes)
+        searched_fact.file = file
+        searched_fact
       end
 
       def load_cached_facts(collection, cached_facts, weight)

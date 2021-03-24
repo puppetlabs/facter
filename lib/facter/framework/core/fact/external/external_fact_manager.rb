@@ -19,12 +19,19 @@ module Facter
       custom_facts.each do |custom_fact|
         fact = LegacyFacter[custom_fact.name]
         type = fact.options[:fact_type] || :custom
+        fact_attributes = Facter::FactAttributes.new(
+          user_query: custom_fact.user_query,
+          filter_tokens: [],
+          structured: custom_fact.structured
+        )
 
-        resolved_fact = ResolvedFact.new(custom_fact.name, fact.value, type)
-        resolved_fact.filter_tokens = []
-        resolved_fact.user_query = custom_fact.user_query
+        resolved_fact = ResolvedFact.new(
+          custom_fact.name,
+          fact.value,
+          type,
+          fact_attributes
+        )
         resolved_fact.file = fact.options[:file]
-        resolved_fact.options = fact.options
 
         resolved_custom_facts << resolved_fact
       end

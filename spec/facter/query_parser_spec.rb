@@ -9,15 +9,15 @@ describe Facter::QueryParser do
       os_family_class = 'Facter::Ubuntu::OsFamily'
 
       loaded_fact_os_name = double(Facter::LoadedFact, name: 'os.name', klass: os_name_class,
-                                                       type: :core, file: nil, options: {})
+                                                       type: :core, file: nil, structured: false)
       loaded_fact_os_family = double(Facter::LoadedFact, name: 'os.family', klass: os_family_class, type: :core,
-                                                         file: nil, options: {})
+                                                         file: nil, structured: false)
       loaded_facts = [loaded_fact_os_name, loaded_fact_os_family]
 
       matched_facts = Facter::QueryParser.parse(query_list, loaded_facts)
 
       expect(matched_facts).to be_an_instance_of(Array).and \
-        contain_exactly(an_instance_of(Facter::SearchedFact).and(having_attributes(fact_class: os_name_class)))
+        contain_exactly(an_instance_of(Facter::SearchedFact).and(having_attributes(klass: os_name_class)))
     end
 
     it 'compose filter_tokens correctly' do
@@ -26,7 +26,7 @@ describe Facter::QueryParser do
       os_name_class = 'Facter::Ubuntu::OsName'
 
       loaded_fact_os_name = double(Facter::LoadedFact, name: 'os.release', klass: os_name_class,
-                                                       type: :core, file: nil, options: {})
+                                                       type: :core, file: nil, structured: false)
       loaded_facts = [loaded_fact_os_name]
 
       matched_facts = Facter::QueryParser.parse(query_list, loaded_facts)
@@ -41,15 +41,15 @@ describe Facter::QueryParser do
       os_family_class = 'Facter::Ubuntu::OsFamily'
 
       loaded_fact_networking = double(Facter::LoadedFact, name: 'ipaddress_.*', klass: networking_class, type: :legacy,
-                                                          file: nil, options: {})
+                                                          file: nil, structured: false)
       loaded_fact_os_family = double(Facter::LoadedFact, name: 'os.family', klass: os_family_class, type: :core,
-                                                         file: nil, options: {})
+                                                         file: nil, structured: false)
       loaded_facts = [loaded_fact_networking, loaded_fact_os_family]
 
       matched_facts = Facter::QueryParser.parse(query_list, loaded_facts)
 
       expect(matched_facts).to be_an_instance_of(Array).and \
-        contain_exactly(an_instance_of(Facter::SearchedFact).and(having_attributes(fact_class: networking_class)))
+        contain_exactly(an_instance_of(Facter::SearchedFact).and(having_attributes(klass: networking_class)))
     end
 
     it 'creates a searched fact correctly without name collision' do
@@ -59,14 +59,14 @@ describe Facter::QueryParser do
       ssh_key_class = 'Facter::El::Sshalgorithmkey'
 
       loaded_fact_ssh_key = instance_spy(Facter::LoadedFact, name: 'ssh.*key', klass: ssh_key_class,
-                                                             type: :legacy, options: {})
-      loaded_fact_ssh = instance_spy(Facter::LoadedFact, name: 'ssh', klass: ssh_class, type: :core, options: {})
+                                                             type: :legacy, structured: false)
+      loaded_fact_ssh = instance_spy(Facter::LoadedFact, name: 'ssh', klass: ssh_class, type: :core, structured: false)
       loaded_facts = [loaded_fact_ssh_key, loaded_fact_ssh]
 
       matched_facts = Facter::QueryParser.parse(query_list, loaded_facts)
 
       expect(matched_facts).to be_an_instance_of(Array).and \
-        contain_exactly(an_instance_of(Facter::SearchedFact).and(having_attributes(fact_class: ssh_class)))
+        contain_exactly(an_instance_of(Facter::SearchedFact).and(having_attributes(klass: ssh_class)))
     end
 
     it 'creates one custom searched fact' do
@@ -74,28 +74,28 @@ describe Facter::QueryParser do
       os_name_class = 'Facter::Ubuntu::OsName'
 
       loaded_fact_os_name = double(Facter::LoadedFact, name: 'os.name', klass: os_name_class,
-                                                       type: :core, file: nil, options: {})
+                                                       type: :core, file: nil, structured: false)
       loaded_fact_custom_fact = double(Facter::LoadedFact, name: 'custom_fact', klass: nil,
-                                                           type: :custom, file: nil, options: {})
+                                                           type: :custom, file: nil, structured: false)
       loaded_facts = [loaded_fact_os_name, loaded_fact_custom_fact]
 
       matched_facts = Facter::QueryParser.parse(query_list, loaded_facts)
 
       expect(matched_facts).to be_an_instance_of(Array).and \
-        contain_exactly(an_instance_of(Facter::SearchedFact).and(having_attributes(fact_class: nil, type: :custom)))
+        contain_exactly(an_instance_of(Facter::SearchedFact).and(having_attributes(klass: nil, type: :custom)))
     end
 
     it 'queries if param is symbol' do
       query_list = [:path]
       path_class = 'Facter::Ubuntu::Path'
       loaded_fact_path = double(Facter::LoadedFact, name: 'path', klass: path_class,
-                                                    type: :core, file: nil, options: {})
+                                                    type: :core, file: nil, structured: false)
       loaded_facts = [loaded_fact_path]
 
       matched_facts = Facter::QueryParser.parse(query_list, loaded_facts)
 
       expect(matched_facts).to be_an_instance_of(Array).and \
-        contain_exactly(an_instance_of(Facter::SearchedFact).and(having_attributes(fact_class: path_class)))
+        contain_exactly(an_instance_of(Facter::SearchedFact).and(having_attributes(klass: path_class)))
     end
 
     context 'when fact does not exist' do
@@ -116,9 +116,9 @@ describe Facter::QueryParser do
         [
           instance_double(
             Facter::LoadedFact, name: 'os.name', klass: 'Facter::Ubuntu::Os::Name',
-                                type: :core, file: nil, options: {}
+                                type: :core, file: nil, structured: false
           ),
-          instance_double(Facter::LoadedFact, name: 'os', klass: nil, type: :custom, file: nil, options: {})
+          instance_double(Facter::LoadedFact, name: 'os', klass: nil, type: :custom, file: nil, structured: false)
         ]
       end
 
@@ -127,7 +127,7 @@ describe Facter::QueryParser do
 
         expect(matched_facts).to be_an_instance_of(Array).and \
           contain_exactly(an_instance_of(Facter::SearchedFact)
-          .and(having_attributes(name: 'os', fact_class: nil, type: :custom)))
+          .and(having_attributes(name: 'os', klass: nil, type: :custom)))
       end
     end
   end

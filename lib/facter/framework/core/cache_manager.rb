@@ -122,10 +122,19 @@ cache_format_version is incorrect!")
       else
         return unless data[searched_fact.name]
 
-        rf = Facter::ResolvedFact.new(searched_fact.name, data[searched_fact.name], searched_fact.type,
-                                      searched_fact.user_query, searched_fact.filter_tokens)
-        rf.options = searched_fact.options
-        [rf]
+        fact_attributes = Facter::FactAttributes.new(
+          user_query: searched_fact.user_query,
+          filter_tokens: searched_fact.filter_tokens,
+          structured: searched_fact.structured
+        )
+
+        [Facter::ResolvedFact.new(
+          searched_fact.name,
+          data[searched_fact.name],
+          searched_fact.type,
+          fact_attributes
+        )]
+
       end
     end
 
@@ -134,8 +143,18 @@ cache_format_version is incorrect!")
       data.each do |fact_name, fact_value|
         next if fact_name == 'cache_format_version'
 
-        fact = Facter::ResolvedFact.new(fact_name, fact_value, searched_fact.type,
-                                        searched_fact.user_query, searched_fact.filter_tokens)
+        fact_attributes = Facter::FactAttributes.new(
+          user_query: searched_fact.user_query,
+          filter_tokens: searched_fact.filter_tokens,
+          structured: false
+        )
+
+        fact = Facter::ResolvedFact.new(
+          fact_name,
+          fact_value,
+          searched_fact.type,
+          fact_attributes
+        )
         fact.file = searched_fact.file
         facts << fact
       end

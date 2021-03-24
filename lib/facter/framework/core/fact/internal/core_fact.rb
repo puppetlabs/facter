@@ -7,13 +7,13 @@ module Facter
     end
 
     def create
-      fact_class = @searched_fact.fact_class
+      klass = @searched_fact.klass
 
-      return unless fact_class
+      return unless klass
 
       fact_value = nil
       Facter::Framework::Benchmarking::Timer.measure(@searched_fact.name) do
-        fact_value = fact_class.new.call_the_resolver
+        fact_value = klass.new.call_the_resolver
       end
 
       fact_value

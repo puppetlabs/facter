@@ -5,7 +5,12 @@ describe Facter::FactCollection do
 
   describe '#build_fact_collection!' do
     let(:user_query) { 'os' }
-    let(:resolved_fact) { Facter::ResolvedFact.new(fact_name, fact_value, type) }
+    let(:fact_attributes) do
+      Facter::FactAttributes.new(user_query: '', filter_tokens: [], structured: true)
+    end
+    let(:resolved_fact) do
+      Facter::ResolvedFact.new(fact_name, fact_value, type, fact_attributes)
+    end
     let(:logger) { instance_spy(Facter::Log) }
 
     before do
@@ -76,8 +81,9 @@ describe Facter::FactCollection do
       let(:fact_name) { 'mygroup.fact1' }
       let(:fact_value) { 'g1_f1_value' }
       let(:type) { :custom }
-
-      let(:resolved_fact2) { Facter::ResolvedFact.new('mygroup.fact1.subfact1', 'g1_sg1_f1_value', type) }
+      let(:resolved_fact2) do
+        Facter::ResolvedFact.new('mygroup.fact1.subfact1', 'g1_sg1_f1_value', type, fact_attributes)
+      end
 
       it 'logs error' do
         resolved_fact2.options = {}

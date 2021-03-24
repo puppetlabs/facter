@@ -23,7 +23,13 @@ module Facter
 
     def build_custom_facts(custom_facts_to_load)
       custom_facts_to_load&.map do |k, v|
-        loaded_fact = LoadedFact.new(k.to_s, nil, :custom, nil, v.options)
+        loaded_fact = LoadedFact.new(
+          k.to_s,
+          nil,
+          :custom,
+          nil,
+          v.options[:type]&.to_sym == :structured
+        )
         loaded_fact.is_env = v.options[:is_env] if v.options[:is_env]
         loaded_fact
       end

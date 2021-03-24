@@ -5,15 +5,15 @@ describe Facter::CacheManager do
 
   let(:cache_dir) { '/etc/facter/cache' }
   let(:searched_core_fact) do
-    instance_spy(Facter::SearchedFact, name: 'os', fact_class: instance_spy(Facts::Linux::Os::Name),
+    instance_spy(Facter::SearchedFact, name: 'os', klass: instance_spy(Facts::Linux::Os::Name),
                                        filter_tokens: [], user_query: '', type: :core, file: nil)
   end
   let(:searched_custom_fact) do
-    instance_spy(Facter::SearchedFact, name: 'my_custom_fact', fact_class: nil, filter_tokens: [],
+    instance_spy(Facter::SearchedFact, name: 'my_custom_fact', klass: nil, filter_tokens: [],
                                        user_query: '', type: :custom, file: nil)
   end
   let(:searched_external_fact) do
-    instance_spy(Facter::SearchedFact, name: 'my_external_fact', fact_class: nil, filter_tokens: [],
+    instance_spy(Facter::SearchedFact, name: 'my_external_fact', klass: nil, filter_tokens: [],
                                        user_query: '', type: :file, file: '/tmp/ext_file.txt')
   end
   let(:searched_facts) { [searched_core_fact, searched_custom_fact, searched_external_fact] }

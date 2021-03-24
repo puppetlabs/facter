@@ -41,8 +41,17 @@ module Facter
       def no_user_query(loaded_facts)
         searched_facts = []
         loaded_facts.each do |loaded_fact|
-          sf = SearchedFact.new(loaded_fact.name, loaded_fact.klass, [], '', loaded_fact.type)
-          sf.options = loaded_fact.options
+          fact_attributes = Facter::FactAttributes.new(
+            user_query: '',
+            filter_tokens: [],
+            structured: loaded_fact.structured
+          )
+          sf = SearchedFact.new(
+            loaded_fact.name,
+            loaded_fact.klass,
+            loaded_fact.type,
+            fact_attributes
+          )
           searched_facts << sf
         end
         searched_facts
@@ -60,8 +69,14 @@ module Facter
 
           return resolvable_fact_list if resolvable_fact_list.any?
         end
-
-        resolvable_fact_list << SearchedFact.new(query, nil, [], query, :nil) if resolvable_fact_list.empty?
+        if resolvable_fact_list.empty?
+          fact_attributes = Facter::FactAttributes.new(
+            user_query: query,
+            filter_tokens: [],
+            structured: false
+          )
+          resolvable_fact_list << SearchedFact.new(query, nil, :nil, fact_attributes)
+        end
 
         resolvable_fact_list
       end
@@ -107,11 +122,15 @@ module Facter
         user_query = @query_list.any? ? query_tokens.join('.') : ''
         fact_name = loaded_fact.name.to_s
         klass_name = loaded_fact.klass
-        type = loaded_fact.type
-        sf = SearchedFact.new(fact_name, klass_name, filter_tokens, user_query, type)
-        sf.file = loaded_fact.file
-        sf.options = loaded_fact.options
 
+        fact_attributes = Facter::FactAttributes.new(
+          user_query: user_query,
+          filter_tokens: filter_tokens,
+          structured: loaded_fact.structured
+        )
+
+        sf = SearchedFact.new(fact_name, klass_name, loaded_fact.type, fact_attributes)
+        sf.file = loaded_fact.file
         sf
       end
 

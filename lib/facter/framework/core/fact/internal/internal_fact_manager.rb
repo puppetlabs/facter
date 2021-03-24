@@ -30,7 +30,12 @@ module Facter
     def resolve_nil_facts(searched_facts)
       resolved_facts = []
       searched_facts.select { |fact| fact.type == :nil }.each do |fact|
-        resolved_facts << ResolvedFact.new(fact.name, nil, :nil, fact.name)
+        fact_attributes = Facter::FactAttributes.new(
+          user_query: fact.name,
+          filter_tokens: [],
+          structured: false
+        )
+        resolved_facts << ResolvedFact.new(fact.name, nil, :nil, fact_attributes)
       end
 
       resolved_facts
@@ -40,7 +45,7 @@ module Facter
       resolved_facts = []
 
       searched_facts
-        .uniq { |searched_fact| searched_fact.fact_class.name }
+        .uniq { |searched_fact| searched_fact.klass.name }
         .each do |searched_fact|
         begin
           fact = CoreFact.new(searched_fact)
@@ -58,7 +63,7 @@ module Facter
     def start_threads(searched_facts)
       # only resolve a fact once, even if multiple search facts depend on that fact
       searched_facts
-        .uniq { |searched_fact| searched_fact.fact_class.name }
+        .uniq { |searched_fact| searched_fact.klass.name }
         .map do |searched_fact|
         Thread.new do
           resolve_fact(searched_fact)
