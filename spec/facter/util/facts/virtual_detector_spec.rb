@@ -27,54 +27,11 @@ describe Facter::Util::Facts::VirtualDetector do
       end
     end
 
-    context 'when detecting with dmidecore' do
-      before do
-        allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
-      end
-
-      context 'when on Amazon' do
-        let(:platform) { 'Amazon' }
-
-        before do
-          allow(Facter::Resolvers::DmiDecode).to receive(:resolve).with(:vendor).and_return(platform)
-        end
-
-        it 'calls Facter::Resolvers::DmiDecode' do
-          detector.platform
-
-          expect(Facter::Resolvers::DmiDecode).to have_received(:resolve).with(:vendor)
-        end
-
-        it 'returns vendor' do
-          expect(detector.platform).to eq('kvm')
-        end
-      end
-
-      context 'when on XEN' do
-        let(:platform) { 'Xen' }
-
-        before do
-          allow(Facter::Resolvers::DmiDecode).to receive(:resolve).with(:vendor).and_return(platform)
-        end
-
-        it 'calls Facter::Resolvers::DmiDecode' do
-          detector.platform
-
-          expect(Facter::Resolvers::DmiDecode).to have_received(:resolve).with(:vendor)
-        end
-
-        it 'returns vendor' do
-          expect(detector.platform).to eq('xen')
-        end
-      end
-    end
-
-    context 'when is FreeBSD' do
+    context 'when FreeBSD' do
       let(:value) { 'jail' }
 
       before do
         allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
-        allow(Facter::Resolvers::DmiDecode).to receive(:resolve).with(:vendor).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return('jail')
       end
 
@@ -89,12 +46,11 @@ describe Facter::Util::Facts::VirtualDetector do
       end
     end
 
-    context 'when is gce' do
+    context 'when gce' do
       let(:value) { 'gce' }
 
       before do
         allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
-        allow(Facter::Resolvers::DmiDecode).to receive(:resolve).with(:vendor).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return('Google Engine')
       end
@@ -110,12 +66,11 @@ describe Facter::Util::Facts::VirtualDetector do
       end
     end
 
-    context 'when is xen-hvm' do
+    context 'when xen-hvm' do
       let(:value) { 'xenhvm' }
 
       before do
         allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
-        allow(Facter::Resolvers::DmiDecode).to receive(:resolve).with(:vendor).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return(value)
@@ -132,12 +87,11 @@ describe Facter::Util::Facts::VirtualDetector do
       end
     end
 
-    context 'when is vmware' do
+    context 'when vmware' do
       let(:value) { 'vmware_fusion' }
 
       before do
         allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
-        allow(Facter::Resolvers::DmiDecode).to receive(:resolve).with(:vendor).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return(nil)
@@ -155,12 +109,11 @@ describe Facter::Util::Facts::VirtualDetector do
       end
     end
 
-    context 'when is openVz' do
+    context 'when openVz' do
       let(:value) { 'openvzve' }
 
       before do
         allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
-        allow(Facter::Resolvers::DmiDecode).to receive(:resolve).with(:vendor).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return(nil)
@@ -179,12 +132,11 @@ describe Facter::Util::Facts::VirtualDetector do
       end
     end
 
-    context 'when is vserver' do
+    context 'when vserver' do
       let(:value) { 'vserver_host' }
 
       before do
         allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
-        allow(Facter::Resolvers::DmiDecode).to receive(:resolve).with(:vendor).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return(nil)
@@ -204,12 +156,11 @@ describe Facter::Util::Facts::VirtualDetector do
       end
     end
 
-    context 'when is xen priviledged' do
+    context 'when xen' do
       let(:value) { 'xen0' }
 
       before do
         allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
-        allow(Facter::Resolvers::DmiDecode).to receive(:resolve).with(:vendor).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return(nil)
@@ -230,12 +181,11 @@ describe Facter::Util::Facts::VirtualDetector do
       end
     end
 
-    context 'when is bochs discovered with dmi product_name' do
+    context 'when bochs' do
       let(:value) { 'bochs' }
 
       before do
         allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
-        allow(Facter::Resolvers::DmiDecode).to receive(:resolve).with(:vendor).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Vmware).to receive(:resolve).with(:vm).and_return(nil)
@@ -258,17 +208,16 @@ describe Facter::Util::Facts::VirtualDetector do
         expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:product_name)
       end
 
-      it 'returns bosch' do
+      it 'returns bochs' do
         expect(detector.platform).to eq(value)
       end
     end
 
-    context 'when is hyper-v discovered with lspci' do
+    context 'when hyper-v' do
       let(:value) { 'hyperv' }
 
       before do
         allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
-        allow(Facter::Resolvers::DmiDecode).to receive(:resolve).with(:vendor).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Vmware).to receive(:resolve).with(:vm).and_return(nil)
@@ -296,7 +245,6 @@ describe Facter::Util::Facts::VirtualDetector do
 
       before do
         allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
-        allow(Facter::Resolvers::DmiDecode).to receive(:resolve).with(:vendor).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Vmware).to receive(:resolve).with(:vm).and_return(nil)
@@ -308,7 +256,7 @@ describe Facter::Util::Facts::VirtualDetector do
         allow(Facter::Resolvers::Lspci).to receive(:resolve).with(:vm).and_return(nil)
       end
 
-      it 'returns physiscal' do
+      it 'returns physical' do
         expect(detector.platform).to eq(vm)
       end
     end
@@ -318,7 +266,6 @@ describe Facter::Util::Facts::VirtualDetector do
 
       before do
         allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
-        allow(Facter::Resolvers::DmiDecode).to receive(:resolve).with(:vendor).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Vmware).to receive(:resolve).with(:vm).and_return(nil)
