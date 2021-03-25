@@ -13,14 +13,14 @@ Many of the command line options can also be set via the HOCON config file. This
 
 OPTIONS
 -------
-<% @Facter::Cli.class_options.each do |name, option| -%><% next if option.hide%>
+<% Facter::Cli.class_options.each do |name, option| -%><% next if option.hide%>
   * `<%= option.aliases[0] + '`, `' if option.aliases.any? %>--<%= 'no-' if negate_options.include?(name.to_s)%><%= name.to_s.gsub('_','-') %>`:
 
     <%= option.description %>
 
 <% end -%>
 
-<% @Facter::Cli.commands.select { |_k, command_class| command_class.instance_of?(Thor::Command) }.each do |_, command| -%>
+<% Facter::Cli.commands.select { |_k, command_class| command_class.instance_of?(Thor::Command) }.each do |_, command| -%>
   * `<%= command.usage %>`:
 
     <%= command.description %>
@@ -32,7 +32,7 @@ FILES
 -----
 <em>/etc/puppetlabs/facter/facter.conf</em>
 
-A HOCON config file that can be used to specify directories for custom and external facts, set various command line options, and specify facts to block. See example below for details, or visit the GitHub README.
+A HOCON config file that can be used to specify directories for custom and external facts, set various command line options, and specify facts to block. See example below for details, or visit the [GitHub README](https://github.com/puppetlabs/puppetlabs-hocon#overview).
 
 EXAMPLES
 --------
@@ -55,7 +55,7 @@ dmi => {
     version => "6.00"
   }
 }
-[\.\.\.]
+[...]
 ```
 
 Display a single structured fact:
@@ -91,7 +91,7 @@ $ facter processorcount
 Format facts as JSON:
 
 ```
-$ facter \-\-json os.name os.release.major processors.isa
+$ facter --json os.name os.release.major processors.isa
 {
   "os.name": "Ubuntu",
   "os.release.major": "14.04",
@@ -120,7 +120,7 @@ cli : {
     verbose   : false,
     log-level : "info"
 }
-# always loaded, fact-sepcific configuration
+# always loaded, fact-specific configuration
 facts : {
     # for valid blocklist entries, use --list-block-groups
     blocklist : [ "file system", "EC2" ],
