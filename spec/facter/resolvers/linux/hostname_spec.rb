@@ -83,6 +83,33 @@ describe Facter::Resolvers::Linux::Hostname do
             it_behaves_like 'detects values'
           end
         end
+
+        context 'when FFI is not installed' do
+          before do
+            allow(Socket).to receive(:gethostname).and_return(nil)
+            allow(Facter::Resolvers::Linux::Hostname).to receive(:require).and_call_original
+            allow(Facter::Resolvers::Linux::Hostname).to receive(:require)
+              .with('facter/util/resolvers/ffi/hostname')
+              .and_raise(LoadError, 'cannot load ffi')
+          end
+
+          it 'logs that ffi canot be loaded' do
+            hostname_resolver.resolve(:hostname)
+            expect(log_spy).to have_received(:debug).with('cannot load ffi')
+          end
+
+          it 'does not resolve hostname' do
+            expect(hostname_resolver.resolve(:hostname)).to be_nil
+          end
+
+          it 'does not resolve domain' do
+            expect(hostname_resolver.resolve(:domain)).to be_nil
+          end
+
+          it 'does not resolve fqdn' do
+            expect(hostname_resolver.resolve(:fqdn)).to be_nil
+          end
+        end
       end
     end
 
@@ -142,6 +169,36 @@ describe Facter::Resolvers::Linux::Hostname do
             it_behaves_like 'detects values'
           end
         end
+
+        context 'when ffi is not installed' do
+          let(:host) { hostname }
+          let(:resolv_conf) { "domain #{domain}" }
+
+          before do
+            allow(Socket).to receive(:gethostname).and_return(host)
+            allow(Facter::Util::FileHelper).to receive(:safe_read).with('/etc/resolv.conf').and_return(resolv_conf)
+            allow(Facter::Resolvers::Linux::Hostname).to receive(:require).and_call_original
+
+            allow(Facter::Resolvers::Linux::Hostname).to receive(:require)
+              .with('facter/util/resolvers/ffi/hostname')
+              .and_raise(LoadError, 'cannot load ffi')
+          end
+
+          it 'logs that ffi canot be loaded' do
+            hostname_resolver.resolve(:domain)
+            expect(log_spy).to have_received(:debug).with('cannot load ffi')
+          end
+
+          it_behaves_like 'detects values'
+
+          context 'when /etc/resolv.conf is empty' do
+            let(:resolv_conf) { '' }
+            let(:domain) { nil }
+            let(:fqdn) { hostname }
+
+            it_behaves_like 'detects values'
+          end
+        end
       end
     end
 
@@ -153,6 +210,27 @@ describe Facter::Resolvers::Linux::Hostname do
 
       before do
         allow(Facter::Util::Resolvers::Ffi::Hostname).to receive(:getffihostname).and_return('')
+      end
+
+      it_behaves_like 'detects values'
+    end
+
+    context 'when FFI is not installed' do
+      let(:hostname) { nil }
+      let(:domain) { nil }
+      let(:host) { '' }
+      let(:fqdn) { nil }
+
+      before do
+        allow(Facter::Resolvers::Linux::Hostname).to receive(:require).and_call_original
+        allow(Facter::Resolvers::Linux::Hostname).to receive(:require)
+          .with('facter/util/resolvers/ffi/hostname')
+          .and_raise(LoadError, 'cannot load ffi')
+      end
+
+      it 'logs that ffi canot be loaded' do
+        hostname_resolver.resolve(:hostname)
+        expect(log_spy).to have_received(:debug).with('cannot load ffi')
       end
 
       it_behaves_like 'detects values'
