@@ -37,15 +37,20 @@ module Facter
           end
 
           def retrieving_hostname
-            output = Socket.gethostname
-            if !output || output.empty? || output['0.0.0.0']
-              require 'facter/util/resolvers/ffi/hostname'
+            output = Socket.gethostname || ''
+            if output.empty? || output['0.0.0.0']
+              begin
+                require 'facter/util/resolvers/ffi/hostname'
 
-              output = Facter::Util::Resolvers::Ffi::Hostname.getffihostname
+                output = Facter::Util::Resolvers::Ffi::Hostname.getffihostname
+              rescue LoadError => e
+                log.debug(e.message)
+                output = nil
+              end
             end
 
             log.debug("Tried to retrieve hostname and got: #{output}")
-            output && !output.empty? ? output : nil
+            return output unless output&.empty?
           end
 
           def parse_fqdn(output)
@@ -76,6 +81,9 @@ module Facter
             fqdn = Facter::Util::Resolvers::Ffi::Hostname.getffiaddrinfo(host)
             log.debug("FFI getaddrinfo was called and it retrieved: #{fqdn}")
             fqdn
+          rescue LoadError => e
+            log.debug(e.message)
+            nil
           end
 
           def exists_and_valid_fqdn?(fqdn, hostname)
