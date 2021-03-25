@@ -9,7 +9,7 @@ module Facter
         end
 
         def platform
-          fact_value = check_docker_lxc || check_dmi || check_freebsd || check_gce || retrieve_from_virt_what
+          fact_value = check_docker_lxc || check_freebsd || check_gce || retrieve_from_virt_what
           fact_value ||= check_vmware || check_open_vz || check_vserver || check_xen || check_other_facts
           fact_value ||= check_lspci || 'physical'
 
@@ -19,15 +19,6 @@ module Facter
         def check_docker_lxc
           @log.debug('Checking Docker and LXC')
           Facter::Resolvers::Containers.resolve(:vm)
-        end
-
-        def check_dmi
-          @log.debug('Checking DMI')
-          vendor = Facter::Resolvers::DmiDecode.resolve(:vendor)
-          @log.debug("dmi detected vendor: #{vendor}")
-          return 'kvm' if vendor =~ /Amazon/
-
-          'xen' if vendor =~ /Xen/
         end
 
         def check_gce
