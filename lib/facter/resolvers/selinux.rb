@@ -13,21 +13,21 @@ module Facter
         end
 
         def retrieve_facts(fact_name)
-          mountpoint = read_mounts_file if @fact_list[:enabled].nil?
+          mountpoint = selinux_mountpoint
+
+          @fact_list[:enabled] = !mountpoint.empty? && read_selinux_config
           read_other_selinux_facts(mountpoint) if @fact_list[:enabled]
 
           @fact_list[fact_name]
         end
 
-        def read_mounts_file
+        def selinux_mountpoint
           output = Facter::Core::Execution.execute('cat /proc/self/mounts', logger: log)
-          @fact_list[:enabled] = false
           mountpoint = ''
 
           output.each_line do |line|
             next unless line =~ /selinuxfs/
 
-            @fact_list[:enabled] = true
             mountpoint = line.split("\s")[1]
             break
           end
@@ -35,8 +35,6 @@ module Facter
         end
 
         def read_other_selinux_facts(mountpoint)
-          return unless read_selinux_config
-
           enforce_file = "#{mountpoint}/enforce"
           policy_file = "#{mountpoint}/policyvers"
 
@@ -60,7 +58,7 @@ module Facter
             @fact_list[:config_policy] = line.split('=').last.strip if line =~ /^SELINUXTYPE=/
           end
 
-          true unless file_lines.empty?
+          !file_lines.empty? ? true : false
         end
       end
     end
