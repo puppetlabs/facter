@@ -45,7 +45,8 @@ describe LegacyFacter::Util::DirectoryLoader do
       dir_loader.load(collection_double)
       file = File.join(dir_loader.directories[0], 'data.yaml')
 
-      expect(collection_double).to have_received(:add).with('f1', value: 'one', fact_type: :external, file: file)
+      expect(collection_double).to have_received(:add)
+        .with('f1', value: 'one', fact_type: :external, file: file, structured: false)
     end
 
     it "ignores files that begin with '.'" do

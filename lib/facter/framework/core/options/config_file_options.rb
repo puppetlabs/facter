@@ -30,7 +30,6 @@ module Facter
         augment_custom(Facter::ConfigReader.global)
         augment_external(Facter::ConfigReader.global)
         augment_show_legacy(Facter::ConfigReader.global)
-        augment_structured_facts(Facter::ConfigReader.global)
         augment_sequential(Facter::ConfigReader.global)
       end
 
@@ -69,12 +68,6 @@ module Facter
 
         @options[:external_dir] = [global_conf['external-dir']].flatten unless global_conf['external-dir'].nil?
         @options[:config_file_external_dir] = @options[:external_dir] || []
-      end
-
-      def augment_structured_facts(global_conf)
-        return if !global_conf || global_conf['structured-external-facts'].nil?
-
-        @options[:structured_external_facts] = global_conf['structured-external-facts']
       end
 
       def augment_ruby(global_conf)

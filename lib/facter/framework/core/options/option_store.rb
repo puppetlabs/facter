@@ -26,7 +26,6 @@ module Facter
     @default_external_dir = []
     @fact_groups = {}
     @sequential = true
-    @structured_external_facts = false
     @ttls = []
     @block_list = []
     @color = true
@@ -43,7 +42,7 @@ module Facter
 
       attr_accessor :config, :strict, :json,
                     :cache, :yaml, :puppet, :ttls, :block, :cli, :config_file_custom_dir,
-                    :config_file_external_dir, :default_external_dir, :fact_groups, :structured_external_facts,
+                    :config_file_external_dir, :default_external_dir, :fact_groups,
                     :block_list, :color, :trace, :sequential, :timing, :hocon, :allow_external_loggers
 
       attr_writer :external_dir
@@ -203,7 +202,6 @@ module Facter
 
       def reset_facts
         @custom_facts = true
-        @structured_external_facts = false
         @external_dir = []
         @custom_dir = []
       end

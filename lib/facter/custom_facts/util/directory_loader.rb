@@ -53,32 +53,47 @@ module LegacyFacter
       private
 
       def load_directory_entries
-        cm = Facter::CacheManager.new
-        facts = []
-        entries.each do |file|
-          basename = File.basename(file)
-          next if file_blocked?(basename)
-
-          if facts.find { |f| f.name == basename } && cm.fact_cache_enabled?(basename)
-            Facter.log_exception(Exception.new("Caching is enabled for group \"#{basename}\" while "\
-              'there are at least two external facts files with the same filename'))
-          else
-            facts << build_searched_fact(basename, file)
-          end
-        end
-
-        cm.resolve_facts(facts)
+        cache_manager = Facter::CacheManager.new
+        cache_manager.resolve_facts(
+          resolve_unstructured_facts(unstructured_entries, cache_manager) +
+          resolve_structured_facts(structured_entries, cache_manager)
+        )
       end
 
-      def build_searched_fact(basename, file)
+      def build_searched_fact(basename, file, structured)
         fact_attributes = Facter::FactAttributes.new(
           user_query: nil,
           filter_tokens: [],
-          structured: false
+          structured: structured
         )
         searched_fact = Facter::SearchedFact.new(basename, nil, :file, fact_attributes)
         searched_fact.file = file
         searched_fact
+      end
+
+      def resolve_structured_facts(fact_list, cache_manager)
+        resolve_facts(fact_list, cache_manager, true)
+      end
+
+      def resolve_unstructured_facts(fact_list, cache_manager)
+        resolve_facts(fact_list, cache_manager, false)
+      end
+
+      def resolve_facts(fact_list, cache_manager, structured)
+        facts = []
+        fact_list.each do |file|
+          basename = File.basename(file)
+
+          next if file_blocked?(basename)
+
+          if facts.find { |f| f.name == basename } && cache_manager.fact_cache_enabled?(basename)
+            Facter.log_exception(Exception.new("Caching is enabled for group \"#{basename}\" while "\
+              'there are at least two external facts files with the same filename'))
+          else
+            facts << build_searched_fact(basename, file, structured)
+          end
+        end
+        facts
       end
 
       def load_cached_facts(collection, cached_facts, weight)
@@ -102,7 +117,7 @@ module LegacyFacter
           else
             data.each do |p, v|
               collection.add(p, value: v, fact_type: :external,
-                                file: fact.file) { has_weight(weight) }
+                                file: fact.file, structured: fact.structured) { has_weight(weight) }
             end
           end
         end
@@ -116,7 +131,7 @@ module LegacyFacter
         data
       end
 
-      def entries
+      def unstructured_entries
         dirs = @directories.select { |directory| File.directory?(directory) }.map do |directory|
           Dir.entries(directory).map { |directory_entry| File.join(directory, directory_entry) }.sort.reverse!
         end
@@ -125,8 +140,22 @@ module LegacyFacter
         []
       end
 
+      def structured_entries
+        dirs = @directories.select { |directory| File.directory?(directory) }.map do |directory|
+          structured_dir = Dir.glob("#{directory}/**/*").find { |e| File.directory?(e) && e =~ /structured$/ }
+          next unless structured_dir
+
+          Dir.entries(structured_dir).map do |directory_entry|
+            File.join(structured_dir, directory_entry)
+          end
+        end
+        dirs.flatten.compact.select { |f| should_parse?(f) }
+      rescue Errno::ENOENT
+        []
+      end
+
       def should_parse?(file)
-        File.basename(file) !~ /^\./
+        File.file?(file) && File.basename(file) !~ /^\./
       end
 
       def file_blocked?(file)

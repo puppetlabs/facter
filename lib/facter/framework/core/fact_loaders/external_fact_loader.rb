@@ -41,8 +41,9 @@ module Facter
       external_facts_to_load = LegacyFacter.collection.external_facts
 
       external_facts_to_load&.each do |k, v|
-        loaded_fact = LoadedFact.new(k.to_s, nil, :external)
-        loaded_fact.file = v.options[:file]
+        loaded_fact = LoadedFact.new(
+          k.to_s, nil, :external, v.options[:file], v.options[:structured]
+        )
         loaded_fact.is_env = v.options[:is_env]
         external_facts << loaded_fact
       end

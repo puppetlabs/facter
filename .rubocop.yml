@@ -69,6 +69,8 @@ Metrics/AbcSize:
     - 'lib/facter/custom_facts/core/execution/popen3.rb'
     - 'lib/facter.rb'
     - 'lib/facter/framework/parsers/query_parser.rb'
+    - 'lib/facter/custom_facts/util/directory_loader.rb'
+    - 'lib/facter/framework/core/fact/external/external_fact_manager.rb'
 
 Metrics/PerceivedComplexity:
   Exclude:
@@ -102,6 +104,7 @@ Metrics/ClassLength:
     - 'install.rb'
     - 'scripts/generate_changelog.rb'
     - 'lib/facter/resolvers/solaris/networking.rb'
+    - 'lib/facter/custom_facts/util/directory_loader.rb'
 
 Naming/AccessorMethodName:
   Exclude:

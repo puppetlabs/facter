@@ -66,7 +66,7 @@ module Facter
       when :custom
         fact.structured ? fact.name.split('.') : [fact.name]
       when :external
-        Options[:structured_external_facts] == true ? fact.name.split('.') : [fact.name]
+        fact.structured ? fact.name.split('.') : [fact.name]
       else
         fact.name.split('.')
       end

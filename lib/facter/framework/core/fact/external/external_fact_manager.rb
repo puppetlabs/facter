@@ -25,12 +25,13 @@ module Facter
           structured: custom_fact.structured
         )
 
-        resolved_fact = ResolvedFact.new(
-          custom_fact.name,
-          fact.value,
-          type,
-          fact_attributes
-        )
+        fact_value = if type == :external && custom_fact.structured
+                       fact.options[:value]
+                     else
+                       fact.value
+                     end
+
+        resolved_fact = ResolvedFact.new(custom_fact.name, fact_value, type, fact_attributes)
         resolved_fact.file = fact.options[:file]
 
         resolved_custom_facts << resolved_fact
