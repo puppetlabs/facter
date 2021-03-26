@@ -21,7 +21,7 @@ module Facter
               device = fs.name
               filesystem = fs.mount_type
               path = fs.mount_point
-              options = fs.options.split(',').map(&:strip).map { |o| o == 'rootfs' ? 'root' : o }
+              options = read_options(fs.options)
 
               mounts[path] = read_stats(path).tap do |hash|
                 hash[:device] = device
@@ -52,6 +52,19 @@ module Facter
               available: Facter::Util::Facts::UnitConverter.bytes_to_human_readable(available_bytes),
               used: Facter::Util::Facts::UnitConverter.bytes_to_human_readable(used_bytes)
             }
+          end
+
+          def read_options(options)
+            options_map = {
+              'read-only' => 'readonly',
+              'asynchronous' => 'async',
+              'synchronous' => 'noasync',
+              'quotas' => 'quota',
+              'rootfs' => 'root',
+              'defwrite' => 'deferwrites'
+            }
+
+            options.split(',').map(&:strip).map { |o| options_map.key?(o) ? options_map[o] : o }
           end
         end
       end
