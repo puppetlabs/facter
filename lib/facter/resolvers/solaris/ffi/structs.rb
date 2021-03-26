@@ -111,6 +111,18 @@ module Facter
             self[:sin_addr][:s_addr]
           end
         end
+
+        class In6Addr < ::FFI::Struct
+          layout :s_addr, [:uint32_t, 4]
+        end
+
+        class SockaddrIn6 < ::FFI::Struct
+          layout  :sin6_family, :sa_family_t,
+                  :sin6_port, :in_port_t,
+                  :sin6_flowinfo, :uint32_t,
+                  :sin6_addr, In6Addr,
+                  :sin6_scope_id, :uint32_t
+        end
       end
     end
   end

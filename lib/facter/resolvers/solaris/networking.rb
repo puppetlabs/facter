@@ -101,14 +101,29 @@ module Facter
           end
 
           def inet_ntop(lifreq, ss_family)
-            sockaddr = FFI::Sockaddr.new(lifreq.lifru_addr.to_ptr)
-            sockaddr_in = FFI::SockaddrIn.new(sockaddr.to_ptr)
-            ip = FFI::InAddr.new(sockaddr_in[:sin_addr].to_ptr)
-            buffer_size = FFI::INET_ADDRSTRLEN
-            buffer_size = FFI::INET6_ADDRSTRLEN if ss_family == FFI::AF_INET6
+            if ss_family == FFI::AF_INET
+              buffer_size = FFI::INET_ADDRSTRLEN
+              ip = get_ipv4(lifreq)
+            else # FFI::AF_INET6
+              buffer_size = FFI::INET6_ADDRSTRLEN
+              ip = get_ipv6(lifreq)
+            end
+
             buffer = ::FFI::MemoryPointer.new(:char, buffer_size)
 
             FFI::Ioctl.inet_ntop(ss_family, ip.to_ptr, buffer.to_ptr, buffer.size)
+          end
+
+          def get_ipv4(lifreq)
+            sockaddr = FFI::Sockaddr.new(lifreq.lifru_addr.to_ptr)
+            sockaddr_in = FFI::SockaddrIn.new(sockaddr.to_ptr)
+            FFI::InAddr.new(sockaddr_in[:sin_addr].to_ptr)
+          end
+
+          def get_ipv6(lifreq)
+            sockaddr = FFI::Sockaddr.new(lifreq.lifru_addr.to_ptr)
+            sockaddr_in6 = FFI::SockaddrIn6.new(sockaddr.to_ptr)
+            FFI::In6Addr.new(sockaddr_in6[:sin6_addr].to_ptr)
           end
 
           def count_interfaces
