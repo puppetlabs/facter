@@ -17,7 +17,12 @@ require "#{ROOT_DIR}/spec/custom_facts/puppetlabs_spec/files"
 # end
 
 RSpec.configure do |config|
-  # config.mock_with :mocha
+  config.extend PuppetlabsSpec::Files
+
+  # This will cleanup any files that were created with tmpdir or tmpfile
+  config.after do
+    PuppetlabsSpec::Files.cleanup
+  end
 
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = '.rspec_status'
