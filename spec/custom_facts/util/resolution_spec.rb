@@ -105,6 +105,11 @@ describe Facter::Util::Resolution do
       expect { resolution.options(fact_type: 'simple') }.not_to raise_error
     end
 
+    it 'can set structured' do
+      resolution.options(structured: true)
+      expect(resolution.instance_variable_get(:@structured)).to eq true
+    end
+
     it 'fails on unhandled options' do
       expect do
         resolution.options(foo: 'bar')

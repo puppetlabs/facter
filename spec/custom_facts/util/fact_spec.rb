@@ -98,6 +98,11 @@ describe Facter::Util::Fact do
       expect(fact.resolution('named')).to be_a_kind_of Facter::Core::Aggregate
     end
 
+    it 'creates an simple resolution when the type is :structured' do
+      fact.define_resolution('named', type: :structured)
+      expect(fact.resolution('named')).to be_a_kind_of Facter::Util::Resolution
+    end
+
     # it "raises an error if there is an existing resolution with a different type" do
     #   pending "We need to stop rescuing all errors when instantiating resolutions"
     #   fact.define_resolution('named')

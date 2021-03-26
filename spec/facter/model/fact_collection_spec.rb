@@ -5,8 +5,9 @@ describe Facter::FactCollection do
 
   describe '#build_fact_collection!' do
     let(:user_query) { 'os' }
+    let(:structured) { false }
     let(:fact_attributes) do
-      Facter::FactAttributes.new(user_query: '', filter_tokens: [], structured: true)
+      Facter::FactAttributes.new(user_query: '', filter_tokens: [], structured: structured)
     end
     let(:resolved_fact) do
       Facter::ResolvedFact.new(fact_name, fact_value, type, fact_attributes)
@@ -30,6 +31,66 @@ describe Facter::FactCollection do
         expected_hash = { 'os' => { 'version' => fact_value } }
 
         expect(fact_collection).to eq(expected_hash)
+      end
+    end
+
+    context 'with custom facts' do
+      context 'when structured' do
+        let(:structured) { true }
+        let(:fact_name) { 'my.fact' }
+        let(:fact_value) { 'val' }
+        let(:type) { :custom }
+
+        it 'splits by dot' do
+          fact_collection.build_fact_collection!([resolved_fact])
+          expected_hash = { 'my' => { 'fact' => fact_value } }
+
+          expect(fact_collection).to eq(expected_hash)
+        end
+      end
+
+      context 'when not structured' do
+        let(:structured) { false }
+        let(:fact_name) { 'my.fact' }
+        let(:fact_value) { 'val' }
+        let(:type) { :custom }
+
+        it 'keeps fact name' do
+          fact_collection.build_fact_collection!([resolved_fact])
+          expected_hash = { 'my.fact' => fact_value }
+
+          expect(fact_collection).to eq(expected_hash)
+        end
+      end
+    end
+
+    context 'with external facts' do
+      context 'when structured' do
+        let(:structured) { true }
+        let(:fact_name) { 'my.fact' }
+        let(:fact_value) { 'val' }
+        let(:type) { :external }
+
+        it 'splits by dot' do
+          fact_collection.build_fact_collection!([resolved_fact])
+          expected_hash = { 'my' => { 'fact' => fact_value } }
+
+          expect(fact_collection).to eq(expected_hash)
+        end
+      end
+
+      context 'when not structured' do
+        let(:structured) { false }
+        let(:fact_name) { 'my.fact' }
+        let(:fact_value) { 'val' }
+        let(:type) { :external }
+
+        it 'keeps fact name' do
+          fact_collection.build_fact_collection!([resolved_fact])
+          expected_hash = { 'my.fact' => fact_value }
+
+          expect(fact_collection).to eq(expected_hash)
+        end
       end
     end
 
@@ -78,6 +139,7 @@ describe Facter::FactCollection do
     end
 
     context 'when fact cannot be added to collection' do
+      let(:structured) { true }
       let(:fact_name) { 'mygroup.fact1' }
       let(:fact_value) { 'g1_f1_value' }
       let(:type) { :custom }
