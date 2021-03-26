@@ -39,22 +39,16 @@ module Facter
       end
 
       def no_user_query(loaded_facts)
-        searched_facts = []
-        loaded_facts.each do |loaded_fact|
+        loaded_facts.map do |loaded_fact|
           fact_attributes = Facter::FactAttributes.new(
             user_query: '',
             filter_tokens: [],
             structured: loaded_fact.structured
           )
-          sf = SearchedFact.new(
-            loaded_fact.name,
-            loaded_fact.klass,
-            loaded_fact.type,
-            fact_attributes
+          SearchedFact.new(
+            loaded_fact.name, loaded_fact.klass, loaded_fact.type, fact_attributes
           )
-          searched_facts << sf
         end
-        searched_facts
       end
 
       def search_for_facts(query, loaded_fact_hash)
@@ -120,18 +114,15 @@ module Facter
       def construct_loaded_fact(query_tokens, query_token_range, loaded_fact)
         filter_tokens = construct_filter_tokens(query_tokens, query_token_range)
         user_query = @query_list.any? ? query_tokens.join('.') : ''
-        fact_name = loaded_fact.name.to_s
-        klass_name = loaded_fact.klass
 
         fact_attributes = Facter::FactAttributes.new(
           user_query: user_query,
           filter_tokens: filter_tokens,
-          structured: loaded_fact.structured
+          structured: loaded_fact.structured,
+          file: loaded_fact.file
         )
 
-        sf = SearchedFact.new(fact_name, klass_name, loaded_fact.type, fact_attributes)
-        sf.file = loaded_fact.file
-        sf
+        SearchedFact.new(loaded_fact.name.to_s, loaded_fact.klass, loaded_fact.type, fact_attributes)
       end
 
       def construct_filter_tokens(query_tokens, query_token_range)

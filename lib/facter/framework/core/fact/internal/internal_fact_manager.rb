@@ -28,17 +28,14 @@ module Facter
     end
 
     def resolve_nil_facts(searched_facts)
-      resolved_facts = []
-      searched_facts.select { |fact| fact.type == :nil }.each do |fact|
+      searched_facts.select { |fact| fact.type == :nil }.map do |fact|
         fact_attributes = Facter::FactAttributes.new(
           user_query: fact.name,
           filter_tokens: [],
           structured: false
         )
-        resolved_facts << ResolvedFact.new(fact.name, nil, :nil, fact_attributes)
+        ResolvedFact.new(fact.name, nil, :nil, fact_attributes)
       end
-
-      resolved_facts
     end
 
     def resolve_sequentially(searched_facts)

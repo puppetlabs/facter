@@ -64,11 +64,10 @@ module LegacyFacter
         fact_attributes = Facter::FactAttributes.new(
           user_query: nil,
           filter_tokens: [],
-          structured: structured
+          structured: structured,
+          file: file
         )
-        searched_fact = Facter::SearchedFact.new(basename, nil, :file, fact_attributes)
-        searched_fact.file = file
-        searched_fact
+        Facter::SearchedFact.new(basename, nil, :file, fact_attributes)
       end
 
       def resolve_structured_facts(fact_list, cache_manager)

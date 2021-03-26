@@ -3,11 +3,11 @@
 module Facter
   class ResolvedFact
     extend Forwardable
-    def_delegators :@fact_attributes, :user_query, :filter_tokens, :structured
-    def_delegators :@fact_attributes, :user_query=, :filter_tokens=, :structured=
+    def_delegators :@fact_attributes, :user_query, :filter_tokens, :structured, :file
+    def_delegators :@fact_attributes, :user_query=, :filter_tokens=
 
     attr_reader :name, :type
-    attr_accessor :value, :file, :options
+    attr_accessor :value
 
     def initialize(name, value, type = :core, fact_attributes = NullFactAttributes.new)
       @name = name

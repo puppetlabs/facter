@@ -148,7 +148,6 @@ describe Facter::FactCollection do
       end
 
       it 'logs error' do
-        resolved_fact2.options = {}
         fact_collection.build_fact_collection!([resolved_fact, resolved_fact2])
 
         expect(logger).to have_received(:error)

@@ -14,15 +14,14 @@ module Facter
     end
 
     def external_facts(custom_facts)
-      resolved_custom_facts = []
-
-      custom_facts.each do |custom_fact|
+      custom_facts.map do |custom_fact|
         fact = LegacyFacter[custom_fact.name]
         type = fact.options[:fact_type] || :custom
         fact_attributes = Facter::FactAttributes.new(
           user_query: custom_fact.user_query,
           filter_tokens: [],
-          structured: custom_fact.structured
+          structured: custom_fact.structured,
+          file: fact.options[:file]
         )
 
         fact_value = if type == :external && custom_fact.structured
@@ -31,13 +30,8 @@ module Facter
                        fact.value
                      end
 
-        resolved_fact = ResolvedFact.new(custom_fact.name, fact_value, type, fact_attributes)
-        resolved_fact.file = fact.options[:file]
-
-        resolved_custom_facts << resolved_fact
+        ResolvedFact.new(custom_fact.name, fact_value, type, fact_attributes)
       end
-
-      resolved_custom_facts
     end
   end
 end

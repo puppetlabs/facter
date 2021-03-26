@@ -125,7 +125,8 @@ cache_format_version is incorrect!")
         fact_attributes = Facter::FactAttributes.new(
           user_query: searched_fact.user_query,
           filter_tokens: searched_fact.filter_tokens,
-          structured: searched_fact.structured
+          structured: searched_fact.structured,
+          file: nil
         )
 
         [Facter::ResolvedFact.new(
@@ -146,17 +147,13 @@ cache_format_version is incorrect!")
         fact_attributes = Facter::FactAttributes.new(
           user_query: searched_fact.user_query,
           filter_tokens: searched_fact.filter_tokens,
-          structured: false
+          structured: false,
+          file: searched_fact.file
         )
 
-        fact = Facter::ResolvedFact.new(
-          fact_name,
-          fact_value,
-          searched_fact.type,
-          fact_attributes
+        facts << Facter::ResolvedFact.new(
+          fact_name, fact_value, searched_fact.type, fact_attributes
         )
-        fact.file = searched_fact.file
-        facts << fact
       end
       facts
     end
