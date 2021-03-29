@@ -97,8 +97,10 @@ module LegacyFacter
 
       def load_cached_facts(collection, cached_facts, weight)
         cached_facts.each do |cached_fact|
-          collection.add(cached_fact.name, value: cached_fact.value, fact_type: :external,
-                                           file: cached_fact.file) { has_weight(weight) }
+          collection.add(cached_fact.name,
+                         value: cached_fact.value,
+                         fact_type: :external, file: cached_fact.file,
+                         structured: cached_fact.structured) { has_weight(weight) }
         end
       end
 

@@ -1,3 +1,4 @@
+
 # frozen_string_literal: true
 
 module Facter
@@ -147,7 +148,7 @@ cache_format_version is incorrect!")
         fact_attributes = Facter::FactAttributes.new(
           user_query: searched_fact.user_query,
           filter_tokens: searched_fact.filter_tokens,
-          structured: false,
+          structured: searched_fact.structured,
           file: searched_fact.file
         )
 
