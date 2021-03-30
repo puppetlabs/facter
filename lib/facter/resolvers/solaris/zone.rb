@@ -32,13 +32,12 @@ module Facter
               id, name, status, path, uuid, brand, ip_type = zone_line.split(':')
               zones_fact << {
                 brand: brand,
-                id: id,
+                id: Facter::Utils.try_to_int(id),
                 iptype: ip_type.chomp,
                 name: name,
                 uuid: uuid,
                 status: status,
                 path: path
-
               }
             end
             zones_fact

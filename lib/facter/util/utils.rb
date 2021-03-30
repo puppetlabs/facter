@@ -40,5 +40,11 @@ module Facter
         value
       end
     end
+
+    def self.try_to_int(value)
+      Integer(value)
+    rescue ArgumentError, TypeError
+      value
+    end
   end
 end

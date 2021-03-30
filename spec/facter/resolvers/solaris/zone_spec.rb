@@ -20,7 +20,7 @@ describe Facter::Resolvers::Solaris::Zone do
     let(:output) { '0:global:running:/::solaris:shared:-:none:' }
     let(:zone) do
       [{ brand: 'solaris',
-         id: '0',
+         id: 0,
          iptype: 'shared',
          name: 'global',
          uuid: '',
