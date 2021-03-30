@@ -94,11 +94,15 @@ module Facter
             end
             log_stderr(stderr, command, logger)
           rescue StandardError => e
-            return '' if logger
+            message = "Failed while executing '#{command}': #{e.message}"
+            if logger
+              @log.debug(message)
+              return ''
+            end
+
             return on_fail unless on_fail == :raise
 
-            raise Facter::Core::Execution::ExecutionFailure.new,
-                  "Failed while executing '#{command}': #{e.message}"
+            raise Facter::Core::Execution::ExecutionFailure.new, message
           end
 
           [out.strip, stderr]
