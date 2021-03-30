@@ -8,7 +8,7 @@ module Facter
         user_queries.each do |user_query|
           fact_collection = build_fact_collection_for_user_query(user_query, resolved_facts)
 
-          splitted_user_query = Utils.split_user_query(user_query)
+          splitted_user_query = Facter::Framework::Lookup.split_key(user_query)
           printable_value = fact_collection.dig(*splitted_user_query)
           facts_to_display.merge!(user_query => printable_value)
         end
@@ -24,7 +24,7 @@ module Facter
       def retrieve_fact_value_for_single_query(user_query, resolved_facts)
         fact_collection = build_fact_collection_for_user_query(user_query, resolved_facts)
         fact_collection = Utils.sort_hash_by_key(fact_collection)
-        splitted_user_query = Utils.split_user_query(user_query)
+        splitted_user_query = Facter::Framework::Lookup.split_key(user_query)
         fact_collection.dig(*splitted_user_query)
       end
 

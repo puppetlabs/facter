@@ -49,7 +49,14 @@ module Facter
     end
 
     def extract_fact_name(fact)
-      fact.type == :legacy ? [fact.name] : fact.name.split('.')
+      case fact.type
+      when :legacy
+        [fact.name]
+      when :custom, :external
+        Facter::Framework::Lookup.split_key(fact.name)
+      else
+        fact.name.split('.')
+      end
     end
   end
 end

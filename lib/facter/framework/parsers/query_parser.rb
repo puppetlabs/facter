@@ -49,7 +49,7 @@ module Facter
       def search_for_facts(query, loaded_fact_hash)
         resolvable_fact_list = []
         query = query.to_s
-        query_tokens = query.end_with?('.*') ? [query] : query.split('.')
+        query_tokens = query.end_with?('.*') ? [query] : Facter::Framework::Lookup.split_key(query)
         size = query_tokens.size
 
         size.times do |i|
@@ -72,12 +72,17 @@ module Facter
           # return the fact if toplevel namespace is found in the first query token
           # eg. query: 'os.name' and loaded_fact_hash contains a fact with 'os' name
           # it will construt and return the 'os' fact
-          if loaded_fact.name == query_tokens[0]
+
+          fact_name = loaded_fact.name
+          split_name = Facter::Framework::Lookup.split_key(fact_name)
+          joined_query = Facter::Framework::Lookup.join_keys(query_tokens[query_token_range])
+
+          if fact_name == query_tokens[0] || fact_name == joined_query || split_name == query_tokens[query_token_range]
             resolvable_fact_list = [construct_loaded_fact(query_tokens, query_token_range, loaded_fact)]
           else
             query_fact = query_tokens[query_token_range].join('.')
 
-            next unless found_fact?(loaded_fact.name, query_fact)
+            next unless found_fact?(fact_name, query_fact)
 
             searched_fact = construct_loaded_fact(query_tokens, query_token_range, loaded_fact)
             resolvable_fact_list << searched_fact
@@ -102,7 +107,7 @@ module Facter
 
       def construct_loaded_fact(query_tokens, query_token_range, loaded_fact)
         filter_tokens = construct_filter_tokens(query_tokens, query_token_range)
-        user_query = @query_list.any? ? query_tokens.join('.') : ''
+        user_query = @query_list.any? ? Facter::Framework::Lookup.join_keys(query_tokens) : ''
         fact_name = loaded_fact.name.to_s
         klass_name = loaded_fact.klass
         type = loaded_fact.type
