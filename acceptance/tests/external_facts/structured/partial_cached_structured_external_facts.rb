@@ -47,18 +47,18 @@ test_name 'strucutured external facts can be cached' do
 
 
     teardown do
-      agent.rm_rf(facts_dir)
+      agent.rm_rf(external_dir)
       agent.rm_rf(config_dir)
       agent.rm_rf(cache_folder)
     end
 
     step 'does not create cache of part of the fact that is not in ttls' do
-      on(agent, facter("--external-dir=#{external_dir} key1.key3"))
+      on(agent, facter("--external-dir \"#{external_dir}\" key1.key3"))
       assert_equal(false, agent.file_exist?("#{cache_folder}/fact_2.txt"))
     end
 
     step 'creates a fact_1.txt cache file that contains fact information' do
-      on(agent, facter("--external-dir=#{external_dir} key1.key2"))
+      on(agent, facter("--external-dir \"#{external_dir}\" key1.key2"))
 
       result = agent.file_exist?("#{cache_folder}/fact_1.txt")
       assert_equal(true, result)
@@ -72,7 +72,7 @@ test_name 'strucutured external facts can be cached' do
     end
 
     step 'resolves the entire fact' do
-      on(agent, facter("--external-dir #{external_dir} key1 --json")) do |facter_output|
+      on(agent, facter("--external-dir \"#{external_dir}\" key1 --json")) do |facter_output|
         assert_equal(
           {
             'key1' => {

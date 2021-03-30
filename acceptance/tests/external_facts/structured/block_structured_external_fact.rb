@@ -32,18 +32,18 @@ test_name 'strucutured external facts can be blocked' do
     create_remote_file(agent, File.join(facts_dir, 'fact_2.txt'), fact_2_content)
 
     teardown do
-      agent.rm_rf(facts_dir)
+      agent.rm_rf(external_dir)
       agent.rm_rf(config_dir)
     end
 
     step 'blocked structured external fact is not displayed' do
-      on(agent, facter("--external-dir=#{external_dir} key1.key2")) do |facter_output|
+      on(agent, facter("--external-dir \"#{external_dir}\" key1.key2")) do |facter_output|
         assert_equal('', facter_output.stdout.chomp)
       end
     end
 
     step 'the remaining structured fact is displayed' do
-      on(agent, facter("--external-dir=#{external_dir} key1.key3")) do |facter_output|
+      on(agent, facter("--external-dir \"#{external_dir}\" key1.key3")) do |facter_output|
         assert_equal(fact_2_value, facter_output.stdout.chomp)
       end
     end

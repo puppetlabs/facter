@@ -143,13 +143,14 @@ module LegacyFacter
 
       def structured_entries
         dirs = @directories.select { |directory| File.directory?(directory) }.map do |directory|
-          structured_dir = Dir.glob("#{directory}/**/*").find { |e| File.directory?(e) && e =~ /structured$/ }
-          next unless structured_dir
+          structured_dir = File.join(directory, 'structured')
+          next unless File.directory?(structured_dir)
 
           Dir.entries(structured_dir).map do |directory_entry|
             File.join(structured_dir, directory_entry)
           end
         end
+
         dirs.flatten.compact.select { |f| should_parse?(f) }
       rescue Errno::ENOENT
         []

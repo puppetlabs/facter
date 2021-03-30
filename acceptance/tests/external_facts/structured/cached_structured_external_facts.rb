@@ -55,13 +55,13 @@ test_name 'strucutured external facts can be cached' do
 
 
     teardown do
-      agent.rm_rf(facts_dir)
+      agent.rm_rf(external_dir)
       agent.rm_rf(config_dir)
       agent.rm_rf(cache_folder)
     end
 
     step 'creates a fact_1.txt and fact_2.txt cache file that contains fact information' do
-      on(agent, facter("--external-dir=#{external_dir} key1 --json")) do |facter_output|
+      on(agent, facter("--external-dir \"#{external_dir}\" key1 --json")) do |facter_output|
         assert_equal(
           {
             'key1' => {
