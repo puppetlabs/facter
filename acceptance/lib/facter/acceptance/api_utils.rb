@@ -27,6 +27,29 @@ module Facter
         create_remote_file(agent, rb_file, file_content)
         rb_file
       end
+
+      def facter_to_hash_rb(agent, options = {})
+        dir = agent.tmpdir('executables')
+
+        teardown do
+          agent.rm_rf(dir)
+        end
+
+        rb_file = File.join(dir, 'facter_run.rb')
+
+        file_content = <<-RUBY
+          require 'facter'
+
+          Facter.debugging(#{options.fetch(:debug, false)})
+          Facter.search('#{options.fetch(:custom_dir, '')}')
+          Facter.search_external(['#{options.fetch(:external_dir, '')}'])
+
+          puts Facter.to_hash.to_json
+        RUBY
+
+        create_remote_file(agent, rb_file, file_content)
+        rb_file
+      end
     end
   end
 end
