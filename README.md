@@ -248,7 +248,7 @@ Facter can be configured via a HOCON config file of the following format:
 global : {
     external-dir     : [ "path1", "path2" ],
     custom-dir       : [ "custom/path" ],
-    no-exernal-facts : false,
+    no-external-facts : false,
     no-custom-facts  : false,
     no-ruby          : false
 }

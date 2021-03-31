@@ -95,10 +95,11 @@ namespace facter { namespace facts {
          * @param ttls a map of resolver names to cache intervals (times-to-live)
          *        for the facts they resolve
          * @param ignore_cache true if the cache should not be consulted when resolving facts
+         * @param sanitize_fact_name true if the facts names shoule be sanitized before saving
          */
         collection(std::set<std::string> const& blocklist = std::set<std::string>(),
                    std::unordered_map<std::string, int64_t> const& ttls = std::unordered_map<std::string, int64_t>{},
-                   bool ignore_cache = false);
+                   bool ignore_cache = false, bool sanitize_fact_name = false);
 
         /**
          * Destructor for fact collection.
@@ -318,6 +319,13 @@ namespace facter { namespace facts {
          */
         std::map<std::string, std::vector<std::string>> get_external_facts_groups(std::vector<std::string> const& directories);
 
+        /**
+         *  Gets sanitize_fact_name flag value
+         *  @param directories The directories to search for external facts.  If empty, the default search paths will be used.
+         * @return true if facts names were sanitized, false otherwise
+         */
+        bool get_sanitize_fact_name();
+
      protected:
         /**
          *  Gets external fact directories for the current platform.
@@ -352,6 +360,7 @@ namespace facter { namespace facts {
         std::set<std::string> _blocklist;
         std::unordered_map<std::string, int64_t> _ttls;
         bool _ignore_cache;
+        bool _sanitize_fact_name;
     };
 
 }}  // namespace facter::facts

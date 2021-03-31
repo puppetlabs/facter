@@ -287,3 +287,42 @@ SCENARIO("converting strings to integers") {
         }
     }
 }
+
+
+SCENARIO("sanityzing fact names") {
+    GIVEN("an empty string") {
+        THEN("it should remain empty") {
+          REQUIRE(sanitize_fact_name("") == "");
+        }
+    }
+    GIVEN("a simple string") {
+        THEN("it should remain the same") {
+          REQUIRE(sanitize_fact_name("abc") == "abc");
+        }
+    }
+    GIVEN("a dotted string") {
+        THEN("it should remain the same") {
+          REQUIRE(sanitize_fact_name("a.b.c") == "a.b.c");
+        }
+    }
+    GIVEN("quotes protected facts in string") {
+        THEN("should remove quotes") {
+          REQUIRE(sanitize_fact_name("\"a.b\".c") == "a.b.c");
+        }
+    }
+    GIVEN("ticks protected facts in string") {
+        THEN("should remove ticks") {
+          REQUIRE(sanitize_fact_name("a.'b.c'") == "a.b.c");
+        }
+    }
+    GIVEN("unbalanced tick in string") {
+        THEN("should keep tick") {
+          REQUIRE(sanitize_fact_name("a.b'.c") == "a.b'.c");
+        }
+    }
+    GIVEN("unbalanced quote in string") {
+        THEN("should keep quote") {
+          REQUIRE(sanitize_fact_name("a.\"b.c") == "a.\"b.c");
+        }
+    }
+}

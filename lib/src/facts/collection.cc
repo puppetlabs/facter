@@ -40,10 +40,14 @@ using facter::util::maybe_stoi;
 
 namespace facter { namespace facts {
 
-    collection::collection(set<string> const& blocklist, unordered_map<string, int64_t> const& ttls, bool ignore_cache) :
-        _blocklist(blocklist), _ttls(ttls), _ignore_cache(ignore_cache)
+    collection::collection(set<string> const& blocklist, unordered_map<string, int64_t> const& ttls,
+                           bool ignore_cache, bool sanitize_fact_name) :
+        _blocklist(blocklist), _ttls(ttls), _ignore_cache(ignore_cache), _sanitize_fact_name(sanitize_fact_name)
     {
         // This needs to be defined here since we use incomplete types in the header
+        if (sanitize_fact_name) {
+            LOG_DEBUG("Fact names will be sanitized since `sanitize-fact-name` is set");
+        }
     }
 
     collection::~collection()
@@ -94,6 +98,9 @@ namespace facter { namespace facts {
 
     void collection::add(string name, unique_ptr<value> value)
     {
+        if (_sanitize_fact_name) {
+            name = sanitize_fact_name(name);
+        }
         // Ensure the fact is resolved before replacing it
         auto old_value = get_value(name);
 
@@ -202,6 +209,10 @@ namespace facter { namespace facts {
             get_external_facts_files_from_dir(external_facts_files, dir, true);
         }
         return external_facts_files;
+    }
+
+    bool collection:: get_sanitize_fact_name(){
+      return _sanitize_fact_name;
     }
 
     void collection::add_external_facts(vector<string> const& directories)

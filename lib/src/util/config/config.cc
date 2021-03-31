@@ -51,6 +51,7 @@ namespace facter { namespace util { namespace config {
             ("external-dir", po::value<vector<string>>(), "A directory or list of directories to use for external facts.")
             ("no-custom-facts", po::value<bool>()->default_value(false), "Disables custom facts.")
             ("no-external-facts", po::value<bool>()->default_value(false), "Disables external facts.")
+            ("sanitize-fact-name", po::value<bool>()->default_value(false), "Sanitize fact name.")
             ("no-ruby", po::value<bool>()->default_value(false), "Disables loading Ruby, facts requiring Ruby, and custom facts.");
         return global_options;
     }

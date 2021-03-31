@@ -266,7 +266,11 @@ int main(int argc, char **argv)
             blocklist.insert(facts_to_block.begin(), facts_to_block.end());
         }
         bool ignore_cache = vm.count("no-cache");
-        collection facts(blocklist, ttls, ignore_cache);
+        bool sanitize_fact_name = false;
+        if (vm.count("sanitize-fact-name")) {
+            sanitize_fact_name = vm["sanitize-fact-name"].as<bool>();
+        }
+        collection facts(blocklist, ttls, ignore_cache, sanitize_fact_name);
         facts.add_default_facts(ruby);
 
         if (ruby && !vm["no-custom-facts"].as<bool>()) {

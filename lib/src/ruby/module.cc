@@ -6,6 +6,7 @@
 #include <facter/logging/logging.hpp>
 #include <facter/util/cli.hpp>
 #include <facter/util/config.hpp>
+#include <facter/util/string.hpp>
 #include <facter/version.h>
 #include <facter/export.h>
 #include <leatherman/util/environment.hpp>
@@ -30,6 +31,7 @@ using leatherman::locale::_;
 
 using namespace std;
 using namespace facter::facts;
+using namespace facter::util;
 using namespace facter::util::config;
 using namespace facter::util::cli;
 using namespace leatherman::execution;
@@ -62,7 +64,15 @@ namespace facter { namespace ruby {
                 blocklist.insert(facts_to_block.begin(), facts_to_block.end());
             }
             auto ttls = load_ttls(hocon_conf);
-            _facts.reset(new collection(blocklist, ttls));
+
+            bool ignore_cache = false;
+            load_global_settings(hocon_conf, vm);
+            bool sanitize_fact_name = false;
+            if (vm.count("sanitize-fact-name")) {
+              sanitize_fact_name = vm["sanitize-fact-name"].as<bool>();
+            }
+
+            _facts.reset(new collection(blocklist, ttls, ignore_cache, sanitize_fact_name));
             _module.reset(new module(*_facts));
 
             // Ruby doesn't have a proper way of notifying extensions that the VM is shutting down
@@ -378,6 +388,10 @@ namespace facter { namespace ruby {
         if (vm.count(cached_custom_facts)) {
             auto facts_to_cache = vm[cached_custom_facts].as<vector<string>>();
             cached_custom_facts_list.insert(cached_custom_facts_list.end(), facts_to_cache.begin(), facts_to_cache.end());
+            if (_collection.get_sanitize_fact_name()) { // collection fact names were sanitized, we must sanitize also cached custom facts
+                std::transform(cached_custom_facts_list.begin(), cached_custom_facts_list.end(), cached_custom_facts_list.begin(),
+                               [](string s) -> string { return (sanitize_fact_name(s)); });
+            }
         }
 
         auto ttls = _collection.get_ttls();
