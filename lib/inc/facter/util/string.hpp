@@ -70,11 +70,9 @@ namespace facter { namespace util {
     boost::optional<int> maybe_stoi(std::string const& str);
 
     /**
-     * Converts the given string to a sanitized string using the same algorithm
-     * as in puppet:
-https://github.com/puppetlabs/puppet/blob/85bd9ed07e3e6c956f1972624a50be914292e1ab/lib/puppet/pops/lookup/sub_lookup.rb#L6-L44
+     * If the string is fully surrounded in quotes/ticks, remove them
      * @param str The string to sanitize.
-     * @return Returns the sanitize string
+     * @return Returns the sanitized string
      */
     std::string sanitize_fact_name(std::string str);
 

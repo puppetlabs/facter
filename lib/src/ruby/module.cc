@@ -388,7 +388,8 @@ namespace facter { namespace ruby {
         if (vm.count(cached_custom_facts)) {
             auto facts_to_cache = vm[cached_custom_facts].as<vector<string>>();
             cached_custom_facts_list.insert(cached_custom_facts_list.end(), facts_to_cache.begin(), facts_to_cache.end());
-            if (_collection.get_sanitize_fact_name()) { // collection fact names were sanitized, we must sanitize also cached custom facts
+            if (_collection.get_sanitize_fact_name()) {
+                //  collection fact names were sanitized, we must sanitize also cached custom facts
                 std::transform(cached_custom_facts_list.begin(), cached_custom_facts_list.end(), cached_custom_facts_list.begin(),
                                [](string s) -> string { return (sanitize_fact_name(s)); });
             }

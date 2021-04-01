@@ -306,23 +306,23 @@ SCENARIO("sanityzing fact names") {
         }
     }
     GIVEN("quotes protected facts in string") {
-        THEN("should remove quotes") {
-          REQUIRE(sanitize_fact_name("\"a.b\".c") == "a.b.c");
+        THEN("should remove quotes in fully quoted string") {
+          REQUIRE(sanitize_fact_name("\"a.b.c\"") == "a.b.c");
+        }
+    }
+    GIVEN("quotes protected facts in string") {
+        THEN("should not remove quotes in partial quoted string") {
+          REQUIRE(sanitize_fact_name("\"a.b\".c") == "\"a.b\".c");
         }
     }
     GIVEN("ticks protected facts in string") {
-        THEN("should remove ticks") {
-          REQUIRE(sanitize_fact_name("a.'b.c'") == "a.b.c");
+        THEN("should remove quotes in fully ticked string") {
+          REQUIRE(sanitize_fact_name("'a.b.c'") == "a.b.c");
         }
     }
-    GIVEN("unbalanced tick in string") {
-        THEN("should keep tick") {
-          REQUIRE(sanitize_fact_name("a.b'.c") == "a.b'.c");
-        }
-    }
-    GIVEN("unbalanced quote in string") {
-        THEN("should keep quote") {
-          REQUIRE(sanitize_fact_name("a.\"b.c") == "a.\"b.c");
+    GIVEN("ticks protected facts in string") {
+        THEN("should not remove quotes in partial ticked string") {
+          REQUIRE(sanitize_fact_name("a.'b.c'") == "a.'b.c'");
         }
     }
 }
