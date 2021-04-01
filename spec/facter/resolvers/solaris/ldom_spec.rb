@@ -37,19 +37,19 @@ describe Facter::Resolvers::Solaris::Ldom do
     end
 
     it 'parses role_control' do
-      expect(resolver.resolve(:role_control)).to eq('false')
+      expect(resolver.resolve(:role_control)).to eq(false)
     end
 
     it 'parses role_io' do
-      expect(resolver.resolve(:role_io)).to eq('false')
+      expect(resolver.resolve(:role_io)).to eq(false)
     end
 
     it 'parses role_root' do
-      expect(resolver.resolve(:role_root)).to eq('false')
+      expect(resolver.resolve(:role_root)).to eq(false)
     end
 
     it 'parses role_service' do
-      expect(resolver.resolve(:role_service)).to eq('false')
+      expect(resolver.resolve(:role_service)).to eq(false)
     end
   end
 

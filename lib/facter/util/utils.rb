@@ -29,5 +29,16 @@ module Facter
         object
       end
     end
+
+    def self.try_to_bool(val)
+      case val.to_s
+      when 'true'
+        true
+      when 'false'
+        false
+      else
+        val
+      end
+    end
   end
 end
