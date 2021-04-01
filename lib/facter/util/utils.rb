@@ -30,14 +30,14 @@ module Facter
       end
     end
 
-    def self.try_to_bool(val)
-      case val.to_s
+    def self.try_to_bool(value)
+      case value.to_s
       when 'true'
         true
       when 'false'
         false
       else
-        val
+        value
       end
     end
   end
