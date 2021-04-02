@@ -80,6 +80,7 @@ describe Facter::FactCollection do
       let(:resolved_fact2) { Facter::ResolvedFact.new('mygroup.fact1.subfact1', 'g1_sg1_f1_value', type) }
 
       it 'logs error' do
+        allow(Facter::Options).to receive(:[]).with(:autopromote_dotted_facts).and_return(true)
         fact_collection.build_fact_collection!([resolved_fact, resolved_fact2])
 
         expect(logger).to have_received(:error)
