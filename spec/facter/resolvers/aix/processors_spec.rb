@@ -82,5 +82,13 @@ describe Facter::Resolvers::Aix::Processors do
     it 'returns logical_count fact' do
       expect(resolver.resolve(:logical_count)).to eq(8)
     end
+
+    it 'returns cores fact' do
+      expect(resolver.resolve(:cores_per_socket)).to eq(1)
+    end
+
+    it 'returns threads fact' do
+      expect(resolver.resolve(:threads_per_core)).to eq(8)
+    end
   end
 end

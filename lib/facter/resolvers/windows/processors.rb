@@ -35,16 +35,18 @@ module Facter
           isa = nil
           logical_count = 0
           cores = nil
-          threads = nil
+          threads = 0
+          threads_per_core = 0
           result.each do |proc|
             models << proc.Name
             logical_count += proc.NumberOfLogicalProcessors if proc.NumberOfLogicalProcessors
             isa ||= find_isa(proc.Architecture)
             cores = proc.NumberOfCores
-            threads = proc.ThreadCount / proc.NumberOfCores
+            threads = thread_count(proc.ThreadCount)
+            threads_per_core = threads.zero? ? 0 : (proc.ThreadCount / proc.NumberOfCores)
           end
 
-          { models: models, isa: isa, logical_count: logical_count.zero? ? models.count : logical_count, cores_per_socket: cores, threads_per_core: threads }
+          { models: models, isa: isa, logical_count: logical_count.zero? ? models.count : logical_count, cores_per_socket: cores, threads_per_core: threads_per_core }
         end
 
         def find_isa(arch)
@@ -54,6 +56,15 @@ module Facter
           return isa if isa
 
           log.debug 'Unable to determine processor type: unknown architecture'
+        end
+
+        def thread_count(thread)
+          binding.pry
+          if thread == nil or thread == 0 then
+            return 0
+          else
+            return thread
+          end
         end
 
         def build_fact_list(result)
