@@ -21,6 +21,8 @@ describe Facter::Resolvers::Solaris::Processors do
       ['Intel(r) Xeon(r) Gold 6138 CPU @ 2.00GHz', 'Intel(r) Xeon(r) Gold 6138 CPU @ 2.00GHz']
     end
     let(:physical_processors) { 2 }
+    let(:threads_per_core) { 1 }
+    let(:cores_per_socket) { 1 }
     let(:speed_expected) { 1_995_246_617 }
     let(:output) { load_fixture('kstat_cpu').read }
     let(:status) { true }
@@ -39,6 +41,14 @@ describe Facter::Resolvers::Solaris::Processors do
 
     it 'returns speed of processors' do
       expect(resolver.resolve(:speed)).to eq(speed_expected)
+    end
+
+    it 'returns cores per socket' do
+      expect(resolver.resolve(:cores_per_socket)).to eq(cores_per_socket)
+    end
+
+    it 'returns threads per core' do
+      expect(resolver.resolve(:threads_per_core)).to eq(threads_per_core)
     end
   end
 
