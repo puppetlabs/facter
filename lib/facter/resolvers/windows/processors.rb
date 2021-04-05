@@ -19,7 +19,7 @@ module Facter
 
         def read_fact_from_win32_processor(fact_name)
           win = Facter::Util::Windows::Win32Ole.new
-          proc = win.exec_query('SELECT Name,Architecture,NumberOfLogicalProcessors FROM Win32_Processor')
+          proc = win.exec_query('SELECT Name,Architecture,NumberOfLogicalProcessors,ThreadCount,NumberOfCores FROM Win32_Processor')
           unless proc
             log.debug 'WMI query returned no results'\
             'for Win32_Processor with values Name, Architecture and NumberOfLogicalProcessors.'
@@ -34,13 +34,17 @@ module Facter
           models = []
           isa = nil
           logical_count = 0
+          cores = nil
+          threads = nil
           result.each do |proc|
             models << proc.Name
             logical_count += proc.NumberOfLogicalProcessors if proc.NumberOfLogicalProcessors
             isa ||= find_isa(proc.Architecture)
+            cores = proc.NumberOfCores
+            threads = proc.ThreadCount / proc.NumberOfCores
           end
 
-          { models: models, isa: isa, logical_count: logical_count.zero? ? models.count : logical_count }
+          { models: models, isa: isa, logical_count: logical_count.zero? ? models.count : logical_count, cores_per_socket: cores, threads_per_core: threads }
         end
 
         def find_isa(arch)
@@ -57,6 +61,8 @@ module Facter
           @fact_list[:isa] = result[:isa]
           @fact_list[:models] = result[:models]
           @fact_list[:physicalcount] = result[:models].size
+          @fact_list[:cores_per_socket] = result[:cores_per_socket]
+          @fact_list[:threads_per_core] = result[:threads_per_core]
         end
       end
     end
