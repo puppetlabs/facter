@@ -1,24 +1,17 @@
 # frozen_string_literal: true
 
 require 'pathname'
+require_relative 'integration_helper'
 
 ROOT_DIR = Pathname.new(File.expand_path('..', __dir__)) unless defined?(ROOT_DIR)
+
+# prevent facter from loading its spec files as facts
+$LOAD_PATH.delete_if { |entry| entry =~ %r{facter/spec} }
 
 ENV['RACK_ENV'] = 'test'
 
 require 'bundler/setup'
-
-require 'open3'
-require 'thor'
-require 'fileutils'
-
-require_relative '../lib/facter/resolvers/base_resolver'
-
 require 'facter'
-require 'facter/framework/cli/cli'
-require 'facter/framework/cli/cli_launcher'
-
-require './lib/facter/framework/core/file_loader'
 
 # Configure RSpec
 RSpec.configure do |config|
@@ -49,6 +42,8 @@ RSpec.configure do |config|
   end
 
   config.after do
+    Facter.reset
+    Facter.clear
     Facter::OptionStore.reset
   end
 end
