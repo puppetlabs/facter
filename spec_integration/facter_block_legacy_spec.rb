@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'json'
-require_relative 'integration_helper'
+require_relative 'spec_helper'
 
 describe 'Facter' do
   context 'when legacy facts is blocked' do

@@ -17,9 +17,12 @@ module Facter
       self
     end
 
-    def value(*keys)
-      keys.reduce(self) do |memo, key|
-        memo.fetch(key.to_s)
+    def value(user_query)
+      fetch(user_query) do
+        split_user_query = Facter::Utils.split_user_query(user_query)
+        split_user_query.reduce(self) do |memo, key|
+          memo.fetch(key.to_s)
+        end
       end
     end
 
@@ -49,7 +52,14 @@ module Facter
     end
 
     def extract_fact_name(fact)
-      fact.type == :legacy ? [fact.name] : fact.name.split('.')
+      case fact.type
+      when :legacy
+        [fact.name]
+      when :custom, :external
+        Options[:autopromote_dotted_facts] == true ? fact.name.split('.') : [fact.name]
+      else
+        fact.name.split('.')
+      end
     end
   end
 end

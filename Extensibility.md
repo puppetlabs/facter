@@ -91,3 +91,15 @@ Facter 4 supports all 4 forms of "external facts" which Facter 3 supports:
 * YAML files with the .yaml extension whose key-value pairs will be mapped to fact-value pairs.
 * Text files with the .txt extension containing `fact=some_value` strings
 * Executable files returning `fact=some_value` strings
+
+Enable auto promotion of dotted facts to structured
+---------------------------
+
+By default Facter 4 considers dots in fact names as normal characters.
+If you want to enable the new behavior, that promotes dotted facts to structured you need to set the following config:
+
+```
+global : {
+    autopromote-dotted-facts : true
+}
+```
