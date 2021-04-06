@@ -83,7 +83,7 @@ describe Facter::Resolvers::BaseResolver do
       it 'logs the Load Error exception' do
         resolver.resolve(fact)
 
-        expect(resolver.log).to have_received(:debug).with("resolving fact #{fact}, but LoadError")
+        expect(resolver.log).to have_received(:debug).with(/Resolving fact #{fact}, but got LoadError/)
       end
 
       it 'sets the fact to nil' do
