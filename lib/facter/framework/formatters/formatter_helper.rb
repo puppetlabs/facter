@@ -4,7 +4,7 @@ module Facter
   class FormatterHelper
     class << self
       def retrieve_facts_to_display_for_user_query(user_queries, resolved_facts)
-        facts_to_display = {}
+        facts_to_display = FactCollection.new
         user_queries.each do |user_query|
           fact_collection = build_fact_collection_for_user_query(user_query, resolved_facts)
 

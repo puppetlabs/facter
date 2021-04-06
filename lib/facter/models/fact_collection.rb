@@ -7,6 +7,10 @@ module Facter
       @log = Log.new(self)
     end
 
+    def to_yaml
+      deep_to_h.to_yaml
+    end
+
     def build_fact_collection!(facts)
       facts.each do |fact|
         next if %i[core legacy].include?(fact.type) && fact.value.nil?
@@ -41,6 +45,12 @@ module Facter
     end
 
     private
+
+    def deep_to_h(collection = self)
+      collection.each_pair.with_object({}) do |(key, value), hash|
+        hash[key] = value.is_a?(FactCollection) ? deep_to_h(value) : value
+      end
+    end
 
     def bury_fact(fact)
       split_fact_name = extract_fact_name(fact)
