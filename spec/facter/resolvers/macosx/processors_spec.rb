@@ -24,9 +24,15 @@ describe Facter::Resolvers::Macosx::Processors do
 
   before do
     processors_resolver.instance_variable_set(:@log, log_spy)
+    query_string = 'sysctl hw.logicalcpu_max '\
+    'hw.physicalcpu_max '\
+    'machdep.cpu.brand_string '\
+    'hw.cpufrequency_max '\
+    'machdep.cpu.core_count machdep.cpu.thread_count'
+
     allow(Facter::Core::Execution)
       .to receive(:execute)
-      .with('sysctl hw.logicalcpu_max hw.physicalcpu_max machdep.cpu.brand_string hw.cpufrequency_max machdep.cpu.core_count machdep.cpu.thread_count', logger: log_spy)
+      .with(query_string, logger: log_spy)
       .and_return(output)
   end
 

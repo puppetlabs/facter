@@ -11,9 +11,8 @@ module Facter
                   brand: 'machdep.cpu.brand_string',
                   speed: 'hw.cpufrequency_max',
                   cores_per_socket: 'machdep.cpu.core_count',
-                  threads_per_core: 'machdep.cpu.thread_count' 
-                }.freeze
-                
+                  threads_per_core: 'machdep.cpu.thread_count' }.freeze
+
         class << self
           # :logicalcount
           # :models
@@ -61,11 +60,11 @@ module Facter
           end
 
           def build_cores_per_socket(count)
-            @fact_list[:cores_per_socket] = count.split(': ')[1].to_i 
+            @fact_list[:cores_per_socket] = count.split(': ')[1].to_i
           end
 
-          def build_threads_per_core(count, count2)
-            @fact_list[:threads_per_core] = count.split(': ')[1].to_i / count2.split(': ')[1].to_i
+          def build_threads_per_core(number_of_threads, number_of_cores)
+            @fact_list[:threads_per_core] = number_of_threads.split(': ')[1].to_i / number_of_cores.split(': ')[1].to_i
           end
         end
       end
