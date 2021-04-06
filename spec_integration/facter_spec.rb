@@ -14,6 +14,20 @@ describe 'Facter' do
   end
 
   describe '.value' do
+    context 'with core facts' do
+      context 'when facts are structured' do
+        it 'does not return wrong values when the query is wrong' do
+          expect(Facter.value('os.name.something')).to be(nil)
+        end
+      end
+
+      context 'when facts have hash values' do
+        it 'does not return wrong values when the query is wrong' do
+          expect(Facter.value('mountpoints./.available.something')).to be(nil)
+        end
+      end
+    end
+
     context 'when structured facts are disabled' do
       context 'with custom fact' do
         let(:fact_name) { 'a.b.c' }
@@ -28,6 +42,10 @@ describe 'Facter' do
 
         it 'works with fact name' do
           expect(Facter.value('a.b.c')).to eql('custom')
+        end
+
+        it 'does not work with extra token in fact name' do
+          expect(Facter.value('a.b.c.d')).to be(nil)
         end
 
         it 'does not work with partial fact name' do
@@ -48,6 +66,10 @@ describe 'Facter' do
 
         it 'works with full fact name' do
           expect(Facter.value('a.b.c')).to eql('external')
+        end
+
+        it 'does not work with extra token in fact name' do
+          expect(Facter.value('a.b.c.d')).to be(nil)
         end
 
         it 'does not work with partial fact name' do
@@ -82,6 +104,10 @@ describe 'Facter' do
           expect(Facter.value('a.b.c')).to eql('custom')
         end
 
+        it 'does not work with extra token in fact name' do
+          expect(Facter.value('a.b.c.d')).to be(nil)
+        end
+
         it 'works with partial fact name' do
           expect(Facter.value('a.b')).to eql({ 'c' => 'custom' })
         end
@@ -100,6 +126,10 @@ describe 'Facter' do
 
         it 'works with full fact name' do
           expect(Facter.value('a.b.c')).to eql('external')
+        end
+
+        it 'does not work with extra token in fact name' do
+          expect(Facter.value('a.b.c.d')).to be(nil)
         end
 
         it 'works with partial fact name' do
@@ -130,6 +160,10 @@ describe 'Facter' do
           expect(Facter.to_user_output({}, 'a.b.c')).to eql(['custom', 0])
         end
 
+        it 'does not work with extra token in fact name' do
+          expect(Facter.to_user_output({}, 'a.b.c.d')).to eql(['', 0])
+        end
+
         it 'does not work with partial fact name' do
           expect(Facter.to_user_output({}, 'a.b')).to eql(['', 0])
         end
@@ -148,6 +182,10 @@ describe 'Facter' do
 
         it 'works with full fact name' do
           expect(Facter.to_user_output({}, 'a.b.c')).to eql(['external', 0])
+        end
+
+        it 'does not work with extra token in fact name' do
+          expect(Facter.to_user_output({}, 'a.b.c.d')).to eql(['', 0])
         end
 
         it 'does not work with partial fact name' do
@@ -182,6 +220,10 @@ describe 'Facter' do
           expect(Facter.to_user_output({}, 'a.b.c')).to eql(['custom', 0])
         end
 
+        it 'does not work with extra token in fact name' do
+          expect(Facter.to_user_output({}, 'a.b.c.d')).to eql(['', 0])
+        end
+
         it 'works with partial fact name' do
           expect(Facter.to_user_output({}, 'a.b')).to eql(["{\n  c => \"custom\"\n}", 0])
         end
@@ -200,6 +242,10 @@ describe 'Facter' do
 
         it 'works with full fact name' do
           expect(Facter.to_user_output({}, 'a.b.c')).to eql(['external', 0])
+        end
+
+        it 'does not work with extra token in fact name' do
+          expect(Facter.to_user_output({}, 'a.b.c.d')).to eql(['', 0])
         end
 
         it 'works with partial fact name' do
