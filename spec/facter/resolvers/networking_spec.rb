@@ -15,6 +15,8 @@ describe Facter::Resolvers::Networking do
       allow(Facter::Core::Execution)
         .to receive(:execute).with('ipconfig getoption en0 server_identifier', logger: log_spy).and_return(dhcp)
       allow(Facter::Core::Execution)
+        .to receive(:execute).with('ipconfig getoption en0.1 server_identifier', logger: log_spy).and_return(dhcp)
+      allow(Facter::Core::Execution)
         .to receive(:execute).with('ipconfig getoption llw0 server_identifier', logger: log_spy).and_return('')
       allow(Facter::Core::Execution)
         .to receive(:execute).with('ipconfig getoption awdl0 server_identifier', logger: log_spy).and_return(dhcp)
@@ -25,7 +27,7 @@ describe Facter::Resolvers::Networking do
     end
 
     let(:interfaces) { load_fixture('ifconfig_mac').read }
-    let(:dhcp) { '192.168.143.1 ' }
+    let(:dhcp) { '192.168.143.1' }
     let(:primary) { 'en0' }
 
     it 'detects primary interface' do
@@ -37,7 +39,7 @@ describe Facter::Resolvers::Networking do
     end
 
     it 'detects all interfaces' do
-      expected = %w[lo0 gif0 stf0 en0 en1 en2 bridge0 p2p0 awdl0 llw0 utun0 utun1 utun2]
+      expected = %w[lo0 gif0 stf0 en0 en0.1 en1 en2 bridge0 p2p0 awdl0 llw0 utun0 utun1 utun2]
       expect(networking.resolve(:interfaces).keys).to match_array(expected)
     end
 
