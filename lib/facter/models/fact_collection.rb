@@ -56,7 +56,7 @@ module Facter
       when :legacy
         [fact.name]
       when :custom, :external
-        Options[:autopromote_dotted_facts] == true ? fact.name.split('.') : [fact.name]
+        Options[:force_dot_resolution] == true ? fact.name.split('.') : [fact.name]
       else
         fact.name.split('.')
       end

@@ -19,7 +19,7 @@ describe 'Facter' do
         let(:fact_name) { 'a.b.c' }
 
         before do
-          Facter::Options[:autopromote_dotted_facts] = false
+          Facter::Options[:force_dot_resolution] = false
 
           Facter.add(fact_name) do
             setcode { 'custom' }
@@ -62,11 +62,11 @@ describe 'Facter' do
 
     context 'when structured facts are enabled' do
       before do
-        Facter::Options[:autopromote_dotted_facts] = true
+        Facter::Options[:force_dot_resolution] = true
       end
 
       after do
-        Facter::Options[:autopromote_dotted_facts] = false
+        Facter::Options[:force_dot_resolution] = false
       end
 
       context 'with custom fact' do
@@ -119,7 +119,7 @@ describe 'Facter' do
         let(:fact_name) { 'a.b.c' }
 
         before do
-          Facter::Options[:autopromote_dotted_facts] = false
+          Facter::Options[:force_dot_resolution] = false
 
           Facter.add(fact_name) do
             setcode { 'custom' }
@@ -162,11 +162,11 @@ describe 'Facter' do
 
     context 'when structured facts are enabled' do
       before do
-        Facter::Options[:autopromote_dotted_facts] = true
+        Facter::Options[:force_dot_resolution] = true
       end
 
       after do
-        Facter::Options[:autopromote_dotted_facts] = false
+        Facter::Options[:force_dot_resolution] = false
       end
 
       context 'with custom fact' do

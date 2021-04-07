@@ -92,14 +92,15 @@ Facter 4 supports all 4 forms of "external facts" which Facter 3 supports:
 * Text files with the .txt extension containing `fact=some_value` strings
 * Executable files returning `fact=some_value` strings
 
-Enable auto promotion of dotted facts to structured
+Enable conversion of dotted facts to structured
 ---------------------------
 
-By default Facter 4 considers dots in fact names as normal characters.
-If you want to enable the new behavior, that promotes dotted facts to structured you need to set the following config:
+By default Facter 4 treats the `.` in custom or external fact names as part of the fact name and not a delimiter for structured facts.
+
+If you want to enable the new behaviour, that converts dotted facts to structured you need to set the following config:
 
 ```
 global : {
-    autopromote-dotted-facts : true
+    force-dot-resolution : true
 }
 ```
