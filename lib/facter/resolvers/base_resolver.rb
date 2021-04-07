@@ -28,10 +28,10 @@ module Facter
           cache_nil_for_unresolved_facts(fact_name)
         end
       rescue NoMethodError => e
-        log.debug("Could not resolve #{fact_name}, got #{e}")
+        log.debug("Could not resolve #{fact_name}, got #{e} at #{e.backtrace[0]}")
         @fact_list[fact_name] = nil
       rescue LoadError, NameError => e
-        log.debug("resolving fact #{fact_name}, but #{e}")
+        log.debug("Resolving fact #{fact_name}, but got #{e} at #{e.backtrace[0]}")
         @fact_list[fact_name] = nil
       end
 
