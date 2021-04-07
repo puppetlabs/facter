@@ -19,9 +19,9 @@ module Facter
       private
 
       def augment_structured_facts(global_conf)
-        return if !global_conf || global_conf['autopromote-dotted-facts'].nil?
+        return if !global_conf || global_conf['force-dot-resolution'].nil?
 
-        @options[:autopromote_dotted_facts] = global_conf['autopromote-dotted-facts']
+        @options[:force_dot_resolution] = global_conf['force-dot-resolution']
       end
 
       def augment_all
