@@ -43,6 +43,14 @@ describe Facter::Util::Resolvers::Networking::PrimaryInterface do
         expect(primary_interface.read_from_proc_route).to eq(nil)
       end
     end
+
+    context 'when proc net route has blackhole default' do
+      let(:output) { load_fixture('proc_net_route_blackhole').read }
+
+      it 'parses output /proc/net/route file' do
+        expect(primary_interface.read_from_proc_route).to eq(nil)
+      end
+    end
   end
 
   describe '#read_from_ip_route' do
