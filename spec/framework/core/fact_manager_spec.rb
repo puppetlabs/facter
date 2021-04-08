@@ -106,6 +106,14 @@ describe Facter::FactManager do
           stub_internal_manager(searched_facts, [resolved_fact])
           stub_external_manager(searched_facts, [resolved_fact])
           stub_cache_manager(searched_facts, [])
+
+          # mock core_or_external_fact to return nil
+          allow(fact_loader).to receive(:load_internal_facts).and_return([])
+          allow(fact_loader).to receive(:load_external_facts).and_return([])
+          stub_query_parser([[user_query], []], [])
+          stub_internal_manager([], [])
+          stub_external_manager([], [])
+          stub_cache_manager([], [])
         end
 
         it 'tries to load it from fact_name.rb' do
@@ -115,10 +123,10 @@ describe Facter::FactManager do
             .with("Searching fact: #{user_query} in file: #{user_query}.rb")
         end
 
-        it 'does not load core and external facts' do
+        it 'loads core and external facts' do
           Facter::FactManager.instance.resolve_fact(user_query)
 
-          expect(logger).not_to have_received(:debug)
+          expect(logger).to have_received(:debug)
             .with("Searching fact: #{user_query} in core facts and external facts")
         end
 
@@ -195,6 +203,14 @@ describe Facter::FactManager do
           stub_internal_manager(searched_facts, [])
           stub_external_manager(searched_facts, [])
           stub_cache_manager(searched_facts, cached_fact)
+
+          # mock core_or_external_fact to return nil
+          allow(fact_loader).to receive(:load_internal_facts).and_return([])
+          allow(fact_loader).to receive(:load_external_facts).and_return([])
+          stub_query_parser([[user_query], []], [])
+          stub_internal_manager([], [])
+          stub_external_manager([], [])
+          stub_cache_manager([], [])
         end
 
         it 'returns the cached fact' do

@@ -45,9 +45,11 @@ module Facter
 
       @cache_manager = Facter::CacheManager.new
 
-      resolved_facts = custom_fact_by_filename ||
-                       core_or_external_fact ||
-                       all_custom_facts
+      custom_facts = custom_fact_by_filename || []
+      core_and_external_facts = core_or_external_fact || []
+      resolved_facts = core_and_external_facts + custom_facts
+
+      resolved_facts = all_custom_facts if resolved_facts.empty?
 
       @cache_manager.cache_facts(resolved_facts)
 

@@ -17,7 +17,7 @@ require "#{ROOT_DIR}/spec/custom_facts/puppetlabs_spec/files"
 # end
 
 RSpec.configure do |config|
-  # config.mock_with :mocha
+  config.extend PuppetlabsSpec::Files
 
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = '.rspec_status'
@@ -47,5 +47,8 @@ RSpec.configure do |config|
     @old_env.each_pair { |k, v| ENV[k] = v }
     to_remove = ENV.keys.reject { |key| @old_env.include? key }
     to_remove.each { |key| ENV.delete key }
+
+    # This will cleanup any files that were created with tmpdir or tmpfile
+    PuppetlabsSpec::Files.cleanup
   end
 end
