@@ -23,7 +23,7 @@ module Facter
 
     def dig_fact(user_query)
       split_user_query = Facter::Utils.split_user_query(user_query)
-      fact = dig(*split_user_query) || dig(user_query)
+      fact = dig(user_query) || dig(*split_user_query)
     rescue TypeError
       # An incorrect user query (e.g. mountpoints./.available.asd) can cause
       # Facter to call dig on a string, which raises a type error.
