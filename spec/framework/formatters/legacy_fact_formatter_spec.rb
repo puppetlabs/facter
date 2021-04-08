@@ -43,6 +43,10 @@ describe Facter::LegacyFactFormatter do
     Facter::ResolvedFact.new('path', 'C:\\Program Files\\Puppet Labs\\Puppet\\bin;C:\\cygwin64\\bin')
   end
 
+  let(:wrong_query_fact) do
+    Facter::ResolvedFact.new('mountpoints', { '/tmp' => 'something' })
+  end
+
   before do
     resolved_fact1.user_query = 'resolved_fact1'
     resolved_fact1.filter_tokens = []
@@ -73,6 +77,9 @@ describe Facter::LegacyFactFormatter do
 
     win_path.user_query = ''
     win_path.filter_tokens = []
+
+    wrong_query_fact.user_query = 'mountpoints.asd'
+    wrong_query_fact.filter_tokens = []
   end
 
   context 'when no user query' do
@@ -164,6 +171,18 @@ describe Facter::LegacyFactFormatter do
 
           expect(legacy_formatter.format([nil_nested_fact1])).to eq('')
         end
+      end
+    end
+
+    context 'when user query is wrong' do
+      it 'prints no value' do
+        expect(legacy_formatter.format([wrong_query_fact])).to eq('')
+      end
+
+      it 'does not raise if fact leaf is string' do
+        wrong_query_fact.user_query = 'mountpoints./tmp.asd'
+
+        expect { legacy_formatter.format([wrong_query_fact]) }.not_to raise_error
       end
     end
   end
