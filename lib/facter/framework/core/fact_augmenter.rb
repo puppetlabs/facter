@@ -13,7 +13,6 @@ module Facter
       augumented_resolved_facts
     end
 
-    # rubocop:todo Metrics/AbcSize
     private_class_method def self.get_resolved_facts_for_searched_fact(searched_fact, resolved_facts)
       if searched_fact.name.include?('.*')
         resolved_facts
@@ -22,17 +21,34 @@ module Facter
           .uniq(&:name)
       else
         resolved_facts.select do |resolved_fact|
-          searched_fact.name.eql?(resolved_fact.name) && searched_fact.filter_tokens == resolved_fact.filter_tokens
+          valid_fact(searched_fact, resolved_fact)
         end.reject(&:user_query).uniq(&:name)
       end
     end
-    # rubocop:enable Metrics/AbcSize
 
     private_class_method def self.augment_resolved_fact_for_user_query!(searched_fact, matched_facts)
       matched_facts.each do |matched_fact|
         matched_fact.user_query = searched_fact.user_query
         matched_fact.filter_tokens = searched_fact.filter_tokens
       end
+    end
+
+    private_class_method def self.valid_fact(searched_fact, resolved_fact)
+      return false unless searched_fact.name.eql?(resolved_fact.name)
+
+      if searched_fact.filter_tokens.any?
+        case resolved_fact.value
+        when Array, Hash
+          begin
+            resolved_fact.value.dig(*searched_fact.filter_tokens)
+          rescue TypeError
+            return false
+          end
+        else
+          return false
+        end
+      end
+      true
     end
   end
 end
