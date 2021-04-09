@@ -27,7 +27,7 @@ module Facts
 
           {
             brand: current_zone[:brand],
-            id: current_zone[:id],
+            id: Facter::Utils.try_to_int(current_zone[:id]),
             ip_type: current_zone[:iptype],
             name: current_zone[:name],
             uuid: current_zone[:uuid]
