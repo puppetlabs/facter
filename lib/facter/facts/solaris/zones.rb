@@ -50,6 +50,7 @@ module Facts
       def create_legacy_zone_facts(zone)
         legacy_facts = []
         %w[brand iptype name uuid id path status].each do |key|
+          zone[key.to_sym] = zone[key.to_sym].to_s if key.to_sym == :id
           legacy_facts << Facter::ResolvedFact.new("zone_#{zone[:name]}_#{key}", zone[key.to_sym], :legacy)
         end
 
