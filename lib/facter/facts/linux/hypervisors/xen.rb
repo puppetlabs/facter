@@ -8,6 +8,7 @@ module Facts
 
         def initialize
           @log = Facter::Log.new(self)
+          @virtual = Facter::Util::Facts::VirtualDetector.new
         end
 
         def call_the_resolver
@@ -28,10 +29,7 @@ module Facts
         private
 
         def xen?
-          Facter::Resolvers::VirtWhat.resolve(:vm) =~ /xen/ ||
-            Facter::Resolvers::Xen.resolve(:vm) =~ /xen/ ||
-            discover_hypervisor == 'xenhvm' ||
-            Facter::Resolvers::Lspci.resolve(:vm) =~ /xen/
+          @virtual.platform =~ /xen/
         end
 
         def hvm?
