@@ -43,7 +43,7 @@ module Facter
             return if output_hash.empty?
 
             VIRTINFO_MAPPING.each do |key, value|
-              @fact_list[key] = Facter::Utils.try_to_bool(output_hash.dig(*value)&.strip)
+              @fact_list[key] = output_hash.dig(*value)&.strip
             end
 
             @fact_list[fact_name]

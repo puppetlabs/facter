@@ -15,10 +15,10 @@ describe Facts::Solaris::Hypervisors::Ldom do
           'control_domain' => 'opdx-a0-sun2',
           'domain_name' => 'sol11-9',
           'domain_uuid' => 'd7a3a4df-ce8c-47a9-b396-cb5a5f30c0b2',
-          'role_control' => 'false',
-          'role_io' => 'false',
-          'role_root' => 'false',
-          'role_service' => 'false'
+          'role_control' => false,
+          'role_io' => false,
+          'role_root' => false,
+          'role_service' => false
         }
       end
 
