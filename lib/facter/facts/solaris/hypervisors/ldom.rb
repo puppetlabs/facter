@@ -17,7 +17,7 @@ module Facts
           fact_value = %i[
             chassis_serial control_domain domain_name
             domain_uuid role_control role_io role_root role_service
-          ].map! { |key| [key, Facter::Resolvers::Solaris::Ldom.resolve(key)] }.to_h
+          ].map! { |key| [key, Facter::Utils.try_to_bool(Facter::Resolvers::Solaris::Ldom.resolve(key))] }.to_h
 
           Facter::ResolvedFact.new(FACT_NAME, fact_value)
         end
