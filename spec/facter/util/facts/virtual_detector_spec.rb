@@ -7,6 +7,7 @@ describe Facter::Util::Facts::VirtualDetector do
     let(:logger_mock) { instance_spy(Facter::Log) }
 
     before do
+      Facter::Util::Facts::VirtualDetector.class_variable_set(:@@fact_value, nil)
       allow(Facter::Log).to receive(:new).and_return(logger_mock)
     end
 
