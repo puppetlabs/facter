@@ -232,7 +232,7 @@ module Facter
           'os.hardware' => 'x86_64',
           'os.name' => 'Darwin',
           'os.macosx.build' => /\d+[A-Z]\d{1,4}\w?/,
-          'os.macosx.product' => 'Mac OS X',
+          'os.macosx.product' => agent['platform'] =~ /osx-11-/ ? 'macOS' : 'Mac OS X',
           'os.macosx.version.full' => /#{os_version}\.\d+/,
           'os.macosx.version.major' => os_version,
           'os.macosx.version.minor' => /\d+/,
