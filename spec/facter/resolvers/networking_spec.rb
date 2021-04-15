@@ -39,7 +39,7 @@ describe Facter::Resolvers::Networking do
     end
 
     it 'detects all interfaces' do
-      expected = %w[lo0 gif0 stf0 en0 en0.1 en1 en2 bridge0 p2p0 awdl0 llw0 utun0 utun1 utun2]
+      expected = %w[lo0 gif0 stf0 en0 en0.1 en1 en2 bridge0 p2p0 awdl0 llw0 utun0 utun1 utun2 ib0 ib1]
       expect(networking.resolve(:interfaces).keys).to match_array(expected)
     end
 
@@ -127,6 +127,11 @@ describe Facter::Resolvers::Networking do
     it 'checks interface utun2' do
       expected = { bindings: [{ address: '10.16.132.213', netmask: '255.255.254.0', network: '10.16.132.0' }] }
       expect(networking.resolve(:interfaces)['utun2']).to include(expected)
+    end
+
+    it 'checks interface ib0 has the expected mac' do
+      expected = { mac: '80:00:02:08:FA:81:00:00:00:00:00:00:00:00:00:00:00:00:00:00' }
+      expect(networking.resolve(:interfaces)['ib0']).to include(expected)
     end
 
     context 'when primary interface could not be retrieved' do

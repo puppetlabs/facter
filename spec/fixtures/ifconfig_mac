@@ -72,3 +72,17 @@ utun1: flags=8051<UP,POINTOPOINT,RUNNING,MULTICAST> mtu 2000
 	nd6 options=201<PERFORMNUD,DAD>
 utun2: flags=8051<UP,POINTOPOINT,RUNNING,MULTICAST> mtu 1500
 	inet 10.16.132.213 -->  10.16.132.213 netmask 0xfffffe00 
+ib0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 4092
+        infiniband 80:00:02:08:FA:81:00:00:00:00:00:00:00:00:00:00:00:00:00:00  txqueuelen 256  (InfiniBand)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+ib1: flags=4099<UP,BROADCAST,MULTICAST>  mtu 4092
+        infiniband 80:00:02:09:FA:81:00:00:00:00:00:00:00:00:00:00:00:00:00:00  txqueuelen 256  (InfiniBand)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+

@@ -17,7 +17,8 @@ describe Facter::Util::Linux::SocketParser do
       ifaddr_obj('lo', '::1', '00:00:00:00:00:00', 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff', false),
       ifaddr_obj('ens160', '10.16.119.155', '00:50:56:9a:61:46', '255.255.240.0', true),
       ifaddr_obj('ens160', '10.16.127.70', '00:50:56:9a:61:46', '255.255.240.0', true),
-      ifaddr_obj('ens160', 'fe80::250:56ff:fe9a:8481', '00:50:56:9a:61:46', 'ffff:ffff:ffff:ffff::', false)
+      ifaddr_obj('ens160', 'fe80::250:56ff:fe9a:8481', '00:50:56:9a:61:46', 'ffff:ffff:ffff:ffff::', false),
+      ifaddr_obj('ib0', '192.168.2.12', '80:00:02:08:fa:81:00:00:00:00:00:00:00:23:7d:ff:ff:94:73:fd', '255.255.255.0', true) # rubocop:disable Layout/LineLength
     ]
   end
 
@@ -29,6 +30,8 @@ describe Facter::Util::Linux::SocketParser do
         .with('ip link show ens160', logger: log_spy).and_return(load_fixture('ip_link_show_ens160').read)
       allow(Facter::Core::Execution).to receive(:execute)
         .with('ip link show lo', logger: log_spy).and_return(load_fixture('ip_link_show_lo').read)
+      allow(Facter::Core::Execution).to receive(:execute)
+        .with('ip link show ib0', logger: log_spy).and_return(load_fixture('ip_link_show_ib0').read)
     end
 
     let(:result) do
@@ -50,6 +53,12 @@ describe Facter::Util::Linux::SocketParser do
             { address: 'fe80::250:56ff:fe9a:8481', netmask: 'ffff:ffff:ffff:ffff::', network: 'fe80::', scope6: 'link' }
           ],
           mac: '00:50:56:9a:61:46'
+        },
+        'ib0' => {
+          bindings: [
+            { address: '192.168.2.12', netmask: '255.255.255.0', network: '192.168.2.0' }
+          ],
+          mac: '80:00:02:08:fa:81:00:00:00:00:00:00:00:23:7d:ff:ff:94:73:fd'
         }
       }
     end

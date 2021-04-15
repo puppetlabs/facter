@@ -63,7 +63,8 @@ module Facter
         end
 
         def extract_mac(raw_data, parsed_interface_data)
-          mac = raw_data.match(/(?:ether|lladdr)\s+(\w?\w:\w?\w:\w?\w:\w?\w:\w?\w:\w?\w)/)&.captures&.first
+          mac = raw_data.match(/(?:ether|lladdr)\s+((?:\w?\w:){5}\w?\w)|(?:infiniband)\s+((?:\w?\w:){19}\w?\w)/)
+                       &.captures&.compact&.first
           parsed_interface_data[:mac] = mac unless mac.nil?
         end
 

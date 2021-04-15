@@ -36,7 +36,7 @@ module Facter
           def search_for_mac(ifaddr)
             mac = mac_from_bonded_interface(ifaddr.name)
             mac ||= mac_from(ifaddr)
-            mac if !mac.nil? && mac != '00:00:00:00:00:00' && mac =~ /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/
+            mac if !mac.nil? && mac != '00:00:00:00:00:00' && mac =~ /^([0-9A-Fa-f]{2}[:-]){5,19}([0-9A-Fa-f]{2})$/
           end
 
           def mac_from_bonded_interface(interface_name)
