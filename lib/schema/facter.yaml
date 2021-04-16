@@ -1894,7 +1894,7 @@ xen:
     type: map
     description: Return metadata for the Xen hypervisor.
     resolution: |
-        POSIX platforms: use `/usr/lib/xen-common/bin/xen-toolstack` to locate xen admin commands if available, otherwise fallback to `/usr/sbin/xl` or `/usr/sbin/xm`. Use the found command to execute the `list` query.
+        POSIX platforms: if `/usr/sbin/xl` and `/usr/sbin/xm` is installed use `/usr/lib/xen-common/bin/xen-toolstack` to choose, otherwise try `/usr/sbin/xl` then `/usr/sbin/xm` in order. Use the found command to execute the `list` query.
     caveats: |
         POSIX platforms: confined to Xen privileged virtual machines.
     elements:
