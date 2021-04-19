@@ -219,12 +219,8 @@ module Facter
 
       # osx
       def osx_expected_facts(agent)
-        version = agent['platform'].match(/osx-(10\.\d+)/)
-        os_version = if version.nil?
-                       /\d+\.\d+/
-                     else
-                       /#{version[1]}/
-                     end
+        version = agent['platform'].match(/osx-(\d+)\.?(\d+)?/)
+        major_version = /#{Regexp.escape(version.captures.compact.join('.'))}/
 
         expected_facts = {
           'os.architecture' => 'x86_64',
@@ -232,10 +228,9 @@ module Facter
           'os.hardware' => 'x86_64',
           'os.name' => 'Darwin',
           'os.macosx.build' => /\d+[A-Z]\d{1,4}\w?/,
-          'os.macosx.product' => agent['platform'] =~ /osx-11-/ ? 'macOS' : 'Mac OS X',
-          'os.macosx.version.full' => /#{os_version}\.\d+/,
-          'os.macosx.version.major' => os_version,
-          'os.macosx.version.minor' => /\d+/,
+          'os.macosx.product' => agent['platform'] =~ /osx-10/ ? 'Mac OS X' : 'macOS',
+          'os.macosx.version.major' => major_version,
+          'os.macosx.version.minor' => agent['platform'] =~ /osx-10/ ? /\d+/ : /\d+\.\d+/,
           'os.release.full' => /\d+\.\d+\.\d+/,
           'os.release.major' => /\d+/,
           'os.release.minor' => /\d+/,
@@ -248,6 +243,7 @@ module Facter
           'kernelversion' => /\d+\.\d+\.\d+/,
           'kernelmajversion' => /\d+\.\d+/
         }
+        expected_facts['os.macosx.version.full'] = /#{expected_facts['os.macosx.version.major']}\.#{expected_facts['os.macosx.version.minor']}/
         expected_facts
       end
 
