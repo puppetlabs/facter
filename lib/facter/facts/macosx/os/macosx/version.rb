@@ -10,13 +10,21 @@ module Facts
 
           def call_the_resolver
             fact_value = Facter::Resolvers::SwVers.resolve(:productversion)
-            versions = fact_value.split('.')
-            ver = { 'full' => fact_value, 'major' => "#{versions[0]}.#{versions[1]}", 'minor' => versions[-1] }
+            ver = version_hash(fact_value)
 
             [Facter::ResolvedFact.new(FACT_NAME, ver),
              Facter::ResolvedFact.new(ALIASES[0], fact_value, :legacy),
              Facter::ResolvedFact.new(ALIASES[1], ver['major'], :legacy),
              Facter::ResolvedFact.new(ALIASES[2], ver['minor'], :legacy)]
+          end
+
+          def version_hash(fact_value)
+            versions = fact_value.split('.')
+            if versions[0] == '10'
+              { 'full' => fact_value, 'major' => "#{versions[0]}.#{versions[1]}", 'minor' => versions[-1] }
+            else
+              { 'full' => fact_value, 'major' => versions[0], 'minor' => "#{versions[1]}.#{versions[-1]}" }
+            end
           end
         end
       end
