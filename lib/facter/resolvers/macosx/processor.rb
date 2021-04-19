@@ -9,12 +9,17 @@ module Facter
         ITEMS = { logical_count: 'hw.logicalcpu_max',
                   physical_count: 'hw.physicalcpu_max',
                   brand: 'machdep.cpu.brand_string',
-                  speed: 'hw.cpufrequency_max' }.freeze
+                  speed: 'hw.cpufrequency_max',
+                  cores_per_socket: 'machdep.cpu.core_count',
+                  threads_per_core: 'machdep.cpu.thread_count' }.freeze
+
         class << self
           # :logicalcount
           # :models
           # :physicalcount
           # :speed
+          # :cores_per_socket
+          # :threads_per_core
 
           private
 
@@ -33,6 +38,8 @@ module Facter
             build_physical_count(processors_data[1])
             build_models(processors_data[2])
             build_speed(processors_data[3])
+            build_cores_per_socket(processors_data[4])
+            build_threads_per_core(processors_data[5], processors_data[4])
           end
 
           def build_logical_count(count)
@@ -50,6 +57,14 @@ module Facter
 
           def build_speed(value)
             @fact_list[:speed] = value.split(': ')[1].to_i
+          end
+
+          def build_cores_per_socket(count)
+            @fact_list[:cores_per_socket] = count.split(': ')[1].to_i
+          end
+
+          def build_threads_per_core(number_of_threads, number_of_cores)
+            @fact_list[:threads_per_core] = number_of_threads.split(': ')[1].to_i / number_of_cores.split(': ')[1].to_i
           end
         end
       end

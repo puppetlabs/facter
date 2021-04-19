@@ -1,4 +1,4 @@
-uAt:
+CuAt:
         name = "proc0"
         attribute = "type"
         value = "PowerPC_POWER8"
