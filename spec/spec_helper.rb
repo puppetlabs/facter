@@ -23,6 +23,7 @@ require 'fileutils'
 require_relative '../lib/facter/resolvers/base_resolver'
 
 Dir[ROOT_DIR.join('spec/mocks/*.rb')].sort.each { |file| require file }
+require_relative 'custom_facts/puppetlabs_spec/files'
 
 require 'facter'
 require 'facter/framework/cli/cli'
@@ -67,7 +68,18 @@ RSpec.configure do |config|
     mocks.verify_partial_doubles = true
   end
 
+  config.before do
+    LegacyFacter.clear
+    LegacyFacter.clear_messages
+  end
+
   config.after do
     Facter::OptionStore.reset
+  end
+
+  # This will cleanup any files that were created with tmpdir or tmpfile
+  config.extend PuppetlabsSpec::Files
+  config.after do
+    PuppetlabsSpec::Files.cleanup
   end
 end
