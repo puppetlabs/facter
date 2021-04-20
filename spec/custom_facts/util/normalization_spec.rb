@@ -1,5 +1,3 @@
-require_relative '../../spec_helper_legacy'
-
 describe LegacyFacter::Util::Normalization do
   subject(:normalization) { LegacyFacter::Util::Normalization }
 

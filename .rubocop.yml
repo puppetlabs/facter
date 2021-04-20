@@ -139,7 +139,6 @@ Style/ClassVars:
 Style/FrozenStringLiteralComment:
   Exclude:
     - 'spec/custom_facts/util/normalization_spec.rb'
-    - 'spec/custom_facts/shared_contexts/platform.rb'
     - 'spec/custom_facts/core/execution/windows_spec.rb'
     - 'spec/custom_facts/core/execution/posix_spec.rb'
     - 'lib/facter/custom_facts/util/resolution.rb'

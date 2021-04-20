@@ -1,7 +1,13 @@
-require_relative '../../../spec_helper_legacy'
-
-describe Facter::Core::Execution::Windows, as_platform: :windows do
+describe Facter::Core::Execution::Windows do
   subject(:executor) { Facter::Core::Execution::Windows.new }
+
+  before do
+    allow(LegacyFacter).to receive(:value).and_return('Windows')
+    allow(LegacyFacter::Util::Config).to receive(:windows?).and_return(true)
+
+    stub_const('::File::PATH_SEPARATOR', ';')
+    stub_const('File::ALT_SEPARATOR', '\\')
+  end
 
   describe '#search_paths' do
     it 'uses the PATH environment variable to determine locations' do

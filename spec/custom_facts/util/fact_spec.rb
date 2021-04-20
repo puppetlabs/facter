@@ -1,8 +1,6 @@
 #! /usr/bin/env ruby
 # frozen_string_literal: true
 
-require_relative '../../spec_helper_legacy'
-
 describe Facter::Util::Fact do
   subject(:fact) { Facter::Util::Fact.new('yay') }
 
