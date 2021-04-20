@@ -37,6 +37,7 @@ load_dir(['config'])
 load_dir(['util'])
 load_dir(%w[util resolvers])
 load_dir(%w[util facts])
+load_dir(%w[util facts posix])
 load_dir(%w[util resolvers networking])
 
 load_dir(['resolvers'])

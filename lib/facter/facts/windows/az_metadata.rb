@@ -16,7 +16,7 @@ module Facts
       private
 
       def azure_hypervisor?
-        Facter::Resolvers::Virtualization.resolve(:virtual) == 'hyperv'
+        Facter::Resolvers::Windows::Virtualization.resolve(:virtual) == 'hyperv'
       end
     end
   end

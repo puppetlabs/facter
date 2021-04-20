@@ -16,7 +16,7 @@ module Facts
       private
 
       def aws_hypervisors?
-        virtual = Facter::Resolvers::Virtualization.resolve(:virtual)
+        virtual = Facter::Resolvers::Windows::Virtualization.resolve(:virtual)
 
         virtual == 'kvm' || virtual =~ /xen/
       end

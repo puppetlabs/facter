@@ -7,7 +7,7 @@ module Facts
         FACT_NAME = 'cloud.provider'
 
         def call_the_resolver
-          virtual = Facter::Resolvers::Virtualization.resolve(:virtual)
+          virtual = Facter::Resolvers::Windows::Virtualization.resolve(:virtual)
           provider = case virtual
                      when 'hyperv'
                        'azure' unless Facter::Resolvers::Az.resolve(:metadata).empty?

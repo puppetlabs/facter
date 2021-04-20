@@ -7,7 +7,7 @@ describe Facts::Windows::Cloud::Provider do
     context 'when on hyperv' do
       before do
         allow(Facter::Resolvers::Az).to receive(:resolve).with(:metadata).and_return(value)
-        allow(Facter::Resolvers::Virtualization).to receive(:resolve).with(:virtual).and_return('hyperv')
+        allow(Facter::Resolvers::Windows::Virtualization).to receive(:resolve).with(:virtual).and_return('hyperv')
       end
 
       context 'when az_metadata exists' do
@@ -31,7 +31,7 @@ describe Facts::Windows::Cloud::Provider do
 
     context 'when on a physical machine' do
       before do
-        allow(Facter::Resolvers::Virtualization).to receive(:resolve).with(:virtual).and_return(nil)
+        allow(Facter::Resolvers::Windows::Virtualization).to receive(:resolve).with(:virtual).and_return(nil)
       end
 
       it 'returns nil' do
