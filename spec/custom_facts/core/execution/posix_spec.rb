@@ -1,5 +1,3 @@
-require_relative '../../../spec_helper_legacy'
-
 describe Facter::Core::Execution::Posix, unless: LegacyFacter::Util::Config.windows? do
   subject(:posix_executor) { Facter::Core::Execution::Posix.new }
 

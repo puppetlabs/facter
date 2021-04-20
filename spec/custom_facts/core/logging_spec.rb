@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../spec_helper_legacy'
-
 describe LegacyFacter::Core::Logging do
   subject(:logging) { LegacyFacter::Core::Logging }
 

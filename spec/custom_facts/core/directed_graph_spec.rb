@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../spec_helper_legacy'
-
 describe LegacyFacter::Core::DirectedGraph do
   subject(:graph) { LegacyFacter::Core::DirectedGraph.new }
 

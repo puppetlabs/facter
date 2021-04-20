@@ -1,8 +1,6 @@
 #! /usr/bin/env ruby
 # frozen_string_literal: true
 
-require_relative '../../spec_helper_legacy'
-
 describe LegacyFacter::Util::Collection do
   let(:external_loader) { instance_spy(LegacyFacter::Util::NothingLoader) }
   let(:internal_loader) do

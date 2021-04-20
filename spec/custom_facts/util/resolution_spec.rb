@@ -1,8 +1,6 @@
 #! /usr/bin/env ruby
 # frozen_string_literal: true
 
-require_relative '../../spec_helper_legacy'
-
 describe Facter::Util::Resolution do
   subject(:resolution) { Facter::Util::Resolution.new(:foo, stub_fact) }
 
