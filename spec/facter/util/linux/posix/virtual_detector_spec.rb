@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-describe Facter::Util::Facts::VirtualDetector do
-  subject(:detector) { Facter::Util::Facts::VirtualDetector.new }
+describe Facter::Util::Facts::Posix::VirtualDetector do
+  subject(:detector) { Facter::Util::Facts::Posix::VirtualDetector.new }
 
   describe '#platform' do
     let(:logger_mock) { instance_spy(Facter::Log) }
 
     before do
-      Facter::Util::Facts::VirtualDetector.class_variable_set(:@@fact_value, nil)
+      Facter::Util::Facts::Posix::VirtualDetector.class_variable_set(:@@fact_value, nil)
       allow(Facter::Log).to receive(:new).and_return(logger_mock)
     end
 

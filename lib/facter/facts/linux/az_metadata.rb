@@ -6,7 +6,7 @@ module Facts
       FACT_NAME = 'az_metadata'
 
       def initialize
-        @virtual = Facter::Util::Facts::VirtualDetector.new
+        @virtual = Facter::Util::Facts::Posix::VirtualDetector.new
       end
 
       def call_the_resolver
