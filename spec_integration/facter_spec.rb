@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative 'spec_helper'
-require_relative '../spec/spec_helper_legacy'
 
 describe 'Facter' do
   include PuppetlabsSpec::Files

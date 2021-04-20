@@ -2,6 +2,7 @@
 
 require 'pathname'
 require_relative 'integration_helper'
+require_relative '../spec/custom_facts/puppetlabs_spec/files'
 
 ROOT_DIR = Pathname.new(File.expand_path('..', __dir__)) unless defined?(ROOT_DIR)
 
@@ -45,5 +46,13 @@ RSpec.configure do |config|
     Facter.reset
     Facter.clear
     Facter::OptionStore.reset
+    LegacyFacter.clear
+    LegacyFacter.clear_messages
+  end
+
+  # This will cleanup any files that were created with tmpdir or tmpfile
+  config.extend PuppetlabsSpec::Files
+  config.after(:all) do
+    PuppetlabsSpec::Files.cleanup
   end
 end
