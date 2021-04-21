@@ -724,6 +724,13 @@ macosx_productversion_minor:
     resolution: |
         Mac OSX: use the `sw_vers` utility to retrieve the Mac OSX product minor version.
 
+macosx_productversion_patch:
+    type: string
+    hidden: true
+    description: Return the Mac OSX product patch version.
+    resolution: |
+        Mac OSX: use the `sw_vers` utility to retrieve the Mac OSX product patch version.
+
 manufacturer:
     type: string
     hidden: true
@@ -1184,6 +1191,9 @@ os:
                         minor:
                             type: string
                             description: The minor Mac OSX version number.
+                        patch:
+                            type: string
+                            description: The patch Mac OSX version number.
         name:
             type: string
             description: The operating system's name.
