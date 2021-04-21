@@ -22,19 +22,18 @@ module Facter
     end
 
     def dig_fact(user_query)
-      split_user_query = Facter::Utils.split_user_query(user_query)
-      fact = dig(user_query) || dig(*split_user_query)
-    rescue TypeError
-      # An incorrect user query (e.g. mountpoints./.available.asd) can cause
-      # Facter to call dig on a string, which raises a type error.
-      # If this happens, we assume the query is wrong and silently continue.
-    ensure
-      @log.debug("Fact \"#{user_query}\" does not exist") unless fact
-      fact
+      value(user_query)
+    rescue KeyError
+      nil
     end
 
     def value(user_query)
-      dig_fact(user_query)
+      fetch(user_query) do
+        split_user_query = Facter::Utils.split_user_query(user_query)
+        split_user_query.reduce(self) do |memo, key|
+          memo.fetch(key) { memo.fetch(key.to_s) } if memo.is_a?(Hash) || memo.is_a?(Array)
+        end
+      end
     end
 
     def bury(*args)
