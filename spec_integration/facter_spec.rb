@@ -574,4 +574,38 @@ describe 'Facter' do
       end
     end
   end
+
+  describe '.fact' do
+    context 'with custom facts' do
+      context 'when fact has value' do
+        before do
+          Facter.add('my_fact') do
+            setcode { 'my_value' }
+          end
+        end
+
+        it 'returns a ResolvedFact with value' do
+          expect(Facter.fact('my_fact')).to be_instance_of(Facter::ResolvedFact).and have_attributes(value: 'my_value')
+        end
+      end
+
+      context 'when fact value is nil' do
+        before do
+          Facter.add('custom1', weight: 999) do
+            setcode { nil }
+          end
+        end
+
+        it 'returns a ResolvedFact with value: nil' do
+          expect(Facter.fact('custom1')).to be_instance_of(Facter::ResolvedFact).and have_attributes(value: nil)
+        end
+      end
+    end
+
+    context 'when searching for a fact that does not exists' do
+      it 'returns nil' do
+        expect(Facter.fact('non_existent')).to be_nil
+      end
+    end
+  end
 end
