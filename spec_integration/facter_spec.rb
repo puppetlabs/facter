@@ -6,9 +6,10 @@ describe 'Facter' do
   include PuppetlabsSpec::Files
 
   let(:ext_facts_dir) { tmpdir('external_facts') }
+  let(:custom_facts_dir) { tmpdir('custom_facts') }
 
-  def write_to_file(file_name, to_write)
-    file = File.join(ext_facts_dir, file_name)
+  def write_to_file(file_name, to_write, dir = ext_facts_dir)
+    file = File.join(dir, file_name)
     File.open(file, 'w') { |f| f.print to_write }
   end
 
@@ -37,6 +38,28 @@ describe 'Facter' do
       end
 
       context 'with custom fact' do
+        context 'with nested Facter.value calls' do
+          before do
+            Facter.search(custom_facts_dir)
+            data = <<-RUBY
+              Facter.add(:a) do
+                setcode { 'a' }
+              end
+
+              Facter.value(:kernel)
+
+              Facter.add(:b) do
+                setcode { 'b' }
+              end
+            RUBY
+            write_to_file(tmp_filename('custom_fact.rb'), data, custom_facts_dir)
+          end
+
+          it 'does not override original user query' do
+            expect(Facter.value('b')).to eql('b')
+          end
+        end
+
         context 'when has the same name as a structured core fact' do
           before do
             Facter.add('os.name', weight: 999) do
