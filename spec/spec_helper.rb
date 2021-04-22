@@ -40,6 +40,10 @@ def colorize(str, color)
   "#{color}#{str}#{Facter::RESET}"
 end
 
+# Configure webmock
+require 'webmock/rspec'
+WebMock.disable_net_connect!
+
 # Configure RSpec
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
