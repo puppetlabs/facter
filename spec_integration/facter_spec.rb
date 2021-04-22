@@ -30,6 +30,76 @@ describe 'Facter' do
           expect(Facter.value('mountpoints./.available.something')).to be(nil)
         end
       end
+
+      context 'with array as value' do
+        it 'can access value by index' do
+          expect(Facter.value('processors.models.0')).not_to be_nil
+        end
+
+        it 'cannot access non existent index' do
+          expect(Facter.value('processors.models.1000')).to be_nil
+        end
+
+        it 'does not use non numeric string as index' do
+          expect(Facter.value('processors.models.abc')).to be_nil
+        end
+
+        it 'does not use non negative index' do
+          expect(Facter.value('processors.models.-1')).to be_nil
+        end
+      end
+    end
+
+    context 'with custom facts' do
+      context 'with array as value' do
+        before do
+          Facter.add('arr_fact') do
+            setcode { %w[x y z] }
+          end
+        end
+
+        it 'can access value by index' do
+          expect(Facter.value('arr_fact.0')).to eql('x')
+        end
+
+        it 'cannot access non existent index' do
+          expect(Facter.value('arr_fact.3')).to be_nil
+        end
+
+        it 'does not use non numeric string as index' do
+          expect(Facter.value('arr_fact.abc')).to be_nil
+        end
+
+        it 'does not use non negative index' do
+          expect(Facter.value('arr_fact.-1')).to be_nil
+        end
+      end
+    end
+
+    context 'with external facts' do
+      context 'with array as value' do
+        before do
+          Facter.search_external([ext_facts_dir])
+          data = { 'arr_ext_fact' => %w[ex1 ex2] }
+          write_to_file(tmp_filename('os_fact.yaml'), YAML.dump(data))
+        end
+
+        it 'can access value by index' do
+          expect(Facter.value('arr_ext_fact.0')).to eql('ex1')
+        end
+
+        it 'cannot access non existent index' do
+          expect(Facter.value('arr_ext_fact.3')).to be_nil
+        end
+
+        it 'does not use non numeric string as index' do
+          expect(Facter.value('arr_ext_fact.abc')).to be_nil
+        end
+
+        it 'does not use non negative index' do
+          expect(Facter.value('arr_ext_fact.-1')).to be_nil
+        end
+      end
     end
 
     context 'when structured facts are disabled' do
@@ -306,6 +376,58 @@ describe 'Facter' do
   end
 
   describe '.to_user_output' do
+    context 'with custom facts' do
+      context 'with array as value' do
+        before do
+          Facter.add('arr_fact') do
+            setcode { %w[x y z] }
+          end
+        end
+
+        it 'can access value by index' do
+          expect(Facter.to_user_output({}, 'arr_fact.0')).to eql(['x', 0])
+        end
+
+        it 'cannot access non existent index' do
+          expect(Facter.to_user_output({}, 'arr_fact.3')).to eql(['', 0])
+        end
+
+        it 'does not use non numeric string as index' do
+          expect(Facter.to_user_output({}, 'arr_fact.abc')).to eql(['', 0])
+        end
+
+        it 'does not use non negative index' do
+          expect(Facter.to_user_output({}, 'arr_fact.-1')).to eql(['', 0])
+        end
+      end
+    end
+
+    context 'with external facts' do
+      context 'with array as value' do
+        before do
+          Facter.search_external([ext_facts_dir])
+          data = { 'arr_ext_fact' => %w[ex1 ex2] }
+          write_to_file(tmp_filename('os_fact.yaml'), YAML.dump(data))
+        end
+
+        it 'can access value by index' do
+          expect(Facter.to_user_output({}, 'arr_ext_fact.0')).to eql(['ex1', 0])
+        end
+
+        it 'cannot access non existent index' do
+          expect(Facter.to_user_output({}, 'arr_ext_fact.3')).to eql(['', 0])
+        end
+
+        it 'does not use non numeric string as index' do
+          expect(Facter.to_user_output({}, 'arr_ext_fact.abc')).to eql(['', 0])
+        end
+
+        it 'does not use non negative index' do
+          expect(Facter.to_user_output({}, 'arr_ext_fact.-1')).to eql(['', 0])
+        end
+      end
+    end
+
     context 'when structured facts are disabled' do
       before do
         Facter::Options[:force_dot_resolution] = false
@@ -576,6 +698,38 @@ describe 'Facter' do
   end
 
   describe '.fact' do
+    context 'with core facts' do
+      context 'when facts are structured' do
+        it 'does not return ResolvedFact when the query is wrong' do
+          expect(Facter.fact('os.name.something')).to be_nil
+        end
+      end
+
+      context 'when facts have hash values' do
+        it 'does not return ResolvedFact when the query is wrong' do
+          expect(Facter.fact('mountpoints./.available.something')).to be_nil
+        end
+      end
+
+      context 'with array as value' do
+        it 'returns a ResolvedFact with value' do
+          expect(Facter.fact('processors.models.0')).to be_instance_of(Facter::ResolvedFact)
+        end
+
+        it 'cannot access non existent index' do
+          expect(Facter.fact('processors.models.1000')).to be_nil
+        end
+
+        it 'does not use non numeric string as index' do
+          expect(Facter.fact('processors.models.abc')).to be_nil
+        end
+
+        it 'does not use non negative index' do
+          expect(Facter.fact('processors.models.-1')).to be_nil
+        end
+      end
+    end
+
     context 'with custom facts' do
       context 'when fact has value' do
         before do
@@ -598,6 +752,58 @@ describe 'Facter' do
 
         it 'returns a ResolvedFact with value: nil' do
           expect(Facter.fact('custom1')).to be_instance_of(Facter::ResolvedFact).and have_attributes(value: nil)
+        end
+      end
+
+      context 'with array as value' do
+        before do
+          Facter.add('arr_fact') do
+            setcode { %w[x y z] }
+          end
+        end
+
+        it 'returns a ResolvedFact with value for an existent index' do
+          expect(Facter.fact('arr_fact.0')).to be_instance_of(Facter::ResolvedFact).and have_attributes(value: 'x')
+        end
+
+        it 'cannot access non existent index' do
+          expect(Facter.fact('arr_fact.3')).to be_nil
+        end
+
+        it 'does not use non numeric string as index' do
+          expect(Facter.fact('arr_fact.abc')).to be_nil
+        end
+
+        it 'does not use non negative index' do
+          expect(Facter.fact('arr_fact.-1')).to be_nil
+        end
+      end
+    end
+
+    context 'with external facts' do
+      context 'with array as value' do
+        before do
+          Facter.search_external([ext_facts_dir])
+          data = { 'arr_ext_fact' => %w[ex1 ex2] }
+          write_to_file(tmp_filename('os_fact.yaml'), YAML.dump(data))
+        end
+
+        it 'can access value by index' do
+          expect(Facter.fact('arr_ext_fact.0'))
+            .to be_instance_of(Facter::ResolvedFact)
+            .and have_attributes(value: 'ex1')
+        end
+
+        it 'cannot access non existent index' do
+          expect(Facter.fact('arr_ext_fact.3')).to be_nil
+        end
+
+        it 'does not use non numeric string as index' do
+          expect(Facter.fact('arr_ext_fact.abc')).to be_nil
+        end
+
+        it 'does not use non negative index' do
+          expect(Facter.fact('arr_ext_fact.-1')).to be_nil
         end
       end
     end
