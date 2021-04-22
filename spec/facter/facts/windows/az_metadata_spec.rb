@@ -12,7 +12,7 @@ describe Facts::Windows::AzMetadata do
       let(:value) { nil }
 
       before do
-        allow(Facter::Resolvers::Virtualization).to receive(:resolve).with(:virtual).and_return(nil)
+        allow(Facter::Resolvers::Windows::Virtualization).to receive(:resolve).with(:virtual).and_return(nil)
       end
 
       it 'returns az metadata fact as nil' do
@@ -30,7 +30,7 @@ describe Facts::Windows::AzMetadata do
       let(:value) { { 'info' => 'value' } }
 
       before do
-        allow(Facter::Resolvers::Virtualization).to receive(:resolve).with(:virtual).and_return('hyperv')
+        allow(Facter::Resolvers::Windows::Virtualization).to receive(:resolve).with(:virtual).and_return('hyperv')
       end
 
       context 'when on Azure' do

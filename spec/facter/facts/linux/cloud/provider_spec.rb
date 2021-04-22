@@ -4,10 +4,10 @@ describe Facts::Linux::Cloud::Provider do
   describe '#call_the_resolver' do
     subject(:fact) { Facts::Linux::Cloud::Provider.new }
 
-    let(:virtual_detector) { instance_spy(Facter::Util::Facts::VirtualDetector) }
+    let(:virtual_detector) { instance_spy(Facter::Util::Facts::Posix::VirtualDetector) }
 
     before do
-      allow(Facter::Util::Facts::VirtualDetector).to receive(:new).and_return(virtual_detector)
+      allow(Facter::Util::Facts::Posix::VirtualDetector).to receive(:new).and_return(virtual_detector)
     end
 
     context 'when on hyperv' do

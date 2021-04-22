@@ -3,11 +3,11 @@
 describe Facts::Linux::Hypervisors::Xen do
   subject(:fact) { Facts::Linux::Hypervisors::Xen.new }
 
-  let(:virtual_detector_double) { instance_spy(Facter::Util::Facts::VirtualDetector) }
+  let(:virtual_detector_double) { instance_spy(Facter::Util::Facts::Posix::VirtualDetector) }
 
   describe '#call_the_resolver' do
     before do
-      allow(Facter::Util::Facts::VirtualDetector).to receive(:new).and_return(virtual_detector_double)
+      allow(Facter::Util::Facts::Posix::VirtualDetector).to receive(:new).and_return(virtual_detector_double)
     end
 
     context 'when xen hypervisor' do

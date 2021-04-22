@@ -7,7 +7,9 @@ module Facts
         FACT_NAME = 'hypervisors.xen'
 
         def call_the_resolver
-          fact_value = { context: hvm? ? 'hvm' : 'pv' } if Facter::Resolvers::Virtualization.resolve(:virtual) == 'xen'
+          if Facter::Resolvers::Windows::Virtualization.resolve(:virtual) == 'xen'
+            fact_value = { context: hvm? ? 'hvm' : 'pv' }
+          end
 
           Facter::ResolvedFact.new(FACT_NAME, fact_value)
         end

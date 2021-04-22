@@ -17,7 +17,8 @@ module Facts
         def kvm?
           product_name = Facter::Resolvers::DMIComputerSystem.resolve(:name)
 
-          (Facter::Resolvers::Virtualization.resolve(:virtual) == 'kvm' || Facter::Resolvers::NetKVM.resolve(:kvm)) &&
+          (Facter::Resolvers::Windows::Virtualization.resolve(:virtual) == 'kvm' ||
+           Facter::Resolvers::NetKVM.resolve(:kvm)) &&
             product_name != 'VirtualBox' && !product_name.match(/^Parallels/)
         end
 

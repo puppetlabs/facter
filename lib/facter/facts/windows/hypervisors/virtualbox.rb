@@ -15,12 +15,12 @@ module Facts
         private
 
         def virtualbox?
-          Facter::Resolvers::Virtualization.resolve(:virtual) == 'virtualbox' ||
+          Facter::Resolvers::Windows::Virtualization.resolve(:virtual) == 'virtualbox' ||
             Facter::Resolvers::DMIComputerSystem.resolve(:name) == 'VirtualBox'
         end
 
         def populate_version_and_revision
-          oem_strings = Facter::Resolvers::Virtualization.resolve(:oem_strings)
+          oem_strings = Facter::Resolvers::Windows::Virtualization.resolve(:oem_strings)
           return unless oem_strings
 
           version = revision = ''

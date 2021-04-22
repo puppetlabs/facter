@@ -6,7 +6,7 @@ module Facts
       FACT_NAME = 'is_virtual'
 
       def initialize
-        @virtual = Facter::Util::Facts::VirtualDetector.new
+        @virtual = Facter::Util::Facts::Posix::VirtualDetector.new
       end
 
       def call_the_resolver

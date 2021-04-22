@@ -4,10 +4,10 @@ describe Facts::Linux::AzMetadata do
   describe '#call_the_resolver' do
     subject(:fact) { Facts::Linux::AzMetadata.new }
 
-    let(:virtual_detector_double) { instance_spy(Facter::Util::Facts::VirtualDetector) }
+    let(:virtual_detector_double) { instance_spy(Facter::Util::Facts::Posix::VirtualDetector) }
 
     before do
-      allow(Facter::Util::Facts::VirtualDetector).to receive(:new).and_return(virtual_detector_double)
+      allow(Facter::Util::Facts::Posix::VirtualDetector).to receive(:new).and_return(virtual_detector_double)
       allow(Facter::Resolvers::Az).to receive(:resolve).with(:metadata).and_return(value)
     end
 

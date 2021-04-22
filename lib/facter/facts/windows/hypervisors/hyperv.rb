@@ -15,7 +15,7 @@ module Facts
         private
 
         def hyperv?
-          Facter::Resolvers::Virtualization.resolve(:virtual) == 'hyperv' ||
+          Facter::Resolvers::Windows::Virtualization.resolve(:virtual) == 'hyperv' ||
             Facter::Resolvers::DMIBios.resolve(:manufacturer).include?('Microsoft')
         end
       end
