@@ -555,7 +555,7 @@ module Facter
       begin
         value = fact_collection.value(user_query)
         add_fact_to_searched_facts(user_query, value)
-      rescue KeyError
+      rescue KeyError, TypeError
         nil
       end
     end

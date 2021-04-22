@@ -23,7 +23,7 @@ module Facter
 
     def dig_fact(user_query)
       value(user_query)
-    rescue KeyError
+    rescue KeyError, TypeError
       nil
     end
 
