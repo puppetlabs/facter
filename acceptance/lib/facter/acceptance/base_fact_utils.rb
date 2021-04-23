@@ -230,7 +230,7 @@ module Facter
           'os.macosx.build' => /\d+[A-Z]\d{1,4}\w?/,
           'os.macosx.product' => agent['platform'] =~ /osx-10/ ? 'Mac OS X' : 'macOS',
           'os.macosx.version.major' => major_version,
-          'os.macosx.version.minor' => agent['platform'] =~ /osx-10/ ? /\d+/ : /\d+\.\d+/,
+          'os.macosx.version.minor' => /\d+/,
           'os.release.full' => /\d+\.\d+\.\d+/,
           'os.release.major' => /\d+/,
           'os.release.minor' => /\d+/,
@@ -243,7 +243,13 @@ module Facter
           'kernelversion' => /\d+\.\d+\.\d+/,
           'kernelmajversion' => /\d+\.\d+/
         }
-        expected_facts['os.macosx.version.full'] = /#{expected_facts['os.macosx.version.major']}\.#{expected_facts['os.macosx.version.minor']}/
+
+        if agent['platform'] =~ /osx-10/
+          expected_facts['os.macosx.version.full'] = /#{expected_facts['os.macosx.version.major']}\.#{expected_facts['os.macosx.version.minor']}/
+        else
+          expected_facts['os.macosx.version.patch'] = /\d+/
+          expected_facts['os.macosx.version.full'] = /^#{expected_facts['os.macosx.version.major']}\.#{expected_facts['os.macosx.version.minor']}\.#{expected_facts['os.macosx.version.patch']}$/
+        end
         expected_facts
       end
 
