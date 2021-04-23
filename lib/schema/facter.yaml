@@ -1368,6 +1368,12 @@ processors:
         speed:
             type: string
             description: The speed of the processors, such as "2.0 GHz".
+        cores:
+            type: integer
+            description: The number of cores per processor socket.
+        threads:
+            type: integer
+            description: The number of threads per processor core.
 
 productname:
     type: string
