@@ -3,17 +3,15 @@
 describe Facts::Linux::Hypervisors::Xen do
   subject(:fact) { Facts::Linux::Hypervisors::Xen.new }
 
-  let(:virtual_detector_double) { instance_spy(Facter::Util::Facts::Posix::VirtualDetector) }
+  let(:virtual_detector_double) { class_spy(Facter::Util::Facts::Posix::VirtualDetector) }
 
   describe '#call_the_resolver' do
     before do
-      allow(Facter::Util::Facts::Posix::VirtualDetector).to receive(:new).and_return(virtual_detector_double)
+      allow(Facter::Util::Facts::Posix::VirtualDetector).to receive(:platform).and_return(value)
     end
 
     context 'when xen hypervisor' do
-      before do
-        allow(virtual_detector_double).to receive(:platform).and_return('xen')
-      end
+      let(:value) { 'xen' }
 
       context 'when Xen resolver returns privileged false' do
         before do
@@ -106,9 +104,7 @@ describe Facts::Linux::Hypervisors::Xen do
     end
 
     context 'when not xen hypervisor' do
-      before do
-        allow(virtual_detector_double).to receive(:platform).and_return(nil)
-      end
+      let(:value) { nil }
 
       it 'returns empty array' do
         expect(fact.call_the_resolver).to eq([])

@@ -6,12 +6,8 @@ module Facts
       class Provider
         FACT_NAME = 'cloud.provider'
 
-        def initialize
-          @virtual = Facter::Util::Facts::Posix::VirtualDetector.new
-        end
-
         def call_the_resolver
-          provider = case @virtual.platform
+          provider = case Facter::Util::Facts::Posix::VirtualDetector.platform
                      when 'hyperv'
                        'azure' unless Facter::Resolvers::Az.resolve(:metadata).empty?
                      end

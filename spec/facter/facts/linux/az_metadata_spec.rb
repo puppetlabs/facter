@@ -4,10 +4,9 @@ describe Facts::Linux::AzMetadata do
   describe '#call_the_resolver' do
     subject(:fact) { Facts::Linux::AzMetadata.new }
 
-    let(:virtual_detector_double) { instance_spy(Facter::Util::Facts::Posix::VirtualDetector) }
+    let(:virtual_detector_double) { class_spy(Facter::Util::Facts::Posix::VirtualDetector) }
 
     before do
-      allow(Facter::Util::Facts::Posix::VirtualDetector).to receive(:new).and_return(virtual_detector_double)
       allow(Facter::Resolvers::Az).to receive(:resolve).with(:metadata).and_return(value)
     end
 
@@ -15,7 +14,7 @@ describe Facts::Linux::AzMetadata do
       let(:value) { nil }
 
       before do
-        allow(virtual_detector_double).to receive(:platform).and_return(nil)
+        allow(Facter::Util::Facts::Posix::VirtualDetector).to receive(:platform).and_return(nil)
       end
 
       it 'returns az metadata fact as nil' do
@@ -33,7 +32,7 @@ describe Facts::Linux::AzMetadata do
       let(:value) { { 'info' => 'value' } }
 
       before do
-        allow(virtual_detector_double).to receive(:platform).and_return('hyperv')
+        allow(Facter::Util::Facts::Posix::VirtualDetector).to receive(:platform).and_return('hyperv')
       end
 
       context 'when on Azure' do

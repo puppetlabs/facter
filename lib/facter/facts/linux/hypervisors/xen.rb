@@ -8,7 +8,6 @@ module Facts
 
         def initialize
           @log = Facter::Log.new(self)
-          @virtual = Facter::Util::Facts::Posix::VirtualDetector.new
         end
 
         def call_the_resolver
@@ -29,7 +28,7 @@ module Facts
         private
 
         def xen?
-          @virtual.platform =~ /xen/
+          Facter::Util::Facts::Posix::VirtualDetector.platform =~ /xen/
         end
 
         def hvm?

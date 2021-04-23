@@ -4,10 +4,9 @@ describe Facts::Linux::Ec2Metadata do
   describe '#call_the_resolver' do
     subject(:fact) { Facts::Linux::Ec2Metadata.new }
 
-    let(:virtual_detector_double) { instance_spy(Facter::Util::Facts::Posix::VirtualDetector) }
+    let(:virtual_detector_double) { class_spy(Facter::Util::Facts::Posix::VirtualDetector) }
 
     before do
-      allow(Facter::Util::Facts::Posix::VirtualDetector).to receive(:new).and_return(virtual_detector_double)
       allow(Facter::Resolvers::Ec2).to receive(:resolve).with(:metadata).and_return(value)
     end
 
@@ -15,7 +14,7 @@ describe Facts::Linux::Ec2Metadata do
       let(:value) { nil }
 
       before do
-        allow(virtual_detector_double).to receive(:platform).and_return(nil)
+        allow(Facter::Util::Facts::Posix::VirtualDetector).to receive(:platform).and_return(nil)
       end
 
       it 'returns ec2 metadata fact as nil' do
@@ -48,7 +47,7 @@ describe Facts::Linux::Ec2Metadata do
       let(:value) { { 'info' => 'value' } }
 
       before do
-        allow(virtual_detector_double).to receive(:platform).and_return('kvm')
+        allow(Facter::Util::Facts::Posix::VirtualDetector).to receive(:platform).and_return('kvm')
       end
 
       it_behaves_like 'check ec2 resolver called with metadata'
@@ -59,7 +58,7 @@ describe Facts::Linux::Ec2Metadata do
       let(:value) { { 'info' => 'value' } }
 
       before do
-        allow(virtual_detector_double).to receive(:platform).and_return('xen')
+        allow(Facter::Util::Facts::Posix::VirtualDetector).to receive(:platform).and_return('xen')
       end
 
       it_behaves_like 'check ec2 resolver called with metadata'
@@ -70,7 +69,7 @@ describe Facts::Linux::Ec2Metadata do
       let(:value) { { 'info' => 'value' } }
 
       before do
-        allow(virtual_detector_double).to receive(:platform).and_return('aws')
+        allow(Facter::Util::Facts::Posix::VirtualDetector).to receive(:platform).and_return('aws')
       end
 
       it_behaves_like 'check ec2 resolver called with metadata'
