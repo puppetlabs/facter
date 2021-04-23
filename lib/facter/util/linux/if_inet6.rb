@@ -15,11 +15,15 @@ module Facter
             'homeaddress' => 0x10,
             'deprecated' => 0x20,
             'tentative' => 0x40,
-            'permanent' => 0x80,
-            'managetempaddr' => 0x100,
-            'noprefixroute' => 0x200,
-            'mcautojoin' => 0x400,
-            'stableprivacy' => 0x800
+            'permanent' => 0x80
+            # /proc/net/if_inet6 only supports the old 8bit flags
+            # I have been unable to find a simple solution to accesses
+            # the full 32bit flags.  netlink is all I can could find but
+            # that will likely be ugly
+            # 'managetempaddr' => 0x100,
+            # 'noprefixroute' => 0x200,
+            # 'mcautojoin' => 0x400,
+            # 'stableprivacy' => 0x800
           }.freeze
 
           def read_flags
