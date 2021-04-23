@@ -18,6 +18,9 @@ describe Facter::Resolvers::Linux::Networking do
         .with(log_spy).and_return([[{ interface: 'ens192', ip: '10.16.125.217' }], []])
       allow(Facter::Util::Resolvers::Networking::PrimaryInterface).to receive(:read_from_proc_route)
         .and_return('ens160')
+      allow(File).to receive(:exist?).with('/proc/net/if_inet6').and_return(true)
+      allow(Facter::Util::FileHelper).to receive(:safe_read)
+        .with('/proc/net/if_inet6', nil).and_return(load_fixture('proc_net_if_inet6').read)
     end
 
     after do
@@ -54,7 +57,8 @@ describe Facter::Resolvers::Linux::Networking do
             { address: '127.0.0.1', netmask: '255.0.0.0', network: '127.0.0.0' }
           ],
           bindings6: [
-            { address: '::1', netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff', network: '::1', scope6: 'host' }
+            { address: '::1', netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+              network: '::1', scope6: 'host', flags: ['permanent'] }
           ],
           dhcp: '10.32.22.9',
           ip: '127.0.0.1',
@@ -72,7 +76,8 @@ describe Facter::Resolvers::Linux::Networking do
             { address: '10.16.127.70', netmask: '255.255.240.0', network: '10.16.112.0' }
           ],
           bindings6: [
-            { address: 'fe80::250:56ff:fe9a:8481', netmask: 'ffff:ffff:ffff:ffff::', network: 'fe80::', scope6: 'link' }
+            { address: 'fe80::250:56ff:fe9a:8481', netmask: 'ffff:ffff:ffff:ffff::',
+              network: 'fe80::', scope6: 'link', flags: ['permanent'] }
           ],
           dhcp: '10.32.22.10',
           ip: '10.16.119.155',
@@ -141,7 +146,8 @@ describe Facter::Resolvers::Linux::Networking do
             { address: '10.16.127.70', netmask: '255.255.240.0', network: '10.16.112.0' }
           ],
           bindings6: [
-            { address: 'fe80::250:56ff:fe9a:8481', netmask: 'ffff:ffff:ffff:ffff::', network: 'fe80::', scope6: 'link' }
+            { address: 'fe80::250:56ff:fe9a:8481', netmask: 'ffff:ffff:ffff:ffff::', network: 'fe80::',
+              scope6: 'link', flags: ['permanent'] }
           ],
           dhcp: '10.32.22.10',
           ip: '10.16.127.70',
@@ -257,7 +263,8 @@ describe Facter::Resolvers::Linux::Networking do
         {
           'lo' => {
             bindings6: [
-              { address: '::1', netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff', network: '::1', scope6: 'host' }
+              { address: '::1', netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+                network: '::1', scope6: 'host', flags: ['permanent'] }
             ],
             ip6: '::1',
             mtu: 65_536,
@@ -268,7 +275,7 @@ describe Facter::Resolvers::Linux::Networking do
           'ens160' => {
             bindings6: [
               { address: 'fe80::250:56ff:fe9a:8481', netmask: 'ffff:ffff:ffff:ffff::',
-                network: 'fe80::', scope6: 'link' }
+                network: 'fe80::', scope6: 'link', flags: ['permanent'] }
             ],
             ip6: 'fe80::250:56ff:fe9a:8481',
             mac: '00:50:56:9a:61:46',
@@ -285,6 +292,9 @@ describe Facter::Resolvers::Linux::Networking do
         allow(Facter::Util::Resolvers::Networking::PrimaryInterface).to receive(:read_from_ip_route).and_return(nil)
         allow(Facter::Util::Linux::Dhcp).to receive(:dhcp).with('lo', '1', log_spy).and_return(nil)
         allow(Facter::Util::Linux::Dhcp).to receive(:dhcp).with('ens160', '2', log_spy).and_return(nil)
+        allow(File).to receive(:exist?).with('/proc/net/if_inet6').and_return(true)
+        allow(Facter::Util::FileHelper).to receive(:safe_read)
+          .with('/proc/net/if_inet6', nil).and_return(load_fixture('proc_net_if_inet6').read)
       end
 
       it 'returns all the interfaces' do

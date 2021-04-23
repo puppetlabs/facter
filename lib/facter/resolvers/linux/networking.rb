@@ -20,6 +20,7 @@ module Facter
             add_info_from_routing_table
             retrieve_primary_interface
             Facter::Util::Resolvers::Networking.expand_main_bindings(@fact_list)
+            add_flags
             @fact_list[fact_name]
           end
 
@@ -70,6 +71,23 @@ module Facter
             routes4, routes6 = Facter::Util::Linux::RoutingTable.read_routing_table(log)
             compare_ips(routes4, :bindings)
             compare_ips(routes6, :bindings6)
+          end
+
+          def add_flags
+            flags = Facter::Util::Linux::IfInet6.read_flags
+            flags.each_pair do |iface, ips|
+              next unless @fact_list[:interfaces].key?(iface)
+
+              ips.each_pair do |ip, ip_flags|
+                next unless @fact_list[:interfaces][iface].key?(:bindings6)
+
+                @fact_list[:interfaces][iface][:bindings6].each do |binding|
+                  next unless binding[:address] == ip
+
+                  binding[:flags] = ip_flags
+                end
+              end
+            end
           end
 
           def compare_ips(routes, binding_key)
