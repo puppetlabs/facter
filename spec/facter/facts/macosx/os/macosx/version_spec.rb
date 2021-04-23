@@ -26,12 +26,14 @@ describe Facts::Macosx::Os::Macosx::Version do
                           an_object_having_attributes(name: 'macosx_productversion_major', value: version['major'],
                                                       type: :legacy),
                           an_object_having_attributes(name: 'macosx_productversion_minor', value: version['minor'],
+                                                      type: :legacy),
+                          an_object_having_attributes(name: 'macosx_productversion_patch', value: version['patch'],
                                                       type: :legacy))
       end
 
       context 'when macOS version >= 11' do
         let(:resolver_output) { '11.2.1' }
-        let(:version) { { 'full' => '11.2.1', 'major' => '11', 'minor' => '2.1' } }
+        let(:version) { { 'full' => '11.2.1', 'major' => '11', 'minor' => '2', 'patch' => '1' } }
 
         before do
           allow(Facter::Resolvers::SwVers).to \
@@ -51,6 +53,8 @@ describe Facts::Macosx::Os::Macosx::Version do
                             an_object_having_attributes(name: 'macosx_productversion_major', value: version['major'],
                                                         type: :legacy),
                             an_object_having_attributes(name: 'macosx_productversion_minor', value: version['minor'],
+                                                        type: :legacy),
+                            an_object_having_attributes(name: 'macosx_productversion_patch', value: version['patch'],
                                                         type: :legacy))
         end
       end
