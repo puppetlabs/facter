@@ -39,7 +39,7 @@ After cloning the project, run `bundle install` to install all dependencies.
 You can run facter by executing `./bin/facter`.
 The command will output all the facts that facter detected for the current os.
 
-The implementation can be validated locally by running the `./check.sh` script.
+The implementation can be validated locally by running `bundle exec rake check`.
 
 ## Goals - fast, easy, compatible
 * Gain performance similar to the C++ version of Facter. We plan to achieve this goal by gathering multiple facts with only one call and by using the faster Win32 API rather than WMI for the Windows implementation.
