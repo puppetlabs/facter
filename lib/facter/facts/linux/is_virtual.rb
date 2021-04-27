@@ -5,12 +5,8 @@ module Facts
     class IsVirtual
       FACT_NAME = 'is_virtual'
 
-      def initialize
-        @virtual = Facter::Util::Facts::Posix::VirtualDetector.new
-      end
-
       def call_the_resolver
-        fact_value = @virtual.platform
+        fact_value = Facter::Util::Facts::Posix::VirtualDetector.platform
 
         Facter::ResolvedFact.new(FACT_NAME, check_if_virtual(fact_value))
       end

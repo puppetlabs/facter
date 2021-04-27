@@ -5,10 +5,6 @@ module Facts
     class AzMetadata
       FACT_NAME = 'az_metadata'
 
-      def initialize
-        @virtual = Facter::Util::Facts::Posix::VirtualDetector.new
-      end
-
       def call_the_resolver
         return Facter::ResolvedFact.new(FACT_NAME, nil) unless azure_hypervisor?
 
@@ -20,7 +16,7 @@ module Facts
       private
 
       def azure_hypervisor?
-        @virtual.platform == 'hyperv'
+        Facter::Util::Facts::Posix::VirtualDetector.platform == 'hyperv'
       end
     end
   end

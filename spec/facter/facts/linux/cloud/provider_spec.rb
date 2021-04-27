@@ -4,16 +4,12 @@ describe Facts::Linux::Cloud::Provider do
   describe '#call_the_resolver' do
     subject(:fact) { Facts::Linux::Cloud::Provider.new }
 
-    let(:virtual_detector) { instance_spy(Facter::Util::Facts::Posix::VirtualDetector) }
-
-    before do
-      allow(Facter::Util::Facts::Posix::VirtualDetector).to receive(:new).and_return(virtual_detector)
-    end
+    let(:virtual_detector) { class_spy(Facter::Util::Facts::Posix::VirtualDetector) }
 
     context 'when on hyperv' do
       before do
         allow(Facter::Resolvers::Az).to receive(:resolve).with(:metadata).and_return(value)
-        allow(virtual_detector).to receive(:platform).and_return('hyperv')
+        allow(Facter::Util::Facts::Posix::VirtualDetector).to receive(:platform).and_return('hyperv')
       end
 
       context 'when az_metadata exists' do
@@ -37,7 +33,7 @@ describe Facts::Linux::Cloud::Provider do
 
     context 'when on a physical machine' do
       before do
-        allow(virtual_detector).to receive(:platform).and_return(nil)
+        allow(Facter::Util::Facts::Posix::VirtualDetector).to receive(:platform).and_return(nil)
       end
 
       it 'returns nil' do

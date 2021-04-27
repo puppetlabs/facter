@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe Facter::Util::Facts::Posix::VirtualDetector do
-  subject(:detector) { Facter::Util::Facts::Posix::VirtualDetector.new }
+  subject(:detector) { Facter::Util::Facts::Posix::VirtualDetector }
 
   describe '#platform' do
     let(:logger_mock) { instance_spy(Facter::Log) }

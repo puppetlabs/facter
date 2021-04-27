@@ -4,13 +4,12 @@ describe Facts::Freebsd::Virtual do
   describe '#call_the_resolver' do
     subject(:fact) { Facts::Freebsd::Virtual.new }
 
-    let(:virtual_detector_double) { instance_spy(Facter::Util::Facts::Posix::VirtualDetector) }
+    let(:virtual_detector_double) { class_spy(Facter::Util::Facts::Posix::VirtualDetector) }
     let(:log_spy) { instance_spy(Facter::Log) }
 
     before do
       allow(Facter::Log).to receive(:new).and_return(log_spy)
-      allow(Facter::Util::Facts::Posix::VirtualDetector).to receive(:new).and_return(virtual_detector_double)
-      allow(virtual_detector_double).to receive(:platform).and_return(value)
+      allow(Facter::Util::Facts::Posix::VirtualDetector).to receive(:platform).and_return(value)
     end
 
     shared_examples 'check resolved fact value' do
