@@ -31,7 +31,7 @@ module Facter
       fetch(user_query) do
         split_user_query = Facter::Utils.split_user_query(user_query)
         split_user_query.reduce(self) do |memo, key|
-          memo.fetch(key) { memo.fetch(key.to_s) } if memo.is_a?(Hash) || memo.is_a?(Array)
+          memo.fetch(key) { memo.fetch(key.to_s) } if memo.respond_to?(:fetch)
         end
       end
     end
@@ -60,7 +60,7 @@ module Facter
 
     def bury_fact(fact)
       split_fact_name = extract_fact_name(fact)
-      bury(*split_fact_name + fact.filter_tokens << fact.value)
+      bury(*split_fact_name << fact.value)
     rescue NoMethodError
       @log.error("#{fact.type.to_s.capitalize} fact `#{fact.name}` cannot be added to collection."\
           ' The format of this fact is incompatible with other'\

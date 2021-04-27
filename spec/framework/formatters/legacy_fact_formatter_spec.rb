@@ -12,15 +12,15 @@ describe Facter::LegacyFactFormatter do
   end
 
   let(:nested_fact1) do
-    Facter::ResolvedFact.new('my.nested.fact1', 'my_nested_fact_value')
+    Facter::ResolvedFact.new('my.nested.fact1', [0, 1, 2, 3, 'my_nested_fact_value'])
   end
 
   let(:nested_fact2) do
-    Facter::ResolvedFact.new('my.nested.fact2', 'my_nested_fact_value')
+    Facter::ResolvedFact.new('my.nested.fact2', [0, 1, 2, 'my_nested_fact_value'])
   end
 
   let(:nested_fact3) do
-    Facter::ResolvedFact.new('my.nested.fact3', 'value')
+    Facter::ResolvedFact.new('my.nested.fact3', { 'my_nested_fact_value' => ['first', { 'another' => 'value' }] })
   end
 
   let(:nil_resolved_fact1) do

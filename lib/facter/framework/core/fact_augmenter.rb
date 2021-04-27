@@ -2,53 +2,49 @@
 
 module Facter
   module FactAugmenter
-    def self.augment_resolved_facts(searched_facts, resolved_facts)
-      augumented_resolved_facts = []
-      searched_facts.each do |searched_fact|
-        matched_facts = get_resolved_facts_for_searched_fact(searched_fact, resolved_facts)
-        augment_resolved_fact_for_user_query!(searched_fact, matched_facts)
-        augumented_resolved_facts.concat(matched_facts)
+    class << self
+      def augment_resolved_facts(searched_facts, resolved_facts)
+        augumented_resolved_facts = []
+        searched_facts.each do |searched_fact|
+          matched_facts = get_resolved_facts_for_searched_fact(searched_fact, resolved_facts)
+          augment_resolved_fact_for_user_query!(searched_fact, matched_facts)
+          augumented_resolved_facts.concat(matched_facts)
+        end
+
+        augumented_resolved_facts
       end
 
-      augumented_resolved_facts
-    end
+      private
 
-    private_class_method def self.get_resolved_facts_for_searched_fact(searched_fact, resolved_facts)
-      if searched_fact.name.include?('.*')
-        resolved_facts
-          .select { |resolved_fact| resolved_fact.name.match(searched_fact.name) }
-          .reject(&:user_query)
-          .uniq(&:name)
-      else
-        resolved_facts.select do |resolved_fact|
-          valid_fact(searched_fact, resolved_fact)
-        end.reject(&:user_query).uniq(&:name)
+      def get_resolved_facts_for_searched_fact(searched_fact, resolved_facts)
+        criteria = if searched_fact.name.include?('.*')
+                     ->(resolved_fact) { resolved_fact.name.match(searched_fact.name) }
+                   else
+                     ->(resolved_fact) { valid_fact?(searched_fact, resolved_fact) }
+                   end
+
+        resolved_facts.select(&criteria).reject(&:user_query).uniq(&:name)
       end
-    end
 
-    private_class_method def self.augment_resolved_fact_for_user_query!(searched_fact, matched_facts)
-      matched_facts.each do |matched_fact|
-        matched_fact.user_query = searched_fact.user_query
-        matched_fact.filter_tokens = searched_fact.filter_tokens
-      end
-    end
-
-    private_class_method def self.valid_fact(searched_fact, resolved_fact)
-      return false unless searched_fact.name.eql?(resolved_fact.name)
-
-      if searched_fact.filter_tokens.any?
-        case resolved_fact.value
-        when Array, Hash
-          begin
-            resolved_fact.value.dig(*searched_fact.filter_tokens)
-          rescue TypeError
-            return false
-          end
-        else
-          return false
+      def augment_resolved_fact_for_user_query!(searched_fact, matched_facts)
+        matched_facts.each do |matched_fact|
+          matched_fact.user_query = searched_fact.user_query
         end
       end
-      true
+
+      def valid_fact?(searched_fact, resolved_fact)
+        return false unless searched_fact.name == resolved_fact.name
+        return true unless searched_fact.filter_tokens.any?
+
+        fact_value = resolved_fact.value
+        return false unless fact_value.respond_to?(:dig)
+
+        begin
+          return true if fact_value.dig(*searched_fact.filter_tokens)
+        rescue StandardError
+          false
+        end
+      end
     end
   end
 end
