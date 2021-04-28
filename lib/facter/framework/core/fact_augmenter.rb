@@ -4,45 +4,30 @@ module Facter
   module FactAugmenter
     class << self
       def augment_resolved_facts(searched_facts, resolved_facts)
-        augumented_resolved_facts = []
-        searched_facts.each do |searched_fact|
+        searched_facts.reduce([]) do |result, searched_fact|
           matched_facts = get_resolved_facts_for_searched_fact(searched_fact, resolved_facts)
           augment_resolved_fact_for_user_query!(searched_fact, matched_facts)
-          augumented_resolved_facts.concat(matched_facts)
+          result + matched_facts
         end
-
-        augumented_resolved_facts
       end
 
       private
 
       def get_resolved_facts_for_searched_fact(searched_fact, resolved_facts)
-        criteria = if searched_fact.name.include?('.*')
-                     ->(resolved_fact) { resolved_fact.name.match(searched_fact.name) }
-                   else
-                     ->(resolved_fact) { valid_fact?(searched_fact, resolved_fact) }
-                   end
-
+        criteria = ->(resolved_fact) { valid_fact?(searched_fact, resolved_fact) }
         resolved_facts.select(&criteria).reject(&:user_query).uniq(&:name)
       end
 
       def augment_resolved_fact_for_user_query!(searched_fact, matched_facts)
-        matched_facts.each do |matched_fact|
-          matched_fact.user_query = searched_fact.user_query
-        end
+        matched_facts.each { |mf| mf.user_query = searched_fact.user_query }
       end
 
       def valid_fact?(searched_fact, resolved_fact)
-        return false unless searched_fact.name == resolved_fact.name
-        return true unless searched_fact.filter_tokens.any?
-
-        fact_value = resolved_fact.value
-        return false unless fact_value.respond_to?(:dig)
-
-        begin
-          return true if fact_value.dig(*searched_fact.filter_tokens)
-        rescue StandardError
-          false
+        searched_fact_name = searched_fact.name
+        if searched_fact_name.include?('.*')
+          resolved_fact.name.match(searched_fact_name)
+        else
+          resolved_fact.name == searched_fact_name
         end
       end
     end

@@ -31,7 +31,9 @@ module Facter
       fetch(user_query) do
         split_user_query = Facter::Utils.split_user_query(user_query)
         split_user_query.reduce(self) do |memo, key|
-          memo.fetch(key) { memo.fetch(key.to_s) } if memo.respond_to?(:fetch)
+          raise KeyError unless memo.respond_to?(:fetch)
+
+          memo.fetch(key) { memo.fetch(key.to_s) }
         end
       end
     end
