@@ -67,8 +67,8 @@ describe Facter::InternalFactManager do
         internal_fact_manager.resolve_facts([searched_fact, searched_fact_with_alias])
       end
 
-      it 'resolves the fact only once' do
-        expect(os_name_instance_spy).to have_received(:call_the_resolver).once
+      it 'resolves the fact for all searched facts' do
+        expect(os_name_instance_spy).to have_received(:call_the_resolver).twice
       end
     end
 
