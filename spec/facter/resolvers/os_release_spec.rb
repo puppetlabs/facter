@@ -6,6 +6,7 @@ describe Facter::Resolvers::OsRelease do
   end
 
   before do
+    Facter::Resolvers::OsRelease.invalidate_cache
     allow(Facter::Util::FileHelper).to receive(:safe_readlines)
       .with('/etc/os-release')
       .and_return(os_release_content)
