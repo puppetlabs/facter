@@ -7,11 +7,11 @@ describe Facter do
   let(:type) { :core }
   let(:os_fact) do
     instance_spy(Facter::ResolvedFact, name: fact_name, value: fact_value,
-                                       user_query: fact_user_query, filter_tokens: [], type: type)
+                                       user_query: fact_user_query, type: type)
   end
   let(:missing_fact) do
     instance_spy(Facter::ResolvedFact, name: 'missing_fact', value: nil,
-                                       user_query: 'missing_fact', filter_tokens: [], type: :nil)
+                                       user_query: 'missing_fact', type: :nil)
   end
   let(:empty_fact_collection) { Facter::FactCollection.new }
   let(:logger) { instance_spy(Facter::Log) }

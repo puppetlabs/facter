@@ -41,7 +41,7 @@ module Facter
       def no_user_query(loaded_facts)
         searched_facts = []
         loaded_facts.each do |loaded_fact|
-          searched_facts << SearchedFact.new(loaded_fact.name, loaded_fact.klass, [], '', loaded_fact.type)
+          searched_facts << SearchedFact.new(loaded_fact.name, loaded_fact.klass, '', loaded_fact.type)
         end
         searched_facts
       end
@@ -59,7 +59,7 @@ module Facter
           return resolvable_fact_list if resolvable_fact_list.any?
         end
 
-        resolvable_fact_list << SearchedFact.new(query, nil, [], query, :nil) if resolvable_fact_list.empty?
+        resolvable_fact_list << SearchedFact.new(query, nil, query, :nil) if resolvable_fact_list.empty?
 
         resolvable_fact_list
       end
@@ -73,7 +73,7 @@ module Facter
 
           next unless found_fact?(loaded_fact.name, query_fact)
 
-          searched_fact = construct_loaded_fact(query_tokens, query_token_range, loaded_fact)
+          searched_fact = construct_loaded_fact(query_tokens, loaded_fact)
           resolvable_fact_list << searched_fact
         end
 
@@ -93,22 +93,15 @@ module Facter
         true
       end
 
-      def construct_loaded_fact(query_tokens, query_token_range, loaded_fact)
-        filter_tokens = construct_filter_tokens(query_tokens, query_token_range)
+      def construct_loaded_fact(query_tokens, loaded_fact)
         user_query = @query_list.any? ? query_tokens.join('.') : ''
         fact_name = loaded_fact.name.to_s
         klass_name = loaded_fact.klass
         type = loaded_fact.type
-        sf = SearchedFact.new(fact_name, klass_name, filter_tokens, user_query, type)
+        sf = SearchedFact.new(fact_name, klass_name, user_query, type)
         sf.file = loaded_fact.file
 
         sf
-      end
-
-      def construct_filter_tokens(query_tokens, query_token_range)
-        query_tokens.drop(query_token_range.size).map do |token|
-          token =~ /^[0-9]+$/ ? token.to_i : token
-        end
       end
     end
   end

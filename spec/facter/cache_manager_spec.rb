@@ -6,21 +6,21 @@ describe Facter::CacheManager do
   let(:cache_dir) { '/etc/facter/cache' }
   let(:searched_core_fact) do
     instance_spy(Facter::SearchedFact, name: 'os', fact_class: instance_spy(Facts::Linux::Os::Name),
-                                       filter_tokens: [], user_query: '', type: :core, file: nil)
+                                       user_query: '', type: :core, file: nil)
   end
   let(:searched_custom_fact) do
-    instance_spy(Facter::SearchedFact, name: 'my_custom_fact', fact_class: nil, filter_tokens: [],
+    instance_spy(Facter::SearchedFact, name: 'my_custom_fact', fact_class: nil,
                                        user_query: '', type: :custom, file: nil)
   end
   let(:searched_external_fact) do
-    instance_spy(Facter::SearchedFact, name: 'my_external_fact', fact_class: nil, filter_tokens: [],
+    instance_spy(Facter::SearchedFact, name: 'my_external_fact', fact_class: nil,
                                        user_query: '', type: :file, file: '/tmp/ext_file.txt')
   end
   let(:searched_facts) { [searched_core_fact, searched_custom_fact, searched_external_fact] }
   let(:cached_core_fact) { "{\n  \"os\": \"Ubuntu\",\n  \"cache_format_version\": 1\n}" }
   let(:cached_external_fact) { "{\n  \"my_external_fact\": \"ext_fact\",\n\"cache_format_version\": 1\n}" }
 
-  let(:resolved_core_fact) { mock_resolved_fact('os', 'Ubuntu', '', []) }
+  let(:resolved_core_fact) { mock_resolved_fact('os', 'Ubuntu', '') }
   let(:resolved_facts) { [resolved_core_fact] }
   let(:group_name) { 'operating system' }
   let(:cache_file_name) { File.join(cache_dir, group_name) }
