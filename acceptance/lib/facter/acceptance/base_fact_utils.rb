@@ -146,6 +146,10 @@ module Facter
           os_arch                 = 'aarch64'
           os_hardware             = 'aarch64'
           processor_model_pattern = // # aarch64 does not populate a model value in /proc/cpuinfo
+        elsif agent['platform'] =~ /ppc64le/
+          os_arch                 = 'ppc64le'
+          os_hardware             = 'ppc64le'
+          processor_model_pattern = /(POWER.*)/
         else
           os_arch                 = 'i386'
           os_hardware             = 'i686'
