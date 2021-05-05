@@ -81,6 +81,10 @@ module FFI
 
     def read_int; end
 
+    def read_uint32(); end
+
+    def read_wide_string_with_length(*); end
+
     def self.size; end
   end
 
