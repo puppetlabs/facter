@@ -67,22 +67,30 @@ module Facter
         end
 
         def get_mount_sizes(mount)
-          stats = Facter::Util::Resolvers::FilesystemHelper.read_mountpoint_stats(mount[:path])
+          begin
+            stats = Facter::Util::Resolvers::FilesystemHelper.read_mountpoint_stats(mount[:path])
+            get_bytes_data(mount, stats)
+          rescue Sys::Filesystem::Error => e
+            @log.debug("Could not get stats for mountpoint #{mount[:path]}, got #{e}")
+            mount[:size_bytes] = mount[:available_bytes] = mount[:used_bytes] = 0
+          end
 
-          get_bytes_data(mount, stats)
-
-          total_bytes = mount[:used_bytes] + mount[:available_bytes]
-          mount[:capacity] = Facter::Util::Resolvers::FilesystemHelper.compute_capacity(mount[:used_bytes], total_bytes)
-
-          mount[:size] = Facter::Util::Facts::UnitConverter.bytes_to_human_readable(mount[:size_bytes])
-          mount[:available] = Facter::Util::Facts::UnitConverter.bytes_to_human_readable(mount[:available_bytes])
-          mount[:used] = Facter::Util::Facts::UnitConverter.bytes_to_human_readable(mount[:used_bytes])
+          populate_mount(mount)
         end
 
         def get_bytes_data(mount, stats)
           mount[:size_bytes] = stats.bytes_total.abs
           mount[:available_bytes] = stats.bytes_available.abs
           mount[:used_bytes] = stats.bytes_used.abs
+        end
+
+        def populate_mount(mount)
+          total_bytes = mount[:used_bytes] + mount[:available_bytes]
+          mount[:capacity] = Facter::Util::Resolvers::FilesystemHelper.compute_capacity(mount[:used_bytes], total_bytes)
+
+          mount[:size] = Facter::Util::Facts::UnitConverter.bytes_to_human_readable(mount[:size_bytes])
+          mount[:available] = Facter::Util::Facts::UnitConverter.bytes_to_human_readable(mount[:available_bytes])
+          mount[:used] = Facter::Util::Facts::UnitConverter.bytes_to_human_readable(mount[:used_bytes])
         end
       end
     end

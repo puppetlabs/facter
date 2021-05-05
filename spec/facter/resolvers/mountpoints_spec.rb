@@ -64,6 +64,49 @@ describe Facter::Resolvers::Mountpoints do
     expect(result).to be_empty
   end
 
+  context 'when mountpoint cannot be accessed' do
+    subject(:mountpoints) { Facter::Resolvers::Mountpoints }
+
+    let(:expected_fact) do
+      [{ available: '0 bytes',
+         available_bytes: 0,
+         capacity: '100%',
+         device: '/dev/nvme0n1p2',
+         filesystem: 'ext4',
+         options: %w[rw noatime],
+         path: '/',
+         size: '0 bytes',
+         size_bytes: 0,
+         used: '0 bytes',
+         used_bytes: 0 }]
+    end
+    let(:logger) { instance_spy(Facter::Log) }
+
+    before do
+      stub_const('Sys::Filesystem::Error', StandardError)
+      allow(Facter::Util::Resolvers::FilesystemHelper).to \
+        receive(:read_mountpoint_stats).with(mount.mount_point).and_raise(Sys::Filesystem::Error)
+
+      mountpoints.instance_variable_set(:@log, logger)
+    end
+
+    after do
+      Facter.instance_variable_set(:@logger, nil)
+    end
+
+    it 'logs into debug if it cannot receive mountpoints stats' do
+      Facter::Resolvers::Mountpoints.resolve(:mountpoints)
+
+      expect(logger).to have_received(:debug)
+        .with("Could not get stats for mountpoint #{mount.mount_point}, got StandardError")
+    end
+
+    it 'fallbacks to default values' do
+      result = Facter::Resolvers::Mountpoints.resolve(:mountpoints)
+      expect(result).to eq(expected_fact)
+    end
+  end
+
   describe '.root_device' do
     let(:mount) do
       double(Sys::Filesystem::Mount, mount_point: '/', mount_type: 'ext4', options: 'rw,noatime', name: '/dev/root')
