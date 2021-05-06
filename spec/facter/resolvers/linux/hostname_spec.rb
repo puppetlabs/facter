@@ -87,9 +87,9 @@ describe Facter::Resolvers::Linux::Hostname do
         context 'when FFI is not installed' do
           before do
             allow(Socket).to receive(:gethostname).and_return(nil)
-            allow(Facter::Resolvers::Linux::Hostname).to receive(:require).and_call_original
-            allow(Facter::Resolvers::Linux::Hostname).to receive(:require)
-              .with('facter/util/resolvers/ffi/hostname')
+            allow(Facter::Resolvers::Linux::Hostname).to receive(:require_relative).and_call_original
+            allow(Facter::Resolvers::Linux::Hostname).to receive(:require_relative)
+              .with(%r{resolvers/ffi/hostname})
               .and_raise(LoadError, 'cannot load ffi')
           end
 
@@ -177,10 +177,10 @@ describe Facter::Resolvers::Linux::Hostname do
           before do
             allow(Socket).to receive(:gethostname).and_return(host)
             allow(Facter::Util::FileHelper).to receive(:safe_read).with('/etc/resolv.conf').and_return(resolv_conf)
-            allow(Facter::Resolvers::Linux::Hostname).to receive(:require).and_call_original
+            allow(Facter::Resolvers::Linux::Hostname).to receive(:require_relative).and_call_original
 
-            allow(Facter::Resolvers::Linux::Hostname).to receive(:require)
-              .with('facter/util/resolvers/ffi/hostname')
+            allow(Facter::Resolvers::Linux::Hostname).to receive(:require_relative)
+              .with(%r{resolvers/ffi/hostname})
               .and_raise(LoadError, 'cannot load ffi')
           end
 
@@ -222,9 +222,9 @@ describe Facter::Resolvers::Linux::Hostname do
       let(:fqdn) { nil }
 
       before do
-        allow(Facter::Resolvers::Linux::Hostname).to receive(:require).and_call_original
-        allow(Facter::Resolvers::Linux::Hostname).to receive(:require)
-          .with('facter/util/resolvers/ffi/hostname')
+        allow(Facter::Resolvers::Linux::Hostname).to receive(:require_relative).and_call_original
+        allow(Facter::Resolvers::Linux::Hostname).to receive(:require_relative)
+          .with(%r{resolvers/ffi/hostname})
           .and_raise(LoadError, 'cannot load ffi')
       end
 
