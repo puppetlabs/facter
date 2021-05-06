@@ -15,7 +15,7 @@ module Facter
         end
 
         def read_performance_information
-          require 'facter/resolvers/windows/ffi/memory_ffi'
+          require_relative '../../../facter/resolvers/windows/ffi/memory_ffi'
 
           state_ptr = FFI::MemoryPointer.new(PerformanceInformation.size)
           if MemoryFFI::GetPerformanceInfo(state_ptr, state_ptr.size) == FFI::WIN32FALSE
