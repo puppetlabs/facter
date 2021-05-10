@@ -2,15 +2,13 @@
 
 module Facter
   class InternalFactManager
-    @@log = Facter::Log.new(self)
-
     def resolve_facts(searched_facts)
       internal_searched_facts = filter_internal_facts(searched_facts)
       resolved_facts = if Options[:sequential]
-                         @@log.debug('Resolving facts sequentially')
+                         log.debug('Resolving facts sequentially')
                          resolve_sequentially(internal_searched_facts)
                        else
-                         @@log.debug('Resolving fact in parallel')
+                         log.debug('Resolving fact in parallel')
                          resolve_in_parallel(internal_searched_facts)
                        end
 
@@ -72,8 +70,12 @@ module Facter
       fact = CoreFact.new(searched_fact)
       fact.create
     rescue StandardError => e
-      @@log.log_exception(e)
+      log.log_exception(e)
       nil
+    end
+
+    def log
+      @log ||= Facter::Log.new(self)
     end
   end
 end
