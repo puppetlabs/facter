@@ -2,6 +2,12 @@
 
 module Facter
   class InternalFactManager
+    # resolves each SearchFact and filter out facts that do not match the given user query
+    # @param searched_facts [Array<Facter::SearchedFact>] array of searched facts
+    #
+    # @return [Array<Facter::ResolvedFact>]
+    #
+    # @api private
     def resolve_facts(searched_facts)
       internal_searched_facts = filter_internal_facts(searched_facts)
       resolved_facts = if Options[:sequential]

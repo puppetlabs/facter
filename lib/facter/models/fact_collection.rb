@@ -11,6 +11,12 @@ module Facter
       deep_to_h.to_yaml
     end
 
+    # Transorms a list of {Facter::ResolvedFact} into a nested collection.
+    # @param facts [Array<Facter::ResolvedFact>]
+    #
+    # @return [FactCollection]
+    #
+    # @api private
     def build_fact_collection!(facts)
       facts.each do |fact|
         next if %i[core legacy].include?(fact.type) && fact.value.nil?
@@ -27,6 +33,15 @@ module Facter
       nil
     end
 
+    # Collection#fetch implementation for nested collections.
+    # @param user_query [String] the search terms, separated by "."
+    #
+    # @return [String]
+    #
+    # @example for fact_collection = { "os": { "name": "Darwin" } }
+    #   fact_collection.fetch("os.name") #=> "Darwin"
+    #
+    # @api private
     def value(user_query)
       fetch(user_query) do
         split_user_query = Facter::Utils.split_user_query(user_query)
