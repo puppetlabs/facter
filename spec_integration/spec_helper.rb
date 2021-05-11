@@ -1,18 +1,11 @@
 # frozen_string_literal: true
 
-require 'pathname'
+require 'facter'
 require_relative 'integration_helper'
 require_relative '../spec/custom_facts/puppetlabs_spec/files'
 
-ROOT_DIR = Pathname.new(File.expand_path('..', __dir__)) unless defined?(ROOT_DIR)
-
 # prevent facter from loading its spec files as facts
 $LOAD_PATH.delete_if { |entry| entry =~ %r{facter/spec} }
-
-ENV['RACK_ENV'] = 'test'
-
-require 'bundler/setup'
-require 'facter'
 
 # Configure RSpec
 RSpec.configure do |config|

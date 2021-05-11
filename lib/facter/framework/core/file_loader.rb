@@ -59,5 +59,4 @@ os_hierarchy.each { |operating_system| load_dir(['resolvers', operating_system.d
 require 'facter/custom_facts/core/legacy_facter'
 load_dir(%w[framework utils])
 
-require 'facter/framework/core/fact_augmenter'
 require 'facter/framework/parsers/query_parser'

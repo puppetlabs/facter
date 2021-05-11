@@ -11,6 +11,12 @@ module Facter
       deep_to_h.to_yaml
     end
 
+    # Transorms a list of {Facter::ResolvedFact} into a nested collection.
+    # @param facts [Array<Facter::ResolvedFact>]
+    #
+    # @return [FactCollection]
+    #
+    # @api private
     def build_fact_collection!(facts)
       facts.each do |fact|
         next if %i[core legacy].include?(fact.type) && fact.value.nil?
@@ -27,11 +33,22 @@ module Facter
       nil
     end
 
+    # Collection#fetch implementation for nested collections.
+    # @param user_query [String] the search terms, separated by "."
+    #
+    # @return [String]
+    #
+    # @example for fact_collection = { "os": { "name": "Darwin" } }
+    #   fact_collection.fetch("os.name") #=> "Darwin"
+    #
+    # @api private
     def value(user_query)
       fetch(user_query) do
         split_user_query = Facter::Utils.split_user_query(user_query)
         split_user_query.reduce(self) do |memo, key|
-          memo.fetch(key) { memo.fetch(key.to_s) } if memo.is_a?(Hash) || memo.is_a?(Array)
+          raise KeyError unless memo.respond_to?(:fetch)
+
+          memo.fetch(key) { memo.fetch(key.to_s) }
         end
       end
     end
@@ -60,7 +77,7 @@ module Facter
 
     def bury_fact(fact)
       split_fact_name = extract_fact_name(fact)
-      bury(*split_fact_name + fact.filter_tokens << fact.value)
+      bury(*split_fact_name << fact.value)
     rescue NoMethodError
       @log.error("#{fact.type.to_s.capitalize} fact `#{fact.name}` cannot be added to collection."\
           ' The format of this fact is incompatible with other'\

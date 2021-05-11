@@ -47,6 +47,10 @@ describe 'Facter' do
         it 'does not use non negative index' do
           expect(Facter.value('processors.models.-1')).to be_nil
         end
+
+        it 'respects the filter tokens' do
+          expect(Facter.value('processors')['models'][0]).to eql(Facter.value('processors.models.0'))
+        end
       end
     end
 
