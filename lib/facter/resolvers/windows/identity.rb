@@ -31,12 +31,7 @@ module Facter
             return
           end
 
-          { user: name_ptr.read_wide_string_with_length(size_ptr.read_uint32), privileged: privileged? }
-        end
-
-        def privileged?
-          result = IdentityFFI::IsUserAnAdmin()
-          result && result != FFI::WIN32FALSE
+          { user: name_ptr.read_wide_string_with_length(size_ptr.read_uint32), privileged: IdentityFFI.privileged? }
         end
 
         def retrieve_facts(fact_name)

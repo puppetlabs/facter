@@ -12,4 +12,9 @@ module IdentityFFI
   ffi_convention :stdcall
   ffi_lib :shell32
   attach_function :IsUserAnAdmin, [], :win32_bool
+
+  def self.privileged?
+    result = self.IsUserAnAdmin()
+    result && result != FFI::WIN32FALSE
+  end
 end
