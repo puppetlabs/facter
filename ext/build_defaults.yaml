@@ -1,3 +1,4 @@
 ---
 build_gem: TRUE
 project: facter
+nonfinal_gem_path: '/opt/repository-nightlies/downloads/gems/facter-nightly'
