@@ -10,8 +10,8 @@ Gem::Specification.new do |spec|
   spec.email         = ['team-nw@puppet.com']
   spec.homepage      = 'https://github.com/puppetlabs/facter'
 
-  spec.summary       = 'New version of Facter'
-  spec.description   = 'New version of Facter'
+  spec.summary       = 'Facter, a system inventory tool'
+  spec.description   = 'You can prove anything with facts!'
   spec.license       = 'MIT'
 
   spec.files = Dir['bin/facter'] +

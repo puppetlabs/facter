@@ -1,1 +1,17 @@
-build_defaults.yaml
+---
+project: 'facter'
+author: 'Puppet Labs'
+email: 'team-nw@puppet.com'
+homepage: 'https://github.com/puppetlabs/facter'
+summary: 'Facter, a system inventory tool'
+description: 'You can prove anything with facts!'
+version_file: 'lib/facter/version.rb'
+files: 'bin/facter lib/facter.rb lib/**/*.rb'
+gem_files: 'bin/facter lib/facter.rb lib/**/*.rb'
+gem_require_path: 'lib'
+gem_executables: 'facter'
+gem_default_executables: 'facter'
+gem_required_ruby_version: ['>= 2.3', '< 4.0']
+gem_runtime_dependencies:
+  hocon: ~> 1.3
+  thor: ['>= 1.0.1', '< 2.0']
