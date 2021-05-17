@@ -67,6 +67,18 @@ describe Facter::Resolvers::Partitions do
           .with("#{sys_block_path}/sda/sda1/size", '0').and_return('234')
       end
 
+      context 'when there is more than one partition' do
+        it 'checks for blkid only once' do
+          resolver.resolve(:partitions)
+          expect(Facter::Core::Execution).to have_received(:execute).with('which blkid', logger: logger).once
+        end
+
+        it 'checks for lsblk only once' do
+          resolver.resolve(:partitions)
+          expect(Facter::Core::Execution).to have_received(:execute).with('which lsblk', logger: logger).once
+        end
+      end
+
       context 'when device size files are readable' do
         let(:partitions) do
           { '/dev/sda1' => { filesystem: 'ext3', label: '/boot', size: '117.00 KiB',

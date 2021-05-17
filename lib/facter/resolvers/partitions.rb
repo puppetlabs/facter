@@ -109,7 +109,7 @@ module Facter
 
           output = Facter::Core::Execution.execute("which #{command}", logger: log)
 
-          blkid_and_lsblk[:command_exists_key] = !output.empty?
+          blkid_and_lsblk[command_exists_key] = !output.empty?
         end
 
         def execute_and_extract_blkid_info
