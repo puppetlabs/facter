@@ -38,14 +38,11 @@ private_methods def allow_attr_change(resolved_fact_mock, fact_name, fact_value)
 
   allow(resolved_fact_mock)
     .to receive(:user_query=)
-
-  allow(resolved_fact_mock)
-    .to receive(:filter_tokens=)
 end
 
-def mock_resolved_fact(fact_name, fact_value, user_query = nil, filter_tokens = [], type = :core)
+def mock_resolved_fact(fact_name, fact_value, user_query = nil, type = :core)
   resolved_fact_mock = double(Facter::ResolvedFact, name: fact_name, value: fact_value,
-                                                    user_query: user_query, filter_tokens: filter_tokens, type: type,
+                                                    user_query: user_query, type: type,
                                                     legacy?: type == :legacy, core?: type == :core, file: nil)
 
   allow_attr_change(resolved_fact_mock, fact_name, fact_value)

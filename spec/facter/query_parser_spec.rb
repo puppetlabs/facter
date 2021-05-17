@@ -19,19 +19,6 @@ describe Facter::QueryParser do
         contain_exactly(an_instance_of(Facter::SearchedFact).and(having_attributes(fact_class: os_name_class)))
     end
 
-    it 'compose filter_tokens correctly' do
-      query_list = ['os.release.arry.1.val2']
-
-      os_name_class = 'Facter::Ubuntu::OsName'
-
-      loaded_fact_os_name = double(Facter::LoadedFact, name: 'os.release', klass: os_name_class, type: :core, file: nil)
-      loaded_facts = [loaded_fact_os_name]
-
-      matched_facts = Facter::QueryParser.parse(query_list, loaded_facts)
-
-      expect(matched_facts.first.filter_tokens).to eq(['arry', 1, 'val2'])
-    end
-
     it 'creates one legacy fact' do
       query_list = ['ipaddress_ens160']
 

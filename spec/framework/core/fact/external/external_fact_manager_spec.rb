@@ -5,7 +5,7 @@ describe Facter::ExternalFactManager do
     let(:custom_fact_name) { 'my_custom_fact' }
     let(:custom_fact_value) { 'custom_fact_value' }
     let(:custom_fact) { Facter::Util::Fact.new(custom_fact_name) }
-    let(:searched_fact) { Facter::SearchedFact.new(custom_fact_name, nil, [], '', :custom) }
+    let(:searched_fact) { Facter::SearchedFact.new(custom_fact_name, nil, '', :custom) }
     let(:custom_fact_manager) { Facter::ExternalFactManager.new }
 
     before do
