@@ -38,12 +38,14 @@ test_name "C100305: The Ruby fact should resolve as expected in AIO" do
           end
       end
 
+      has_sitedir = !on(agent, 'ruby -e"puts RbConfig::CONFIG[\'sitedir\']"').output.chomp.empty?
+
       ruby_version   = /2\.\d+\.\d+/
       expected_facts = {
           'ruby.platform' => ruby_platform,
-          'ruby.sitedir'  => /\/site_ruby/,
           'ruby.version'  => ruby_version
       }
+      expected_facts['ruby.sitedir'] = /\/site_ruby/ if has_sitedir
 
       step("verify that ruby structured fact contains facts") do
         on(agent, facter("--json ruby")) do |facter_results|
