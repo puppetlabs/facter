@@ -38,7 +38,7 @@ module Facter
           !!(path =~ ABSOLUTE_PATH_REGEX)
         end
 
-        DOUBLE_QUOTED_COMMAND = /^"(.+?)"(?:\s+(.*))?/.freeze
+        DOUBLE_QUOTED_COMMAND = /\A"(.+?)"(?:\s+(.*))?/.freeze
 
         def expand_command(command)
           exe = nil

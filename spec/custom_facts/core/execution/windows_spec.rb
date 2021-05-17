@@ -125,6 +125,13 @@ describe Facter::Core::Execution::Windows do
       expect(executor.expand_command('foo /a /b')).to eq '"C:\My Tools\foo.exe" /a /b'
     end
 
+    it 'expands a multi-line command with double quotes' do
+      allow(executor).to receive(:which).with('foo').and_return 'C:\My Tools\foo.exe'
+      expect(executor.expand_command(
+               'foo cmd /c\\n" show | grep "(^test)'
+             )).to eq(%q("C:\My Tools\foo.exe" cmd /c\n" show | grep "(^test)))
+    end
+
     it 'returns nil if command not found' do
       allow(executor).to receive(:which).with('foo').and_return nil
       expect(executor.expand_command('foo /a | stuff >> NUL')).to be nil
