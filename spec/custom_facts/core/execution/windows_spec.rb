@@ -1,5 +1,5 @@
 describe Facter::Core::Execution::Windows do
-  subject(:executor) { Facter::Core::Execution::Windows.new }
+  let(:executor) { Facter::Core::Execution::Windows.new }
 
   before do
     allow(LegacyFacter).to receive(:value).and_return('Windows')
