@@ -1,5 +1,5 @@
 describe Facter::Core::Execution::Posix, unless: LegacyFacter::Util::Config.windows? do
-  subject(:posix_executor) { Facter::Core::Execution::Posix.new }
+  let(:posix_executor) { Facter::Core::Execution::Posix.new }
 
   describe '#search_paths' do
     it 'uses the PATH environment variable plus /sbin and /usr/sbin on unix' do
@@ -68,6 +68,20 @@ describe Facter::Core::Execution::Posix, unless: LegacyFacter::Util::Config.wind
     it 'quotes expanded binary if found in path with spaces' do
       allow(posix_executor).to receive(:which).with('foo.sh').and_return '/home/bob/my tools/foo.sh'
       expect(posix_executor.expand_command('foo.sh /a /b')).to eq "'/home/bob/my tools/foo.sh' /a /b"
+    end
+
+    it 'expands a multi-line command with single quotes' do
+      allow(posix_executor).to receive(:which).with('dpkg-query').and_return '/usr/bin/dpkg-query'
+      expect(posix_executor.expand_command(
+               "dpkg-query --showformat='${PACKAGE} ${VERSION}\n' --show | egrep '(^samba)"
+             )).to eq("/usr/bin/dpkg-query --showformat='${PACKAGE} ${VERSION}\n' --show | egrep '(^samba)")
+    end
+
+    it 'expands a multi-line command with double quotes' do
+      allow(posix_executor).to receive(:which).with('dpkg-query').and_return '/usr/bin/dpkg-query'
+      expect(posix_executor.expand_command(
+               "dpkg-query --showformat='${PACKAGE} ${VERSION}\n\" --show | egrep \"(^samba)"
+             )).to eq("/usr/bin/dpkg-query --showformat='${PACKAGE} ${VERSION}\n\" --show | egrep \"(^samba)")
     end
 
     it 'returns nil if not found' do
