@@ -19,6 +19,7 @@ end
 require 'open3'
 require 'thor'
 require 'fileutils'
+require 'timecop'
 
 require_relative '../lib/facter/resolvers/base_resolver'
 

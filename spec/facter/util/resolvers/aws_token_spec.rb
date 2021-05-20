@@ -7,6 +7,10 @@ describe 'Facter::Util::Resolvers::Http' do
     Facter::Util::Resolvers::AwsToken.reset
   end
 
+  after do
+    Facter::Util::Resolvers::AwsToken.reset
+  end
+
   describe '#get' do
     it 'calls Facter::Util::Resolvers::Http.put_request' do
       allow(Facter::Util::Resolvers::Http).to receive(:put_request)
@@ -24,7 +28,7 @@ describe 'Facter::Util::Resolvers::Http' do
     it 'makes a second request if token is expired' do
       allow(Facter::Util::Resolvers::Http).to receive(:put_request).and_return('token')
       aws_token.get(1)
-      sleep 1
+      Timecop.travel(Time.now + 2)
       aws_token.get(1)
       expect(Facter::Util::Resolvers::Http).to have_received(:put_request).twice
     end
