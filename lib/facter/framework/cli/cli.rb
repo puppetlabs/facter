@@ -126,7 +126,7 @@ module Facter
       Facter.values(@options, args)
     end
 
-    desc '--version, -v', 'Print the version', hide: true
+    desc '--version, -v', 'Print the version'
     map ['--version', '-v'] => :version
     def version(*_args)
       puts Facter::VERSION
@@ -168,7 +168,7 @@ module Facter
       exit status
     end
 
-    desc 'help', 'Help for all arguments'
+    desc '--help, -h', 'Help for all arguments'
     def help(*args)
       help_string = +''
       help_string << help_header(args)
@@ -205,7 +205,11 @@ module Facter
         Cli.commands
            .select { |_k, command_class| command_class.instance_of?(Thor::Command) }
            .each do |_k, command|
-          help_command_options << build_option(command['name'], [], command['description'])
+          help_command_options << build_option(
+            command['name'],
+            [command['usage'].split(',')[1]],
+            command['description']
+          )
         end
 
         help_command_options
