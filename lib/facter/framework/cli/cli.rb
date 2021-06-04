@@ -97,6 +97,11 @@ module Facter
                  type: :boolean,
                  desc: 'Resolve facts sequentially'
 
+    class_option :puppet,
+                 type: :boolean,
+                 aliases: '-p',
+                 desc: 'Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.'
+
     desc '--man', 'Display manual.', hide: true
     map ['--man'] => :man
     def man(*args)
@@ -111,6 +116,7 @@ module Facter
 
     desc 'query', 'Default method', hide: true
     def query(*args)
+      Facter.puppet_facts if options[:puppet]
       output, status = Facter.to_user_output(@options, *args)
       puts output
 
@@ -154,18 +160,6 @@ module Facter
       cache_groups.gsub!(/:\s*\n/, "\n")
 
       puts cache_groups
-    end
-
-    desc '--puppet, -p', 'Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.'
-    map ['--puppet', '-p'] => :puppet
-    def puppet(*args)
-      Facter.puppet_facts
-
-      output, status = Facter.to_user_output(@options, *args)
-      puts output
-
-      status = 1 if Facter::Log.errors?
-      exit status
     end
 
     desc '--help, -h', 'Help for all arguments'
