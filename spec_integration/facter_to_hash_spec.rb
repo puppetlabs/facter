@@ -35,17 +35,21 @@ describe Facter do
       end
     end
 
-    context 'when concatenating short flags' do
-      it 'returns no error' do
-        _, err = IntegrationHelper.exec_facter('-pjdt')
+    context 'when concatenating short options' do
+      context 'when using valid flags' do
+        it 'returns no error' do
+          _, err = IntegrationHelper.exec_facter('-pjdt')
 
-        expect(err).not_to match(/ERROR Facter::OptionsValidator - unrecognised option/)
+          expect(err).not_to match(/ERROR Facter::OptionsValidator - unrecognised option/)
+        end
       end
 
-      it 'returns error' do
-        _, err = IntegrationHelper.exec_facter('-pjdtz')
+      context 'when using flags and subcommands' do
+        it 'returns validation error' do
+          _, err = IntegrationHelper.exec_facter('-pjdtz')
 
-        expect(err).to match(/ERROR Facter::OptionsValidator - .*unrecognised option '-z'/)
+          expect(err).to match(/ERROR Facter::OptionsValidator - .*unrecognised option '-z'/)
+        end
       end
 
       context 'when concatenating JSON and DEBUG flags' do
