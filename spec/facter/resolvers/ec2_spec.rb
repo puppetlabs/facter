@@ -119,7 +119,6 @@ describe Facter::Resolvers::Ec2 do
 
     let(:token) { 'v2_token' }
     let(:headers) { { 'X-aws-ec2-metadata-token' => token } }
-    let(:expected_header) { headers }
 
     it_behaves_like 'ec2'
   end
@@ -131,7 +130,6 @@ describe Facter::Resolvers::Ec2 do
 
     let(:token) { nil }
     let(:headers) { { 'Accept' => '*/*' } }
-    let(:expected_header) { {} }
 
     it_behaves_like 'ec2'
   end
@@ -139,8 +137,8 @@ describe Facter::Resolvers::Ec2 do
   it 'does not add headers if token is nil' do
     allow(Facter::Resolvers::Ec2).to receive(:v2_token).and_return(nil)
 
-    stub_request(:any, metadata_uri).with { |request| !request.headers.key?('X-aws-ec2-metadata-token') }
-    stub_request(:any, userdata_uri).with { |request| !request.headers.key?('X-aws-ec2-metadata-token') }
+    stub_request(:get, metadata_uri).with { |request| !request.headers.key?('X-aws-ec2-metadata-token') }
+    stub_request(:get, userdata_uri).with { |request| !request.headers.key?('X-aws-ec2-metadata-token') }
 
     ec2.resolve(:userdata)
   end
