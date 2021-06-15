@@ -173,7 +173,12 @@ module Facter
             'kernelrelease'            => /\d+\.\d+\.\d+/,
             'kernelversion'            => /\d+\.\d+/,
             'kernelmajversion'         => /\d+\.\d+/
-        }
+        }.reject do |fact, value|
+          # Skip os fact matching on Debian 11 as it does not report the stable
+          # version until its official release
+          fact.start_with?('os.') if os_version == /11/
+        end
+
         expected_facts
       end
 
