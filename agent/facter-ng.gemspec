@@ -13,6 +13,7 @@ Gem::Specification.new do |spec|
   spec.description   = 'You can prove anything with facts!'
 
   spec.files = Dir['bin/facter-ng'] +
+               Dir['LICENSE'] +
                Dir['lib/**/*.rb'] +
                Dir['lib/**/*.json'] +
                Dir['lib/**/*.conf'] +

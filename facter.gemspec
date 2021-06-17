@@ -15,6 +15,7 @@ Gem::Specification.new do |spec|
   spec.license       = 'MIT'
 
   spec.files = Dir['bin/facter'] +
+               Dir['LICENSE'] +
                Dir['lib/**/*.rb'] +
                Dir['lib/**/*.json'] +
                Dir['lib/**/*.conf'] +
