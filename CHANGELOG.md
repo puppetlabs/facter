@@ -1,3 +1,7 @@
+## Facter release notes are now provided as part of the [official Puppet documentation](https://puppet.com/docs/puppet/7/release_notes_facter.html) and are no longer tracked in this file.
+
+# Previous versions
+
 ## [4.0.44](https://github.com/puppetlabs/facter/tree/4.0.44) (2020-10-21)
 
 [Full Changelog](https://github.com/puppetlabs/facter/compare/4.0.43...4.0.44)
