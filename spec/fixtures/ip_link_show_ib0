@@ -1,2 +1,0 @@
-4: ib0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 4092 qdisc pfifo_fast state DOWN mode DEFAULT group default qlen 256
-    link/infiniband 80:00:02:08:fa:81:00:00:00:00:00:00:00:23:7d:ff:ff:94:73:fd brd 00:ff:ff:ff:ff:12:40:1b:ff:ff:00:00:00:00:00:00:ff:ff:ff:ff
