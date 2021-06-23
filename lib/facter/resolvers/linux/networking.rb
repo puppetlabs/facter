@@ -44,7 +44,6 @@ module Facter
 
               parse_ip_command_line(line, mtu_and_indexes)
             end
-            log.debug("Associated MTU and index in ip command: #{mtu_and_indexes}")
             mtu_and_indexes
           end
 
