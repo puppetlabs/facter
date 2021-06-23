@@ -37,12 +37,12 @@ describe Facter::Resolvers::Partitions do
     before do
       allow(File).to receive(:readable?).with(sys_block_path).and_return(true)
       allow(Dir).to receive(:entries).with(sys_block_path).and_return(sys_block_subdirs)
-      allow(Facter::Core::Execution).to receive(:execute)
-        .with('which blkid', logger: logger).and_return('/usr/bin/blkid')
+      allow(Facter::Core::Execution).to receive(:which)
+        .with('blkid').and_return('/usr/bin/blkid')
       allow(Facter::Core::Execution).to receive(:execute)
         .with('blkid', logger: logger).and_return(load_fixture('blkid_output').read)
-      allow(Facter::Core::Execution).to receive(:execute)
-        .with('which lsblk', logger: logger).and_return('/usr/bin/lsblk')
+      allow(Facter::Core::Execution).to receive(:which)
+        .with('lsblk').and_return('/usr/bin/lsblk')
       allow(Facter::Core::Execution).to receive(:execute)
         .with('lsblk -fp', logger: logger).and_return(load_fixture('lsblk_output').read)
     end
@@ -70,12 +70,12 @@ describe Facter::Resolvers::Partitions do
       context 'when there is more than one partition' do
         it 'checks for blkid only once' do
           resolver.resolve(:partitions)
-          expect(Facter::Core::Execution).to have_received(:execute).with('which blkid', logger: logger).once
+          expect(Facter::Core::Execution).to have_received(:which).with('blkid').once
         end
 
         it 'checks for lsblk only once' do
           resolver.resolve(:partitions)
-          expect(Facter::Core::Execution).to have_received(:execute).with('which lsblk', logger: logger).once
+          expect(Facter::Core::Execution).to have_received(:which).with('lsblk').once
         end
       end
 
