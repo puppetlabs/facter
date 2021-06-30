@@ -8,9 +8,11 @@ Gem::Specification.new do |spec|
   spec.version       = '4.2.2'
   spec.authors       = ['Puppet']
   spec.email         = ['team-nw@puppet.com']
+  spec.homepage      = 'https://github.com/puppetlabs/facter'
 
   spec.summary       = 'Facter, a system inventory tool'
   spec.description   = 'You can prove anything with facts!'
+  spec.license       = 'MIT'
 
   # ruby 2.3 doesn't support `base` keyword arg
   dirs =
