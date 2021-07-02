@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'pathname'
-
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
@@ -16,7 +14,6 @@ Gem::Specification.new do |spec|
   spec.description   = 'You can prove anything with facts!'
   spec.license       = 'MIT'
 
-  # ruby 2.3 doesn't support `base` keyword arg
   dirs =
     Dir[File.join(__dir__, 'bin/facter')] +
     Dir[File.join(__dir__, 'LICENSE')] +
@@ -24,10 +21,8 @@ Gem::Specification.new do |spec|
     Dir[File.join(__dir__, 'lib/**/*.json')] +
     Dir[File.join(__dir__, 'lib/**/*.conf')] +
     Dir[File.join(__dir__, 'lib/**/*.erb')]
-  base = Pathname.new(__dir__)
-  spec.files = dirs.map do |path|
-    Pathname.new(path).relative_path_from(base).to_path
-  end
+  base = "#{__dir__}#{File::SEPARATOR}"
+  spec.files = dirs.map { |path| path.sub(base, '') }
 
   spec.required_ruby_version = '>= 2.3', '< 4.0'
   spec.bindir = 'bin'

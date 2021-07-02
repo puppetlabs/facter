@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'pathname'
-
 lib = File.expand_path('../lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
@@ -16,22 +14,17 @@ Gem::Specification.new do |spec|
   spec.description   = 'You can prove anything with facts!'
   spec.license       = 'MIT'
 
-  # ruby 2.3 doesn't support `base` keyword arg
-  # we are building from `facter/agent` so we need to move
-  # one level up in the `facter` folder.
-  root_dir = Pathname.new(File.expand_path('..', __dir__))
+  root_dir = File.join(__dir__, '..')
   dirs =
     Dir[File.join(root_dir, 'bin/facter-ng')] +
     Dir[File.join(root_dir, 'LICENSE')] +
     Dir[File.join(root_dir, 'lib/**/*.rb')] +
     Dir[File.join(root_dir, 'lib/**/*.json')] +
     Dir[File.join(root_dir, 'lib/**/*.conf')] +
-    Dir[File.join(root_dir, 'agent/**/*')] +
     Dir[File.join(root_dir, 'lib/**/*.erb')]
-  base = Pathname.new(root_dir)
-  spec.files = dirs.map do |path|
-    Pathname.new(path).relative_path_from(base).to_path
-  end
+  base = "#{root_dir}#{File::SEPARATOR}"
+
+  spec.files = dirs.map { |path| path.sub(base, '') }
 
   spec.required_ruby_version = '>= 2.3', '< 4.0'
 
