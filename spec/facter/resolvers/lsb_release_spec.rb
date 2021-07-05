@@ -7,9 +7,8 @@ describe Facter::Resolvers::LsbRelease do
 
   context 'when system is ubuntu' do
     before do
-      allow(Facter::Core::Execution::Popen3).to receive(:popen3e)
-        .with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'which lsb_release')
-        .and_return(['/usr/bin/lsb_release', '', 0])
+      allow(Facter::Core::Execution).to receive(:which)
+        .with('lsb_release').and_return('/usr/bin/lsb_release')
       allow(Facter::Core::Execution::Popen3).to receive(:popen3e)
         .with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'lsb_release -a')
         .and_return(["Distributor ID:\tUbuntu\nDescription:\tUbuntu 18.04.1 LTS\nRelease:\t18.04\nCodename:\tbionic\n",
@@ -43,9 +42,8 @@ describe Facter::Resolvers::LsbRelease do
 
   context 'when system is centos' do
     before do
-      allow(Facter::Core::Execution::Popen3).to receive(:popen3e)
-        .with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'which lsb_release')
-        .and_return(['/usr/bin/lsb_release', '', 0])
+      allow(Facter::Core::Execution).to receive(:which)
+        .with('lsb_release').and_return('/usr/bin/lsb_release')
       allow(Facter::Core::Execution::Popen3).to receive(:popen3e)
         .with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'lsb_release -a')
         .and_return([load_fixture('centos_lsb_release').read, '', 0])
@@ -84,9 +82,8 @@ describe Facter::Resolvers::LsbRelease do
 
   context 'when lsb_release is not installed on system' do
     before do
-      allow(Facter::Core::Execution::Popen3).to receive(:popen3e)
-        .with({ 'LANG' => 'C', 'LC_ALL' => 'C' }, 'which lsb_release')
-        .and_return(['', 'no lsb_release in (PATH:usr/sbin)', 1])
+      allow(Facter::Core::Execution).to receive(:which)
+        .with('lsb_release').and_return(nil)
     end
 
     it 'returns distro Distributor ID as nil' do
