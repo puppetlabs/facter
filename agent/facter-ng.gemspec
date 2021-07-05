@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = 'Facter, a system inventory tool'
   spec.description   = 'You can prove anything with facts!'
-  spec.license       = 'MIT'
+  spec.license       = 'Apache-2.0'
 
   root_dir = File.join(__dir__, '..')
   dirs =

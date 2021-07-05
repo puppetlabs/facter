@@ -10,6 +10,7 @@ files: 'bin/facter lib/facter.rb lib/**/*.rb'
 gem_files: 'bin/facter lib/facter.rb lib/**/*.rb'
 gem_require_path: 'lib'
 gem_executables: 'facter'
+gem_license: 'Apache-2.0'
 gem_default_executables: 'facter'
 gem_required_ruby_version: ['>= 2.3', '< 4.0']
 gem_runtime_dependencies:
