@@ -21,6 +21,7 @@ Gem::Specification.new do |spec|
     Dir[File.join(root_dir, 'lib/**/*.rb')] +
     Dir[File.join(root_dir, 'lib/**/*.json')] +
     Dir[File.join(root_dir, 'lib/**/*.conf')] +
+    Dir[File.join(root_dir, 'agent/**/*')] +
     Dir[File.join(root_dir, 'lib/**/*.erb')]
   base = "#{root_dir}#{File::SEPARATOR}"
 
