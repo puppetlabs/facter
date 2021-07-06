@@ -47,3 +47,6 @@ The implementation can be validated locally by running `bundle exec rake check`.
 * Enable native integration with other Ruby-based projects such as Bolt and puppet.
 * Enable native integration for custom facts.
 * Provide 100% compatibility with C++ Facter (drop-in replacement).
+
+## Licensing
+See [LICENSE](https://github.com/puppetlabs/facter/blob/main/LICENSE) file. Puppet is licensed by Puppet, Inc. under the Apache license. Puppet, Inc. can be contacted at: info@puppet.com
