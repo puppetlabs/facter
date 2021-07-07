@@ -1,7 +1,7 @@
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "FACTER" "8" "March 2021" "Puppet, Inc." "Facter manual"
+.TH "FACTER" "8" "July 2021" "Puppet, Inc." "Facter manual"
 .
 .SH "NAME"
 \fBfacter\fR
@@ -147,6 +147,18 @@ Show how much time it took to resolve each fact
 Resolve facts sequentially
 .
 .TP
+\fB\-p\fR, \fB\-\-puppet\fR:
+.
+.IP
+Load the Puppet libraries, thus allowing Facter to load Puppet\-specific facts\.
+.
+.TP
+\fB\-\-version, \-v\fR:
+.
+.IP
+Print the version
+.
+.TP
 \fB\-\-list\-block\-groups\fR:
 .
 .IP
@@ -159,13 +171,7 @@ List block groups
 List cache groups
 .
 .TP
-\fB\-\-puppet, \-p\fR:
-.
-.IP
-Load the Puppet libraries, thus allowing Facter to load Puppet\-specific facts\.
-.
-.TP
-\fBhelp\fR:
+\fB\-\-help, \-h\fR:
 .
 .IP
 Help for all arguments
