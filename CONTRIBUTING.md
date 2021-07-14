@@ -48,7 +48,11 @@ top of things.
 
 * Make sure you have added the necessary tests for your changes.
 * Run _all_ the tests to assure nothing else was accidentally broken.
-  * We recommend running `./check.sh` to have the same checks run as on github
+* We recommend running the follwing rake tasks:
+  * `bundle exec rake rubocop` - runs rubocop cheks
+  * `bundle exec rake spec_random` - runs unit tests
+  * `bundle exec rake spec_integration` - runs integration tests. Note that tests with the `skip_outside_ci` tag are excluded outside of CI, you can run them with `CI=true bundle exec rake spec_integration`
+* Or you can use `bundle exec rake check` to run all the above tasks in one command
 
 ## Making Trivial Changes
 

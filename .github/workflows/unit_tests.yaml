@@ -9,6 +9,9 @@ on:
     branches:
       - main
 
+env:
+  CI: true
+
 jobs:
   linux_unit_tests:
     name: Ruby version

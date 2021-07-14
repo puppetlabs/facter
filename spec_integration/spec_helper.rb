@@ -12,6 +12,9 @@ RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = '.rspec_status'
 
+  # exclude `skip_outside_ci` tests if not running on CI
+  config.filter_run_excluding :skip_outside_ci unless ENV['CI']
+
   # Disable RSpec exposing methods globally on `Module` and `main`
   config.disable_monkey_patching!
   config.expose_dsl_globally = true
