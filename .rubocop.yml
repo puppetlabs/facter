@@ -102,6 +102,7 @@ Metrics/ClassLength:
     - 'install.rb'
     - 'scripts/generate_changelog.rb'
     - 'lib/facter/resolvers/solaris/networking.rb'
+    - 'lib/facter/framework/logging/logger.rb'
 
 Naming/AccessorMethodName:
   Exclude:

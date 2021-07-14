@@ -75,7 +75,7 @@ RSpec.configure do |config|
 
   config.before do
     LegacyFacter.clear
-    LegacyFacter.clear_messages
+    Facter.clear_messages
   end
 
   config.after do

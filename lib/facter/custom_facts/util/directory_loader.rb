@@ -52,6 +52,10 @@ module LegacyFacter
 
       private
 
+      def log
+        @log ||= Facter::Log.new(self)
+      end
+
       def load_directory_entries(_collection)
         cm = Facter::CacheManager.new
         facts = []
@@ -87,15 +91,23 @@ module LegacyFacter
           data = resolve_fact(fact, parser)
 
           if data == false
-            LegacyFacter.warn "Could not interpret fact file #{fact.file}"
+            log.warn "Could not interpret fact file #{fact.file}"
           elsif (data == {}) || data.nil?
-            @log.debug("Fact file #{fact.file} was parsed but no key=>value data was returned")
+            log.debug("Fact file #{fact.file} was parsed but no key=>value data was returned")
           else
-            data.each do |p, v|
-              collection.add(p, value: v, fact_type: :external,
-                                file: fact.file) { has_weight(weight) }
-            end
+            add_data(data, collection, fact, weight)
           end
+        end
+      end
+
+      def add_data(data, collection, fact, weight)
+        data.each do |key, value|
+          collection.add(
+            key,
+            value: value,
+            fact_type: :external,
+            file: fact.file
+          ) { has_weight(weight) }
         end
       end
 

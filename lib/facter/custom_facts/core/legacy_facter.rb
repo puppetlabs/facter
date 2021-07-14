@@ -38,8 +38,6 @@ module LegacyFacter
   include Comparable
   include Enumerable
 
-  extend LegacyFacter::Core::Logging
-
   # module methods
 
   # Accessor for the collection object which holds all the facts
