@@ -119,4 +119,24 @@ describe Facter::Resolvers::OsRelease do
       expect(result).to eq('OracleLinux')
     end
   end
+
+  context 'when on Archlinux' do
+    let(:os_release_content) { load_fixture('os_release_archlinux').readlines }
+
+    it 'returns os NAME' do
+      result = Facter::Resolvers::OsRelease.resolve(:name)
+
+      expect(result).to eq('Archlinux')
+    end
+  end
+
+  context 'when on Manjarolinux' do
+    let(:os_release_content) { load_fixture('os_release_manjarolinux').readlines }
+
+    it 'returns os NAME' do
+      result = Facter::Resolvers::OsRelease.resolve(:name)
+
+      expect(result).to eq('Manjarolinux')
+    end
+  end
 end
