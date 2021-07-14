@@ -53,12 +53,15 @@ module Facter
         end
 
         def process_name
-          return unless @fact_list[:name]
+          os_name = @fact_list[:name]
+          return unless os_name
 
-          @fact_list[:name] = if @fact_list[:name].downcase.start_with?('red', 'oracle')
-                                @fact_list[:name].split(' ')[0..1].join
+          @fact_list[:name] = if os_name.downcase.start_with?('red', 'oracle', 'arch', 'manjaro')
+                                os_name = os_name.split(' ')[0..1].join
+                                os_name = os_name.capitalize if os_name.downcase.start_with?('arch', 'manjaro')
+                                os_name
                               else
-                                @fact_list[:name].split(' ')[0].strip
+                                os_name.split(' ')[0].strip
                               end
         end
 
