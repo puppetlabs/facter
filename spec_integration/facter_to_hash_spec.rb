@@ -92,7 +92,7 @@ describe Facter do
         expect(out).to match(/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/)
       end
 
-      it 'returns ipaddress6' do
+      it 'returns ipaddress6', :skip_outside_ci do
         out, = IntegrationHelper.exec_facter('ipaddress6')
 
         expect(out).to match(/([a-z0-9]{1,4}:{1,2})+[a-z0-9]{1,4}/)
@@ -131,7 +131,7 @@ describe Facter do
       expect(fact_hash['ipaddress']).to match(/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/)
     end
 
-    it 'contains ipaddress6' do
+    it 'contains ipaddress6', :skip_outside_ci do
       fact_hash = Facter.to_hash
 
       expect(fact_hash['ipaddress6']).to match(/([a-z0-9]{1,4}:{1,2})+[a-z0-9]{1,4}/)
