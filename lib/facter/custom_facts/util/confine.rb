@@ -41,13 +41,13 @@ module LegacyFacter
           begin
             return !!@block.call
           rescue StandardError => e
-            LegacyFacter.debug "Confine raised #{e.class} #{e}"
+            log.debug "Confine raised #{e.class} #{e}"
             return false
           end
         end
 
         unless (fact = Facter[@fact])
-          LegacyFacter.debug format('No fact for %<fact>s', fact: @fact)
+          log.debug format('No fact for %<fact>s', fact: @fact)
           return false
         end
         value = convert(fact.value)
@@ -58,12 +58,18 @@ module LegacyFacter
           begin
             return !!@block.call(value)
           rescue StandardError => e
-            LegacyFacter.debug "Confine raised #{e.class} #{e}"
+            log.debug "Confine raised #{e.class} #{e}"
             return false
           end
         end
 
         @values.any? { |v| convert(v) === value }
+      end
+
+      private
+
+      def log
+        @log ||= Facter::Log.new(self)
       end
     end
   end

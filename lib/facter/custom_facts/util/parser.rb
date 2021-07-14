@@ -137,8 +137,8 @@ module LegacyFacter
           if LegacyFacter.json?
             JSON.parse(content)
           else
-            LegacyFacter.warnonce "Cannot parse JSON data file #{filename} without the json library."
-            LegacyFacter.warnonce 'Suggested next step is `gem install json` to install the json library.'
+            Facter.warnonce "Cannot parse JSON data file #{filename} without the json library."
+            Facter.warnonce 'Suggested next step is `gem install json` to install the json library.'
             nil
           end
         end

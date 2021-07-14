@@ -10,10 +10,16 @@ describe LegacyFacter::Util::Collection do
     load
   end
   let(:collection) { LegacyFacter::Util::Collection.new(internal_loader, external_loader) }
+  let(:logger) { instance_spy(Facter::Log) }
 
   before do
     Singleton.__init__(Facter::FactManager)
     Singleton.__init__(Facter::FactLoader)
+    allow(Facter::Log).to receive(:new).and_return(logger)
+  end
+
+  after do
+    LegacyFacter::Util::Collection.instance_variable_set(:@log, nil)
   end
 
   it 'delegates its load_all method to its loader' do
@@ -53,7 +59,7 @@ describe LegacyFacter::Util::Collection do
       end
 
       it 'discards resolutions that throw an exception when added' do
-        allow(LegacyFacter).to receive(:warn).with(/Unable to add resolve .* kaboom!/)
+        allow(logger).to receive(:warn).with(/Unable to add resolve .* kaboom!/)
 
         expect do
           collection.add('yay') do
@@ -79,13 +85,13 @@ describe LegacyFacter::Util::Collection do
     end
 
     it 'passes options to newly generated facts' do
-      allow(LegacyFacter).to receive(:warnonce)
+      allow(logger).to receive(:warnonce)
       fact = collection.define_fact(:newfact, ldapname: 'NewFact')
       expect(fact.ldapname).to eq 'NewFact'
     end
 
     it 'logs an error if the fact could not be defined' do
-      expect(Facter).to receive(:log_exception).with(StandardError, 'Unable to add fact newfact: kaboom!')
+      expect(logger).to receive(:log_exception).with('Unable to add fact newfact: kaboom!')
 
       collection.define_fact(:newfact) do
         raise 'kaboom!'
@@ -278,7 +284,7 @@ describe LegacyFacter::Util::Collection do
 
   describe 'when no facts are loaded' do
     it 'warns when no facts were loaded' do
-      expect(LegacyFacter)
+      expect(logger)
         .to receive(:warnonce)
         .with("No facts loaded from #{internal_loader.search_path.join(File::PATH_SEPARATOR)}").once
 

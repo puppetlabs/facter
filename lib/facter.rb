@@ -13,8 +13,6 @@ module Facter
   Options.init
   Log.output(STDOUT)
   @already_searched = {}
-  @debug_once = []
-  @warn_once = []
 
   class << self
     # Method used by puppet-agent to retrieve facts
@@ -109,8 +107,7 @@ module Facter
     # @api public
     def clear
       @already_searched = {}
-      @debug_once = []
-      @warn_once = []
+      Facter::Log.clear_messages
       LegacyFacter.clear
       Options[:custom_dir] = []
       LegacyFacter.collection.invalidate_custom_facts
@@ -153,13 +150,7 @@ module Facter
     #
     # @api public
     def debugonce(message)
-      return unless debugging?
-
-      message_string = message.to_s
-      return if @debug_once.include? message_string
-
-      @debug_once << message_string
-      logger.debug(message_string)
+      logger.debugonce(message)
       nil
     end
 
@@ -482,11 +473,7 @@ module Facter
     #
     # @api public
     def warnonce(message)
-      message_string = message.to_s
-      return if @warn_once.include? message_string
-
-      @warn_once << message_string
-      logger.warn(message_string)
+      logger.warnonce(message)
       nil
     end
 
