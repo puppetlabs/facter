@@ -47,8 +47,6 @@ module Facter
         @used_resolution_weight = 0
 
         @value = nil
-
-        @log = Facter::Log.new(self)
       end
 
       # Adds a new {Facter::Util::Resolution resolution}.  This requires a
@@ -87,8 +85,8 @@ module Facter
 
         resolve
       rescue StandardError => e
-        LegacyFacter
-          .log_exception(e, "Unable to add resolve #{resolution_name.inspect} for fact #{@name}: #{e.message}")
+        log.log_exception("Unable to add resolve #{resolution_name.inspect} for fact #{@name}: #{e.message}")
+        nil
       end
 
       # Retrieve an existing resolution by name
@@ -122,7 +120,7 @@ module Facter
         return @value if @value
 
         if @resolves.empty?
-          LegacyFacter.debug format('No resolves for %<name>s', name: @name)
+          log.debug format('No resolves for %<name>s', name: @name)
           return nil
         end
 
@@ -147,11 +145,15 @@ module Facter
       def extract_ldapname_option!(options)
         return unless options[:ldapname]
 
-        LegacyFacter.warnonce('ldapname is deprecated and will be removed in a future version')
+        log.warnonce('ldapname is deprecated and will be removed in a future version')
         self.ldapname = options.delete(:ldapname)
       end
 
       private
+
+      def log
+        @log ||= Facter::Log.new(self)
+      end
 
       def resolve_value
         return Facter.core_value(name) if @value.nil?
@@ -222,18 +224,18 @@ module Facter
 
       def log_fact_path(resolve)
         fact = resolve.fact
-        @log.debug("#{resolve.fact_type} fact #{fact.name} got resolved from: #{fact.location}")
+        log.debug("#{resolve.fact_type} fact #{fact.name} got resolved from: #{fact.location}")
       end
 
       def announce_when_no_suitable_resolution(resolutions)
         return unless resolutions.empty?
 
-        LegacyFacter.debug format('Found no suitable resolves of %<resolver_length> for %<name>s',
-                                  resolver_length: @resolves.length, name: @name)
+        log.debug format('Found no suitable resolves of %<resolver_length> for %<name>s',
+                         resolver_length: @resolves.length, name: @name)
       end
 
       def announce_when_no_value_found(value)
-        LegacyFacter.debug(format('value for %<name>s is still nil', name: @name)) if value.nil?
+        log.debug(format('value for %<name>s is still nil', name: @name)) if value.nil?
       end
 
       def create_or_return_resolution(resolution_name, resolution_type)

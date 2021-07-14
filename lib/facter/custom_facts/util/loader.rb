@@ -78,7 +78,7 @@ module LegacyFacter
           if valid_search_path?(path)
             search_paths << path
           else
-            LegacyFacter.warn "Excluding #{path} from search path. Fact file paths must be an absolute directory"
+            log.debug "Excluding #{path} from search path. Fact file paths must be an absolute directory"
           end
         end
 
@@ -88,6 +88,10 @@ module LegacyFacter
       end
 
       private
+
+      def log
+        @log ||= Facter::Log.new(self)
+      end
 
       # Validate that the given path is valid, ie it is an absolute path.
       #

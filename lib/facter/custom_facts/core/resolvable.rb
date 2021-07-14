@@ -103,7 +103,7 @@ module LegacyFacter
 
         finishtime = Time.now.to_f
         ms = (finishtime - starttime) * 1000
-        LegacyFacter.show_time format('%<qn>s: %<ms>.2fms', qn: qualified_name, ms: ms)
+        Facter::Log.show_time format('%<qn>s: %<ms>.2fms', qn: qualified_name, ms: ms)
       end
 
       def qualified_name

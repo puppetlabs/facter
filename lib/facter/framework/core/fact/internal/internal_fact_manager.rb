@@ -11,10 +11,10 @@ module Facter
     def resolve_facts(searched_facts)
       internal_searched_facts = filter_internal_facts(searched_facts)
       resolved_facts = if Options[:sequential]
-                         log.debug('Resolving facts sequentially')
+                         log.debugonce('Resolving facts sequentially')
                          resolve_sequentially(internal_searched_facts)
                        else
-                         log.debug('Resolving fact in parallel')
+                         log.debugonce('Resolving fact in parallel')
                          resolve_in_parallel(internal_searched_facts)
                        end
 
