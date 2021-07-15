@@ -29,7 +29,6 @@ module Facter
     end
 
     def load_internal_facts(user_query, options)
-      @log.debug('Loading internal facts')
       internal_facts = []
       if user_query || options[:show_legacy]
         # if we have a user query, then we must search in core facts and legacy facts

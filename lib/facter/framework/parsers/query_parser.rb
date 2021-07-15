@@ -24,13 +24,11 @@ module Facter
       # Returns a list of SearchedFact objects that resolve the users query.
       def parse(query_list, loaded_fact)
         matched_facts = []
-        @log.debug "User query is: #{query_list}"
         @query_list = query_list
 
         return no_user_query(loaded_fact) unless query_list.any?
 
         query_list.each do |query|
-          @log.debug "Query is #{query}"
           found_facts = search_for_facts(query, loaded_fact)
           matched_facts << found_facts
         end
@@ -65,7 +63,6 @@ module Facter
       end
 
       def get_facts_matching_tokens(query_tokens, query_token_range, loaded_fact_hash)
-        @log.debug "Checking query tokens #{query_tokens[query_token_range].join('.')}"
         resolvable_fact_list = []
 
         loaded_fact_hash.each do |loaded_fact|
@@ -77,7 +74,7 @@ module Facter
           resolvable_fact_list << searched_fact
         end
 
-        @log.debug "List of resolvable facts: #{resolvable_fact_list.inspect}"
+        @log.debug "List of resolvable facts: #{resolvable_fact_list.inspect}" if resolvable_fact_list.any?
         resolvable_fact_list
       end
 
