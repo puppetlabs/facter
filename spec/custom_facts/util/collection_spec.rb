@@ -15,6 +15,7 @@ describe LegacyFacter::Util::Collection do
   before do
     Singleton.__init__(Facter::FactManager)
     Singleton.__init__(Facter::FactLoader)
+    Singleton.__init__(Facter::ClassDiscoverer)
     allow(Facter::Log).to receive(:new).and_return(logger)
   end
 
