@@ -91,7 +91,7 @@ module Facter
           msg = "Already evaluated #{@name}"
           msg << " at #{@last_evaluated}" if msg.is_a? String
           msg << ', reevaluating anyways'
-          LegacyFacter.warn msg
+          log.warn msg
         end
 
         instance_eval(&block)
@@ -170,6 +170,10 @@ module Facter
       end
 
       private
+
+      def log
+        @log ||= Facter::Log.new(self)
+      end
 
       # If the weights are equal, we consider external facts greater tan custom facts
       def compare_equal_weights(other)

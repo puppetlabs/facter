@@ -43,7 +43,6 @@ RSpec.configure do |config|
     Facter.clear
     Facter::OptionStore.reset
     LegacyFacter.clear
-    LegacyFacter.clear_messages
   end
 
   # This will cleanup any files that were created with tmpdir or tmpfile

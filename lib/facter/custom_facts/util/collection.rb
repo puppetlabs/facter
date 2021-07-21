@@ -32,7 +32,7 @@ module LegacyFacter
 
         fact
       rescue StandardError => e
-        Facter.log_exception(e, "Unable to add fact #{name}: #{e}")
+        log.log_exception("Unable to add fact #{name}: #{e}")
       end
 
       # Add a resolution mechanism for a named fact.  This does not distinguish
@@ -71,9 +71,7 @@ module LegacyFacter
         # Try HARDER
         internal_loader.load_all unless @facts[name]
 
-        if @facts.empty?
-          LegacyFacter.warnonce("No facts loaded from #{internal_loader.search_path.join(File::PATH_SEPARATOR)}")
-        end
+        log.warnonce("No facts loaded from #{internal_loader.search_path.join(File::PATH_SEPARATOR)}") if @facts.empty?
 
         @facts[name]
       end
@@ -180,6 +178,10 @@ module LegacyFacter
 
         @external_facts_loaded = true
         external_loader.load(self)
+      end
+
+      def log
+        @log ||= Facter::Log.new(self)
       end
     end
   end

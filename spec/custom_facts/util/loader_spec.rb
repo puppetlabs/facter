@@ -2,6 +2,12 @@
 # frozen_string_literal: true
 
 describe LegacyFacter::Util::Loader do
+  let(:logger) { instance_spy(Facter::Log) }
+
+  before do
+    allow(Facter::Log).to receive(:new).and_return(logger)
+  end
+
   def loader_from(places)
     env = places[:env] || {}
     search_path = places[:search_path] || []
@@ -108,7 +114,7 @@ describe LegacyFacter::Util::Loader do
       allow(loader).to receive(:valid_search_path?).and_return false
       allow(loader).to receive(:valid_search_path?).with('/one').and_return true
       allow(loader).to receive(:valid_search_path?).with('two/three').and_return false
-      allow(LegacyFacter)
+      allow(logger)
         .to receive(:warn)
         .with('Excluding two/three from search path. Fact file paths must be an absolute directory').once
 

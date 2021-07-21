@@ -69,6 +69,7 @@ Metrics/AbcSize:
     - 'lib/facter/custom_facts/core/execution/popen3.rb'
     - 'lib/facter.rb'
     - 'lib/facter/framework/parsers/query_parser.rb'
+    - 'lib/facter/framework/core/fact_manager.rb'
 
 Metrics/PerceivedComplexity:
   Exclude:
@@ -102,6 +103,8 @@ Metrics/ClassLength:
     - 'install.rb'
     - 'scripts/generate_changelog.rb'
     - 'lib/facter/resolvers/solaris/networking.rb'
+    - 'lib/facter/framework/logging/logger.rb'
+    - 'lib/facter/framework/core/fact_manager.rb'
 
 Naming/AccessorMethodName:
   Exclude:

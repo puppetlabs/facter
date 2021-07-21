@@ -13,6 +13,7 @@ module Facter
     end
 
     def resolve_facts(user_query = [])
+      log_resolving_method
       @options[:user_query] = user_query
       cache_manager = Facter::CacheManager.new
 
@@ -40,6 +41,7 @@ module Facter
     # - load all the core facts, external facts and env facts
     # - load all custom facts
     def resolve_fact(user_query)
+      log_resolving_method
       @options[:user_query] = user_query
       @log.debug("resolving fact with user_query: #{user_query}")
 
@@ -58,11 +60,20 @@ module Facter
     end
 
     def resolve_core(user_query = [], options = {})
+      log_resolving_method
       @cache_manager = CacheManager.new
       core_fact(user_query, options)
     end
 
     private
+
+    def log_resolving_method
+      if Options[:sequential]
+        @log.debugonce('Resolving facts sequentially')
+      else
+        @log.debugonce('Resolving fact in parallel')
+      end
+    end
 
     def core_fact(user_query, options)
       loaded_facts_hash = @fact_loader.load_internal_facts(user_query, options)

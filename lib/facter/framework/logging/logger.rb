@@ -15,8 +15,16 @@ module Facter
     @@logger = nil
     @@message_callback = nil
     @@has_errors = false
+    @@debug_messages = []
+    @@warn_messages = []
+    @@timing = false
 
     class << self
+      def clear_messages
+        @@debug_messages.clear
+        @@warn_messages.clear
+      end
+
       def on_message(&block)
         @@message_callback = block
       end
@@ -47,6 +55,41 @@ module Facter
           "[#{datetime}] #{severity} #{msg} \n"
         end
       end
+
+      # Print an exception message, and optionally a backtrace if trace is set
+
+      # Print timing information
+      #
+      # @param string [String] the time to print
+      # @return [void]
+      #
+      # @api private
+      def show_time(string)
+        return unless string && timing?
+
+        if @@message_callback
+          @@message_callback.call(:info, string)
+        else
+          warn("#{GREEN}#{string}#{RESET}")
+        end
+      end
+
+      # Enable or disable logging of timing information
+      #
+      # @param bool [true, false]
+      # @return [void]
+      #
+      # @api private
+      def timing(bool)
+        @@timing = bool
+      end
+
+      # Returns whether timing output is turned on
+      #
+      # @api private
+      def timing?
+        @@timing
+      end
     end
 
     def initialize(logged_class)
@@ -68,6 +111,16 @@ module Facter
       end
     end
 
+    def debugonce(msg)
+      return unless debugging_active?
+
+      message_string = msg.to_s
+      return if @@debug_messages.include? message_string
+
+      @@debug_messages << message_string
+      debug(message_string)
+    end
+
     def info(msg)
       if msg.nil? || msg.empty?
         empty_message_error(msg)
@@ -86,6 +139,14 @@ module Facter
         msg = colorize(msg, YELLOW) if Options[:color]
         @@logger.warn(@class_name + ' - ' + msg)
       end
+    end
+
+    def warnonce(message)
+      message_string = message.to_s
+      return if @@warn_messages.include? message_string
+
+      @@warn_messages << message_string
+      warn(message_string)
     end
 
     def error(msg, colorize = false)
