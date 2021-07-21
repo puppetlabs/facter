@@ -2057,6 +2057,6 @@ zpool_version:
 
 nim_type:
     type: string
-    description: Tells if the node is master or standalone inside an AIX Nim environment.
+    description: Tells if the node is a primary server or standalone inside an AIX Nim environment.
     details: |
         Is Available only on AIX.
