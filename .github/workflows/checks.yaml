@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - main
-  pull_request_target:
+  pull_request:
     branches:
       - main
 
@@ -52,22 +52,3 @@ jobs:
           ruby-version: 2.6
       - run: bundle install --jobs 3 --retry 3
       - run: bundle exec rake commits
-
-  snyk_test:
-    runs-on: ubuntu-latest
-    name: Snyk vulnerabilities
-    steps:
-      - name: Checkout current PR
-        uses: actions/checkout@v2
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 2.7
-      - name: Install dependencies
-        run: bundle install --jobs 3 --retry 3
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/ruby@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          command: test

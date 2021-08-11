@@ -3,9 +3,12 @@ name: Snyk Monitor
 on:
   schedule:
     - cron: '0 5 * * 1-5'
-  workflow_dispatch:
+  push:
+    branches:
+      - main
 jobs:
   snyk_monitor:
+    if: github.repository_owner = 'puppetlabs'
     runs-on: ubuntu-latest
     name: Snyk Monitor
     steps:
