@@ -8,7 +8,7 @@ on:
       - main
 jobs:
   snyk_monitor:
-    if: github.repository_owner = 'puppetlabs'
+    if: ${{ github.repository_owner == 'puppetlabs' }}
     runs-on: ubuntu-latest
     name: Snyk Monitor
     steps:
