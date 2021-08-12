@@ -19,7 +19,7 @@ module Facter
             @fact_list[:mountpoints] = {}
             output = Facter::Core::Execution.execute('mount', logger: log)
             output.split("\n").map do |line|
-              next if line =~ /node|---|procfs|ahafs/
+              next if line =~ /\s+node\s+|---|procfs|ahafs/
 
               elem = line.split("\s")
 
