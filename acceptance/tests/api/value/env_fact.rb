@@ -22,5 +22,15 @@ test_name 'Facter.value(env_fact)' do
         assert_match(fact_value, result.stdout.chomp, 'Incorrect fact value for env fact')
       end
     end
+
+    step 'resolves the fact with the correct value if the env fact is upcased' do
+      facter_rb = facter_value_rb(agent, fact_name)
+
+      env = { "FACTER_#{fact_name.upcase}" => fact_value }
+
+      on(agent, "#{ruby_command(agent)} #{facter_rb}", environment: env) do |result|
+        assert_match(fact_value, result.stdout.chomp, 'Incorrect fact value for env fact')
+      end
+    end
   end
 end
