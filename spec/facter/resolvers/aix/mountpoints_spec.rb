@@ -9,9 +9,9 @@ describe Facter::Resolvers::Aix::Mountpoints do
       '/usr' => { available: '2.84 GiB', available_bytes: 3_049_021_440, capacity: '43.21%', device: '/dev/hd2',
                   filesystem: 'jfs2', options: ['rw', 'log=/dev/hd8'], size: '5.00 GiB', size_bytes: 5_368_709_120,
                   used: '2.16 GiB', used_bytes: 2_319_687_680 },
-      '/var' => { available: '205.06 MiB', available_bytes: 215023616, capacity: '0.76%', device: '/dev/hd3', 
-                  filesystem: 'x', options: ['rw', 'nodev', 'log=/dev/hd3'], size: '206.64 MiB', size_bytes: 216678912, 
-                  used: '1.58 MiB', used_bytes: 1655296}}
+      '/var' => { available: '205.06 MiB', available_bytes: 215_023_616, capacity: '0.76%', device: '/dev/hd3',
+                  filesystem: 'x', options: ['rw', 'nodev', 'log=/dev/hd3'], size: '206.64 MiB',
+                  size_bytes: 216_678_912, used: '1.58 MiB', used_bytes: 1_655_296 } }
   end
   let(:log_spy) { instance_spy(Facter::Log) }
 

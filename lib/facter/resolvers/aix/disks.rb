@@ -34,7 +34,7 @@ module Facter
 
             return if stdout.empty?
 
-            info_size = Facter::Util::Aix::InfoExtractor.extract(stdout, /PP SIZE:|TOTAL PPs:|FREE PPs:|PV STATE:/)
+            info_size = Facter::Util::Aix::InfoExtractor.extract(stdout, :lspv)
 
             return unless info_size['PV STATE']
 
