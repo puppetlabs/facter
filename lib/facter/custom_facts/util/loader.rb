@@ -141,13 +141,13 @@ module LegacyFacter
           # Skip anything that doesn't match our regex.
           next unless name =~ /^facter_?(\w+)$/i
 
-          env_name = Regexp.last_match(1)
+          env_name = Regexp.last_match(1).downcase
 
           # If a fact name was specified, skip anything that doesn't
           # match it.
           next if fact && (env_name != fact)
 
-          LegacyFacter.add(Regexp.last_match(1), fact_type: :external, is_env: true) do
+          LegacyFacter.add(env_name, fact_type: :external, is_env: true) do
             has_weight 1_000_000
             setcode { value }
           end

@@ -198,6 +198,13 @@ describe Facter do
   end
 
   describe '#value' do
+    it 'downcases the user query' do
+      mock_fact_manager(:resolve_fact, [os_fact])
+      allow(fact_collection_spy).to receive(:value).with('os.name').and_return('Ubuntu')
+
+      expect(Facter.value('OS.NAME')).to eq('Ubuntu')
+    end
+
     it 'returns a value' do
       mock_fact_manager(:resolve_fact, [os_fact])
       allow(fact_collection_spy).to receive(:value).with('os.name').and_return('Ubuntu')
@@ -212,7 +219,7 @@ describe Facter do
       expect(Facter.value('os.name')).to be nil
     end
 
-    context 'when custom fact with nill value' do
+    context 'when custom fact with nil value' do
       let(:type) { :custom }
       let(:fact_value) { nil }
       let(:fact_user_query) { '' }
@@ -227,6 +234,13 @@ describe Facter do
   end
 
   describe '#fact' do
+    it 'downcases the user query' do
+      mock_fact_manager(:resolve_fact, [os_fact])
+      allow(fact_collection_spy).to receive(:value).with('os.name').and_return('Ubuntu')
+
+      expect(Facter.fact('OS.NAME')).to be_instance_of(Facter::ResolvedFact).and have_attributes(value: 'Ubuntu')
+    end
+
     it 'returns a fact' do
       mock_fact_manager(:resolve_fact, [os_fact])
       allow(fact_collection_spy).to receive(:value).with('os.name').and_return('Ubuntu')

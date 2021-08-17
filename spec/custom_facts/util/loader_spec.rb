@@ -263,7 +263,7 @@ describe LegacyFacter::Util::Loader do
 
     context 'when loads all facts from the environment' do
       before do
-        Facter::Util::Resolution.with_env 'facter_one' => 'yayness', 'facter_two' => 'boo' do
+        Facter::Util::Resolution.with_env 'FACTER_one' => 'yayness', 'FACTER_TWO' => 'boo' do
           loader.load_all
         end
       end
@@ -277,7 +277,7 @@ describe LegacyFacter::Util::Loader do
       end
     end
 
-    it 'onlies load all facts one time' do
+    it 'only load all facts once' do
       loader = loader_from(env: {})
       expect(loader).to receive(:load_env).once
 
