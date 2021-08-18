@@ -26,4 +26,4 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           command: monitor
-          args: --org=puppet-foss
+          args: --org=puppet-foss --project-name=${{ github.repository }}
