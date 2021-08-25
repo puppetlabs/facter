@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
   base = "#{__dir__}#{File::SEPARATOR}"
   spec.files = dirs.map { |path| path.sub(base, '') }
 
-  spec.required_ruby_version = '>= 2.3', '< 4.0'
+  spec.required_ruby_version = '>= 2.3', '< 4'
   spec.bindir = 'bin'
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
