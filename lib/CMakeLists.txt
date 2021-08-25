@@ -78,6 +78,7 @@ set(LIBFACTER_COMMON_SOURCES
     "src/ruby/ruby.cc"
     "src/ruby/ruby_value.cc"
     "src/ruby/simple_resolution.cc"
+    "src/util/aws_token.cc"
     "src/util/scoped_file.cc"
     "src/util/string.cc"
     "src/util/cli.cc"

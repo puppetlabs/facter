@@ -4,6 +4,7 @@
 #include <facter/facts/scalar_value.hpp>
 #include <facter/facts/fact.hpp>
 #include <facter/facts/vm.hpp>
+#include <facter/util/aws_token.hpp>
 #include <facter/util/string.hpp>
 #include <leatherman/util/environment.hpp>
 #include <leatherman/util/regex.hpp>
@@ -34,20 +35,24 @@ namespace facter { namespace facts { namespace resolvers {
 #ifdef USE_CURL
     static const char* EC2_METADATA_ROOT_URL = "http://169.254.169.254/latest/meta-data/";
     static const char* EC2_USERDATA_ROOT_URL = "http://169.254.169.254/latest/user-data/";
+    static const char* AWS_API_TOKEN_URL = "http://169.254.169.254/latest/api/token";
     static const unsigned int EC2_CONNECTION_TIMEOUT = 600;
+    static const unsigned int AWS_API_TOKEN_LIFETIME = 100;
 #ifdef HAS_LTH_GET_INT
     static const unsigned int EC2_SESSION_TIMEOUT = environment::get_int("EC2_SESSION_TIMEOUT", 5000);
-#else
+#else  // HAS_LTH_GET_INT
     static const unsigned int EC2_SESSION_TIMEOUT = 5000;
-#endif
+#endif  // HAS_LTH_GET_INT
 
-    static void query_metadata_value(lth_curl::client& cli, map_value& value, string const& url, string const& name, string const& http_langs)
+    static void query_metadata_value(lth_curl::client& cli, map_value& value, string const& url, string const& name, string const& http_langs, string const& token)
     {
         lth_curl::request req(url + name);
         req.connection_timeout(EC2_CONNECTION_TIMEOUT);
         req.timeout(EC2_SESSION_TIMEOUT);
         if (!http_langs.empty())
             req.add_header("Accept-Language", http_langs);
+        if (!token.empty())
+            req.add_header("X-aws-ec2-metadata-token", token);
 
         auto response = cli.get(req);
         if (response.status_code() != 200) {
@@ -61,7 +66,7 @@ namespace facter { namespace facts { namespace resolvers {
         value.add(name, make_value<string_value>(move(body)));
     }
 
-    static void query_metadata(lth_curl::client& cli, map_value& value, string const& url, string const& http_langs)
+    static void query_metadata(lth_curl::client& cli, map_value& value, string const& url, string const& http_langs, string const& token)
     {
         // Stores the metadata names to filter out
         static set<string> filter = {
@@ -73,6 +78,8 @@ namespace facter { namespace facts { namespace resolvers {
         req.timeout(EC2_SESSION_TIMEOUT);
         if (!http_langs.empty())
             req.add_header("Accept-Language", http_langs);
+        if (!token.empty())
+            req.add_header("X-aws-ec2-metadata-token", token);
 
         auto response = cli.get(req);
         if (response.status_code() != 200) {
@@ -98,13 +105,13 @@ namespace facter { namespace facts { namespace resolvers {
 
             // If the name does not end with a '/', then it is a key name; request the value
             if (name.back() != '/') {
-                query_metadata_value(cli, value, url, name, http_langs);
+                query_metadata_value(cli, value, url, name, http_langs, token);
                 return true;
             }
 
             // Otherwise, this is a category; recurse down it
             auto child = make_value<map_value>();
-            query_metadata(cli, *child, url + name, http_langs);
+            query_metadata(cli, *child, url + name, http_langs, token);
             trim_right_if(name, boost::is_any_of("/"));
             value.add(move(name), move(child));
             return true;
@@ -117,7 +124,7 @@ namespace facter { namespace facts { namespace resolvers {
 #ifndef USE_CURL
         LOG_INFO("EC2 facts are unavailable: facter was built without libcurl support.");
         return;
-#else
+#else  // USE_CURL
         auto virtualization = facts.get<string_value>(fact::virtualization);
         if (!virtualization || (virtualization->value() != vm::kvm && !boost::starts_with(virtualization->value(), "xen"))) {
             LOG_DEBUG("EC2 facts are unavailable: not running under an EC2 instance.");
@@ -127,11 +134,15 @@ namespace facter { namespace facts { namespace resolvers {
         LOG_DEBUG("querying EC2 instance metadata at {1}.", EC2_METADATA_ROOT_URL);
 
         lth_curl::client cli;
+        auto token = facter::util::get_token(AWS_API_TOKEN_URL, cli, AWS_API_TOKEN_LIFETIME);
+        if (!token.empty())
+            LOG_DEBUG("querying EC2 metadata using IMDSv2");
+
         auto metadata = make_value<map_value>();
 
         try
         {
-            query_metadata(cli, *metadata, EC2_METADATA_ROOT_URL, http_langs());
+            query_metadata(cli, *metadata, EC2_METADATA_ROOT_URL, http_langs(), token);
 
             if (!metadata->empty()) {
                 facts.add(fact::ec2_metadata, move(metadata));
@@ -158,6 +169,8 @@ namespace facter { namespace facts { namespace resolvers {
             req.timeout(EC2_SESSION_TIMEOUT);
             if (!http_langs().empty())
                 req.add_header("Accept-Language", http_langs());
+            if (!token.empty())
+                req.add_header("X-aws-ec2-metadata-token", token);
 
             auto response = cli.get(req);
             if (response.status_code() != 200) {
@@ -169,7 +182,7 @@ namespace facter { namespace facts { namespace resolvers {
         } catch (runtime_error& ex) {
             LOG_ERROR("EC2 user data request failed: {1}", ex.what());
         }
-#endif
+#endif  // USE_CURL
     }
 
     bool ec2_resolver::is_blockable() const {
