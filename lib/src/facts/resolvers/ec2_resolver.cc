@@ -131,14 +131,28 @@ namespace facter { namespace facts { namespace resolvers {
             return;
         }
 
-        LOG_DEBUG("querying EC2 instance metadata at {1}.", EC2_METADATA_ROOT_URL);
-
         lth_curl::client cli;
-        auto token = facter::util::get_token(AWS_API_TOKEN_URL, cli, AWS_API_TOKEN_LIFETIME);
+        string token("");
+
+        LOG_DEBUG("requesting IMDSv2 token at {1}.", AWS_API_TOKEN_URL);
+
+        try
+        {
+            token = facter::util::get_token(AWS_API_TOKEN_URL, cli, AWS_API_TOKEN_LIFETIME);
+        }
+        catch (lth_curl::http_request_exception& ex) {
+            LOG_DEBUG("EC2 IMDSv2 endpoint is unavailable");
+        }
+        catch (runtime_error& ex) {
+            LOG_ERROR("EC2 IDMSv2 token request failed: {1}", ex.what());
+        }
+
         if (!token.empty())
             LOG_DEBUG("querying EC2 metadata using IMDSv2");
 
         auto metadata = make_value<map_value>();
+
+        LOG_DEBUG("querying EC2 instance metadata at {1}.", EC2_METADATA_ROOT_URL);
 
         try
         {
