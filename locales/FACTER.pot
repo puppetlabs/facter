@@ -962,12 +962,27 @@ msgstr ""
 
 #. debug
 #: lib/src/facts/resolvers/ec2_resolver.cc
-msgid "querying EC2 instance metadata at {1}."
+msgid "requesting IMDSv2 token at {1}."
+msgstr ""
+
+#. debug
+#: lib/src/facts/resolvers/ec2_resolver.cc
+msgid "EC2 IMDSv2 endpoint is unavailable"
+msgstr ""
+
+#. error
+#: lib/src/facts/resolvers/ec2_resolver.cc
+msgid "EC2 IDMSv2 token request failed: {1}"
 msgstr ""
 
 #. debug
 #: lib/src/facts/resolvers/ec2_resolver.cc
 msgid "querying EC2 metadata using IMDSv2"
+msgstr ""
+
+#. debug
+#: lib/src/facts/resolvers/ec2_resolver.cc
+msgid "querying EC2 instance metadata at {1}."
 msgstr ""
 
 #. debug
