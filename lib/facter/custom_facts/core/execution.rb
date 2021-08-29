@@ -96,22 +96,25 @@ module Facter
       end
 
       # Execute a command and return the output of that program.
+      #
       # @param command [String] Command to run
       #
       # @param options [Hash] Hash with options for the command
-      #
-      # Options accepted values :on_fail How to behave when the command could
+      # @option options [Symbol] :on_fail How to behave when the command could
       #   not be run. Specifying :raise will raise an error, anything else will
-      #   return that object on failure. Default is :raise.
-      #   :logger Optional logger used to log the command's stderr.
-      #   :time_limit Optional time out for the specified command. If no time_limit is passed,
-      #   a default of 300 seconds is used.
+      #   return referenced object on failure. Default is :raise.
+      # @option options [String] :logger Optional logger used to log the
+      #   command's stderr.
+      # @option options [Integer] :limit Optional time limit for the specified
+      #   command to run. If no time limit is passed, a default of 300 seconds
+      #   is used.
       #
       # @raise [Facter::Core::Execution::ExecutionFailure] If the command does
       #   not exist or could not be executed and :on_fail is set to :raise
       #
-      # @return [String] the output of the program, or the value of :on_fail (if it's different than :raise) if
-      #   command execution failed and :on_fail was specified.
+      # @return [String] the output of the program, or the value of :on_fail
+      #   (if it's different than :raise) if command execution failed and
+      #   :on_fail was specified.
       #
       # @api public
       def execute(command, options = {})
