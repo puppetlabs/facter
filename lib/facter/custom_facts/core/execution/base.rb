@@ -117,6 +117,11 @@ module Facter
           timeout = (options[:timeout] || options[:time_limit] || options[:limit]).to_i
           timeout = timeout.positive? ? timeout : nil
 
+          extra_keys = options.keys - %i[on_fail expand logger timeout]
+          unless extra_keys.empty?
+            @log.warn("Unexpected key passed to Facter::Core::Execution.execute option: #{options.keys.join(',')}")
+          end
+
           [on_fail, expand, logger, timeout]
         end
 
