@@ -4,7 +4,7 @@ test_name 'Facter::Core::Execution accepts and correctly sets a time limit optio
   first_file_content = <<-EOM
     Facter.add(:foo) do
       setcode do
-        Facter::Core::Execution.execute("sleep 3", {:limit => 2, :on_fail => :not_raise})
+        Facter::Core::Execution.execute("sleep 3", {:timeout => 2, :on_fail => :not_raise})
       end
     end
   EOM
@@ -12,7 +12,7 @@ test_name 'Facter::Core::Execution accepts and correctly sets a time limit optio
   second_file_content = <<-EOM
     Facter.add(:custom_fact) do
       setcode do
-         Facter::Core::Execution.execute("sleep 2", {:limit => 1})
+         Facter::Core::Execution.execute("sleep 2", {:timeout => 1})
       end
     end
   EOM

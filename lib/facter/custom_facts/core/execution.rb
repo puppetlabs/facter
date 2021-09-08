@@ -98,13 +98,13 @@ module Facter
       # Execute a command and return the output of that program.
       # @param command [String] Command to run
       #
-      # @param options [Hash] Hash with options for the command
+      # @param options [Hash<Symbol=>Any>] Hash with options for the command
       #
       # Options accepted values :on_fail How to behave when the command could
       #   not be run. Specifying :raise will raise an error, anything else will
       #   return that object on failure. Default is :raise.
       #   :logger Optional logger used to log the command's stderr.
-      #   :time_limit Optional time out for the specified command. If no time_limit is passed,
+      #   :timeout Optional time out for the specified command. If no timeout is passed,
       #   a default of 300 seconds is used.
       #
       # @raise [Facter::Core::Execution::ExecutionFailure] If the command does
@@ -125,7 +125,7 @@ module Facter
       #   not be run. Specifying :raise will raise an error, anything else will
       #   return that object on failure. Default is :raise.
       # @param logger Optional logger used to log the command's stderr.
-      # @param time_limit Optional time out for the specified command. If no time_limit is passed,
+      # @param timeout Optional time out for the specified command. If no timeout is passed,
       #   a default of 300 seconds is used.
       #
       # @raise [Facter::Core::Execution::ExecutionFailure] If the command does
@@ -135,8 +135,8 @@ module Facter
       #   :on_fail if command execution failed and :on_fail was specified.
       #
       # @api private
-      def execute_command(command, on_fail = nil, logger = nil, time_limit = nil)
-        @@impl.execute_command(command, on_fail, logger, time_limit)
+      def execute_command(command, on_fail = nil, logger = nil, timeout = nil)
+        @@impl.execute_command(command, on_fail, logger, timeout)
       end
 
       class ExecutionFailure < StandardError; end
