@@ -205,6 +205,25 @@ module Facter
       Facter::Options[:debug] = debug_bool
     end
 
+    # Check whether http debugging is enabled
+    #
+    # @return [bool]
+    #
+    # @api public
+    def http_debug?
+      Options[:http_debug]
+    end
+
+    # Enable or disable http debugging
+    # @param debug_bool [bool] State which http debugging should have
+    #
+    # @return [type] [description]
+    #
+    # @api public
+    def http_debug(http_debug_bool)
+      Facter::Options[:http_debug] = http_debug_bool
+    end
+
     # Enable sequential resolving of facts
     #
     # @return [bool]

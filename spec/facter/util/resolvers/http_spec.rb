@@ -79,6 +79,22 @@ describe Facter::Util::Resolvers::Http do
         expect(log_spy).to have_received(:debug).with("Trying to connect to #{url} but got: some error")
       end
     end
+
+    context 'when options[:http_debug] is set to true' do
+      let(:net_http_class) { class_spy(Net::HTTP) }
+      let(:net_http_instance) { instance_spy(Net::HTTP) }
+
+      before do
+        stub_const('Net::HTTP', net_http_class)
+        Facter::Options[:http_debug] = true
+      end
+
+      it 'sets Net::Http to write request and responses to stderr' do
+        allow(net_http_class).to receive(:new).and_return(net_http_instance)
+        http.send(client_method, url)
+        expect(net_http_instance).to have_received(:set_debug_output).with($stderr)
+      end
+    end
   end
 
   RSpec.shared_examples 'a http request on windows' do
