@@ -23,5 +23,9 @@ module Facter
     def to_s
       @value.to_s
     end
+
+    def resolves?(user_query)
+      @name == user_query
+    end
   end
 end

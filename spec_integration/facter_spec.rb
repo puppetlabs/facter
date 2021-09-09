@@ -78,6 +78,24 @@ describe 'Facter' do
           expect(Facter.value('arr_fact.-1')).to be_nil
         end
       end
+
+      context 'when having name collision with a core legacy fact' do
+        # core legacy fact -> network_.*
+        before do
+          Facter.search(custom_facts_dir)
+          data = <<-RUBY
+            Facter.add(:network_nexthop_ip) do
+              setcode { 'network_nexthop_ip' }
+            end
+          RUBY
+
+          write_to_file(tmp_filename('custom_fact.rb'), data, custom_facts_dir)
+        end
+
+        it 'resolves the custom fact' do
+          expect(Facter.value(:network_nexthop_ip)).to eql('network_nexthop_ip')
+        end
+      end
     end
 
     context 'with external facts' do

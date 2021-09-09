@@ -61,7 +61,7 @@ describe Facter::FactManager do
       ]
     end
 
-    let(:resolved_fact) { mock_resolved_fact(os, 'Ubuntu', '') }
+    let(:resolved_fact) { mock_resolved_fact(os, 'Ubuntu', os) }
 
     before do
       allow(Facter::FactLoader.instance).to receive(:load).and_return(loaded_facts)
@@ -95,8 +95,8 @@ describe Facter::FactManager do
         ]
       end
 
-      let(:resolved_fact) { mock_resolved_fact(fact_name, 'custom', '', :custom) }
-      let(:cached_fact) { mock_resolved_fact(fact_name, 'cached_custom', '', :custom) }
+      let(:resolved_fact) { mock_resolved_fact(fact_name, 'custom', fact_name, :custom) }
+      let(:cached_fact) { mock_resolved_fact(fact_name, 'cached_custom', fact_name, :custom) }
 
       context 'when is found in custom_dir/fact_name.rb' do
         before do
@@ -251,7 +251,7 @@ describe Facter::FactManager do
         ]
       end
 
-      let(:resolved_fact) { mock_resolved_fact('os.name', 'darwin', '', :core) }
+      let(:resolved_fact) { mock_resolved_fact('os.name', 'darwin', 'os.name', :core) }
 
       before do
         # mock custom_fact_by_filename to return nil
@@ -298,7 +298,7 @@ describe Facter::FactManager do
 
       context 'when nil' do
         let(:user_query) { 'virtual' }
-        let(:resolved_fact) { mock_resolved_fact('virtual', nil, '', :core) }
+        let(:resolved_fact) { mock_resolved_fact('virtual', nil, 'virtual', :core) }
 
         before do
           # mock all custom facts to return []
@@ -313,7 +313,7 @@ describe Facter::FactManager do
 
       context 'when boolean false' do
         let(:user_query) { 'fips_enabled' }
-        let(:resolved_fact) { mock_resolved_fact('fips_enabled', false, '', :core) }
+        let(:resolved_fact) { mock_resolved_fact('fips_enabled', false, 'fips_enabled', :core) }
 
         it 'resolves fact to false' do
           resolved_facts = Facter::FactManager.instance.resolve_fact(user_query)
@@ -328,7 +328,7 @@ describe Facter::FactManager do
       let(:custom_fact) { instance_double(Facter::LoadedFact, name: 'custom_fact', klass: nil, type: :custom) }
       let(:loaded_facts) { [custom_fact] }
 
-      let(:resolved_fact) { mock_resolved_fact(fact_name, 'custom', '', :custom) }
+      let(:resolved_fact) { mock_resolved_fact(fact_name, 'custom', fact_name, :custom) }
 
       before do
         # mock custom_fact_by_filename to return nil
@@ -394,7 +394,7 @@ describe Facter::FactManager do
         user_query: '', type: :core
       )
     end
-    let(:resolved_fact) { mock_resolved_fact('os', 'Ubuntu', '') }
+    let(:resolved_fact) { mock_resolved_fact('os', 'Ubuntu', 'os') }
 
     it 'resolves all core facts' do
       allow(fact_loader).to receive(:load_internal_facts).and_return(loaded_facts)

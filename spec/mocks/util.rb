@@ -43,7 +43,8 @@ end
 def mock_resolved_fact(fact_name, fact_value, user_query = nil, type = :core)
   resolved_fact_mock = double(Facter::ResolvedFact, name: fact_name, value: fact_value,
                                                     user_query: user_query, type: type,
-                                                    legacy?: type == :legacy, core?: type == :core, file: nil)
+                                                    legacy?: type == :legacy, core?: type == :core, file: nil,
+                                                    resolves?: fact_name == user_query)
 
   allow_attr_change(resolved_fact_mock, fact_name, fact_value)
   resolved_fact_mock
