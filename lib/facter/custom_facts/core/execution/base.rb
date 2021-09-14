@@ -42,7 +42,7 @@ module Facter
         end
 
         def execute(command, options = {})
-          on_fail, expand, logger, time_limit = extract_options(options)
+          on_fail, expand, logger, timeout = extract_options(options)
 
           expanded_command = if !expand && builtin_command?(command) || logger
                                command
@@ -59,12 +59,12 @@ module Facter
             return on_fail
           end
 
-          out, = execute_command(expanded_command, on_fail, logger, time_limit)
+          out, = execute_command(expanded_command, on_fail, logger, timeout)
           out
         end
 
-        def execute_command(command, on_fail = nil, logger = nil, time_limit = nil)
-          time_limit ||= 300
+        def execute_command(command, on_fail = nil, logger = nil, timeout = nil)
+          timeout ||= 300
           begin
             # Set LC_ALL and LANG to force i18n to C for the duration of this exec;
             # this ensures that any code that parses the
@@ -78,12 +78,12 @@ module Facter
               out_reader = Thread.new { stdout.read }
               err_reader = Thread.new { stderr.read }
               begin
-                Timeout.timeout(time_limit) do
+                Timeout.timeout(timeout) do
                   stdout_messages << out_reader.value
                   stderr_messages << err_reader.value
                 end
               rescue Timeout::Error
-                message = "Timeout encounter after #{time_limit}s, killing process with pid: #{pid}"
+                message = "Timeout encounter after #{timeout}s, killing process with pid: #{pid}"
                 Process.kill('KILL', pid)
                 on_fail == :raise ? (raise StandardError, message) : @log.debug(message)
               ensure
@@ -114,10 +114,15 @@ module Facter
           on_fail = options.fetch(:on_fail, :raise)
           expand = options.fetch(:expand, true)
           logger = options[:logger]
-          time_limit = options[:limit].to_i
-          time_limit = time_limit.positive? ? time_limit : nil
+          timeout = (options[:timeout] || options[:time_limit] || options[:limit]).to_i
+          timeout = timeout.positive? ? timeout : nil
 
-          [on_fail, expand, logger, time_limit]
+          extra_keys = options.keys - %i[on_fail expand logger timeout]
+          unless extra_keys.empty?
+            @log.warn("Unexpected key passed to Facter::Core::Execution.execute option: #{options.keys.join(',')}")
+          end
+
+          [on_fail, expand, logger, timeout]
         end
 
         def log_stderr(msg, command, logger)
