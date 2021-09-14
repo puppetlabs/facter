@@ -56,8 +56,12 @@ namespace facter { namespace facts { namespace aix {
             string query = (boost::format("PdDvLn=%1%") % type).str();
             auto cu_dv_query = odm_class<CuDv>::open("CuDv").query(query);
             for (auto& cu_dv : cu_dv_query) {
-                LOG_DEBUG("got a processor: {1}", cu_dv.name);
-                processor_names.push_back(cu_dv.name);
+                if (cu_dv.status == 1) {
+                    LOG_DEBUG("got a processor: {1}", cu_dv.name);
+                    processor_names.push_back(cu_dv.name);
+                } else {
+                    LOG_DEBUG("processor: {1} is a defined or stopped device, skipping", cu_dv.name)
+                }
             }
         }
 
