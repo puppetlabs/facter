@@ -51,7 +51,9 @@ module Facter
       core_and_external_facts = core_or_external_fact(user_query) || []
       resolved_facts = core_and_external_facts + custom_facts
 
-      resolved_facts = all_custom_facts(user_query) if resolved_facts.empty?
+      if resolved_facts.empty? || resolved_facts.none? { |rf| rf.resolves?(user_query) }
+        resolved_facts.concat(all_custom_facts(user_query))
+      end
 
       @cache_manager.cache_facts(resolved_facts)
 
