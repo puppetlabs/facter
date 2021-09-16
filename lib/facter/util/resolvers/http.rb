@@ -60,6 +60,9 @@ module Facter
             http = Net::HTTP.new(parsed_url.host)
             http.read_timeout = timeouts[:session] || SESSION_TIMEOUT
             http.open_timeout = timeouts[:connection] || CONNECTION_TIMEOUT
+
+            http.set_debug_output($stderr) if Options[:http_debug]
+
             http
           end
 

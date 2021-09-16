@@ -97,6 +97,10 @@ module Facter
                  type: :boolean,
                  desc: 'Resolve facts sequentially'
 
+    class_option :http_debug,
+                 type: :boolean,
+                 desc: 'Whether to write HTTP request and responses to stderr. This should never be used in production.'
+
     class_option :puppet,
                  type: :boolean,
                  aliases: '-p',

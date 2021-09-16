@@ -44,7 +44,8 @@ describe Facter::OptionStore do
         external_dir: [],
         custom_dir: [],
         allow_external_loggers: true,
-        force_dot_resolution: false
+        force_dot_resolution: false,
+        http_debug: false
       )
     end
   end
