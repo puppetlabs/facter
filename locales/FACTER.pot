@@ -292,6 +292,11 @@ msgstr ""
 
 #. debug
 #: lib/src/facts/aix/processor_resolver.cc
+msgid "processor: {1} is a defined or stopped device, skipping"
+msgstr ""
+
+#. debug
+#: lib/src/facts/aix/processor_resolver.cc
 msgid "got attribute {1}={2} for processor {3}"
 msgstr ""
 
