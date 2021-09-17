@@ -1,4 +1,11 @@
 CuDv:
-        name = "proc0"
-        status = 1
-        PdDvLn = "processor/sys/proc_rspc"
+		name = "proc0"
+		status = 1
+		chgstatus = 2
+		PdDvLn = "processor/sys/proc_rspc"
+
+CuDv:
+		name = "proc8"
+		status = 0
+		chgstatus = 2
+		PdDvLn = "processor/sys/proc_rspc"

@@ -6,11 +6,15 @@ describe Facter::Resolvers::Aix::Processors do
   let(:odm_query_spy) { instance_spy(Facter::Util::Aix::ODMQuery) }
   let(:odm_query_spy2) { instance_spy(Facter::Util::Aix::ODMQuery) }
   let(:odm_query_spy3) { instance_spy(Facter::Util::Aix::ODMQuery) }
+  let(:odm_query_spy4) { instance_spy(Facter::Util::Aix::ODMQuery) }
   let(:logger_spy) { instance_spy(Facter::Log) }
 
   before do
     resolver.instance_variable_set(:@log, logger_spy)
-    allow(Facter::Util::Aix::ODMQuery).to receive(:new).and_return(odm_query_spy, odm_query_spy2, odm_query_spy3)
+    allow(Facter::Util::Aix::ODMQuery).to receive(:new).and_return(odm_query_spy,
+                                                                   odm_query_spy2,
+                                                                   odm_query_spy3,
+                                                                   odm_query_spy4)
     allow(odm_query_spy).to receive(:equals).with('class', 'processor')
     allow(odm_query_spy).to receive(:execute).and_return(result)
   end
@@ -69,6 +73,9 @@ describe Facter::Resolvers::Aix::Processors do
 
       allow(odm_query_spy3).to receive(:equals).with('name', 'proc0')
       allow(odm_query_spy3).to receive(:execute).and_return(load_fixture('processors_cuat').read)
+
+      allow(odm_query_spy4).to receive(:equals).with('name', 'proc8')
+      allow(odm_query_spy4).to receive(:execute).and_return(load_fixture('processors_cuat').read)
     end
 
     it 'returns speed fact' do

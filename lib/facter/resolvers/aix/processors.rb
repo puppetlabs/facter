@@ -42,8 +42,9 @@ module Facter
             return unless result
 
             names = retrieve_from_array(result.scan(/name\s=\s.*/), 1)
+            status = retrieve_from_array(result.scan(/\s+status\s=\s.*/), 1)
 
-            names.each { |elem| query_cuat(elem) }
+            names.each_with_index { |elem, idx| query_cuat(elem) if status[idx] == '1' }
           end
 
           def query_cuat(name)
