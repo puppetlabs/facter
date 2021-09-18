@@ -97,5 +97,9 @@ describe Facter::Resolvers::Aix::Processors do
     it 'returns threads fact' do
       expect(resolver.resolve(:threads_per_core)).to eq(8)
     end
+
+    it 'returns physical_count fact' do
+      expect(resolver.resolve(:physical_count)).to eq(1)
+    end
   end
 end

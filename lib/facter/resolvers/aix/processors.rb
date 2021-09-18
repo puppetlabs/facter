@@ -18,6 +18,7 @@ module Facter
             @fact_list[:logical_count] = 0
             @fact_list[:cores_per_socket] = 0
             @fact_list[:threads_per_core] = 0
+            @fact_list[:physical_count] = 0
 
             odmquery = Facter::Util::Aix::ODMQuery.new
             odmquery.equals('class', 'processor')
@@ -42,9 +43,11 @@ module Facter
             return unless result
 
             names = retrieve_from_array(result.scan(/name\s=\s.*/), 1)
+
             status = retrieve_from_array(result.scan(/\s+status\s=\s.*/), 1)
 
             names.each_with_index { |elem, idx| query_cuat(elem) if status[idx] == '1' }
+            @fact_list[:physical_count] = status.count('1')
           end
 
           def query_cuat(name)
