@@ -120,6 +120,11 @@ module Facter
                      end
         release_string = on(agent, 'cat /etc/*-release').stdout.downcase
         case release_string
+        when /almalinux/
+          os_name = 'AlmaLinux'
+          os_distro_description = /AlmaLinux release #{os_version}\.\d+ \(.+\)/
+          os_distro_id = 'AlmaLinux'
+          os_distro_release_full = /#{os_version}\.\d+/
         when /amazon/
           os_name = 'Amazon'
           # This parses: VERSION_ID="2017.09"
@@ -127,6 +132,11 @@ module Facter
           os_distro_description = /Amazon Linux( AMI)? release (\d )?(\()?#{os_version}(\))?/
           os_distro_id = /^Amazon(AMI)?$/
           os_distro_release_full = /#{os_version}(\.\d+)?/
+        when /rocky/
+          os_name = 'Rocky'
+          os_distro_description = /Rocky Linux release #{os_version}\.\d+ \(.+\)/
+          os_distro_id = 'Rocky'
+          os_distro_release_full = /#{os_version}\.\d+/
         when /centos/
           os_name = 'CentOS'
           os_distro_description = /CentOS( Linux)? release #{os_version}\.\d+(\.\d+)? \(\w+\)/
