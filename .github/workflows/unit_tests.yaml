@@ -21,7 +21,7 @@ jobs:
           - 2.3
           - 2.7
           - 3.0
-          - 'jruby-9.2.19.0'
+          - jruby
     runs-on: ubuntu-18.04
     steps:
       - name: Checkout current PR
