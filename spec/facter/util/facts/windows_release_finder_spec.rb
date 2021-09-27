@@ -25,6 +25,17 @@ describe Facter::Util::Facts::WindowsReleaseFinder do
     end
   end
 
+  describe '#find windows release when version is 2022' do
+    let(:cons) { false }
+    let(:desc) {}
+    let(:k_version) { '10.0.20348' }
+    let(:version) { '10.0' }
+
+    it 'returns 2022' do
+      expect(Facter::Util::Facts::WindowsReleaseFinder.find_release(input)).to eql('2022')
+    end
+  end
+
   describe '#find windows release when version is 2019' do
     let(:cons) { false }
     let(:desc) {}
