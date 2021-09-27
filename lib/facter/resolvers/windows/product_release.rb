@@ -24,10 +24,19 @@ module Facter
 
         def build_fact_list(reg)
           reg.each do |name, _value|
-            @fact_list[:edition_id] = reg[name] if name == 'EditionID'
-            @fact_list[:installation_type] = reg[name] if name == 'InstallationType'
-            @fact_list[:product_name] = reg[name] if name == 'ProductName'
-            @fact_list[:release_id] = reg[name] if name == 'ReleaseId'
+            case name
+            when 'EditionID'
+              @fact_list[:edition_id] = reg[name]
+            when 'InstallationType'
+              @fact_list[:installation_type] = reg[name]
+            when 'ProductName'
+              @fact_list[:product_name] = reg[name]
+            when 'DisplayVersion'
+              @fact_list[:release_id] = reg[name]
+              @fact_list[:display_version] = reg[name]
+            when 'ReleaseId'
+              @fact_list[:release_id] = reg[name] unless @fact_list[:release_id]
+            end
           end
         end
       end

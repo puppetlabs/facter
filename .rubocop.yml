@@ -82,6 +82,7 @@ Metrics/PerceivedComplexity:
 
 Metrics/CyclomaticComplexity:
   Exclude:
+    - 'lib/facter/resolvers/windows/product_release.rb'
     - 'lib/facter/custom_facts/util/values.rb'
     - 'lib/facter/custom_facts/util/confine.rb'
     - 'lib/facter/custom_facts/core/execution/windows.rb'
