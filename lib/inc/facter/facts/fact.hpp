@@ -451,6 +451,11 @@ namespace facter { namespace facts {
         constexpr static char const* windows_release_id = "windows_release_id";
 
         /**
+         * The fact for Windows Display Version.
+         */
+        constexpr static char const* windows_display_version = "windows_display_version";
+
+        /**
          * The fact for Windows native system32 directory.
          */
         constexpr static char const* windows_system32 = "system32";

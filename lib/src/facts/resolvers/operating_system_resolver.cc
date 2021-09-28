@@ -39,6 +39,7 @@ namespace facter { namespace facts { namespace resolvers {
                 fact::windows_edition_id,
                 fact::windows_installation_type,
                 fact::windows_product_name,
+                fact::windows_display_version,
                 fact::windows_release_id,
                 fact::windows_system32,
                 fact::selinux,
@@ -217,6 +218,11 @@ namespace facter { namespace facts { namespace resolvers {
         if (!data.win.release_id.empty()) {
             facts.add(fact::windows_release_id, make_value<string_value>(data.win.release_id, true));
             windows->add("release_id", make_value<string_value>(move(data.win.release_id)));
+        }
+
+        if (!data.win.display_version.empty()) {
+            facts.add(fact::windows_display_version, make_value<string_value>(data.win.display_version, true));
+            windows->add("display_version", make_value<string_value>(move(data.win.display_version)));
         }
 
         if (!data.win.system32.empty()) {
