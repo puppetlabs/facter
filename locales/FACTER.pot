@@ -1291,6 +1291,11 @@ msgstr ""
 
 #. debug
 #: lib/src/facts/windows/operating_system_resolver.cc
+msgid "failure getting DisplayVersion: {1}"
+msgstr ""
+
+#. debug
+#: lib/src/facts/windows/operating_system_resolver.cc
 msgid "failure getting ReleaseId: {1}"
 msgstr ""
 
