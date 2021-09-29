@@ -79,14 +79,29 @@ namespace facter { namespace facts { namespace windows {
         }
     }
 
+    static string get_display_version()
+    {
+        string displayVersion;
+        try {
+            displayVersion = registry::get_registry_string(registry::HKEY::LOCAL_MACHINE,
+                "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\", "DisplayVersion");
+        } catch (registry_exception &e) {
+            LOG_DEBUG("failure getting DisplayVersion: {1}", e.what());
+        }
+        return displayVersion;
+    }
+
     static string get_release_id()
     {
         string releaseID;
-        try {
-            releaseID = registry::get_registry_string(registry::HKEY::LOCAL_MACHINE,
-                "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\", "ReleaseId");
-        } catch (registry_exception &e) {
-            LOG_DEBUG("failure getting ReleaseId: {1}", e.what());
+        releaseID = get_display_version();
+        if (releaseID.empty()) {
+            try {
+                releaseID = registry::get_registry_string(registry::HKEY::LOCAL_MACHINE,
+                    "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\", "ReleaseId");
+            } catch (registry_exception &e) {
+                LOG_DEBUG("failure getting ReleaseId: {1}", e.what());
+            }
         }
         return releaseID;
     }
@@ -153,6 +168,7 @@ namespace facter { namespace facts { namespace windows {
         result.architecture = get_architecture(result.hardware);
         result.win.system32 = get_system32();
         result.win.release_id = get_release_id();
+        result.win.display_version = get_display_version();
         result.win.edition_id = get_edition_id();
         result.win.installation_type = get_installation_type();
         result.win.product_name = get_product_name();

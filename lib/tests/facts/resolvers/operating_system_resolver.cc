@@ -37,6 +37,7 @@ struct test_os_resolver : operating_system_resolver
         result.osx.product = "Mac OS X";
         result.osx.build = "14A388b";
         result.osx.version = "10.10";
+        result.win.display_version = "21H2";
         result.win.release_id = "1904";
         result.win.edition_id = "ServerStandard";
         result.win.installation_type = "Server";
@@ -65,7 +66,7 @@ SCENARIO("using the operating system resolver") {
     }
     WHEN("data is present") {
         facts.add(make_shared<test_os_resolver>());
-        REQUIRE(facts.size() == 30u);
+        REQUIRE(facts.size() == 31u);
         THEN("a structured fact is added") {
             auto os = facts.get<map_value>(fact::os);
             REQUIRE(os);
@@ -144,7 +145,7 @@ SCENARIO("using the operating system resolver") {
             REQUIRE(minor->value() == "0");
             auto windows = os->get<map_value>("windows");
             REQUIRE(windows);
-            REQUIRE(windows->size() == 5u);
+            REQUIRE(windows->size() == 6u);
             auto edition_id = facts.get<string_value>(fact::windows_edition_id);
             REQUIRE(edition_id);
             REQUIRE(edition_id->value() == "ServerStandard");
@@ -157,6 +158,9 @@ SCENARIO("using the operating system resolver") {
             auto release_id = facts.get<string_value>(fact::windows_release_id);
             REQUIRE(release_id);
             REQUIRE(release_id->value() == "1904");
+            auto display_version = facts.get<string_value>(fact::windows_display_version);
+            REQUIRE(display_version);
+            REQUIRE(display_version->value() == "21H2");
             auto system32 = windows->get<string_value>("system32");
             REQUIRE(system32);
             REQUIRE(system32->value() == "C:\\WINDOWS\\sysnative");
@@ -249,6 +253,9 @@ SCENARIO("using the operating system resolver") {
             auto release_id = facts.get<string_value>(fact::windows_release_id);
             REQUIRE(release_id);
             REQUIRE(release_id->value() == "1904");
+            auto display_version = facts.get<string_value>(fact::windows_display_version);
+            REQUIRE(display_version);
+            REQUIRE(display_version->value() == "21H2");
             auto system32 = facts.get<string_value>(fact::windows_system32);
             REQUIRE(system32);
             REQUIRE(system32->value() == "C:\\WINDOWS\\sysnative");

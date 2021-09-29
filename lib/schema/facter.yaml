@@ -1238,6 +1238,9 @@ os:
                 product_name:
                     type: string
                     description: Specify the textual product name.
+                display_version:
+                    type: string
+                    description: Windows Display Version of the form YYMM.
                 release_id:
                     type: string
                     description: Windows Build Version of the form YYMM.
@@ -1719,6 +1722,13 @@ windows_release_id:
     description: Return Windows Build Version of the form YYMM.
     resolution: |
         Windows: query the registry to retrieve the build version number.
+
+windows_display_version:
+    type: string
+    hidden: true
+    description: Return Windows Display Version.
+    resolution: |
+        Windows: query the registry to retrieve the display version.
 
 system32:
     type: string

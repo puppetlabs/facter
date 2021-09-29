@@ -113,6 +113,10 @@ namespace facter { namespace facts { namespace resolvers {
              */
             std::string product_name;
             /**
+             * Stores the Windows Display Version.
+             */
+            std::string display_version;
+            /**
              * Stores the Windows Build Version.
              */
             std::string release_id;
