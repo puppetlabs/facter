@@ -127,6 +127,15 @@ namespace facter { namespace facts { namespace windows {
         return product_name;
     }
 
+    static string get_release_from_build_number(long const& build_number)
+    {
+        if (build_number >= 20348L) {
+            return "2022";
+        } else if (build_number >= 17623L) {
+            return "2019";
+        }
+        return "2016";
+    }
 
     operating_system_resolver::operating_system_resolver(shared_ptr<wmi> wmi_conn) :
         resolvers::operating_system_resolver(),
@@ -176,11 +185,9 @@ namespace facter { namespace facts { namespace windows {
             auto build_number = stol(build_number_as_str);
 
             if (consumerrel) {
-              result.release = "10";
-            } else if (build_number >= 17623L) {
-              result.release = "2019";
+                result.release = "10";
             } else {
-              result.release = "2016";
+                result.release = get_release_from_build_number(build_number);
             }
         } else if (version == "6.3") {
             result.release = consumerrel ? "8.1" : "2012 R2";
