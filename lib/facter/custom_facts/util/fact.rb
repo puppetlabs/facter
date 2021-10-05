@@ -117,7 +117,7 @@ module Facter
       #
       # @api public
       def value
-        return @value if @value
+        return @value unless @value.nil?
 
         if @resolves.empty?
           log.debug format('No resolves for %<name>s', name: @name)

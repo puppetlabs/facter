@@ -61,6 +61,11 @@ describe Facter::Util::Resolution do
       expect(resolution.value).to eq 'foo'
     end
 
+    it 'returns a value that is equal to false' do
+      resolution.value = false
+      expect(resolution.value).to eq false
+    end
+
     describe 'and setcode has not been called' do
       it 'returns nil' do
         expect(resolution.value).to be_nil
