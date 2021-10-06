@@ -188,7 +188,7 @@ module Facter
       end
 
       def resolve_value
-        if @value
+        if !@value.nil?
           @value
         elsif @code.nil?
           nil
