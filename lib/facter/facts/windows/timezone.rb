@@ -6,7 +6,7 @@ module Facts
       FACT_NAME = 'timezone'
 
       def call_the_resolver
-        fact_value = Facter::Resolvers::Windows::Timezone.resolve(:timezone)
+        fact_value = Facter::Resolvers::Timezone.resolve(:timezone)
 
         Facter::ResolvedFact.new(FACT_NAME, fact_value)
       end

@@ -7,13 +7,13 @@ describe Facts::Windows::Timezone do
     let(:timezone) { 'UTC' }
 
     before do
-      allow(Facter::Resolvers::Windows::Timezone).to \
+      allow(Facter::Resolvers::Timezone).to \
         receive(:resolve).with(:timezone).and_return(timezone)
     end
 
     it 'calls Facter::Resolvers::Timezone' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Windows::Timezone).to have_received(:resolve).with(:timezone)
+      expect(Facter::Resolvers::Timezone).to have_received(:resolve).with(:timezone)
     end
 
     it 'returns a resolved fact' do
