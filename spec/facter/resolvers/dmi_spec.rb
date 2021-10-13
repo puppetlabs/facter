@@ -159,5 +159,14 @@ describe Facter::Resolvers::Linux::DmiBios do
         expect(resolver.resolve(:product_uuid)).to be(nil)
       end
     end
+
+    context 'when product_name contains garbled information' do
+      let(:file_content) { "Supermicro^L\x8DD$Pptal0\n" }
+      let(:file) { 'sys_vendor' }
+
+      it 'returns product_name with the invalid characters replaced' do
+        expect(resolver.resolve(:sys_vendor)).to eq('Supermicro^L�D$Pptal0')
+      end
+    end
   end
 end
