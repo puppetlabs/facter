@@ -9,8 +9,11 @@ using namespace std;
 
 namespace facter { namespace util {
 
-    string get_token(string const& url, lth_curl::client& cli, int const& lifetime){
+    string get_token(string const& url, lth_curl::client& cli, int const& lifetime,
+                     unsigned int ec2_connection_timeout, unsigned int ec2_session_timeout){
         lth_curl::request req(url);
+        req.connection_timeout(ec2_connection_timeout);
+        req.timeout(ec2_session_timeout);
         req.add_header("X-aws-ec2-metadata-token-ttl-seconds", to_string(lifetime));
         auto response = cli.put(req);
 

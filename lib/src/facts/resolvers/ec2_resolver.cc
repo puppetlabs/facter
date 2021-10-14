@@ -138,7 +138,7 @@ namespace facter { namespace facts { namespace resolvers {
 
         try
         {
-            token = facter::util::get_token(AWS_API_TOKEN_URL, cli, AWS_API_TOKEN_LIFETIME);
+            token = facter::util::get_token(AWS_API_TOKEN_URL, cli, AWS_API_TOKEN_LIFETIME, EC2_CONNECTION_TIMEOUT, EC2_SESSION_TIMEOUT);
         }
         catch (lth_curl::http_request_exception& ex) {
             LOG_DEBUG("EC2 IMDSv2 endpoint is unavailable");
