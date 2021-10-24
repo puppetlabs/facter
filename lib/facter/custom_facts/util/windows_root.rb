@@ -4,7 +4,8 @@ module LegacyFacter
   module Util
     module Root
       def self.root?
-        Facter::Resolvers::Identity.resolve(:privileged)
+        require 'facter/resolvers/windows/ffi/identity_ffi'
+        IdentityFFI.privileged?
       end
     end
   end

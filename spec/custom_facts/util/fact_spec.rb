@@ -1,13 +1,16 @@
 #! /usr/bin/env ruby
 # frozen_string_literal: true
 
-require_relative '../../spec_helper_legacy'
-
 describe Facter::Util::Fact do
   subject(:fact) { Facter::Util::Fact.new('yay') }
 
   let(:resolution) { Facter::Util::Resolution.new('yay', fact) }
   let(:options) { { fact_type: :custom } }
+  let(:logger) { instance_spy(Facter::Log) }
+
+  before do
+    allow(Facter::Log).to receive(:new).and_return(logger)
+  end
 
   it 'requires a name' do
     expect { Facter::Util::Fact.new }.to raise_error(ArgumentError)
@@ -42,7 +45,7 @@ describe Facter::Util::Fact do
   end
 
   it 'issues a deprecation warning for use of ldapname' do
-    expect(LegacyFacter).to receive(:warnonce).with('ldapname is deprecated and will be removed in a future version')
+    expect(logger).to receive(:warnonce).with('ldapname is deprecated and will be removed in a future version')
     Facter::Util::Fact.new('YayNess', ldapname: 'fooness')
   end
 

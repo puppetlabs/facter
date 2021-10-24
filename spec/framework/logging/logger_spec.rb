@@ -108,6 +108,21 @@ describe Logger do
     end
   end
 
+  describe '#debugonce' do
+    before do
+      allow(Facter).to receive(:debugging?).and_return(true)
+    end
+
+    it 'writes the same debug message only once' do
+      message = 'Some error message'
+
+      log.debugonce(message)
+      log.debugonce(message)
+
+      expect(multi_logger_double).to have_received(:debug).once.with("Class - #{message}")
+    end
+  end
+
   describe '#info' do
     it 'writes info message' do
       log.info('info_message')
@@ -202,6 +217,21 @@ describe Logger do
     end
   end
 
+  describe '#warnonce' do
+    before do
+      allow(Facter).to receive(:debugging?).and_return(true)
+    end
+
+    it 'writes the same debug message only once' do
+      message = 'Some error message'
+
+      log.warnonce(message)
+      log.warnonce(message)
+
+      expect(multi_logger_double).to have_received(:warn).once.with("Class - #{message}")
+    end
+  end
+
   describe '#error' do
     it 'writes error message with color on macosx' do
       allow(OsDetector.instance).to receive(:detect).and_return(:macosx)
@@ -252,6 +282,59 @@ describe Logger do
       expect(multi_logger_double)
         .to have_received(:error)
         .with("Class - #{colorize("Test exception\nbacktrace:1", Facter::RED)}")
+    end
+  end
+
+  describe '.clear_messages' do
+    before do
+      allow(Facter).to receive(:debugging?).and_return(true)
+    end
+
+    it 'clears debugonce messages' do
+      message = 'Some error message'
+
+      log.debugonce(message)
+      Facter::Log.clear_messages
+      log.debugonce(message)
+
+      expect(multi_logger_double).to have_received(:debug).twice.with("Class - #{message}")
+    end
+
+    it 'clears warnonce messages' do
+      message = 'Some error message'
+
+      log.warnonce(message)
+      Facter::Log.clear_messages
+      log.warnonce(message)
+
+      expect(multi_logger_double).to have_received(:warn).twice.with("Class - #{message}")
+    end
+  end
+
+  describe '.show_time' do
+    before do
+      allow(Facter::Log).to receive(:timing?).and_return(true)
+    end
+
+    it 'prints the message to stderr' do
+      expect { Facter::Log.show_time('foo') }.to output("\e[32mfoo\e[0m\n").to_stderr
+    end
+  end
+
+  describe 'setting the timing mode' do
+    it 'is enabled when the given value is true' do
+      Facter::Log.timing(true)
+      expect(Facter::Log.timing?).to be true
+    end
+
+    it 'is disabled when the given value is false' do
+      Facter::Log.timing(false)
+      expect(Facter::Log.timing?).to be false
+    end
+
+    it 'is disabled when the given value is nil' do
+      Facter::Log.timing(nil)
+      expect(Facter::Log.timing?).to be nil
     end
   end
 end

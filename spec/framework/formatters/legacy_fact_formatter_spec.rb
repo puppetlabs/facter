@@ -12,15 +12,15 @@ describe Facter::LegacyFactFormatter do
   end
 
   let(:nested_fact1) do
-    Facter::ResolvedFact.new('my.nested.fact1', 'my_nested_fact_value')
+    Facter::ResolvedFact.new('my.nested.fact1', [0, 1, 2, 3, 'my_nested_fact_value'])
   end
 
   let(:nested_fact2) do
-    Facter::ResolvedFact.new('my.nested.fact2', 'my_nested_fact_value')
+    Facter::ResolvedFact.new('my.nested.fact2', [0, 1, 2, 'my_nested_fact_value'])
   end
 
   let(:nested_fact3) do
-    Facter::ResolvedFact.new('my.nested.fact3', 'value')
+    Facter::ResolvedFact.new('my.nested.fact3', { 'my_nested_fact_value' => ['first', { 'another' => 'value' }] })
   end
 
   let(:nil_resolved_fact1) do
@@ -43,36 +43,32 @@ describe Facter::LegacyFactFormatter do
     Facter::ResolvedFact.new('path', 'C:\\Program Files\\Puppet Labs\\Puppet\\bin;C:\\cygwin64\\bin')
   end
 
+  let(:wrong_query_fact) do
+    Facter::ResolvedFact.new('mountpoints', { '/tmp' => 'something' })
+  end
+
   before do
     resolved_fact1.user_query = 'resolved_fact1'
-    resolved_fact1.filter_tokens = []
 
     resolved_fact2.user_query = 'resolved_fact2'
-    resolved_fact2.filter_tokens = []
 
     nested_fact1.user_query = 'my.nested.fact1.4'
-    nested_fact1.filter_tokens = [4]
 
     nested_fact2.user_query = 'my.nested.fact2.3'
-    nested_fact2.filter_tokens = [3]
 
     nested_fact3.user_query = 'my.nested.fact3.my_nested_fact_value.1.another'
-    nested_fact3.filter_tokens = ['my_nested_fact_value', 1, 'another']
 
     nil_resolved_fact1.user_query = 'nil_resolved_fact1'
-    nil_resolved_fact1.filter_tokens = []
 
     nil_resolved_fact2.user_query = 'nil_resolved_fact2'
-    nil_resolved_fact2.filter_tokens = []
 
     nil_nested_fact1.user_query = 'my'
-    nil_nested_fact1.filter_tokens = []
 
     nil_nested_fact2.user_query = 'my.nested.fact2'
-    nil_nested_fact2.filter_tokens = []
 
     win_path.user_query = ''
-    win_path.filter_tokens = []
+
+    wrong_query_fact.user_query = 'mountpoints.asd'
   end
 
   context 'when no user query' do
@@ -130,7 +126,7 @@ describe Facter::LegacyFactFormatter do
       context 'when there is a single user query that contains :' do
         let(:resolved_fact) do
           instance_spy(Facter::ResolvedFact, name: 'networking.ip6', value: 'fe80::7ca0:ab22:703a:b329',
-                                             user_query: 'networking.ip6', filter_tokens: [], type: :core)
+                                             user_query: 'networking.ip6', type: :core)
         end
 
         it 'returns single value without replacing : with =>' do
@@ -164,6 +160,18 @@ describe Facter::LegacyFactFormatter do
 
           expect(legacy_formatter.format([nil_nested_fact1])).to eq('')
         end
+      end
+    end
+
+    context 'when user query is wrong' do
+      it 'prints no value' do
+        expect(legacy_formatter.format([wrong_query_fact])).to eq('')
+      end
+
+      it 'does not raise if fact leaf is string' do
+        wrong_query_fact.user_query = 'mountpoints./tmp.asd'
+
+        expect { legacy_formatter.format([wrong_query_fact]) }.not_to raise_error
       end
     end
   end
@@ -228,7 +236,7 @@ describe Facter::LegacyFactFormatter do
   context 'when fact starts with double ":"' do
     let(:resolved_fact) do
       instance_spy(Facter::ResolvedFact, name: 'networking', value: { ip6: '::1' },
-                                         user_query: 'networking', filter_tokens: [], type: :core)
+                                         user_query: 'networking', type: :core)
     end
 
     it 'formats the fact correctly' do
@@ -240,7 +248,7 @@ describe Facter::LegacyFactFormatter do
   context 'when fact name contains a windows path' do
     let(:resolved_fact) do
       instance_spy(Facter::ResolvedFact, name: 'C:\\Program Files\\App', value: 'bin_dir',
-                                         user_query: '', filter_tokens: [], type: :core)
+                                         user_query: '', type: :core)
     end
 
     it 'formats the fact correctly' do
@@ -252,7 +260,7 @@ describe Facter::LegacyFactFormatter do
   context 'when fact value contains newline' do
     let(:resolved_fact) do
       instance_spy(Facter::ResolvedFact, name: 'custom_fact', value: 'value1 \n value2',
-                                         user_query: '', filter_tokens: [], type: :core)
+                                         user_query: '', type: :core)
     end
 
     it 'formats the fact correctly' do

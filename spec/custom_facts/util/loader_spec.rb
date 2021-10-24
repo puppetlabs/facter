@@ -1,9 +1,13 @@
 #! /usr/bin/env ruby
 # frozen_string_literal: true
 
-require_relative '../../spec_helper_legacy'
-
 describe LegacyFacter::Util::Loader do
+  let(:logger) { instance_spy(Facter::Log) }
+
+  before do
+    allow(Facter::Log).to receive(:new).and_return(logger)
+  end
+
   def loader_from(places)
     env = places[:env] || {}
     search_path = places[:search_path] || []
@@ -110,7 +114,7 @@ describe LegacyFacter::Util::Loader do
       allow(loader).to receive(:valid_search_path?).and_return false
       allow(loader).to receive(:valid_search_path?).with('/one').and_return true
       allow(loader).to receive(:valid_search_path?).with('two/three').and_return false
-      allow(LegacyFacter)
+      allow(logger)
         .to receive(:warn)
         .with('Excluding two/three from search path. Fact file paths must be an absolute directory').once
 
@@ -259,7 +263,7 @@ describe LegacyFacter::Util::Loader do
 
     context 'when loads all facts from the environment' do
       before do
-        Facter::Util::Resolution.with_env 'facter_one' => 'yayness', 'facter_two' => 'boo' do
+        Facter::Util::Resolution.with_env 'FACTER_one' => 'yayness', 'FACTER_TWO' => 'boo' do
           loader.load_all
         end
       end
@@ -273,7 +277,7 @@ describe LegacyFacter::Util::Loader do
       end
     end
 
-    it 'onlies load all facts one time' do
+    it 'only load all facts once' do
       loader = loader_from(env: {})
       expect(loader).to receive(:load_env).once
 

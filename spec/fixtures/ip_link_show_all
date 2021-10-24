@@ -1,0 +1,6 @@
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000\    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: ens160: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc mq state UP mode DEFAULT group default qlen 1000\    link/ether 00:50:56:9a:51:af brd ff:ff:ff:ff:ff:ff
+3: ib0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 4092 qdisc pfifo_fast state DOWN mode DEFAULT group default qlen 256\    link/infiniband 80:00:02:08:fa:81:00:00:00:00:00:00:00:23:7d:ff:ff:94:73:fd brd 00:ff:ff:ff:ff:12:40:1b:ff:ff:00:00:00:00:00:00:ff:ff:ff:ff
+4: eth2: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc fq_codel master bond0 state UP mode DEFAULT group default qlen 1000\    link/ether 08:00:27:29:dc:a5 brd ff:ff:ff:ff:ff:ff
+5: eth3: <BROADCAST,MULTICAST,SLAVE,UP,LOWER_UP> mtu 1500 qdisc fq_codel master bond0 state UP mode DEFAULT group default qlen 1000\    link/ether 08:00:27:29:dc:a5 brd ff:ff:ff:ff:ff:ff
+6: bond0: <BROADCAST,MULTICAST,MASTER,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000\    link/ether 08:00:27:29:dc:a5 brd ff:ff:ff:ff:ff:ff    

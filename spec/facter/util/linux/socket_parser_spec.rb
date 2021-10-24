@@ -17,7 +17,8 @@ describe Facter::Util::Linux::SocketParser do
       ifaddr_obj('lo', '::1', '00:00:00:00:00:00', 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff', false),
       ifaddr_obj('ens160', '10.16.119.155', '00:50:56:9a:61:46', '255.255.240.0', true),
       ifaddr_obj('ens160', '10.16.127.70', '00:50:56:9a:61:46', '255.255.240.0', true),
-      ifaddr_obj('ens160', 'fe80::250:56ff:fe9a:8481', '00:50:56:9a:61:46', 'ffff:ffff:ffff:ffff::', false)
+      ifaddr_obj('ens160', 'fe80::250:56ff:fe9a:8481', '00:50:56:9a:61:46', 'ffff:ffff:ffff:ffff::', false),
+      ifaddr_obj('ib0', '192.168.2.12', '80:00:02:08:fa:81:00:00:00:00:00:00:00:23:7d:ff:ff:94:73:fd', '255.255.255.0', true) # rubocop:disable Layout/LineLength
     ]
   end
 
@@ -26,9 +27,7 @@ describe Facter::Util::Linux::SocketParser do
       allow(Socket).to receive(:getifaddrs).and_return(ifaddrs)
       allow(Socket).to receive(:const_defined?).with(:PF_LINK).and_return(true)
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('ip link show ens160', logger: log_spy).and_return(load_fixture('ip_link_show_ens160').read)
-      allow(Facter::Core::Execution).to receive(:execute)
-        .with('ip link show lo', logger: log_spy).and_return(load_fixture('ip_link_show_lo').read)
+        .with('ip -o link show', logger: log_spy).and_return(load_fixture('ip_link_show_all').read)
     end
 
     let(:result) do
@@ -50,6 +49,12 @@ describe Facter::Util::Linux::SocketParser do
             { address: 'fe80::250:56ff:fe9a:8481', netmask: 'ffff:ffff:ffff:ffff::', network: 'fe80::', scope6: 'link' }
           ],
           mac: '00:50:56:9a:61:46'
+        },
+        'ib0' => {
+          bindings: [
+            { address: '192.168.2.12', netmask: '255.255.255.0', network: '192.168.2.0' }
+          ],
+          mac: '80:00:02:08:fa:81:00:00:00:00:00:00:00:23:7d:ff:ff:94:73:fd'
         }
       }
     end
@@ -72,15 +77,7 @@ describe Facter::Util::Linux::SocketParser do
 
       before do
         allow(Facter::Core::Execution).to receive(:execute)
-          .with('ip link show ens160', logger: log_spy).and_return(load_fixture('ip_link_show_ens160').read)
-        allow(Facter::Core::Execution).to receive(:execute)
-          .with('ip link show lo', logger: log_spy).and_return(load_fixture('ip_link_show_lo').read)
-        allow(Facter::Core::Execution).to receive(:execute)
-          .with('ip link show eth2', logger: log_spy).and_return(load_fixture('ip_link_show_eth2_bonded').read)
-        allow(Facter::Core::Execution).to receive(:execute)
-          .with('ip link show eth3', logger: log_spy).and_return(load_fixture('ip_link_show_eth3_bonded').read)
-        allow(Facter::Core::Execution).to receive(:execute)
-          .with('ip link show bond0', logger: log_spy).and_return(load_fixture('ip_link_show_bond0_bonded').read)
+          .with('ip -o link show', logger: log_spy).and_return(load_fixture('ip_link_show_all').read)
         allow(Facter::Util::FileHelper).to receive(:safe_read)
           .with('/proc/net/bonding/bond0', nil).and_return(load_fixture('bond_interface_data').read)
       end

@@ -1,8 +1,6 @@
 #! /usr/bin/env ruby
 # frozen_string_literal: true
 
-require_relative '../../spec_helper_legacy'
-
 describe LegacyFacter::Util::Confine do
   it 'requires a fact name' do
     expect(LegacyFacter::Util::Confine.new('yay', true).fact).to eq 'yay'
@@ -123,7 +121,7 @@ describe LegacyFacter::Util::Confine do
 
     it 'accepts and evaluate a block argument against the fact' do
       allow(@fact).to receive(:value).and_return 'foo'
-      confine = LegacyFacter::Util::Confine.new(:yay) { |f| f === 'foo' }
+      confine = LegacyFacter::Util::Confine.new(:yay) { |f| f == 'foo' }
       expect(confine.true?).to be true
     end
 

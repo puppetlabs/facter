@@ -55,6 +55,17 @@ augeasversion:
     resolution: |
         All platforms: query augparse for the augeas version.
 
+az_metadata:
+    type: map
+    description: |
+        Return the Microsoft Azure instance metadata.
+        Please see the [Microsoft Azure instance metadata documentation](http://https://docs.microsoft.com/en-us/azure/virtual-machines/windows/instance-metadata-service) for the contents of this fact.
+    resolution: |
+        Azure: query the Azure metadata endpoint and parse the response.
+    caveats: |
+        All platforms: `libfacter` must be built with `libcurl` support.
+    validate: false
+
 blockdevices:
     type: string
     hidden: true
@@ -186,7 +197,7 @@ chassistype:
 
 cloud:
     type: map
-    description: Information about the cloud instance of the node. This is currently only populated on Linux nodes running in Microsoft Azure.
+    description: Information about the cloud instance of the node. This is currently only populated on nodes running in Microsoft Azure.
     elements:
         provider:
             type: string
@@ -713,6 +724,13 @@ macosx_productversion_minor:
     resolution: |
         Mac OSX: use the `sw_vers` utility to retrieve the Mac OSX product minor version.
 
+macosx_productversion_patch:
+    type: string
+    hidden: true
+    description: Return the Mac OSX product patch version.
+    resolution: |
+        Mac OSX: use the `sw_vers` utility to retrieve the Mac OSX product patch version.
+
 manufacturer:
     type: string
     hidden: true
@@ -1173,6 +1191,9 @@ os:
                         minor:
                             type: string
                             description: The minor Mac OSX version number.
+                        patch:
+                            type: string
+                            description: The patch Mac OSX version number.
         name:
             type: string
             description: The operating system's name.
@@ -1357,6 +1378,12 @@ processors:
         speed:
             type: string
             description: The speed of the processors, such as "2.0 GHz".
+        cores:
+            type: integer
+            description: The number of cores per processor socket.
+        threads:
+            type: integer
+            description: The number of threads per processor core.
 
 productname:
     type: string
@@ -1883,7 +1910,7 @@ xen:
     type: map
     description: Return metadata for the Xen hypervisor.
     resolution: |
-        POSIX platforms: use `/usr/lib/xen-common/bin/xen-toolstack` to locate xen admin commands if available, otherwise fallback to `/usr/sbin/xl` or `/usr/sbin/xm`. Use the found command to execute the `list` query.
+        POSIX platforms: if `/usr/sbin/xl` and `/usr/sbin/xm` is installed use `/usr/lib/xen-common/bin/xen-toolstack` to choose, otherwise try `/usr/sbin/xl` then `/usr/sbin/xm` in order. Use the found command to execute the `list` query.
     caveats: |
         POSIX platforms: confined to Xen privileged virtual machines.
     elements:

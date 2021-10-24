@@ -13,7 +13,7 @@ module Facter
         end
 
         def retrieve_ruby_information(fact_name)
-          @fact_list[:sitedir] = RbConfig::CONFIG['sitelibdir']
+          @fact_list[:sitedir] = RbConfig::CONFIG['sitelibdir'] if RbConfig::CONFIG['sitedir']
           @fact_list[:platform] = RUBY_PLATFORM
           @fact_list[:version] = RUBY_VERSION
           @fact_list[fact_name]

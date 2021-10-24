@@ -6,6 +6,7 @@ describe Facter::Resolvers::OsRelease do
   end
 
   before do
+    Facter::Resolvers::OsRelease.invalidate_cache
     allow(Facter::Util::FileHelper).to receive(:safe_readlines)
       .with('/etc/os-release')
       .and_return(os_release_content)
@@ -116,6 +117,26 @@ describe Facter::Resolvers::OsRelease do
       result = Facter::Resolvers::OsRelease.resolve(:name)
 
       expect(result).to eq('OracleLinux')
+    end
+  end
+
+  context 'when on Archlinux' do
+    let(:os_release_content) { load_fixture('os_release_archlinux').readlines }
+
+    it 'returns os NAME' do
+      result = Facter::Resolvers::OsRelease.resolve(:name)
+
+      expect(result).to eq('Archlinux')
+    end
+  end
+
+  context 'when on Manjarolinux' do
+    let(:os_release_content) { load_fixture('os_release_manjarolinux').readlines }
+
+    it 'returns os NAME' do
+      result = Facter::Resolvers::OsRelease.resolve(:name)
+
+      expect(result).to eq('Manjarolinux')
     end
   end
 end

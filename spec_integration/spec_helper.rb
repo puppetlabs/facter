@@ -1,29 +1,19 @@
 # frozen_string_literal: true
 
-require 'pathname'
-
-ROOT_DIR = Pathname.new(File.expand_path('..', __dir__)) unless defined?(ROOT_DIR)
-
-ENV['RACK_ENV'] = 'test'
-
-require 'bundler/setup'
-
-require 'open3'
-require 'thor'
-require 'fileutils'
-
-require_relative '../lib/facter/resolvers/base_resolver'
-
 require 'facter'
-require 'facter/framework/cli/cli'
-require 'facter/framework/cli/cli_launcher'
+require_relative 'integration_helper'
+require_relative '../spec/custom_facts/puppetlabs_spec/files'
 
-require './lib/facter/framework/core/file_loader'
+# prevent facter from loading its spec files as facts
+$LOAD_PATH.delete_if { |entry| entry =~ %r{facter/spec} }
 
 # Configure RSpec
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
   config.example_status_persistence_file_path = '.rspec_status'
+
+  # exclude `skip_outside_ci` tests if not running on CI
+  config.filter_run_excluding :skip_outside_ci unless ENV['CI']
 
   # Disable RSpec exposing methods globally on `Module` and `main`
   config.disable_monkey_patching!
@@ -49,6 +39,15 @@ RSpec.configure do |config|
   end
 
   config.after do
+    Facter.reset
+    Facter.clear
     Facter::OptionStore.reset
+    LegacyFacter.clear
+  end
+
+  # This will cleanup any files that were created with tmpdir or tmpfile
+  config.extend PuppetlabsSpec::Files
+  config.after(:all) do
+    PuppetlabsSpec::Files.cleanup
   end
 end

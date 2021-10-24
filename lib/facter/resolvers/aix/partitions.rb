@@ -40,7 +40,7 @@ module Facter
 
             return if stdout.empty?
 
-            info_hash =  Facter::Util::Aix::InfoExtractor.extract(stdout, /PPs:|PP SIZE|TYPE:|LABEL:|MOUNT/)
+            info_hash =  Facter::Util::Aix::InfoExtractor.extract(stdout, :lslv)
             size_bytes = compute_size(info_hash)
 
             part_info = {

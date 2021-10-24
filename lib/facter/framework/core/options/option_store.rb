@@ -35,6 +35,8 @@ module Facter
     @custom_dir = []
     @hocon = false
     @allow_external_loggers = true
+    @force_dot_resolution = false
+    @http_debug = false
 
     class << self
       attr_reader :debug, :verbose, :log_level, :show_legacy,
@@ -42,8 +44,8 @@ module Facter
 
       attr_accessor :config, :strict, :json,
                     :cache, :yaml, :puppet, :ttls, :block, :cli, :config_file_custom_dir,
-                    :config_file_external_dir, :default_external_dir, :fact_groups,
-                    :block_list, :color, :trace, :sequential, :timing, :hocon, :allow_external_loggers
+                    :config_file_external_dir, :default_external_dir, :fact_groups, :force_dot_resolution,
+                    :block_list, :color, :trace, :sequential, :timing, :hocon, :allow_external_loggers, :http_debug
 
       attr_writer :external_dir
 
@@ -178,6 +180,7 @@ module Facter
         @ttls = []
         @block = true
         @cli = nil
+        @http_debug = false
         reset_config
       end
 
@@ -202,6 +205,7 @@ module Facter
 
       def reset_facts
         @custom_facts = true
+        @force_dot_resolution = false
         @external_dir = []
         @custom_dir = []
       end

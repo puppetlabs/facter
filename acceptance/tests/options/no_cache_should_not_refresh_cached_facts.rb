@@ -52,7 +52,7 @@ FILE
       agent.modified_at(cached_fact_file, '198001010000')
 
       on(agent, facter("--no-cache")) do |facter_output|
-        assert_no_match(/caching/, facter_output.stderr, "facter should not have tried to refresh the cache")
+        assert_no_match(/caching values for/, facter_output.stderr, "facter should not have tried to refresh the cache")
       end
 
       cat_output = agent.cat(cached_fact_file)

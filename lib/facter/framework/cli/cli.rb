@@ -97,6 +97,15 @@ module Facter
                  type: :boolean,
                  desc: 'Resolve facts sequentially'
 
+    class_option :http_debug,
+                 type: :boolean,
+                 desc: 'Whether to write HTTP request and responses to stderr. This should never be used in production.'
+
+    class_option :puppet,
+                 type: :boolean,
+                 aliases: '-p',
+                 desc: 'Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.'
+
     desc '--man', 'Display manual.', hide: true
     map ['--man'] => :man
     def man(*args)
@@ -111,6 +120,7 @@ module Facter
 
     desc 'query', 'Default method', hide: true
     def query(*args)
+      Facter.puppet_facts if options[:puppet]
       output, status = Facter.to_user_output(@options, *args)
       puts output
 
@@ -126,7 +136,7 @@ module Facter
       Facter.values(@options, args)
     end
 
-    desc '--version, -v', 'Print the version', hide: true
+    desc '--version, -v', 'Print the version'
     map ['--version', '-v'] => :version
     def version(*_args)
       puts Facter::VERSION
@@ -156,19 +166,7 @@ module Facter
       puts cache_groups
     end
 
-    desc '--puppet, -p', 'Load the Puppet libraries, thus allowing Facter to load Puppet-specific facts.'
-    map ['--puppet', '-p'] => :puppet
-    def puppet(*args)
-      Facter.puppet_facts
-
-      output, status = Facter.to_user_output(@options, *args)
-      puts output
-
-      status = 1 if Facter::Log.errors?
-      exit status
-    end
-
-    desc 'help', 'Help for all arguments'
+    desc '--help, -h', 'Help for all arguments'
     def help(*args)
       help_string = +''
       help_string << help_header(args)
@@ -205,7 +203,11 @@ module Facter
         Cli.commands
            .select { |_k, command_class| command_class.instance_of?(Thor::Command) }
            .each do |_k, command|
-          help_command_options << build_option(command['name'], [], command['description'])
+          help_command_options << build_option(
+            command['name'],
+            [command['usage'].split(',')[1]],
+            command['description']
+          )
         end
 
         help_command_options

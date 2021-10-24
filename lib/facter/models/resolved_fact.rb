@@ -3,14 +3,13 @@
 module Facter
   class ResolvedFact
     attr_reader :name, :type
-    attr_accessor :user_query, :filter_tokens, :value, :file
+    attr_accessor :user_query, :value, :file
 
-    def initialize(name, value = '', type = :core, user_query = nil, filter_tokens = [])
+    def initialize(name, value = '', type = :core, user_query = nil)
       @name = name
       @value = Utils.deep_stringify_keys(value)
       @type = type
       @user_query = user_query
-      @filter_tokens = filter_tokens
     end
 
     def legacy?
@@ -23,6 +22,10 @@ module Facter
 
     def to_s
       @value.to_s
+    end
+
+    def resolves?(user_query)
+      @name == user_query
     end
   end
 end

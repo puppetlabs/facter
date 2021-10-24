@@ -19,6 +19,7 @@ describe Facter::Resolvers::Identity do
 
   after do
     Facter::Resolvers::Identity.invalidate_cache
+    Facter::Resolvers::Identity.instance_variable_set(:@log, nil)
   end
 
   describe '#resolve when user is administrator' do

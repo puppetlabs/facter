@@ -9,20 +9,20 @@ test_name 'C59029: networking facts should be fully populated' do
   @ip_regex       = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
   @netmask_regex  = /^(((128|192|224|240|248|252|254)\.0\.0\.0)|(255\.(0|128|192|224|240|248|252|254)\.0\.0)|(255\.255\.(0|128|192|224|240|248|252|254)\.0)|(255\.255\.255\.(0|128|192|224|240|248|252|254)))$/
 
-  expected_networking = {
-    %w[networking dhcp] => agent['platform'] =~ /fedora-32|el-8-aarch64/ ? '' : @ip_regex, # https://gitlab.freedesktop.org/NetworkManager/NetworkManager/-/issues/426
-    %w[networking ip] => @ip_regex,
-    %w[networking ip6] => /[a-f0-9]+:+/,
-    %w[networking mac] => /[a-f0-9]{2}:/,
-    %w[networking mtu] => /\d+/,
-    %w[networking netmask] => @netmask_regex,
-    %w[networking netmask6] => /[a-f0-9]+:/,
-    %w[networking network] => @ip_regex,
-    %w[networking network6] => /([a-f0-9]+)?:([a-f0-9]+)?/,
-    %w[networking scope6] => /link|host|site|global|compat/
-  }
-
   agents.each do |agent|
+    expected_networking = {
+      %w[networking dhcp] => agent['platform'] =~ /fedora-32|fedora-34|el-8-/ ? '' : @ip_regex, # https://gitlab.freedesktop.org/NetworkManager/NetworkManager/-/issues/426
+      %w[networking ip] => @ip_regex,
+      %w[networking ip6] => /[a-f0-9]+:+/,
+      %w[networking mac] => /[a-f0-9]{2}:/,
+      %w[networking mtu] => /\d+/,
+      %w[networking netmask] => @netmask_regex,
+      %w[networking netmask6] => /[a-f0-9]+:/,
+      %w[networking network] => @ip_regex,
+      %w[networking network6] => /([a-f0-9]+)?:([a-f0-9]+)?/,
+      %w[networking scope6] => /link|host|site|global|compat/
+    }
+
     primary_interface = fact_on(agent, 'networking.primary')
     refute_empty(primary_interface)
 

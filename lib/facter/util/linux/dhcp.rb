@@ -75,7 +75,10 @@ module Facter
           def search_with_dhcpcd_command(interface_name)
             @log.debug("Attempt to get DHCP for interface #{interface_name}, from dhcpcd command")
 
-            output = Facter::Core::Execution.execute("dhcpcd -U #{interface_name}", logger: @log)
+            @dhcpcd_command ||= Facter::Core::Execution.which('dhcpcd')
+            return unless @dhcpcd_command
+
+            output = Facter::Core::Execution.execute("#{@dhcpcd_command} -U #{interface_name}", logger: @log)
             dhcp = output.match(/dhcp_server_identifier='(.*)'/)
             dhcp[1] if dhcp
           end

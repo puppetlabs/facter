@@ -15,6 +15,8 @@ describe Facter::Resolvers::Networking do
       allow(Facter::Core::Execution)
         .to receive(:execute).with('ipconfig getoption en0 server_identifier', logger: log_spy).and_return(dhcp)
       allow(Facter::Core::Execution)
+        .to receive(:execute).with('ipconfig getoption en0.1 server_identifier', logger: log_spy).and_return(dhcp)
+      allow(Facter::Core::Execution)
         .to receive(:execute).with('ipconfig getoption llw0 server_identifier', logger: log_spy).and_return('')
       allow(Facter::Core::Execution)
         .to receive(:execute).with('ipconfig getoption awdl0 server_identifier', logger: log_spy).and_return(dhcp)
@@ -25,7 +27,7 @@ describe Facter::Resolvers::Networking do
     end
 
     let(:interfaces) { load_fixture('ifconfig_mac').read }
-    let(:dhcp) { '192.168.143.1 ' }
+    let(:dhcp) { '192.168.143.1' }
     let(:primary) { 'en0' }
 
     it 'detects primary interface' do
@@ -37,7 +39,7 @@ describe Facter::Resolvers::Networking do
     end
 
     it 'detects all interfaces' do
-      expected = %w[lo0 gif0 stf0 en0 en1 en2 bridge0 p2p0 awdl0 llw0 utun0 utun1 utun2]
+      expected = %w[lo0 gif0 stf0 en0 en0.1 en1 en2 bridge0 p2p0 awdl0 llw0 utun0 utun1 utun2 utun3 ib0 ib1]
       expect(networking.resolve(:interfaces).keys).to match_array(expected)
     end
 
@@ -125,6 +127,19 @@ describe Facter::Resolvers::Networking do
     it 'checks interface utun2' do
       expected = { bindings: [{ address: '10.16.132.213', netmask: '255.255.254.0', network: '10.16.132.0' }] }
       expect(networking.resolve(:interfaces)['utun2']).to include(expected)
+    end
+
+    it 'checks interface utun3' do
+      expected = { bindings6: [
+        { address: '2001:db8:cafe::132:213', netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+          network: '2001:db8:cafe::132:213', scope6: 'global' }
+      ] }
+      expect(networking.resolve(:interfaces)['utun3']).to include(expected)
+    end
+
+    it 'checks interface ib0 has the expected mac' do
+      expected = { mac: '80:00:02:08:FA:81:00:00:00:00:00:00:00:00:00:00:00:00:00:00' }
+      expect(networking.resolve(:interfaces)['ib0']).to include(expected)
     end
 
     context 'when primary interface could not be retrieved' do

@@ -56,7 +56,12 @@ module Facter
         end
 
         def find_command
-          return XEN_TOOLSTACK if File.exist?(XEN_TOOLSTACK)
+          num_stacks = 0
+          XEN_COMMANDS.each do |command|
+            num_stacks += 1 if File.exist?(command)
+          end
+
+          return XEN_TOOLSTACK if num_stacks > 1 && File.exist?(XEN_TOOLSTACK)
 
           XEN_COMMANDS.each { |command| return command if File.exist?(command) }
         end

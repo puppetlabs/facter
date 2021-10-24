@@ -5,21 +5,29 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = 'facter-ng'
-  spec.version       = '4.0.51'
+  spec.version       = '4.2.5'
   spec.authors       = ['Puppet']
   spec.email         = ['team-nw@puppet.com']
+  spec.homepage      = 'https://github.com/puppetlabs/facter'
 
-  spec.summary       = 'New version of Facter'
-  spec.description   = 'New version of Facter'
+  spec.summary       = 'Facter, a system inventory tool'
+  spec.description   = 'You can prove anything with facts!'
+  spec.license       = 'Apache-2.0'
 
-  spec.files = Dir['bin/facter-ng'] +
-               Dir['lib/**/*.rb'] +
-               Dir['lib/**/*.json'] +
-               Dir['lib/**/*.conf'] +
-               Dir['agent/**/*'] +
-               Dir['lib/**/*.erb']
+  root_dir = File.join(__dir__, '..')
+  dirs =
+    Dir[File.join(root_dir, 'bin/facter-ng')] +
+    Dir[File.join(root_dir, 'LICENSE')] +
+    Dir[File.join(root_dir, 'lib/**/*.rb')] +
+    Dir[File.join(root_dir, 'lib/**/*.json')] +
+    Dir[File.join(root_dir, 'lib/**/*.conf')] +
+    Dir[File.join(root_dir, 'agent/**/*')] +
+    Dir[File.join(root_dir, 'lib/**/*.erb')]
+  base = "#{root_dir}#{File::SEPARATOR}"
 
-  spec.required_ruby_version = '~> 2.3'
+  spec.files = dirs.map { |path| path.sub(base, '') }
+
+  spec.required_ruby_version = '>= 2.3', '< 4.0'
 
   spec.bindir = 'bin'
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
@@ -27,7 +35,7 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency 'bundler', '~> 2.0'
   spec.add_development_dependency 'coveralls', '~> 0.8.23'
-  spec.add_development_dependency 'rake', '>= 12.3.3'
+  spec.add_development_dependency 'rake', '~> 12.3', '>= 12.3.3'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rubocop', '~> 0.74.0'
   spec.add_development_dependency 'rubycritic', '~> 4.1.0'

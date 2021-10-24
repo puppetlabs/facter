@@ -37,11 +37,8 @@ module Facter
                 next if index.zero?
 
                 route = line.strip.split("\t")
-                if route.count > 7 &&
-                   route[ROUTE_TABLE_MAPPING['Destination']] == '00000000' &&
-                   route[ROUTE_TABLE_MAPPING['Mask']] == '00000000'
-                  return route[ROUTE_TABLE_MAPPING['Iface']]
-                end
+
+                return route[ROUTE_TABLE_MAPPING['Iface']] if valid_default_route?(route)
               end
 
               nil
@@ -73,6 +70,15 @@ module Facter
               end
 
               nil
+            end
+
+            private
+
+            def valid_default_route?(route)
+              route.count > 7 &&
+                route[ROUTE_TABLE_MAPPING['Destination']] == '00000000' &&
+                route[ROUTE_TABLE_MAPPING['Mask']] == '00000000' &&
+                route[ROUTE_TABLE_MAPPING['Iface']] != '*' # `*` represents blackhole and not a valid interface
             end
           end
         end

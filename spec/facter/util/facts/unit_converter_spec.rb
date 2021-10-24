@@ -5,7 +5,7 @@ describe Facter::Util::Facts::UnitConverter do
 
   describe '#bytes_to_mb' do
     it 'converts bytes to mega bytes' do
-      expect(converter.bytes_to_mb(256_586_343)).to eq(244.7)
+      expect(converter.bytes_to_mb(256_586_343)).to eq(244.6998052597046)
     end
 
     it 'returns nil if value is nil' do
@@ -13,7 +13,7 @@ describe Facter::Util::Facts::UnitConverter do
     end
 
     it 'converts bytes if value is string' do
-      expect(converter.bytes_to_mb('2343455')).to eq(2.23)
+      expect(converter.bytes_to_mb('2343455')).to eq(2.2348928451538086)
     end
 
     it 'returns 0 if value is 0' do
@@ -44,6 +44,18 @@ describe Facter::Util::Facts::UnitConverter do
 
     it 'converts to Hz even if argument is string' do
       expect(converter.hertz_to_human_readable('2400')).to eql('2.40 kHz')
+    end
+
+    it 'rounds down when 3rd decimal is lower than 5' do
+      expect(converter.hertz_to_human_readable(2_363_000_000)).to eql('2.36 GHz')
+    end
+
+    it 'rounds up when 3rd decimal is equal with 5' do
+      expect(converter.hertz_to_human_readable(2_365_000_000)).to eql('2.37 GHz')
+    end
+
+    it 'rounds up when 3rd decimal is greater than 5' do
+      expect(converter.hertz_to_human_readable(2_367_000_000)).to eql('2.37 GHz')
     end
   end
 

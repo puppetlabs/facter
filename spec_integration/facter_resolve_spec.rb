@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'integration_helper'
+require_relative 'spec_helper'
 
 describe Facter do
   context 'when calling the ruby API resolve' do

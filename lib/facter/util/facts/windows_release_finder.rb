@@ -23,9 +23,11 @@ module Facter
           private
 
           def check_version_10(consumerrel, kernel_version)
+            return '10' if consumerrel
+
             build_number = kernel_version[/([^.]*)$/].to_i
-            if consumerrel
-              '10'
+            if build_number >= 20_348
+              '2022'
             elsif build_number >= 17_623
               '2019'
             else

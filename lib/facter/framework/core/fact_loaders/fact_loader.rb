@@ -11,22 +11,58 @@ module Facter
 
       @internal_facts = []
       @external_facts = []
+      @custom_facts = []
       @facts = []
-    end
 
-    def load(options)
       @internal_loader ||= InternalFactLoader.new
       @external_fact_loader ||= ExternalFactLoader.new
+    end
 
-      @facts = []
-      @external_facts = []
-
-      @internal_facts = load_internal_facts(options)
+    def load(user_query, options)
+      @internal_facts = load_internal_facts(user_query, options)
+      @custom_facts = load_custom_facts(options)
       @external_facts = load_external_facts(options)
 
       filter_env_facts
 
-      @facts = @internal_facts + @external_facts
+      @facts = @internal_facts + @external_facts + @custom_facts
+    end
+
+    def load_internal_facts(user_query, options)
+      internal_facts = []
+      if user_query || options[:show_legacy]
+        # if we have a user query, then we must search in core facts and legacy facts
+        @log.debug('Loading all internal facts')
+        internal_facts = @internal_loader.facts
+      else
+        @log.debug('Load only core facts')
+        internal_facts = @internal_loader.core_facts
+      end
+
+      block_facts(internal_facts, options)
+    end
+
+    def load_custom_fact(options, fact_name)
+      return [] unless options[:custom_facts]
+
+      custom_facts = @external_fact_loader.load_fact(fact_name)
+      block_facts(custom_facts, options)
+    end
+
+    def load_custom_facts(options)
+      return [] unless options[:custom_facts]
+
+      @log.debug('Loading custom facts')
+      custom_facts = @external_fact_loader.custom_facts
+      block_facts(custom_facts, options)
+    end
+
+    def load_external_facts(options)
+      return [] unless options[:external_facts]
+
+      @log.debug('Loading external facts')
+      external_facts = @external_fact_loader.external_facts
+      block_facts(external_facts, options)
     end
 
     private
@@ -43,40 +79,6 @@ module Facter
           false
         end
       end
-    end
-
-    def load_internal_facts(options)
-      @log.debug('Loading internal facts')
-      internal_facts = []
-      if options[:user_query] || options[:show_legacy]
-        # if we have a user query, then we must search in core facts and legacy facts
-        @log.debug('Loading all internal facts')
-        internal_facts = @internal_loader.facts
-      else
-        @log.debug('Load only core facts')
-        internal_facts = @internal_loader.core_facts
-      end
-
-      block_facts(internal_facts, options)
-    end
-
-    def load_external_facts(options)
-      @log.debug('Loading external facts')
-      external_facts = []
-
-      if options[:custom_facts]
-        @log.debug('Loading custom facts')
-        external_facts += @external_fact_loader.custom_facts
-      end
-
-      external_facts = block_facts(external_facts, options)
-
-      if options[:external_facts]
-        @log.debug('Loading external facts')
-        external_facts += @external_fact_loader.external_facts
-      end
-
-      external_facts
     end
 
     def block_facts(facts, options)

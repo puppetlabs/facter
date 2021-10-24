@@ -107,9 +107,7 @@ module Facter
 
           return blkid_and_lsblk[command_exists_key] unless blkid_and_lsblk[command_exists_key].nil?
 
-          output = Facter::Core::Execution.execute("which #{command}", logger: log)
-
-          blkid_and_lsblk[:command_exists_key] = !output.empty?
+          blkid_and_lsblk[command_exists_key] = !Facter::Core::Execution.which(command).nil?
         end
 
         def execute_and_extract_blkid_info

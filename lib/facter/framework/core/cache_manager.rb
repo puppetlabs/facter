@@ -123,7 +123,7 @@ cache_format_version is incorrect!")
         return unless data[searched_fact.name]
 
         [Facter::ResolvedFact.new(searched_fact.name, data[searched_fact.name], searched_fact.type,
-                                  searched_fact.user_query, searched_fact.filter_tokens)]
+                                  searched_fact.user_query)]
       end
     end
 
@@ -133,7 +133,7 @@ cache_format_version is incorrect!")
         next if fact_name == 'cache_format_version'
 
         fact = Facter::ResolvedFact.new(fact_name, fact_value, searched_fact.type,
-                                        searched_fact.user_query, searched_fact.filter_tokens)
+                                        searched_fact.user_query)
         fact.file = searched_fact.file
         facts << fact
       end
@@ -209,7 +209,11 @@ cache_format_version is incorrect!")
     def delete_cache(group_name)
       cache_file_name = File.join(@cache_dir, group_name)
 
-      File.delete(cache_file_name) if File.readable?(cache_file_name)
+      begin
+        File.delete(cache_file_name) if File.readable?(cache_file_name)
+      rescue Errno::EACCES => e
+        @log.warn("Could not delete cache: #{e.message}")
+      end
     end
   end
 end

@@ -59,7 +59,7 @@ describe Facter::Util::Linux::Dhcp do
       end
     end
 
-    context 'when dhcp is available through the dhcp command' do
+    context 'when dhcp is available through the dhcpcd command' do
       before do
         allow(Facter::Util::FileHelper).to receive(:safe_read).with('/run/systemd/netif/leases/1', nil).and_return(nil)
         allow(File).to receive(:readable?).with('/var/lib/dhclient/').and_return(false)
@@ -68,12 +68,36 @@ describe Facter::Util::Linux::Dhcp do
         allow(File).to receive(:readable?).with('/var/lib/NetworkManager/').and_return(false)
         allow(File).to receive(:readable?).with('/var/db/').and_return(false)
 
+        allow(Facter::Core::Execution).to receive(:which)
+          .with('dhcpcd').and_return('/usr/bin/dhcpcd')
         allow(Facter::Core::Execution).to receive(:execute)
-          .with('dhcpcd -U ens160', logger: log_spy).and_return(load_fixture('dhcpcd').read)
+          .with('/usr/bin/dhcpcd -U ens160', logger: log_spy).and_return(load_fixture('dhcpcd').read)
+
+        dhcp_search.instance_eval { @dhcpcd_command = nil }
       end
 
       it 'returns dhcp ip' do
         expect(dhcp_search.dhcp('ens160', 1, log_spy)).to eq('10.32.22.9')
+      end
+    end
+
+    context 'when dhcp is not available through the dhcpcd command' do
+      before do
+        allow(Facter::Util::FileHelper).to receive(:safe_read).with('/run/systemd/netif/leases/1', nil).and_return(nil)
+        allow(File).to receive(:readable?).with('/var/lib/dhclient/').and_return(false)
+        allow(File).to receive(:readable?).with('/var/lib/dhcp/').and_return(false)
+        allow(File).to receive(:readable?).with('/var/lib/dhcp3/').and_return(false)
+        allow(File).to receive(:readable?).with('/var/lib/NetworkManager/').and_return(false)
+        allow(File).to receive(:readable?).with('/var/db/').and_return(false)
+
+        allow(Facter::Core::Execution).to receive(:which)
+          .with('dhcpcd').and_return(nil)
+
+        dhcp_search.instance_eval { @dhcpcd_command = nil }
+      end
+
+      it 'returns nil' do
+        expect(dhcp_search.dhcp('ens160', 1, log_spy)).to eq(nil)
       end
     end
   end

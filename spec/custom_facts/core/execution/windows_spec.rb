@@ -1,7 +1,13 @@
-require_relative '../../../spec_helper_legacy'
+describe Facter::Core::Execution::Windows do
+  let(:executor) { Facter::Core::Execution::Windows.new }
 
-describe Facter::Core::Execution::Windows, as_platform: :windows do
-  subject(:executor) { Facter::Core::Execution::Windows.new }
+  before do
+    allow(LegacyFacter).to receive(:value).and_return('Windows')
+    allow(LegacyFacter::Util::Config).to receive(:windows?).and_return(true)
+
+    stub_const('::File::PATH_SEPARATOR', ';')
+    stub_const('File::ALT_SEPARATOR', '\\')
+  end
 
   describe '#search_paths' do
     it 'uses the PATH environment variable to determine locations' do
@@ -117,6 +123,13 @@ describe Facter::Core::Execution::Windows, as_platform: :windows do
     it 'quotes expanded binary if found in path with spaces' do
       allow(executor).to receive(:which).with('foo').and_return 'C:\My Tools\foo.exe'
       expect(executor.expand_command('foo /a /b')).to eq '"C:\My Tools\foo.exe" /a /b'
+    end
+
+    it 'expands a multi-line command with double quotes' do
+      allow(executor).to receive(:which).with('foo').and_return 'C:\My Tools\foo.exe'
+      expect(executor.expand_command(
+               'foo cmd /c\\n" show | grep "(^test)'
+             )).to eq(%q("C:\My Tools\foo.exe" cmd /c\n" show | grep "(^test)))
     end
 
     it 'returns nil if command not found' do

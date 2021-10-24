@@ -6,7 +6,7 @@ describe Facts::Windows::Ec2Userdata do
 
     before do
       allow(Facter::Resolvers::Ec2).to receive(:resolve).with(:userdata).and_return(value)
-      allow(Facter::Resolvers::Virtualization).to receive(:resolve).with(:virtual).and_return(hypervisor)
+      allow(Facter::Resolvers::Windows::Virtualization).to receive(:resolve).with(:virtual).and_return(hypervisor)
     end
 
     context 'when hypervisor is not kvm or xen' do

@@ -68,6 +68,8 @@ Metrics/AbcSize:
     - 'lib/facter/resolvers/aix/ffi/ffi_helper.rb'
     - 'lib/facter/custom_facts/core/execution/popen3.rb'
     - 'lib/facter.rb'
+    - 'lib/facter/framework/parsers/query_parser.rb'
+    - 'lib/facter/framework/core/fact_manager.rb'
 
 Metrics/PerceivedComplexity:
   Exclude:
@@ -80,6 +82,7 @@ Metrics/PerceivedComplexity:
 
 Metrics/CyclomaticComplexity:
   Exclude:
+    - 'lib/facter/resolvers/windows/product_release.rb'
     - 'lib/facter/custom_facts/util/values.rb'
     - 'lib/facter/custom_facts/util/confine.rb'
     - 'lib/facter/custom_facts/core/execution/windows.rb'
@@ -92,6 +95,7 @@ Metrics/CyclomaticComplexity:
 Metrics/ClassLength:
   Exclude:
     - 'lib/facter/resolvers/partitions.rb'
+    - 'lib/facter/custom_facts/core/execution/base.rb'
     - 'lib/facter/custom_facts/util/fact.rb'
     - 'lib/facter/resolvers/windows/networking.rb'
     - 'lib/facter/custom_facts/util/collection.rb'
@@ -101,6 +105,8 @@ Metrics/ClassLength:
     - 'install.rb'
     - 'scripts/generate_changelog.rb'
     - 'lib/facter/resolvers/solaris/networking.rb'
+    - 'lib/facter/framework/logging/logger.rb'
+    - 'lib/facter/framework/core/fact_manager.rb'
 
 Naming/AccessorMethodName:
   Exclude:
@@ -126,7 +132,7 @@ RSpec/DescribedClass:
   EnforcedStyle: explicit
 
 RSpec/NestedGroups:
-  Max: 5
+  Max: 6
 
 Style/Documentation:
   Enabled: false
@@ -138,7 +144,6 @@ Style/ClassVars:
 Style/FrozenStringLiteralComment:
   Exclude:
     - 'spec/custom_facts/util/normalization_spec.rb'
-    - 'spec/custom_facts/shared_contexts/platform.rb'
     - 'spec/custom_facts/core/execution/windows_spec.rb'
     - 'spec/custom_facts/core/execution/posix_spec.rb'
     - 'lib/facter/custom_facts/util/resolution.rb'

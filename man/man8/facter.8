@@ -1,7 +1,7 @@
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "FACTER" "8" "February 2021" "Puppet, Inc." "Facter manual"
+.TH "FACTER" "8" "July 2021" "Puppet, Inc." "Facter manual"
 .
 .SH "NAME"
 \fBfacter\fR
@@ -147,6 +147,18 @@ Show how much time it took to resolve each fact
 Resolve facts sequentially
 .
 .TP
+\fB\-p\fR, \fB\-\-puppet\fR:
+.
+.IP
+Load the Puppet libraries, thus allowing Facter to load Puppet\-specific facts\.
+.
+.TP
+\fB\-\-version, \-v\fR:
+.
+.IP
+Print the version
+.
+.TP
 \fB\-\-list\-block\-groups\fR:
 .
 .IP
@@ -159,13 +171,7 @@ List block groups
 List cache groups
 .
 .TP
-\fB\-\-puppet, \-p\fR:
-.
-.IP
-Load the Puppet libraries, thus allowing Facter to load Puppet\-specific facts\.
-.
-.TP
-\fBhelp\fR:
+\fB\-\-help, \-h\fR:
 .
 .IP
 Help for all arguments
@@ -174,7 +180,7 @@ Help for all arguments
 \fI/etc/puppetlabs/facter/facter\.conf\fR
 .
 .P
-A HOCON config file that can be used to specify directories for custom and external facts, set various command line options, and specify facts to block\. See example below for details, or visit the GitHub README\.
+A HOCON config file that can be used to specify directories for custom and external facts, set various command line options, and specify facts to block\. See example below for details, or visit the GitHub README \fIhttps://github\.com/puppetlabs/puppetlabs\-hocon#overview\fR\.
 .
 .SH "EXAMPLES"
 Display all facts:
@@ -199,7 +205,7 @@ dmi => {
     version => "6\.00"
   }
 }
-[\e\.\e\.\e\.]
+[\.\.\.]
 .
 .fi
 .
@@ -262,7 +268,7 @@ Format facts as JSON:
 .
 .nf
 
-$ facter \e\-\e\-json os\.name os\.release\.major processors\.isa
+$ facter \-\-json os\.name os\.release\.major processors\.isa
 {
   "os\.name": "Ubuntu",
   "os\.release\.major": "14\.04",
@@ -298,7 +304,7 @@ cli : {
     verbose   : false,
     log\-level : "info"
 }
-# always loaded, fact\-sepcific configuration
+# always loaded, fact\-specific configuration
 facts : {
     # for valid blocklist entries, use \-\-list\-block\-groups
     blocklist : [ "file system", "EC2" ],

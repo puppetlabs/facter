@@ -10,7 +10,7 @@ module Facter
           CONNECTION_TIMEOUT = 0.6
           SESSION_TIMEOUT = 5
 
-          # Makes a GET http request and returns it's response.
+          # Makes a GET http request and returns its response.
           #
           # Params:
           # url: String which contains the address to which the request will be made
@@ -40,6 +40,12 @@ module Facter
             http = http_obj(uri, timeouts)
             request = request_obj(headers, uri, request_type)
 
+            # The Windows implementation of sockets does not respect net/http
+            # timeouts, so check if the target is reachable in a different way
+            if Gem.win_platform?
+              Socket.tcp(uri.host, uri.port, connect_timeout: timeouts[:connection] || CONNECTION_TIMEOUT)
+            end
+
             # Make the request
             response = http.request(request)
             response.uri = url
@@ -54,6 +60,9 @@ module Facter
             http = Net::HTTP.new(parsed_url.host)
             http.read_timeout = timeouts[:session] || SESSION_TIMEOUT
             http.open_timeout = timeouts[:connection] || CONNECTION_TIMEOUT
+
+            http.set_debug_output($stderr) if Options[:http_debug]
+
             http
           end
 

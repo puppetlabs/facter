@@ -4,11 +4,10 @@ describe Facts::Linux::IsVirtual do
   describe '#call_the_resolver' do
     subject(:fact) { Facts::Linux::IsVirtual.new }
 
-    let(:virtual_detector_double) { instance_spy(Facter::Util::Facts::VirtualDetector) }
+    let(:virtual_detector_double) { class_spy(Facter::Util::Facts::Posix::VirtualDetector) }
 
     before do
-      allow(Facter::Util::Facts::VirtualDetector).to receive(:new).and_return(virtual_detector_double)
-      allow(virtual_detector_double).to receive(:platform).and_return(virtual_value)
+      allow(Facter::Util::Facts::Posix::VirtualDetector).to receive(:platform).and_return(virtual_value)
     end
 
     context 'when not in a virtual environment' do

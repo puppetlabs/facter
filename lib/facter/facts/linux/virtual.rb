@@ -7,12 +7,11 @@ module Facts
 
       def initialize
         @log = Facter::Log.new(self)
-        @virtual = Facter::Util::Facts::VirtualDetector.new
       end
 
       def call_the_resolver
         @log.debug('Linux Virtual Resolver')
-        fact_value = @virtual.platform
+        fact_value = Facter::Util::Facts::Posix::VirtualDetector.platform
         @log.debug("Fact value is: #{fact_value}")
 
         Facter::ResolvedFact.new(FACT_NAME, fact_value)

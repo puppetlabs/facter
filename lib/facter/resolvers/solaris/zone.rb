@@ -38,7 +38,6 @@ module Facter
                 uuid: uuid,
                 status: status,
                 path: path
-
               }
             end
             zones_fact

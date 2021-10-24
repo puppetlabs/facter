@@ -18,6 +18,12 @@ module Facter
 
       private
 
+      def augment_structured_facts(global_conf)
+        return if !global_conf || global_conf['force-dot-resolution'].nil?
+
+        @options[:force_dot_resolution] = global_conf['force-dot-resolution']
+      end
+
       def augment_all
         augment_cli(Facter::ConfigReader.cli) if Options.cli?
         augment_globals
@@ -27,6 +33,7 @@ module Facter
       def augment_globals
         augment_ruby(Facter::ConfigReader.global)
 
+        augment_structured_facts(Facter::ConfigReader.global)
         augment_custom(Facter::ConfigReader.global)
         augment_external(Facter::ConfigReader.global)
         augment_show_legacy(Facter::ConfigReader.global)

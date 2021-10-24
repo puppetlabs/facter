@@ -3,19 +3,20 @@
 describe Facts::Linux::Hypervisors::Xen do
   subject(:fact) { Facts::Linux::Hypervisors::Xen.new }
 
+  let(:virtual_detector_double) { class_spy(Facter::Util::Facts::Posix::VirtualDetector) }
+
   describe '#call_the_resolver' do
+    before do
+      allow(Facter::Util::Facts::Posix::VirtualDetector).to receive(:platform).and_return(value)
+    end
+
     context 'when xen hypervisor' do
-      context 'when VirtWhat resolver returns xen' do
+      let(:value) { 'xen' }
+
+      context 'when Xen resolver returns privileged false' do
         before do
-          allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return('xen')
           allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('xenhvm')
           allow(Facter::Resolvers::Xen).to receive(:resolve).with(:privileged).and_return(false)
-        end
-
-        it 'calls Facter::Resolvers::VirtWhat' do
-          fact.call_the_resolver
-
-          expect(Facter::Resolvers::VirtWhat).to have_received(:resolve).with(:vm)
         end
 
         it 'returns xen' do
@@ -26,16 +27,9 @@ describe Facts::Linux::Hypervisors::Xen do
 
       context 'when Xen resolver returns xen0' do
         before do
-          allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return('unknown')
           allow(Facter::Resolvers::Xen).to receive(:resolve).with(:vm).and_return('xen0')
           allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('HVM domU')
           allow(Facter::Resolvers::Xen).to receive(:resolve).with(:privileged).and_return(true)
-        end
-
-        it 'calls Facter::Resolvers::Xen' do
-          fact.call_the_resolver
-
-          expect(Facter::Resolvers::Xen).to have_received(:resolve).with(:vm)
         end
 
         it 'returns xen' do
@@ -46,7 +40,6 @@ describe Facts::Linux::Hypervisors::Xen do
 
       context 'when DmiBios resolver return HVM domU' do
         before do
-          allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return('unknown')
           allow(Facter::Resolvers::Xen).to receive(:resolve).with(:vm).and_return('unknown')
           allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('HVM domU')
           allow(Facter::Resolvers::Xen).to receive(:resolve).with(:privileged).and_return(true)
@@ -55,7 +48,7 @@ describe Facts::Linux::Hypervisors::Xen do
         it 'calls Facter::Resolvers::Linux::DmiBios' do
           fact.call_the_resolver
 
-          expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:product_name).twice
+          expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:product_name)
         end
 
         it 'returns xen' do
@@ -66,7 +59,6 @@ describe Facts::Linux::Hypervisors::Xen do
 
       context 'when Lspci resolver returns xenhvm' do
         before do
-          allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return('unknown')
           allow(Facter::Resolvers::Xen).to receive(:resolve).with(:vm).and_return('unknown')
           allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('unknown')
           allow(Facter::Resolvers::Xen).to receive(:resolve).with(:privileged).and_return(true)
@@ -76,7 +68,7 @@ describe Facts::Linux::Hypervisors::Xen do
         it 'calls Facter::Resolvers::Linux::DmiBios' do
           fact.call_the_resolver
 
-          expect(Facter::Resolvers::Lspci).to have_received(:resolve).with(:vm).twice
+          expect(Facter::Resolvers::Lspci).to have_received(:resolve).with(:vm)
         end
 
         it 'returns xen' do
@@ -87,7 +79,6 @@ describe Facts::Linux::Hypervisors::Xen do
 
       context 'when pv context' do
         before do
-          allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return('xen')
           allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('unknown')
           allow(Facter::Resolvers::Lspci).to receive(:resolve).with(:vm).and_return('unknown')
           allow(Facter::Resolvers::Xen).to receive(:resolve).with(:privileged).and_return(false)
@@ -101,7 +92,6 @@ describe Facts::Linux::Hypervisors::Xen do
 
       context 'when privileged' do
         before do
-          allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return('xen')
           allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('xenhvm')
           allow(Facter::Resolvers::Xen).to receive(:resolve).with(:privileged).and_return(true)
         end
@@ -114,12 +104,7 @@ describe Facts::Linux::Hypervisors::Xen do
     end
 
     context 'when not xen hypervisor' do
-      before do
-        allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return('unknown')
-        allow(Facter::Resolvers::Xen).to receive(:resolve).with(:vm).and_return('unknown')
-        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('unknown')
-        allow(Facter::Resolvers::Lspci).to receive(:resolve).with(:vm).and_return('unknown')
-      end
+      let(:value) { nil }
 
       it 'returns empty array' do
         expect(fact.call_the_resolver).to eq([])

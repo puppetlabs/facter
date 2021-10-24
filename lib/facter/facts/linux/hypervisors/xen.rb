@@ -28,10 +28,7 @@ module Facts
         private
 
         def xen?
-          Facter::Resolvers::VirtWhat.resolve(:vm) =~ /xen/ ||
-            Facter::Resolvers::Xen.resolve(:vm) =~ /xen/ ||
-            discover_hypervisor == 'xenhvm' ||
-            Facter::Resolvers::Lspci.resolve(:vm) =~ /xen/
+          Facter::Util::Facts::Posix::VirtualDetector.platform =~ /xen/
         end
 
         def hvm?

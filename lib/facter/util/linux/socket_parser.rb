@@ -36,7 +36,7 @@ module Facter
           def search_for_mac(ifaddr)
             mac = mac_from_bonded_interface(ifaddr.name)
             mac ||= mac_from(ifaddr)
-            mac if !mac.nil? && mac != '00:00:00:00:00:00' && mac =~ /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/
+            mac if !mac.nil? && mac != '00:00:00:00:00:00' && mac =~ /^([0-9A-Fa-f]{2}[:-]){5,19}([0-9A-Fa-f]{2})$/
           end
 
           def mac_from_bonded_interface(interface_name)
@@ -59,8 +59,23 @@ module Facter
           end
 
           def bond_master_of(interface_name)
-            content = Facter::Core::Execution.execute("ip link show #{interface_name}", logger: @log)
-            content.match(/master (\S*) /)&.captures&.first
+            content = get_ip_link_show_data(interface_name)
+            content&.match(/master (\S*) /)&.captures&.first
+          end
+
+          def get_ip_link_show_data(interface_name)
+            @ip_link_show_data ||= read_ip_link_show_data
+            @ip_link_show_data[interface_name]
+          end
+
+          def read_ip_link_show_data
+            ip_link_show_data = {}
+            output = Facter::Core::Execution.execute('ip -o link show', logger: @log)
+            output.each_line do |line|
+              interface_name = line.split(':')[1]&.strip if line
+              ip_link_show_data[interface_name] = line if interface_name
+            end
+            ip_link_show_data
           end
 
           def mac_from(ifaddr)

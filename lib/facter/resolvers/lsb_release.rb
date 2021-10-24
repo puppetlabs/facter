@@ -25,8 +25,7 @@ module Facter
         end
 
         def lsb_release_installed?
-          output = Facter::Core::Execution.execute('which lsb_release', logger: log)
-          @fact_list[:lsb_release_installed] = !output.empty?
+          @fact_list[:lsb_release_installed] = !Facter::Core::Execution.which('lsb_release').nil?
         end
 
         def read_lsb_release_file

@@ -5,20 +5,20 @@ describe Facter::YamlFactFormatter do
 
   let(:resolved_fact1) do
     instance_spy(Facter::ResolvedFact, name: 'os.name', value: 'Darwin',
-                                       user_query: user_query1, filter_tokens: [], type: :core)
+                                       user_query: user_query1, type: :core)
   end
   let(:resolved_fact2) do
     instance_spy(Facter::ResolvedFact, name: 'os.family', value: 'Darwin',
-                                       user_query: user_query2, filter_tokens: [], type: :core)
+                                       user_query: user_query2, type: :core)
   end
   let(:resolved_fact3) do
     instance_spy(Facter::ResolvedFact, name: 'os.architecture', value: 'x86_64',
-                                       user_query: user_query3, filter_tokens: [], type: :core)
+                                       user_query: user_query3, type: :core)
   end
 
   let(:float_fact) do
     instance_spy(Facter::ResolvedFact, name: 'memory', value: 1024.0,
-                                       user_query: '', filter_tokens: [], type: :core)
+                                       user_query: '', type: :core)
   end
 
   let(:user_query1) { '' }
@@ -58,7 +58,7 @@ describe Facter::YamlFactFormatter do
   context 'when on Windows' do
     let(:win_path) do
       instance_spy(Facter::ResolvedFact, name: 'path', value: value,
-                                         user_query: '', filter_tokens: [], type: :core)
+                                         user_query: '', type: :core)
     end
     let(:value) { 'C:\\Program Files\\Puppet Labs\\Puppet\\bin;C:\\cygwin64\\bin' }
     let(:expected_output) { "path: \"C:\\\\Program Files\\\\Puppet Labs\\\\Puppet\\\\bin;C:\\\\cygwin64\\\\bin\"\n" }

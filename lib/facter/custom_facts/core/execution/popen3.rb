@@ -11,6 +11,8 @@ module Facter
   module Core
     module Execution
       class Popen3
+        @log ||= Log.new(self)
+
         def self.popen_rune(cmd, opts, child_io, parent_io) # :nodoc:
           pid = spawn(*cmd, opts)
           child_io.each(&:close)
@@ -20,7 +22,17 @@ module Facter
               return yield(*result)
             ensure
               parent_io.each(&:close)
-              Process.wait(pid)
+              begin
+                Process.wait(pid)
+              rescue Errno::ENOENT
+                # For some reason, the first Process.wait executed in JRuby
+                # always fails with ENOENT. However, the command output is
+                # filled in so we just need to silently continue.
+                # https://github.com/jruby/jruby/issues/5971
+                raise unless RUBY_PLATFORM == 'java'
+
+                @log.debug('Caught ENOENT during Process.wait on JRuby, continuing...')
+              end
             end
           end
           result

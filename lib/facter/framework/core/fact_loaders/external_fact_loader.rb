@@ -10,20 +10,23 @@ module Facter
       @external_facts = load_external_facts
     end
 
+    def load_fact(fact_name)
+      build_custom_facts(LegacyFacter.collection.custom_fact(fact_name)) || []
+    end
+
     private
 
     def load_custom_facts
-      custom_facts = []
-
       custom_facts_to_load = LegacyFacter.collection.custom_facts
+      build_custom_facts(custom_facts_to_load) || []
+    end
 
-      custom_facts_to_load&.each do |k, v|
+    def build_custom_facts(custom_facts_to_load)
+      custom_facts_to_load&.map do |k, v|
         loaded_fact = LoadedFact.new(k.to_s, nil, :custom)
         loaded_fact.is_env = v.options[:is_env] if v.options[:is_env]
-        custom_facts << loaded_fact
+        loaded_fact
       end
-
-      custom_facts
     end
 
     def load_external_facts

@@ -12,6 +12,15 @@ en0: flags=8863<UP,BROADCAST,SMART,RUNNING,SIMPLEX,MULTICAST> mtu 1500
 	inet 192.168.143.212 netmask 0xffffff00 broadcast 192.168.143.255
 	media: autoselect
 	status: active
+en0.1: flags=8843<UP,BROADCAST,RUNNING,SIMPLEX,MULTICAST> metric 0 mtu 1500
+	options=3<RXCSUM,TXCSUM>
+	ether 08:00:27:f5:23:f7
+	inet 0.0.0.0 netmask 0xff000000 broadcast 255.255.255.255
+	groups: vlan
+	vlan: 1 vlanpcp: 0 parent interface: em0
+	media: autoselect
+	status: active
+	nd6 options=29<PERFORMNUD,IFDISABLED,AUTO_LINKLOCAL>
 en1: flags=8963<UP,BROADCAST,SMART,RUNNING,PROMISC,SIMPLEX,MULTICAST> mtu 1500
 	options=460<TSO4,TSO6,CHANNEL_IO>
 	ether 82:17:0e:93:9d:00 
@@ -63,3 +72,19 @@ utun1: flags=8051<UP,POINTOPOINT,RUNNING,MULTICAST> mtu 2000
 	nd6 options=201<PERFORMNUD,DAD>
 utun2: flags=8051<UP,POINTOPOINT,RUNNING,MULTICAST> mtu 1500
 	inet 10.16.132.213 -->  10.16.132.213 netmask 0xfffffe00 
+utun3: flags=8051<UP,POINTOPOINT,RUNNING,MULTICAST> mtu 1500
+	inet6 2001:db8:cafe::132:213 --> 2001:db8:cafe::132:213 prefixlen 128
+ib0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 4092
+        infiniband 80:00:02:08:FA:81:00:00:00:00:00:00:00:00:00:00:00:00:00:00  txqueuelen 256  (InfiniBand)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+ib1: flags=4099<UP,BROADCAST,MULTICAST>  mtu 4092
+        infiniband 80:00:02:09:FA:81:00:00:00:00:00:00:00:00:00:00:00:00:00:00  txqueuelen 256  (InfiniBand)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+

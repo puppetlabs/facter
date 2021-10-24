@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'integration_helper'
+require_relative 'spec_helper'
 
 describe Facter do
   context 'when calling facter cli' do
@@ -35,6 +35,50 @@ describe Facter do
       end
     end
 
+    context 'when concatenating short options' do
+      context 'when using valid flags' do
+        it 'returns no error' do
+          _, err = IntegrationHelper.exec_facter('-pjdt')
+
+          expect(err).not_to match(/ERROR Facter::OptionsValidator - unrecognised option/)
+        end
+      end
+
+      context 'when using flags and subcommands' do
+        it 'returns validation error' do
+          _, err = IntegrationHelper.exec_facter('-pjdtz')
+
+          expect(err).to match(/ERROR Facter::OptionsValidator - .*unrecognised option '-z'/)
+        end
+      end
+
+      context 'when concatenating JSON and DEBUG flags' do
+        out, err = IntegrationHelper.exec_facter('-jd')
+
+        it 'outputs in valid JSON format' do
+          expect do
+            JSON.parse(out)
+          end.not_to raise_exception
+        end
+
+        it 'outputs DEBUG logs' do
+          expect(err).to match(/DEBUG/)
+        end
+      end
+
+      context 'when concatenating timing and DEBUG flags' do
+        out, err = IntegrationHelper.exec_facter('-td')
+
+        it 'outputs timings of facts' do
+          expect(out).to match(/fact .*, took: .* seconds/)
+        end
+
+        it 'outputs DEBUG logs' do
+          expect(err).to match(/DEBUG/)
+        end
+      end
+    end
+
     context 'with user query' do
       it 'returns fqdn' do
         out, = IntegrationHelper.exec_facter('fqdn')
@@ -48,7 +92,7 @@ describe Facter do
         expect(out).to match(/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/)
       end
 
-      it 'returns ipaddress6' do
+      it 'returns ipaddress6', :skip_outside_ci do
         out, = IntegrationHelper.exec_facter('ipaddress6')
 
         expect(out).to match(/([a-z0-9]{1,4}:{1,2})+[a-z0-9]{1,4}/)
@@ -87,7 +131,7 @@ describe Facter do
       expect(fact_hash['ipaddress']).to match(/[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/)
     end
 
-    it 'contains ipaddress6' do
+    it 'contains ipaddress6', :skip_outside_ci do
       fact_hash = Facter.to_hash
 
       expect(fact_hash['ipaddress6']).to match(/([a-z0-9]{1,4}:{1,2})+[a-z0-9]{1,4}/)

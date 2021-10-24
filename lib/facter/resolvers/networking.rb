@@ -37,12 +37,14 @@ module Facter
 
         def clean_up_interfaces_response(response)
           # convert ip ranges into single ip. eg. 10.16.132.213 -->  10.16.132.213 is converted to 10.16.132.213
-          response.gsub!(/(\d+(\.\d+)*)\s+-->\s+\d+(\.\d+)*/, '\\1')
+          # convert ip6 ranges into single ip. eg. 2001:db8:cafe::132:213 -->
+          # 2001:db8:cafe::132:213 is converted to 2001:db8:cafe::132:213
+          response.gsub!(/([\da-fA-F]+([\.:]+[\da-fA-F]+)*)\s+-->\s+[\da-fA-F]+([\.:]+[\da-fA-F]+)*/, '\\1')
         end
 
         def parse_interfaces_response(response)
           parsed_interfaces_data = {}
-          interfaces_data = Hash[*response.split(/^([A-Za-z0-9_]+): /)[1..-1]]
+          interfaces_data = Hash[*response.split(/^([A-Za-z0-9_\.]+): /)[1..-1]]
 
           interfaces_data.each do |interface_name, raw_data|
             parsed_interface_data = {}
@@ -63,7 +65,8 @@ module Facter
         end
 
         def extract_mac(raw_data, parsed_interface_data)
-          mac = raw_data.match(/(?:ether|lladdr)\s+(\w?\w:\w?\w:\w?\w:\w?\w:\w?\w:\w?\w)/)&.captures&.first
+          mac = raw_data.match(/(?:ether|lladdr)\s+((?:\w?\w:){5}\w?\w)|(?:infiniband)\s+((?:\w?\w:){19}\w?\w)/)
+                       &.captures&.compact&.first
           parsed_interface_data[:mac] = mac unless mac.nil?
         end
 

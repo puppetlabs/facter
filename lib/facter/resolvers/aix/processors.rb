@@ -16,6 +16,8 @@ module Facter
           def query_pddv(fact_name)
             @fact_list[:models] = []
             @fact_list[:logical_count] = 0
+            @fact_list[:cores_per_socket] = 0
+            @fact_list[:threads_per_core] = 0
 
             odmquery = Facter::Util::Aix::ODMQuery.new
             odmquery.equals('class', 'processor')
@@ -40,8 +42,9 @@ module Facter
             return unless result
 
             names = retrieve_from_array(result.scan(/name\s=\s.*/), 1)
+            status = retrieve_from_array(result.scan(/\s+status\s=\s.*/), 1)
 
-            names.each { |elem| query_cuat(elem) }
+            names.each_with_index { |elem, idx| query_cuat(elem) if status[idx] == '1' }
           end
 
           def query_cuat(name)
@@ -59,6 +62,8 @@ module Facter
             threads = smt_enabled ? smt_threads : 1
 
             @fact_list[:logical_count] += threads
+            @fact_list[:cores_per_socket] += 1
+            @fact_list[:threads_per_core] = threads
             @fact_list[:models].concat([type] * threads)
           end
 

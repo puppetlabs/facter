@@ -5,10 +5,6 @@ module Facts
     class Ec2Metadata
       FACT_NAME = 'ec2_metadata'
 
-      def initialize
-        @virtual = Facter::Util::Facts::VirtualDetector.new
-      end
-
       def call_the_resolver
         return Facter::ResolvedFact.new(FACT_NAME, nil) unless aws_hypervisors?
 
@@ -20,7 +16,7 @@ module Facts
       private
 
       def aws_hypervisors?
-        @virtual.platform =~ /kvm|xen|aws/
+        Facter::Util::Facts::Posix::VirtualDetector.platform =~ /kvm|xen|aws/
       end
     end
   end

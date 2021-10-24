@@ -1,69 +1,173 @@
 # frozen_string_literal: true
 
-require 'net/http'
-
 describe Facter::Util::Resolvers::Http do
   subject(:http) { Facter::Util::Resolvers::Http }
 
-  describe '#get_request' do
-    let(:url) { 'http://169.254.169.254/meta-data/' }
-    let(:uri) { URI.parse(url) }
-    let(:http_spy) { instance_spy(Net::HTTP) }
-    let(:http_get_spy) { instance_spy(Net::HTTP::Get) }
-    let(:response_spy) { instance_spy(Net::HTTPOK) }
-    let(:log_spy) { instance_spy(Facter::Log) }
+  let(:url) { 'http://169.254.169.254/meta-data/' }
+  let(:log_spy) { instance_spy(Facter::Log) }
 
-    before do
-      http.instance_variable_set(:@log, log_spy)
+  before do
+    http.instance_variable_set(:@log, log_spy)
+    allow(Gem).to receive(:win_platform?).and_return(false)
+  end
 
-      allow(Net::HTTP).to receive(:new).with(uri.host).and_return(http_spy)
-      allow(Net::HTTP::Get).to receive(:new).with(uri.request_uri, {}).and_return(http_get_spy)
-      allow(http_spy).to receive(:request).with(http_get_spy).and_return(response_spy)
+  RSpec.shared_examples 'a http request' do
+    context 'when success' do
+      before do
+        stub_request(http_verb, url).to_return(status: 200, body: 'success')
+      end
 
-      allow(response_spy).to receive(:code).and_return(200)
-      allow(response_spy).to receive(:body).and_return(output)
-    end
-
-    context 'when http get request is successful' do
-      let(:output) { 'request output' }
-
-      it 'returns the output' do
-        expect(http.get_request(url)).to eq(output)
+      it 'returns the body of the response' do
+        expect(http.send(client_method, url)).to eql('success')
       end
     end
 
-    shared_examples 'logs error and output is empty string' do
-      let(:output) { '' }
+    context 'when setting specific headers' do
+      let(:headers) { { 'Content-Type' => 'application/json' } }
+
+      before do
+        stub_request(http_verb, url).with(headers: headers).and_return(body: 'success')
+      end
+
+      it 'adds them to the request' do
+        expect(http.send(client_method, url, headers)).to eql('success')
+      end
+    end
+
+    context 'when server response with error' do
+      before do
+        stub_request(http_verb, url).to_return(status: 500, body: 'Internal Server Error')
+      end
 
       it 'returns empty string' do
-        expect(http.get_request(url)).to eq(output)
+        expect(http.send(client_method, url)).to eql('')
       end
 
       it 'logs error code' do
-        http.get_request(url)
-        expect(log_spy).to have_received(:debug).with(log_message)
+        http.send(client_method, url)
+        expect(log_spy).to have_received(:debug).with("Request to #{url} failed with error code 500")
       end
     end
 
-    context 'when http get request has error code' do
-      let(:log_message) { 'Request to api/url failed with error code 404' }
-
+    context 'when timeout is reached' do
       before do
-        allow(response_spy).to receive(:code).and_return(404)
-        allow(response_spy).to receive(:uri).and_return('api/url')
+        stub_request(http_verb, url).to_timeout
       end
 
-      it_behaves_like 'logs error and output is empty string'
+      it 'returns empty string' do
+        expect(http.send(client_method, url)).to eql('')
+      end
+
+      it 'logs error message' do
+        http.send(client_method, url)
+        expect(log_spy).to have_received(:debug)
+          .with("Trying to connect to #{url} but got: execution expired")
+      end
     end
 
-    context 'when http get request fails due to timeout' do
-      let(:log_message) { 'Trying to connect to http://169.254.169.254/meta-data/ but got: Net::OpenTimeout' }
-
+    context 'when http request raises error' do
       before do
-        allow(http_spy).to receive(:request).with(http_get_spy).and_raise(Net::OpenTimeout)
+        stub_request(http_verb, url).to_raise(StandardError.new('some error'))
       end
 
-      it_behaves_like 'logs error and output is empty string'
+      it 'returns empty string' do
+        expect(http.send(client_method, url)).to eql('')
+      end
+
+      it 'logs error message' do
+        http.send(client_method, url)
+        expect(log_spy).to have_received(:debug).with("Trying to connect to #{url} but got: some error")
+      end
+    end
+
+    context 'when options[:http_debug] is set to true' do
+      let(:net_http_class) { class_spy(Net::HTTP) }
+      let(:net_http_instance) { instance_spy(Net::HTTP) }
+
+      before do
+        stub_const('Net::HTTP', net_http_class)
+        Facter::Options[:http_debug] = true
+      end
+
+      it 'sets Net::Http to write request and responses to stderr' do
+        allow(net_http_class).to receive(:new).and_return(net_http_instance)
+        http.send(client_method, url)
+        expect(net_http_instance).to have_received(:set_debug_output).with($stderr)
+      end
+    end
+  end
+
+  RSpec.shared_examples 'a http request on windows' do
+    it_behaves_like 'a http request'
+
+    context 'when host is unreachable ' do
+      before do
+        allow(Socket).to receive(:tcp)
+          .with('169.254.169.254', 80, { connect_timeout: 0.6 })
+          .and_raise(Errno::ETIMEDOUT)
+      end
+
+      it 'returns empty string' do
+        expect(http.send(client_method, url)).to eql('')
+      end
+
+      it 'logs error message' do
+        http.send(client_method, url)
+        expect(log_spy).to have_received(:debug)
+          .with(/((Operation|Connection) timed out)|(A connection attempt.*)/)
+      end
+    end
+
+    context 'when timeout is configured' do
+      let(:socket_spy) { class_spy(Socket) }
+
+      before do
+        stub_const('Socket', socket_spy)
+        stub_request(http_verb, url)
+        allow(Socket).to receive(:tcp).with('169.254.169.254', 80, { connect_timeout: 10 })
+      end
+
+      it 'uses the desired value' do
+        http.send(client_method, url, {}, { connection: 10 })
+        expect(socket_spy).to have_received(:tcp).with('169.254.169.254', 80, { connect_timeout: 10 })
+      end
+    end
+  end
+
+  describe '#get_request' do
+    let(:http_verb) { :get }
+    let(:client_method) { :get_request }
+
+    it_behaves_like 'a http request'
+  end
+
+  describe '#put_request' do
+    let(:http_verb) { :put }
+    let(:client_method) { :put_request }
+
+    it_behaves_like 'a http request'
+  end
+
+  context 'when windows' do
+    before do
+      # The Windows implementation of sockets does not respect net/http
+      # timeouts, so the http client checks if the target is reachable using Socket.tcp
+      allow(Gem).to receive(:win_platform?).and_return(true)
+      allow(Socket).to receive(:tcp).with('169.254.169.254', 80, { connect_timeout: 0.6 })
+    end
+
+    describe '#get_request' do
+      let(:http_verb) { :get }
+      let(:client_method) { :get_request }
+
+      it_behaves_like 'a http request on windows'
+    end
+
+    describe '#put_request' do
+      let(:http_verb) { :put }
+      let(:client_method) { :put_request }
+
+      it_behaves_like 'a http request on windows'
     end
   end
 end

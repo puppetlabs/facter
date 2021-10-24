@@ -15,7 +15,7 @@ module Facts
         private
 
         def vmware?
-          Facter::Resolvers::Virtualization.resolve(:virtual) == 'vmware' ||
+          Facter::Resolvers::Windows::Virtualization.resolve(:virtual) == 'vmware' ||
             Facter::Resolvers::DMIBios.resolve(:manufacturer) == 'VMware, Inc.'
         end
       end
