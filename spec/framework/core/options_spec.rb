@@ -50,14 +50,33 @@ describe Facter::Options do
     end
 
     context 'with cli_options' do
-      let(:cli_options) { { 'debug' => true, 'ruby' => true, 'log_level' => 'log_level' } }
+      let(:cli_options) { { 'debug' => true, 'ruby' => true } }
 
       it 'calls OptionStore.set.init with cli_options' do
         Facter::Options.init_from_cli(cli_options)
 
         cli_options.each do |key, value|
-          value = '' if key == 'log_level' && value == 'log_level'
           expect(option_store).to have_received(:set).with(key, value)
+        end
+      end
+
+      context 'with log_level as option' do
+        it 'munges the value none to unknown' do
+          Facter::Options.init_from_cli({ 'log_level' => 'none' })
+
+          expect(option_store).to have_received(:set).with('log_level', 'unknown')
+        end
+
+        it 'munges the value log_level to empty string' do
+          Facter::Options.init_from_cli({ 'log_level' => 'log_level' })
+
+          expect(option_store).to have_received(:set).with('log_level', '')
+        end
+
+        it 'leaves known log level unmunged' do
+          Facter::Options.init_from_cli({ 'log_level' => 'debug' })
+
+          expect(option_store).to have_received(:set).with('log_level', 'debug')
         end
       end
     end
