@@ -16,8 +16,9 @@ describe Facts::Windows::Os::Windows::DisplayVersion do
     end
 
     it 'returns os release id fact' do
-      expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
-        have_attributes(name: 'os.windows.display_version', value: value)
+      expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
+        contain_exactly(an_object_having_attributes(name: 'os.windows.display_version', value: value),
+                        an_object_having_attributes(name: 'windows_display_version', value: value, type: :legacy))
     end
   end
 end
