@@ -167,6 +167,7 @@ module Facter
           macosx_productversion_major
           macosx_productversion_minor
           macosx_productversion_patch
+          windows_display_version
           windows_edition_id
           windows_installation_type
           windows_product_name
