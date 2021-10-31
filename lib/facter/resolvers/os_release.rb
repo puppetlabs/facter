@@ -60,6 +60,9 @@ module Facter
                                 os_name = os_name.split(' ')[0..1].join
                                 os_name = os_name.capitalize if os_name.downcase.start_with?('arch', 'manjaro')
                                 os_name
+                              elsif os_name.downcase.start_with?('virtuozzo')
+                                os_name = os_name.split(' ')[0..1].capitalize.join
+                                os_name
                               else
                                 os_name.split(' ')[0].strip
                               end

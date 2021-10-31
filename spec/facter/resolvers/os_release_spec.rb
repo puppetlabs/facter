@@ -139,4 +139,14 @@ describe Facter::Resolvers::OsRelease do
       expect(result).to eq('Manjarolinux')
     end
   end
+
+  context 'when on VirtuozzoLinux' do
+    let(:os_release_content) { load_fixture('os_release_virtuozzolinux').readlines }
+
+    it 'returns os NAME' do
+      result = Facter::Resolvers::OsRelease.resolve(:name)
+
+      expect(result).to eq('VirtuozzoLinux')
+    end
+  end
 end
