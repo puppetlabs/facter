@@ -55,8 +55,23 @@ module Facter
 
       def store(options)
         options.each do |key, value|
-          value = '' if key == 'log_level' && value == 'log_level'
+          value = munge_option(key, value)
           OptionStore.set(key, value)
+        end
+      end
+
+      private
+
+      def munge_option(key, value)
+        return value unless key.to_sym == :log_level
+
+        case value.to_sym
+        when :log_level
+          ''
+        when :none
+          'unknown'
+        else
+          value
         end
       end
     end
