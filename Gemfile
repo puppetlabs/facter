@@ -1,7 +1,7 @@
 source ENV['GEM_SOURCE'] || 'https://artifactory.delivery.puppetlabs.net/artifactory/api/gems/rubygems/'
 
 def location_for(place, fake_version = nil)
-  if place =~ /^(git[:@][^#]*)#(.*)/
+  if place =~ /^((?:git[:@]|https:)[^#]*)#(.*)/
     [fake_version, { :git => $1, :branch => $2, :require => false }].compact
   elsif place =~ /^file:\/\/(.*)/
     ['>= 0', { :path => File.expand_path($1), :require => false }]
