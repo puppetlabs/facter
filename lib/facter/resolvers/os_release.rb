@@ -63,6 +63,8 @@ module Facter
         end
 
         def process_version_id
+          return unless @fact_list[:version_id]
+
           @fact_list[:version_id] = "#{@fact_list[:version_id]}.0" unless @fact_list[:version_id] =~ /\./
         end
 

@@ -138,6 +138,12 @@ describe Facter::Resolvers::OsRelease do
 
       expect(result).to eq('Manjarolinux')
     end
+
+    it "doesn't pad a non-existent version_id" do
+      result = Facter::Resolvers::OsRelease.resolve(:version_id)
+
+      expect(result).to be_nil
+    end
   end
 
   context 'when on VirtuozzoLinux' do
