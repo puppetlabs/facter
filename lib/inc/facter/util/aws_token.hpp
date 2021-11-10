@@ -16,6 +16,7 @@ namespace facter { namespace util {
      * @param cli the client used to make the request
      * @param lifetime the lifetime of the token
      */
-   std::string get_token(std::string const& url, leatherman::curl::client& cli, int const& lifetime);
+   std::string get_token(std::string const& url, leatherman::curl::client& cli, int const& lifetime,
+                         unsigned int ec2_connection_timeout, unsigned int ec2_session_timeout);
 }}  // namespace facter::util
 #endif  // USE_CURL
