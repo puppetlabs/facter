@@ -21,6 +21,6 @@ describe Facter::Resolvers::SuseRelease do
   end
 
   it 'returns the identifier' do
-    expect(suse_release.resolve(:identifier)).to eq('opensuse')
+    expect(suse_release.resolve(:id)).to eq('opensuse')
   end
 end

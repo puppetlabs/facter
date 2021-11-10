@@ -9,10 +9,11 @@ describe Facter::Resolvers::RedHatRelease do
     Facter::Resolvers::RedHatRelease.invalidate_cache
   end
 
-  context 'when redhat-realse has codename' do
+  context 'when redhat-release has codename' do
     {
       fedora: {
         release_file_content: "Fedora release 32 (Thirty Two)\n",
+        id: 'rhel',
         name: 'Fedora',
         version: '32',
         codename: 'Thirty Two',
@@ -22,6 +23,7 @@ describe Facter::Resolvers::RedHatRelease do
       },
       el: {
         release_file_content: "Red Hat Enterprise Linux release 8.0 (Ootpa)\n",
+        id: 'rhel',
         name: 'RedHat',
         version: '8.0',
         codename: 'Ootpa',
@@ -30,6 +32,7 @@ describe Facter::Resolvers::RedHatRelease do
       },
       el_server: {
         release_file_content: "Red Hat Enterprise Linux Server release 5.10 (Tikanga)\n",
+        id: 'rhel',
         name: 'RedHat',
         version: '5.10',
         codename: 'Tikanga',
@@ -38,6 +41,7 @@ describe Facter::Resolvers::RedHatRelease do
       },
       centos: {
         release_file_content: "CentOS Linux release 7.2.1511 (Core)\n",
+        id: 'rhel',
         name: 'CentOS',
         version: '7.2.1511',
         codename: 'Core',
@@ -54,6 +58,10 @@ describe Facter::Resolvers::RedHatRelease do
 
         it 'returns os NAME' do
           expect(redhat_release.resolve(:name)).to eq(data[:name])
+        end
+
+        it 'returns os ID' do
+          expect(redhat_release.resolve(:id)).to eq(data[:id])
         end
 
         it 'returns os VERSION_ID' do

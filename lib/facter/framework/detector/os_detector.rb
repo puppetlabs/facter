@@ -75,7 +75,7 @@ class OsDetector
     [Facter::Resolvers::OsRelease,
      Facter::Resolvers::RedHatRelease,
      Facter::Resolvers::SuseRelease].each do |resolver|
-      @identifier = resolver.resolve(:identifier)
+      @identifier = resolver.resolve(:id)
       break if @identifier
     end
 

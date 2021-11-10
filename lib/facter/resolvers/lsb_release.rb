@@ -38,8 +38,6 @@ module Facter
 
           result = Hash[*release_info.flatten]
           result.each { |k, v| @fact_list[k.downcase.gsub(/\s/, '_').to_sym] = v }
-
-          @fact_list[:identifier] = @fact_list[:distributor_id]
         end
       end
     end

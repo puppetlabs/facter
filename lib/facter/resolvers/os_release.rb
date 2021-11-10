@@ -37,7 +37,7 @@ module Facter
 
             process_name
             process_version_id
-            process_identifier
+            process_id
 
             @fact_list[fact_name]
           end
@@ -58,8 +58,6 @@ module Facter
         def fill_fact_list(pairs)
           result = Hash[*pairs.flatten]
           result.each { |k, v| @fact_list[k.downcase.to_sym] = v }
-
-          @fact_list[:identifier] = @fact_list[:id]
         end
 
         def process_version_id
@@ -68,10 +66,10 @@ module Facter
           @fact_list[:version_id] = "#{@fact_list[:version_id]}.0" unless @fact_list[:version_id] =~ /\./
         end
 
-        def process_identifier
-          return unless @fact_list[:identifier]
+        def process_id
+          return unless @fact_list[:id]
 
-          @fact_list[:identifier] = 'opensuse' if @fact_list[:identifier] =~ /opensuse/i
+          @fact_list[:id] = 'opensuse' if @fact_list[:id] =~ /opensuse/i
         end
 
         def process_name

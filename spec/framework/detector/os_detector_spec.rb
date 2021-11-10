@@ -117,9 +117,9 @@ describe OsDetector do
       before do
         RbConfig::CONFIG['host_os'] = 'linux'
 
-        allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:identifier)
-        allow(Facter::Resolvers::RedHatRelease).to receive(:resolve).with(:identifier).and_return(:redhat)
-        allow(Facter::Resolvers::SuseRelease).to receive(:resolve).with(:identifier)
+        allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:id)
+        allow(Facter::Resolvers::RedHatRelease).to receive(:resolve).with(:id).and_return(:redhat)
+        allow(Facter::Resolvers::SuseRelease).to receive(:resolve).with(:id)
 
         allow(os_hierarchy).to receive(:construct_hierarchy).with(:redhat).and_return(%w[linux redhat])
       end
@@ -134,21 +134,21 @@ describe OsDetector do
         expect(os_hierarchy).to have_received(:construct_hierarchy).with(:redhat)
       end
 
-      it 'calls Facter::Resolvers::OsRelease with identifier' do
+      it 'calls Facter::Resolvers::OsRelease with id' do
         OsDetector.instance
 
-        expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:identifier)
+        expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:id)
       end
 
-      it 'calls Facter::Resolvers::RedHatRelease with identifier' do
+      it 'calls Facter::Resolvers::RedHatRelease with id' do
         OsDetector.instance
 
-        expect(Facter::Resolvers::RedHatRelease).to have_received(:resolve).with(:identifier)
+        expect(Facter::Resolvers::RedHatRelease).to have_received(:resolve).with(:id)
       end
 
       context 'when distribution is not known' do
         before do
-          allow(Facter::Resolvers::RedHatRelease).to receive(:resolve).with(:identifier).and_return('my_linux_distro')
+          allow(Facter::Resolvers::RedHatRelease).to receive(:resolve).with(:id).and_return('my_linux_distro')
           allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:id_like).and_return(nil)
 
           allow(os_hierarchy).to receive(:construct_hierarchy).and_return([])

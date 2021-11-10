@@ -36,18 +36,18 @@ module Facter
           @fact_list[:distributor_id] = distributor_id(output_strings[0])
           @fact_list[:name] = release_name(output_strings[0])
           @fact_list[:version] = version(output_strings)
-          @fact_list[:identifier] = identifier(@fact_list[:name])
+          @fact_list[:id] = id(@fact_list[:name])
         end
 
         def release_name(value)
           value.split.reject { |el| el.casecmp('linux').zero? }[0..1].join
         end
 
-        def identifier(value)
-          identifier = value.downcase
-          identifier = 'rhel' if @fact_list[:name].casecmp('Red Hat Enterprise Linux')
+        def id(value)
+          id = value.downcase
+          id = 'rhel' if @fact_list[:name].casecmp('Red Hat Enterprise Linux')
 
-          identifier
+          id
         end
 
         def codename(value)
