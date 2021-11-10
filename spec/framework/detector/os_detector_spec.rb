@@ -121,10 +121,6 @@ describe OsDetector do
         allow(Facter::Resolvers::RedHatRelease).to receive(:resolve).with(:identifier).and_return(:redhat)
         allow(Facter::Resolvers::SuseRelease).to receive(:resolve).with(:identifier)
 
-        allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:version)
-        allow(Facter::Resolvers::RedHatRelease).to receive(:resolve).with(:version)
-        allow(Facter::Resolvers::SuseRelease).to receive(:resolve).with(:version)
-
         allow(os_hierarchy).to receive(:construct_hierarchy).with(:redhat).and_return(%w[linux redhat])
       end
 
@@ -148,18 +144,6 @@ describe OsDetector do
         OsDetector.instance
 
         expect(Facter::Resolvers::RedHatRelease).to have_received(:resolve).with(:identifier)
-      end
-
-      it 'calls Facter::Resolvers::OsRelease with version' do
-        OsDetector.instance
-
-        expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:version)
-      end
-
-      it 'calls Facter::Resolvers::RedHatRelease with version' do
-        OsDetector.instance
-
-        expect(Facter::Resolvers::RedHatRelease).to have_received(:resolve).with(:version)
       end
 
       context 'when distribution is not known' do

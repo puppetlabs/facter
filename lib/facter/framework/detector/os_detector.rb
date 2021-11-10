@@ -5,7 +5,7 @@ require 'rbconfig'
 class OsDetector
   include Singleton
 
-  attr_reader :identifier, :version, :hierarchy
+  attr_reader :identifier, :hierarchy
 
   def initialize(*_args)
     @log = Facter::Log.new(self)
@@ -76,7 +76,6 @@ class OsDetector
      Facter::Resolvers::RedHatRelease,
      Facter::Resolvers::SuseRelease].each do |resolver|
       @identifier = resolver.resolve(:identifier)
-      @version = resolver.resolve(:version)
       break if @identifier
     end
 
