@@ -39,8 +39,8 @@ describe Facter::Resolvers::OsRelease do
       expect(result).to eq('bionic')
     end
 
-    it 'returns os identifier' do
-      result = Facter::Resolvers::OsRelease.resolve(:identifier)
+    it 'returns os id' do
+      result = Facter::Resolvers::OsRelease.resolve(:id)
 
       expect(result).to eq('')
     end
@@ -83,8 +83,8 @@ describe Facter::Resolvers::OsRelease do
       expect(result).to eq('buster')
     end
 
-    it 'returns os identifier' do
-      result = Facter::Resolvers::OsRelease.resolve(:identifier)
+    it 'returns os id' do
+      result = Facter::Resolvers::OsRelease.resolve(:id)
 
       expect(result).to eq('debian')
     end
@@ -93,17 +93,17 @@ describe Facter::Resolvers::OsRelease do
   context 'when on opensuse-leap' do
     let(:os_release_content) { load_fixture('os_release_opensuse-leap').readlines }
 
-    it 'returns os identifier' do
-      result = Facter::Resolvers::OsRelease.resolve(:identifier)
+    it 'returns os id' do
+      result = Facter::Resolvers::OsRelease.resolve(:id)
 
       expect(result).to eq('opensuse')
     end
 
     context 'when opensuse identifier is capitalized' do
-      it 'returns os identifier' do
+      it 'returns os id' do
         os_release_content[2] = 'ID="Opensuse-Leap"'
 
-        result = Facter::Resolvers::OsRelease.resolve(:identifier)
+        result = Facter::Resolvers::OsRelease.resolve(:id)
 
         expect(result).to eq('opensuse')
       end
@@ -137,6 +137,22 @@ describe Facter::Resolvers::OsRelease do
       result = Facter::Resolvers::OsRelease.resolve(:name)
 
       expect(result).to eq('Manjarolinux')
+    end
+
+    it "doesn't pad a non-existent version_id" do
+      result = Facter::Resolvers::OsRelease.resolve(:version_id)
+
+      expect(result).to be_nil
+    end
+  end
+
+  context 'when on VirtuozzoLinux' do
+    let(:os_release_content) { load_fixture('os_release_virtuozzolinux').readlines }
+
+    it 'returns os NAME' do
+      result = Facter::Resolvers::OsRelease.resolve(:name)
+
+      expect(result).to eq('VirtuozzoLinux')
     end
   end
 end
