@@ -54,42 +54,32 @@ describe Facter::Core::Execution do
     end
 
     context 'with default parameters' do
-      it 'execute the found command' do
+      it 'executes the found command' do
         execution.execute('waffles')
         expect(impl).to have_received(:execute_command).with('/under/the/honey/are/the/waffles', :raise, nil, nil)
       end
     end
 
     context 'with a timeout' do
-      it 'execute the found command with a timeout' do
+      it 'executes the found command with a timeout' do
         execution.execute('waffles', timeout: 90)
         expect(impl).to have_received(:execute_command).with('/under/the/honey/are/the/waffles', :raise, nil, 90)
       end
     end
 
-    context 'with a deprecated time_limit' do
-      it 'execute the found command with a timeout' do
-        execution.execute('waffles', time_limit: 90)
-        expect(impl).to have_received(:execute_command).with('/under/the/honey/are/the/waffles', :raise, nil, 90)
+    context 'when passing deprecated arguments' do
+      %i[time_limit limit].each do |option|
+        it 'executes the found command with a timeout' do
+          execution.execute('waffles', option => 90)
+          expect(impl).to have_received(:execute_command).with('/under/the/honey/are/the/waffles', :raise, nil, 90)
+        end
       end
 
       it 'emits a warning' do
-        execution.execute('waffles', time_limit: 90)
+        execution.execute('waffles', time_limit: 90, bad_opt: true)
         expect(logger).to have_received(:warn)
-          .with('Unexpected key passed to Facter::Core::Execution.execute option: time_limit')
-      end
-    end
-
-    context 'with a deprecated limit' do
-      it 'execute the found command with a timeout' do
-        execution.execute('waffles', limit: 90)
-        expect(impl).to have_received(:execute_command).with('/under/the/honey/are/the/waffles', :raise, nil, 90)
-      end
-
-      it 'emits a warning' do
-        execution.execute('waffles', limit: 90)
-        expect(logger).to have_received(:warn)
-          .with('Unexpected key passed to Facter::Core::Execution.execute option: limit')
+          .with('Unexpected key passed to Facter::Core::Execution.execute option: time_limit,bad_opt' \
+                ' - valid keys: on_fail,expand,logger,timeout')
       end
     end
   end

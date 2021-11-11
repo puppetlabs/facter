@@ -7,6 +7,7 @@ module Facter
     module Execution
       class Base
         STDERR_MESSAGE = 'Command %s completed with the following stderr message: %s'
+        VALID_OPTIONS = %i[on_fail expand logger timeout].freeze
 
         def initialize
           @log = Log.new(self)
@@ -117,9 +118,10 @@ module Facter
           timeout = (options[:timeout] || options[:time_limit] || options[:limit]).to_i
           timeout = timeout.positive? ? timeout : nil
 
-          extra_keys = options.keys - %i[on_fail expand logger timeout]
+          extra_keys = options.keys - VALID_OPTIONS
           unless extra_keys.empty?
-            @log.warn("Unexpected key passed to Facter::Core::Execution.execute option: #{options.keys.join(',')}")
+            @log.warn("Unexpected key passed to Facter::Core::Execution.execute option: #{extra_keys.join(',')}" \
+                      " - valid keys: #{VALID_OPTIONS.join(',')}")
           end
 
           [on_fail, expand, logger, timeout]
