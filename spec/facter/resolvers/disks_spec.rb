@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-describe Facter::Resolvers::Linux::Disk do
+describe Facter::Resolvers::Linux::Disks do
   describe '#resolve' do
-    subject(:resolver) { Facter::Resolvers::Linux::Disk }
+    subject(:resolver) { Facter::Resolvers::Linux::Disks }
 
     let(:disk_files) { %w[sr0/device sr0/size sda/device sda/size] }
 
@@ -43,7 +43,7 @@ describe Facter::Resolvers::Linux::Disk do
     end
 
     after do
-      Facter::Resolvers::Linux::Disk.invalidate_cache
+      Facter::Resolvers::Linux::Disks.invalidate_cache
     end
 
     context 'when device dir for blocks exists' do

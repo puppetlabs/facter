@@ -27,12 +27,12 @@ describe Facts::Linux::Disks do
 
   describe '#call_the_resolver' do
     before do
-      allow(Facter::Resolvers::Linux::Disk).to receive(:resolve).with(:disks).and_return(disk)
+      allow(Facter::Resolvers::Linux::Disks).to receive(:resolve).with(:disks).and_return(disk)
     end
 
-    it 'calls Facter::Resolvers::Linux::Disk' do
+    it 'calls Facter::Resolvers::Linux::Disks' do
       fact.call_the_resolver
-      expect(Facter::Resolvers::Linux::Disk).to have_received(:resolve).with(:disks)
+      expect(Facter::Resolvers::Linux::Disks).to have_received(:resolve).with(:disks)
     end
 
     it 'returns resolved fact with name disk and value' do

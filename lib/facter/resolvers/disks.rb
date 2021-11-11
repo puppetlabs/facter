@@ -3,7 +3,7 @@
 module Facter
   module Resolvers
     module Linux
-      class Disk < BaseResolver
+      class Disks < BaseResolver
         @log = Facter::Log.new(self)
 
         init_resolver
