@@ -13,38 +13,44 @@ module Facter
                        size: 'size',
                        vendor: 'device/vendor',
                        type: 'queue/rotational',
-                       sn: 'false',
-                       wwid: 'false'
-                     }.freeze
+                       serial: 'false',
+                       wwn: 'false' }.freeze
 
         class << self
           private
 
           def post_resolve(fact_name, _options)
-            @fact_list.fetch(fact_name) { read_facts(fact_name) }
+            @fact_list.fetch(fact_name) do
+              return unless @fact_list.empty?
+
+              build_disks_hash
+
+              read_facts
+
+              @fact_list[:disks] = nil if @fact_list[:disks].empty?
+              @fact_list[fact_name]
+            end
           end
 
-          def read_facts(fact_name)
-            build_disks_hash
+          def lsblk(option, disk)
+            result = Facter::Core::Execution.execute(
+              "/usr/bin/lsblk -dn -o #{option} /dev/#{disk}", on_fail: '', timeout: 1
+            ).strip
+            result.empty? ? nil : result
+          end
 
+          def read_facts
             FILE_PATHS.each do |key, file|
               @fact_list[:disks].each do |disk, value|
                 file_path = File.join(DIR, disk, file)
 
-                if file == 'false'
-                  value[key] = case key
-                               when :sn
-                                 result = Facter::Core::Execution.execute("/usr/bin/lsblk -dn -o serial /dev/#{disk}", {on_fail: "", time_limit: 1}).strip
-                                 next if result.empty?
-                               when :wwid
-                                 result = Facter::Core::Execution.execute("/us/bin/lsblk -dn -o wwn /dev/#{disk}", {on_fail: "", time_limit: 1}).strip
-                                 next if result.empty?
-                               end
-                else
-                  result = Facter::Util::FileHelper.safe_read(file_path).strip
-                end
+                result = if file == 'false'
+                           lsblk(key, disk)
+                         else
+                           Facter::Util::FileHelper.safe_read(file_path, nil)&.strip
+                         end
 
-                next if result.empty?
+                next unless result
 
                 value[key] = case key
                              when :size
@@ -58,16 +64,14 @@ module Facter
                              end
               end
             end
-
-            @fact_list[:disks] = nil if @fact_list[:disks].empty?
-            @fact_list[fact_name]
           end
 
           def build_disks_hash
+            valid_disks = Facter::Util::FileHelper.dir_children(DIR)
+                                                  .select { |disk| File.readable?(File.join(DIR, disk, 'device')) }
+
             @fact_list[:disks] = {}
-            directories = Dir.entries(DIR).reject { |dir| dir =~ /\.+/ }
-            directories.each { |disk| @fact_list[:disks].merge!(disk => {}) }
-            @fact_list[:disks].select! { |disk, _fact| File.readable?(File.join(DIR, disk, 'device')) }
+            valid_disks.each { |disk| @fact_list[:disks][disk] = {} }
           end
 
           def construct_size(facts, value)
