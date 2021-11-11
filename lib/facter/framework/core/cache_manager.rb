@@ -167,13 +167,29 @@ cache_format_version is incorrect!")
         next unless check_ttls?(group_name, @fact_groups.get_group_ttls(group_name))
 
         cache_file_name = File.join(@cache_dir, group_name)
-        next if File.readable?(cache_file_name)
+
+        next if facts_already_cached?(cache_file_name, data)
 
         @log.debug("caching values for #{group_name} facts")
 
         data['cache_format_version'] = 1
         File.write(cache_file_name, JSON.pretty_generate(data))
       end
+    end
+
+    def facts_already_cached?(cache_file_name, data)
+      if File.readable?(cache_file_name)
+        file = Facter::Util::FileHelper.safe_read(cache_file_name)
+        begin
+          cached_data = JSON.parse(file) unless file.nil?
+          return true if (data.keys - cached_data.keys).empty?
+        rescue JSON::ParserError => e
+          @log.debug("Failed to read cache file #{cache_file_name}. Detail: #{e.message}")
+        rescue NoMethodError => e
+          @log.debug("No keys found in #{cache_file_name}. Detail: #{e.message}")
+        end
+      end
+      false
     end
 
     def read_group_json(group_name)
