@@ -8,7 +8,7 @@ module Facts
 
       def call_the_resolver
         facts = []
-        disks = Facter::Resolvers::Linux::Disk.resolve(:disks)
+        disks = Facter::Resolvers::Linux::Disks.resolve(:disks)
 
         return Facter::ResolvedFact.new(FACT_NAME, nil) if disks.nil? || disks.empty?
 

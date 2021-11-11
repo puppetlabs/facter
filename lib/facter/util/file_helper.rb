@@ -22,6 +22,16 @@ module Facter
           default_return
         end
 
+        def dir_children(path)
+          children = if RUBY_VERSION.to_f < 2.5
+                       Dir.entries(path).reject { |dir| ['.', '..'].include?(dir) }
+                     else
+                       Dir.children(path)
+                     end
+
+          children
+        end
+
         private
 
         def log_failed_to_read(path)
