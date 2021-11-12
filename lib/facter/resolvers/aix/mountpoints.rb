@@ -30,8 +30,11 @@ module Facter
 
           def add_mount_points_fact(line)
             elem = line.split("\s")
+
+            elem.shift unless line[0] == ' '
+
             @fact_list[:mountpoints][elem[1]] = { device: elem[0], filesystem: elem[2],
-                                                  options: elem.last.split(',') }
+                                                  options: elem.last.include?(':') ? [] : elem.last.split(',') }
           end
 
           def retrieve_sizes_for_mounts
