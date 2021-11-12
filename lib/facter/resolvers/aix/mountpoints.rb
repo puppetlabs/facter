@@ -18,23 +18,26 @@ module Facter
           def read_mount(fact_name)
             @fact_list[:mountpoints] = {}
             output = Facter::Core::Execution.execute('mount', logger: log)
-            output.split("\n").map do |line|
-              next if line =~ /\s+node\s+|---|procfs|ahafs/
+            output.split("\n").drop(2).map do |line|
+              next if line =~ /procfs|ahafs/
 
-              elem = line.split("\s")
-
-              @fact_list[:mountpoints][elem[1]] = { device: elem[0], filesystem: elem[2],
-                                                    options: elem.last.split(',') }
+              add_mount_points_fact(line)
             end
 
             retrieve_sizes_for_mounts
             @fact_list[fact_name]
           end
 
+          def add_mount_points_fact(line)
+            elem = line.split("\s")
+            @fact_list[:mountpoints][elem[1]] = { device: elem[0], filesystem: elem[2],
+                                                  options: elem.last.split(',') }
+          end
+
           def retrieve_sizes_for_mounts
             output = Facter::Core::Execution.execute('df -P', logger: log)
-            output.split("\n").map do |line|
-              next if line =~ /Filesystem|-\s+-\s+-/
+            output.split("\n").drop(1).map do |line|
+              next if line =~ /-\s+-\s+-/
 
               mount_info = line.split("\s")
               mount_info[3] = translate_to_bytes(mount_info[3])
