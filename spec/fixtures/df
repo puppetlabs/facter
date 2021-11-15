@@ -3,3 +3,4 @@ Filesystem    512-blocks      Used Available Capacity Mounted on
 /dev/hd2        10485760   4530640   5955120      44% /usr
 /dev/hd3          423201      3233    419968      1%  /var
 /proc                  -         -         -       - /proc
+joe:/var/share   143650816  10343368 133307448       8% /tmp/salam
