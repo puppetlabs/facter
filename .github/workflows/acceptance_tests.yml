@@ -41,7 +41,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo chmod a-w /home/runner /usr/share &&
-          sudo chmod -R a-w /usr/share/rust /home/runner/.config /home/linuxbrew
+          sudo chmod -R a-w /home/runner/.config /home/linuxbrew
 
       - name: Install dhclient for Linux
         if: runner.os == 'Linux'
