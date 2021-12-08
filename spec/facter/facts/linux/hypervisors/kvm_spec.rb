@@ -122,6 +122,13 @@ describe Facts::Linux::Hypervisors::Kvm do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact)
           .and have_attributes(name: 'hypervisors.kvm', value: { 'openstack' => true })
       end
+
+      it 'returns open stack when Lspci return nil' do
+        allow(Facter::Resolvers::Lspci).to receive(:resolve).with(:vm).and_return('unknown')
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('OpenStack')
+        expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact)
+          .and have_attributes(name: 'hypervisors.kvm', value: { 'openstack' => true })
+      end
     end
   end
 end
