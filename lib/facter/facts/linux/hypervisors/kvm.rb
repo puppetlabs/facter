@@ -35,13 +35,15 @@ module Facts
         end
 
         def kvm?
+          product_name = discover_hypervisor
           bios_vendor = Facter::Resolvers::Linux::DmiBios.resolve(:bios_vendor)
           @log.debug("Detected bios vendor: #{bios_vendor}")
 
           Facter::Resolvers::VirtWhat.resolve(:vm) == 'kvm' ||
             Facter::Resolvers::Lspci.resolve(:vm) == 'kvm' ||
             bios_vendor&.include?('Amazon EC2') ||
-            bios_vendor&.include?('Google')
+            bios_vendor&.include?('Google') ||
+            product_name&.include?('OpenStack')
         end
 
         def discover_provider
