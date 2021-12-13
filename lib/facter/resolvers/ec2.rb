@@ -20,7 +20,7 @@ module Facter
         def read_facts(fact_name)
           @fact_list[:metadata] = {}
           query_for_metadata(EC2_METADATA_ROOT_URL, @fact_list[:metadata])
-          @fact_list[:userdata] = get_data_from(EC2_USERDATA_ROOT_URL).strip
+          @fact_list[:userdata] = get_data_from(EC2_USERDATA_ROOT_URL).strip.force_encoding('UTF-8')
           @fact_list[fact_name]
         end
 

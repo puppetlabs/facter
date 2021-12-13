@@ -142,4 +142,20 @@ describe Facter::Resolvers::Ec2 do
 
     ec2.resolve(:userdata)
   end
+
+  context 'when data received are ASCII-8BIT encoded' do
+    let(:headers) { { 'Accept' => '*/*' } }
+
+    it 'converts data received to UTF-8 encoding' do
+      allow(Facter::Resolvers::Ec2).to receive(:v2_token).and_return(nil)
+
+      expected_str = "nofail\xCC\xA6\"".strip
+      bin_str = "nofail\xCC\xA6\"".strip.force_encoding(Encoding::ASCII_8BIT)
+      stub_request(:get, userdata_uri).with(headers: headers).to_return(status: 200, body: bin_str, headers:
+        { 'Content-Type' => 'application/octet-stream' })
+      stub_request(:get, metadata_uri).with { |request| !request.headers.key?('X-aws-ec2-metadata-token') }
+
+      expect(ec2.resolve(:userdata)).to eql(expected_str)
+    end
+  end
 end
