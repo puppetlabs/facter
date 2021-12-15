@@ -76,7 +76,7 @@ describe Facter::Resolvers::Linux::Disks do
                 .with("/sys/block/#{disk}#{value}", nil).and_return(values[:vendor])
             when 'false'
               allow(Facter::Core::Execution).to receive(:execute)
-                .with("/usr/bin/lsblk -dn -o #{fact} /dev/#{disk}", on_fail: '', timeout: 1)
+                .with("lsblk -dn -o #{fact} /dev/#{disk}", on_fail: '', timeout: 1)
                 .and_return(values[fact])
             end
           end
@@ -145,7 +145,7 @@ describe Facter::Resolvers::Linux::Disks do
               next unless value == 'false'
 
               allow(Facter::Core::Execution).to receive(:execute)
-                .with("/usr/bin/lsblk -dn -o #{fact} /dev/#{disk}", on_fail: '', timeout: 1)
+                .with("lsblk -dn -o #{fact} /dev/#{disk}", on_fail: '', timeout: 1)
                 .and_return('')
             end
           end
