@@ -11,7 +11,7 @@ test_name 'C59029: networking facts should be fully populated' do
 
   agents.each do |agent|
     expected_networking = {
-      %w[networking dhcp] => agent['platform'] =~ /fedora-32|fedora-34|el-8-/ ? '' : @ip_regex, # https://gitlab.freedesktop.org/NetworkManager/NetworkManager/-/issues/426
+      %w[networking dhcp] => agent['platform'] =~ /fedora-32|fedora-34|el-8-|el-9-/ ? '' : @ip_regex, # https://gitlab.freedesktop.org/NetworkManager/NetworkManager/-/issues/426
       %w[networking ip] => @ip_regex,
       %w[networking ip6] => /[a-f0-9]+:+/,
       %w[networking mac] => /[a-f0-9]{2}:/,
