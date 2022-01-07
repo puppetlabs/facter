@@ -18,10 +18,10 @@ jobs:
     strategy:
       matrix:
         ruby:
-          - 2.3
-          - 2.7
-          - 3.0
-          - jruby
+          - '2.3'
+          - '2.7'
+          - '3.0'
+          - 'jruby'
     runs-on: ubuntu-18.04
     steps:
       - name: Checkout current PR
