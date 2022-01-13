@@ -34,7 +34,7 @@ module Facter
 
           def lsblk(option, disk)
             result = Facter::Core::Execution.execute(
-              "/usr/bin/lsblk -dn -o #{option} /dev/#{disk}", on_fail: '', timeout: 1
+              "lsblk -dn -o #{option} /dev/#{disk}", on_fail: '', timeout: 1
             ).strip
             result.empty? ? nil : result
           end
