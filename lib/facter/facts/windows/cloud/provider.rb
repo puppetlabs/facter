@@ -11,6 +11,8 @@ module Facts
           provider = case virtual
                      when 'hyperv'
                        'azure' unless Facter::Resolvers::Az.resolve(:metadata).empty?
+                     when 'kvm', 'xen'
+                       'aws' unless Facter::Resolvers::Ec2.resolve(:metadata).empty?
                      end
 
           Facter::ResolvedFact.new(FACT_NAME, provider)
