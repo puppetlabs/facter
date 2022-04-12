@@ -13,6 +13,8 @@ module Facts
                        'azure' unless Facter::Resolvers::Az.resolve(:metadata).empty?
                      when 'kvm', 'xen'
                        'aws' unless Facter::Resolvers::Ec2.resolve(:metadata).empty?
+                     when 'gce'
+                       'gce' unless Facter::Resolvers::Gce.resolve(:metadata).empty?
                      end
 
           Facter::ResolvedFact.new(FACT_NAME, provider)
