@@ -71,7 +71,8 @@ module Facter
         end
 
         def extract_dhcp(interface_name, raw_data, parsed_interface_data)
-          return unless raw_data =~ /status:\s+active/
+          return unless ((raw_data =~ /status:\s+active/) &&
+                         (OsDetector.instance.identifier == :windows))
 
           result = Facter::Core::Execution.execute("ipconfig getoption #{interface_name} " \
                                                      'server_identifier', logger: log)
