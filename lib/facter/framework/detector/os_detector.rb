@@ -68,6 +68,7 @@ class OsDetector
 
   def detect_based_on_release_file
     @identifier = :devuan if File.readable?('/etc/devuan_version')
+    @identifier = :archlinux if File.readable?('/etc/arch-release')
   end
 
   def detect_distro
