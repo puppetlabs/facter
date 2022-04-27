@@ -227,7 +227,7 @@ cache_format_version is incorrect!")
 
       begin
         File.delete(cache_file_name) if File.readable?(cache_file_name)
-      rescue Errno::EACCES => e
+      rescue Errno::EACCES, Errno::EROFS => e
         @log.warn("Could not delete cache: #{e.message}")
       end
     end
