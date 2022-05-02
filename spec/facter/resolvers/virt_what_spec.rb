@@ -54,4 +54,22 @@ describe Facter::Resolvers::VirtWhat do
       expect(virt_what_resolver.resolve(:vm)).to eq(result)
     end
   end
+
+  context 'when virt-what detects kvm in RHEL hypervisors redhat first' do
+    let(:content) { "redhat\nkvm" }
+    let(:result) { 'kvm' }
+
+    it 'returns virtual fact' do
+      expect(virt_what_resolver.resolve(:vm)).to eq(result)
+    end
+  end
+
+  context 'when virt-what detects kvm in RHEL hypervisors redhat last' do
+    let(:content) { "kvm\nredhat" }
+    let(:result) { 'kvm' }
+
+    it 'returns virtual fact' do
+      expect(virt_what_resolver.resolve(:vm)).to eq(result)
+    end
+  end
 end

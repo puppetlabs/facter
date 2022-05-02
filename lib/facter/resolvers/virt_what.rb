@@ -34,11 +34,13 @@ module Facter
         end
 
         def determine_other(output)
-          other_vm = output.split("\n").first
+          values = output.split("\n")
+          other_vm = values.first
           return unless other_vm
 
           return 'zlinux' if other_vm =~ /ibm_systemz/
           return retrieve_vserver if other_vm =~ /linux_vserver/
+          return (values - ['redhat']).first if values.include?('redhat')
 
           other_vm
         end
