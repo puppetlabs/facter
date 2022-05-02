@@ -31,6 +31,7 @@ module Facter
             @fact_list[:interfaces].keys.each do |interface_name|
               mtu(interface_name, mtu_and_indexes)
               dhcp(interface_name, mtu_and_indexes)
+              physical(interface_name)
 
               @log.debug("Found interface #{interface_name} with #{@fact_list[:interfaces][interface_name]}")
             end
@@ -45,6 +46,14 @@ module Facter
               parse_ip_command_line(line, mtu_and_indexes)
             end
             mtu_and_indexes
+          end
+
+          def physical(ifname)
+            @fact_list[:interfaces][ifname][:physical] = if File.exist?("/sys/class/net/#{ifname}/device")
+                                                           true
+                                                         else
+                                                           false
+                                                         end
           end
 
           def parse_ip_command_line(line, mtu_and_indexes)
