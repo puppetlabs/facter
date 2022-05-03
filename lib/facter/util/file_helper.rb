@@ -9,14 +9,14 @@ module Facter
         DEBUG_MESSAGE = 'File at: %s is not accessible.'
 
         def safe_read(path, default_return = '')
-          return File.read(path, encoding: Encoding::UTF_8) if File.readable?(path)
+          return File.read(path, Encoding => 'UTF_8') if File.readable?(path)
 
           log_failed_to_read(path)
           default_return
         end
 
         def safe_readlines(path, default_return = [])
-          return File.readlines(path) if File.readable?(path)
+          return File.readlines(path, Encoding => 'UTF_8') if File.readable?(path)
 
           log_failed_to_read(path)
           default_return
