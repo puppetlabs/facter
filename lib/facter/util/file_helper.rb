@@ -16,7 +16,7 @@ module Facter
         end
 
         def safe_readlines(path, default_return = [])
-          return File.readlines(path, encoding: Encoding::UTF_8) if File.readable?(path)
+          return File.readlines(path) if File.readable?(path)
 
           log_failed_to_read(path)
           default_return
