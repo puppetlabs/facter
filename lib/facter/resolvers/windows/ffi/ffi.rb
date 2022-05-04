@@ -24,26 +24,33 @@ MAX_PATH = 32_767
 
 module FFI
   WIN32FALSE = 0
-  END_OF_WCHAR_STRING = "\0\0".encode('UTF-16LE')
+  END_OF_WCHAR_STRING = (+"\0\0").force_encoding(Encoding::UTF_16LE).freeze
 
   class Pointer
     def read_wide_string_with_length(char_length)
       # char_length is number of wide chars (typically excluding NULLs), *not* bytes
-      str = get_bytes(0, char_length * 2).force_encoding('UTF-16LE')
-      str.encode('UTF-8', str.encoding)
+      str = get_bytes(0, char_length * 2).force_encoding(Encoding::UTF_16LE)
+      str.encode(Encoding::UTF_8, str.encoding)
     end
 
-    def read_wide_string_without_length
+    def read_wide_string_without_length(replace_invalid_chars: false)
       wide_character = get_bytes(0, 2)
+      wide_character.force_encoding(Encoding::UTF_16LE)
       i = 2
       str = []
 
-      while wide_character.encode('UTF-16LE') != END_OF_WCHAR_STRING
+      while wide_character != END_OF_WCHAR_STRING
         str << wide_character
         wide_character = get_bytes(i, 2)
+        wide_character.force_encoding(Encoding::UTF_16LE)
         i += 2
       end
-      str.join.force_encoding('UTF-16LE').encode('UTF-8')
+
+      if replace_invalid_chars
+        str.join.force_encoding(Encoding::UTF_16LE).encode(Encoding::UTF_8, Encoding::UTF_16LE, invalid: :replace)
+      else
+        str.join.force_encoding(Encoding::UTF_16LE).encode(Encoding::UTF_8)
+      end
     end
 
     def read_win32_bool

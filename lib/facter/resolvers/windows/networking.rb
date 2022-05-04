@@ -71,12 +71,11 @@ module Facter
                 adapter_address = IpAdapterAddressesLh.new(adapter_address[:Next])
                 next
               end
-
               if !@fact_list[:domain] || @fact_list[:domain].empty?
-                @fact_list[:domain] = adapter_address[:DnsSuffix].read_wide_string_without_length
+                @fact_list[:domain] = adapter_address[:DnsSuffix]
+                                      .read_wide_string_without_length(replace_invalid_chars: true)
               end
-
-              name = adapter_address[:FriendlyName].read_wide_string_without_length
+              name = adapter_address[:FriendlyName].read_wide_string_without_length(replace_invalid_chars: true)
               net_interface[name] = build_interface_info(adapter_address, name)
             end
 

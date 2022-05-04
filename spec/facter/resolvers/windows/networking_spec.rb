@@ -11,6 +11,7 @@ describe Facter::Resolvers::Windows::Networking do
     let(:domain) { '' }
 
     before do
+      allow(FFI::MemoryPointer).to receive(:new).and_call_original
       allow(FFI::MemoryPointer).to receive(:new)
         .with(NetworkingFFI::BUFFER_LENGTH).and_return(size_ptr)
       allow(FFI::MemoryPointer).to receive(:new)
