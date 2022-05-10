@@ -14,7 +14,7 @@ module Facter
             kernel_version = input[:kernel_version]
 
             if version =~ /10.0/
-              check_version_10(consumerrel, kernel_version)
+              check_version_10_11(consumerrel, kernel_version)
             else
               check_version_6(version, consumerrel) || check_version_5(version, consumerrel, description) || version
             end
@@ -22,10 +22,12 @@ module Facter
 
           private
 
-          def check_version_10(consumerrel, kernel_version)
+          def check_version_10_11(consumerrel, kernel_version)
+            build_number = kernel_version[/([^.]*)$/].to_i
+
+            return '11' if build_number >= 22_000
             return '10' if consumerrel
 
-            build_number = kernel_version[/([^.]*)$/].to_i
             if build_number >= 20_348
               '2022'
             elsif build_number >= 17_623
