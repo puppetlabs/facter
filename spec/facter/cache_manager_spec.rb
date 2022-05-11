@@ -132,7 +132,7 @@ describe Facter::CacheManager do
         )
       end
 
-      context 'when file cannot be deleted' do
+      context 'when file cannot be deleted because of access denied' do
         let(:cache_file) { File.join(cache_dir, 'ext_file.txt') }
 
         it 'logs warn if it cannot delete' do
@@ -144,6 +144,24 @@ describe Facter::CacheManager do
           allow(File).to receive(:readable?).with(cache_file).and_return(true)
           allow(File).to receive(:mtime).with(File.join(cache_dir, 'ext_file.txt')).and_return(Time.now)
           allow(File).to receive(:delete).with(cache_file).and_raise(Errno::EACCES)
+
+          cache_manager.resolve_facts([searched_external_fact])
+          expect(logger).to have_received(:warn)
+        end
+      end
+
+      context 'when file cannot be deleted because of read-only filesystem' do
+        let(:cache_file) { File.join(cache_dir, 'ext_file.txt') }
+
+        it 'logs warn if it cannot delete' do
+          allow(fact_groups).to receive(:get_fact).with('ext_file.txt').and_return(external_fact)
+          allow(File).to receive(:readable?).with(cache_file_name).and_return(false)
+          allow(Facter::Util::FileHelper).to receive(:safe_read).with(cache_file)
+                                                                .and_return(cached_external_fact)
+          allow(JSON).to receive(:parse).with(cached_external_fact).and_raise(JSON::ParserError)
+          allow(File).to receive(:readable?).with(cache_file).and_return(true)
+          allow(File).to receive(:mtime).with(File.join(cache_dir, 'ext_file.txt')).and_return(Time.now)
+          allow(File).to receive(:delete).with(cache_file).and_raise(Errno::EROFS)
 
           cache_manager.resolve_facts([searched_external_fact])
           expect(logger).to have_received(:warn)
