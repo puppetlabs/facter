@@ -3,7 +3,7 @@
 describe Facter::Util::FileHelper do
   subject(:file_helper) { Facter::Util::FileHelper }
 
-  let(:path) { '/Users/admin/file.txt' }
+  let(:path) { '/Users/admin/file.txt', anything }
   let(:entries) { ['file.txt', 'a'] }
   let(:content) { 'file content' }
   let(:error_message) do
