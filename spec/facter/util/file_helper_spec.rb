@@ -20,36 +20,36 @@ describe Facter::Util::FileHelper do
 
   shared_context 'when file is readable' do
     before do
-      allow(File).to receive(:readable?).with(path).and_return(true)
+      allow(File).to receive(:readable?).with(path, anything).and_return(true)
     end
   end
 
   shared_context 'when file is not readable' do
     before do
-      allow(File).to receive(:readable?).with(path).and_return(false)
+      allow(File).to receive(:readable?).with(path, anything).and_return(false)
     end
   end
 
   describe '#safe_read' do
     before do
-      allow(File).to receive(:read).with(path).and_return(content)
+      allow(File).to receive(:read).with(path, anything).and_return(content)
     end
 
     context 'when successfully read the file content' do
       include_context 'when file is readable'
 
       it 'returns the file content' do
-        expect(file_helper.safe_read(path)).to eq(content)
+        expect(file_helper.safe_read(path, anything)).to eq(content)
       end
 
       it 'File.readable? is called with the correct path' do
-        file_helper.safe_read(path)
+        file_helper.safe_read(path, anything)
 
         expect(File).to have_received(:readable?).with(path)
       end
 
       it 'File.read is called with the correct path' do
-        file_helper.safe_read(path)
+        file_helper.safe_read(path, anything)
 
         expect(File).to have_received(:read).with(path)
       end
