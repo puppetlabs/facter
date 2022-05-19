@@ -261,6 +261,13 @@ describe Facter::Resolvers::Windows::Networking do
       it 'returns domain' do
         expect(resolver.resolve(:domain)).to eql(domain)
       end
+
+      it 'replaces invalid characters in the friendly name' do
+        stub_utf16le_bytes(friendly_name_ptr, invalid_chars)
+
+        resolved_interface = resolver.resolve(:interfaces).keys.first
+        expect(resolved_interface).to eq("\uFFFD")
+      end
     end
   end
 end
