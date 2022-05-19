@@ -201,9 +201,9 @@ describe Facter::Resolvers::Windows::Networking do
                        DnsSuffix: dns_ptr, FriendlyName: friendly_name_ptr, Flags: 0, Mtu: 1500,
                        FirstUnicastAddress: ptr, Next: ptr, to_ptr: FFI::Pointer::NULL)
       end
-      let(:ptr) { instance_spy(FFI::Pointer) }
-      let(:dns_ptr) { instance_spy(FFI::Pointer) }
-      let(:friendly_name_ptr) { instance_spy(FFI::Pointer) }
+      let(:ptr) { FFI::Pointer.new }
+      let(:dns_ptr) { FFI::Pointer.new }
+      let(:friendly_name_ptr) { FFI::Pointer.new }
       let(:unicast) { OpenStruct.new(Address: address, Next: ptr, to_ptr: FFI::Pointer::NULL, OnLinkPrefixLength: 24) }
       let(:address) { OpenStruct.new(lpSockaddr: ptr) }
       let(:sock_address) { OpenStruct.new(sa_family: NetworkingFFI::AF_INET6) }
@@ -216,6 +216,17 @@ describe Facter::Resolvers::Windows::Networking do
         }
       end
       let(:domain) { 'my_domain' }
+      let(:wchar_null) { "\0".encode(Encoding::UTF_16LE) }
+      let(:invalid_chars) { (+"\xf0\xdc").force_encoding(Encoding::UTF_16LE) }
+
+      def stub_utf16le_bytes(ptr, str)
+        i = 0
+        str.encode(Encoding::UTF_16LE).each_char do |ch|
+          allow(ptr).to receive(:get_bytes).with(i, 2).and_return(ch)
+          i += 2
+        end
+        allow(ptr).to receive(:get_bytes).with(i, 2).and_return(wchar_null)
+      end
 
       before do
         allow(IpAdapterAddressesLh).to receive(:read_list).with(adapter_address).and_yield(adapter)
@@ -226,8 +237,9 @@ describe Facter::Resolvers::Windows::Networking do
         allow(IpAdapterUnicastAddressLH).to receive(:new).with(ptr).and_return(unicast)
         allow(NetworkUtils).to receive(:find_mac_address).with(adapter).and_return('00:50:56:9A:F8:6B')
         allow(IpAdapterAddressesLh).to receive(:new).with(ptr).and_return(adapter)
-        allow(dns_ptr).to receive(:read_wide_string_without_length).and_return('')
-        allow(friendly_name_ptr).to receive(:read_wide_string_without_length).and_return('Ethernet0')
+
+        stub_utf16le_bytes(dns_ptr, '')
+        stub_utf16le_bytes(friendly_name_ptr, 'Ethernet0')
       end
 
       it 'returns interface' do
