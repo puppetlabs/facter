@@ -32,7 +32,7 @@ describe Facter::Util::FileHelper do
 
   describe '#safe_read' do
     before do
-      allow(File).to receive(:read).with(path).and_return(content)
+      allow(File).to receive(:read).with(path, anything).and_return(content)
     end
 
     context 'when successfully read the file content' do
@@ -40,6 +40,10 @@ describe Facter::Util::FileHelper do
 
       it 'returns the file content' do
         expect(file_helper.safe_read(path)).to eq(content)
+      end
+
+      it 'returns the file content as UTF-8' do
+        expect(file_helper.safe_read(path).encoding.name).to eq('UTF-8')
       end
 
       it 'File.readable? is called with the correct path' do
@@ -51,7 +55,7 @@ describe Facter::Util::FileHelper do
       it 'File.read is called with the correct path' do
         file_helper.safe_read(path)
 
-        expect(File).to have_received(:read).with(path)
+        expect(File).to have_received(:read).with(path, anything)
       end
 
       it "doesn't log anything" do
@@ -129,7 +133,7 @@ describe Facter::Util::FileHelper do
 
   describe '#safe_read_lines' do
     before do
-      allow(File).to receive(:readlines).with(path).and_return(array_content)
+      allow(File).to receive(:readlines).with(path, anything).and_return(array_content)
     end
 
     context 'when successfully read the file lines' do
@@ -148,7 +152,7 @@ describe Facter::Util::FileHelper do
       it 'File.readlines is called with the correct path' do
         file_helper.safe_readlines(path)
 
-        expect(File).to have_received(:readlines).with(path)
+        expect(File).to have_received(:readlines).with(path, anything)
       end
 
       it "doesn't log anything" do
