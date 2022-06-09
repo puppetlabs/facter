@@ -20,11 +20,12 @@ test_name "C96148: verify dmi facts" do
     unless agent['platform'] =~ /windows/
       expected_facts.merge!({'dmi.bios.release_date' => /\d+\/\d+\/\d+/,
                              'dmi.bios.vendor'       => /\w+/,
-                             'dmi.bios.version'      => /\d+/,
+                             'dmi.bios.version'      => /(\d+|Google)/,
                              'dmi.chassis.type'      => /\w+/,
                             })
     end
-    unless agent['platform'] =~ /windows|cisco|aarch64|el-/
+    ## gce does not set the dmi.chassis.asset_flag
+    unless agent['platform'] =~ /windows|cisco|aarch64|el-/ || on(agent, facter('virtual')).stdout.chomp =~ /gce/
       expected_facts.merge!({'dmi.chassis.asset_tag' => /\w+/})
     end
     unless agent['platform'] =~ /cisco|aarch64|el-/
