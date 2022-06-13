@@ -87,6 +87,8 @@ Metrics/CyclomaticComplexity:
     - 'lib/facter/custom_facts/util/confine.rb'
     - 'lib/facter/custom_facts/core/execution/windows.rb'
     - 'lib/facter/custom_facts/core/execution/posix.rb'
+    - 'lib/facter/facts/linux/cloud/provider.rb'
+    - 'lib/facter/facts/windows/cloud/provider.rb'
     - 'lib/facter/framework/detector/os_detector.rb'
     - 'install.rb'
     - 'scripts/generate_changelog.rb'
