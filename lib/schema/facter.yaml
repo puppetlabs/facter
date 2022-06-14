@@ -197,7 +197,7 @@ chassistype:
 
 cloud:
     type: map
-    description: Information about the cloud instance of the node. This is currently only populated on nodes running in Microsoft Azure and Amazon Web Service.
+    description: Information about the cloud instance of the node. This is currently only populated on nodes running in Microsoft Azure, Amazon Web Services, and Google Compute Engine.
     elements:
         provider:
             type: string

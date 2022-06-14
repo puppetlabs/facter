@@ -89,5 +89,30 @@ describe Facts::Linux::Cloud::Provider do
         end
       end
     end
+
+    describe 'when on gce' do
+      before do
+        allow(Facter::Resolvers::Gce).to receive(:resolve).with(:metadata).and_return(value)
+        allow(Facter::Util::Facts::Posix::VirtualDetector).to receive(:platform).and_return('gce')
+      end
+
+      describe 'and the "gce" fact has content' do
+        let(:value) { { 'some' => 'metadata' } }
+
+        it 'resolves a provider of "gce"' do
+          expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+            have_attributes(name: 'cloud.provider', value: 'gce')
+        end
+      end
+
+      context 'when the "gce" fact has no content' do
+        let(:value) { {} }
+
+        it 'resolves to nil' do
+          expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+            have_attributes(name: 'cloud.provider', value: nil)
+        end
+      end
+    end
   end
 end

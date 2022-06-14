@@ -79,6 +79,31 @@ describe Facts::Windows::Cloud::Provider do
       end
     end
 
+    context 'when on gce' do
+      before do
+        allow(Facter::Resolvers::Gce).to receive(:resolve).with(:metadata).and_return(value)
+        allow(Facter::Resolvers::Windows::Virtualization).to receive(:resolve).with(:virtual).and_return('gce')
+      end
+
+      describe 'with the "gce" fact having data' do
+        let(:value) { { 'some' => 'metadata' } }
+
+        it 'resolves a provider of "gce"' do
+          expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+            have_attributes(name: 'cloud.provider', value: 'gce')
+        end
+      end
+
+      context 'with the "gce" fact being empty' do
+        let(:value) { {} }
+
+        it 'resolves to nil' do
+          expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+            have_attributes(name: 'cloud.provider', value: nil)
+        end
+      end
+    end
+
     context 'when on a physical machine' do
       before do
         allow(Facter::Resolvers::Windows::Virtualization).to receive(:resolve).with(:virtual).and_return(nil)
