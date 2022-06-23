@@ -70,7 +70,11 @@ module LegacyFacter
         def parse_executable_output(output)
           res = nil
           begin
-            res = YAML.safe_load(output, [Symbol, Time])
+            res = if Gem::Version.new(Psych::VERSION) >= Gem::Version.new('3.1.0') # Ruby 2.6+
+                    YAML.safe_load(output, permitted_classes: [Symbol, Time])
+                  else
+                    YAML.safe_load(output, [Symbol, Time])
+                  end
           rescue StandardError => e
             Facter.debug("Could not parse executable fact output as YAML or JSON (#{e.message})")
           end
@@ -114,7 +118,11 @@ module LegacyFacter
           # Add quotes to Yaml time
           cont = content.gsub(TIME, '"\1"')
 
-          YAML.safe_load(cont, [Date])
+          if Gem::Version.new(Psych::VERSION) >= Gem::Version.new('3.1.0') # Ruby 2.6+
+            YAML.safe_load(cont, permitted_classes: [Date])
+          else
+            YAML.safe_load(cont, [Date])
+          end
         end
       end
 
