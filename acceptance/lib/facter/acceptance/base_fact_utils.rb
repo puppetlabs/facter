@@ -415,6 +415,8 @@ module Facter
           os_version = agent['platform'] =~ /R2/ ? '2012 R2' : '2012'
         elsif agent['platform'] =~ /-10/
           os_version = '10'
+        elsif agent['platform'] =~ /-11/
+          os_version = '11'
         elsif agent['platform'] =~ /2016/
           os_version = '2016'
         elsif agent['platform'] =~ /2019/
