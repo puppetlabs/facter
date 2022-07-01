@@ -195,6 +195,8 @@ module Facter
             os_version = on(agent, 'grep VERSION_ID /etc/os-release | cut --delimiter=\" --fields=2 | cut --delimiter=. --fields=1').stdout.chomp
           when /centos/
             os_name = 'CentOS'
+          when /eurolinux/
+            os_name = 'EuroLinux'
           when /oracle/
             os_name = 'OracleLinux'
           when /scientific/

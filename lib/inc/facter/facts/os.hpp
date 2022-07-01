@@ -74,6 +74,10 @@ namespace facter { namespace facts {
          */
         constexpr static char const* rocky = "Rocky";
         /**
+         * The Rocky Linux operating system.
+         */
+        constexpr static char const* eurolinux = "EuroLinux";
+        /**
          * The Xen Server Linux operating system.
          */
         constexpr static char const* xen_server = "XenServer";
