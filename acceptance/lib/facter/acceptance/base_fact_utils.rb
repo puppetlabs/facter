@@ -348,11 +348,17 @@ module Facter
         else
           os_version = /#{version[1]}/
         end
-
+        if agent['platform'] =~ /x86_64/
+          os_arch                 = 'x86_64'
+          os_hardware             = 'x86_64'
+        elsif agent['platform'] =~ //
+          os_arch                 = 'arm64'
+          os_hardware             = 'arm64'
+        end
         expected_facts = {
-            'os.architecture'          => 'x86_64',
+            'os.architecture'          => os_arch,
             'os.family'                => 'Darwin',
-            'os.hardware'              => 'x86_64',
+            'os.hardware'              => os_hardware,
             'os.name'                  => 'Darwin',
             'os.macosx.build'          => /\d+[A-Z]\d{2,4}\w?/,
             'os.macosx.product'        => agent['platform'] =~ /osx-1[1-9]-/ ? 'macOS' : 'Mac OS X',
