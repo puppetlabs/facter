@@ -239,11 +239,17 @@ module Facter
       def osx_expected_facts(agent)
         version = agent['platform'].match(/osx-(\d+)\.?(\d+)?/)
         major_version = /#{Regexp.escape(version.captures.compact.join('.'))}/
-
+        if agent['platform'] =~ /x86_64/
+          os_arch                 = 'x86_64'
+          os_hardware             = 'x86_64'
+        elsif agent['platform'] =~ /arm64/
+          os_arch                 = 'arm64'
+          os_hardware             = 'arm64'
+        end
         expected_facts = {
-          'os.architecture' => 'x86_64',
+          'os.architecture' => os_arch,
           'os.family' => 'Darwin',
-          'os.hardware' => 'x86_64',
+          'os.hardware' => os_hardware,
           'os.name' => 'Darwin',
           'os.macosx.build' => /\d+[A-Z]\d{1,4}\w?/,
           'os.macosx.product' => agent['platform'] =~ /osx-10/ ? 'Mac OS X' : 'macOS',
@@ -268,6 +274,7 @@ module Facter
           expected_facts['os.macosx.version.patch'] = /\d+/
           expected_facts['os.macosx.version.full'] = /^#{expected_facts['os.macosx.version.major']}\.#{expected_facts['os.macosx.version.minor']}\.#{expected_facts['os.macosx.version.patch']}$/
         end
+
         expected_facts
       end
 
