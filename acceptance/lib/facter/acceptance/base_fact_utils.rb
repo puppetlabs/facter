@@ -351,7 +351,7 @@ module Facter
         if agent['platform'] =~ /x86_64/
           os_arch                 = 'x86_64'
           os_hardware             = 'x86_64'
-        elsif agent['platform'] =~ //
+        elsif agent['platform'] =~ /arm64/
           os_arch                 = 'arm64'
           os_hardware             = 'arm64'
         end
