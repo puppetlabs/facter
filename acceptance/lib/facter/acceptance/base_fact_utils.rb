@@ -351,9 +351,13 @@ module Facter
         if agent['platform'] =~ /x86_64/
           os_arch                 = 'x86_64'
           os_hardware             = 'x86_64'
+          processors_isa          = 'i386'
+          processors_models       = /"Intel\(R\).*"/
         elsif agent['platform'] =~ /arm64/
           os_arch                 = 'arm64'
           os_hardware             = 'arm64'
+          processors_isa          = 'arm'
+          processors_models       = /"Apple M1.*"/
         end
         expected_facts = {
             'os.architecture'          => os_arch,
@@ -370,8 +374,8 @@ module Facter
             'os.release.minor'         => /\d+/,
             'processors.count'         => /[1-9]/,
             'processors.physicalcount' => /[1-9]/,
-            'processors.isa'           => 'i386',
-            'processors.models'        => /"Intel\(R\).*"/,
+            'processors.isa'           => processors_isa,
+            'processors.models'        => processors_models,
             'kernel'                   => 'Darwin',
             'kernelrelease'            => /\d+\.\d+\.\d+/,
             'kernelversion'            => /\d+\.\d+\.\d+/,
