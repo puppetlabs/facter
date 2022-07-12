@@ -17,7 +17,7 @@ test_name "C100305: The Ruby fact should resolve as expected in AIO" do
         when /windows/
           ruby_platform = agent['ruby_arch'] == 'x64' ? 'x64-mingw32' : 'i386-mingw32'
         when /osx/
-          ruby_platform = /(x86_64|aarch64)-darwin[\d.]+/
+          ruby_platform = /(x86_64-darwin[\d.]+|aarch64-darwin)/
         when /aix/
           ruby_platform = /powerpc-aix[\d.]+/
         when /solaris/
