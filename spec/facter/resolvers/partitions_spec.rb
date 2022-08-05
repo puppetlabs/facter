@@ -42,7 +42,9 @@ describe Facter::Resolvers::Partitions do
       allow(Facter::Core::Execution).to receive(:which)
         .with('lsblk').and_return('/usr/bin/lsblk')
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('lsblk -fp', logger: an_instance_of(Facter::Log)).and_return(load_fixture('lsblk_output').read)
+        .with('lsblk --version 2>&1', logger: an_instance_of(Facter::Log)).and_return('lsblk from util-linux 2.24')
+      allow(Facter::Core::Execution).to receive(:execute)
+        .with('lsblk -p -P -o NAME,FSTYPE,LABEL,UUID,PARTUUID,PARTLABEL', logger: an_instance_of(Facter::Log)).and_return(load_fixture('lsblk_output_old').read)
     end
 
     context 'when block has a device subdir' do
@@ -68,12 +70,12 @@ describe Facter::Resolvers::Partitions do
       context 'when there is more than one partition' do
         it 'checks for blkid only once' do
           resolver.resolve(:partitions)
-          expect(Facter::Core::Execution).to have_received(:which).with('blkid').once
+          expect(Facter::Core::Execution).to have_received(:which).with('blkid').at_most(:once)
         end
 
         it 'checks for lsblk only once' do
           resolver.resolve(:partitions)
-          expect(Facter::Core::Execution).to have_received(:which).with('lsblk').once
+          expect(Facter::Core::Execution).to have_received(:which).with('lsblk').at_most(:once)
         end
       end
 
@@ -187,6 +189,44 @@ describe Facter::Resolvers::Partitions do
 
           expect(result).to eq(partitions)
         end
+      end
+    end
+
+    context 'when lsblk can read partition types' do
+      let(:partitions) do
+        { '/dev/sda1' => { filesystem: 'ext3', label: '/boot', parttype: '21686148-6449-6E6F-744E-656564454649', size: '117.00 KiB',
+                           size_bytes: 119_808, uuid: '88077904-4fd4-476f-9af2-0f7a806ca25e',
+                           partuuid: '00061fe0-01' },
+          '/dev/sda2' => { filesystem: 'LVM2_member', parttype: '0fc63daf-8483-4772-8e79-3d69d8477de4', size: '98.25 MiB',
+                           size_bytes: 103_021_056, uuid: 'edi7s0-2WVa-ZBan' } }
+      end
+
+      let(:sda_subdirs) do
+        ['/sys/block/sda/queue',
+         '/sys/block/sda/sda2',
+         '/sys/block/sda/sda2/stat',
+         '/sys/block/sda/sda2/dev',
+         '/sys/block/sda/sda2/uevent',
+         '/sys/block/sda/sda1']
+      end
+
+      before do
+        allow(File).to receive(:directory?).with("#{sys_block_path}/sda/device").and_return(true)
+        allow(Dir).to receive(:[]).with("#{sys_block_path}/sda/**/*").and_return(sda_subdirs)
+        sda_subdirs.each { |subdir| allow(File).to receive(:directory?).with(subdir).and_return(true) }
+        allow(Facter::Util::FileHelper).to receive(:safe_read)
+          .with("#{sys_block_path}/sda/sda2/size", '0').and_return('201213')
+        allow(Facter::Util::FileHelper).to receive(:safe_read)
+          .with("#{sys_block_path}/sda/sda1/size", '0').and_return('234')
+      end
+
+      it 'return partitions fact with part_type' do
+        allow(Facter::Core::Execution).to receive(:execute)
+          .with('lsblk --version 2>&1', logger: an_instance_of(Facter::Log)).and_return('lsblk from util-linux 2.25')
+        allow(Facter::Core::Execution).to receive(:execute)
+          .with('lsblk -p -P -o NAME,FSTYPE,UUID,LABEL,PARTUUID,PARTLABEL,PARTTYPE', logger: an_instance_of(Facter::Log)).and_return(load_fixture('lsblk_output_new').read)
+
+        expect(resolver.resolve(:partitions)).to eq(partitions)
       end
     end
   end

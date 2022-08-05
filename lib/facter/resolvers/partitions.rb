@@ -122,25 +122,45 @@ module Facter
         def populate_from_lsblk(partition_name, blkid_and_lsblk)
           return {} unless available?('lsblk', blkid_and_lsblk)
 
-          blkid_and_lsblk[:lsblk] ||= Facter::Core::Execution.execute('lsblk -fp', logger: log)
+          lsblk_version_raw = Facter::Core::Execution.execute('lsblk --version 2>&1', logger: log)
+          lsblk_version = lsblk_version_raw.match(/ \d\.\d+/)[0].to_f
 
-          part_info = blkid_and_lsblk[:lsblk].match(/#{partition_name}.*/).to_s.split(' ')
-          return {} if part_info.empty?
+          # The -p/--paths option was added in lsblk 2.23, return early and fall back to blkid with earlier versions
+          return {} if lsblk_version < 2.23
 
-          parse_part_info(part_info)
-        end
+          blkid_and_lsblk[:lsblk] ||= execute_and_extract_lsblk_info(lsblk_version)
 
-        def parse_part_info(part_info)
-          result = { filesystem: part_info[1] }
+          partition_data = blkid_and_lsblk[:lsblk][partition_name]
+          return {} unless partition_data
 
-          if part_info.count.eql?(5)
-            result[:label] = part_info[2]
-            result[:uuid] = part_info[3]
-          else
-            result[:uuid] = part_info[2]
-          end
+          filesys = partition_data['FSTYPE']
+          uuid = partition_data['UUID']
+          label = partition_data['LABEL']
+          part_uuid = partition_data['PARTUUID']
+          part_label = partition_data['PARTLABEL']
+          part_type = partition_data['PARTTYPE']
+
+          result = { filesystem: filesys, uuid: uuid, label: label, partuuid: part_uuid, partlabel: part_label }
+          result[:parttype] = part_type if part_type
 
           result
+        end
+
+        def execute_and_extract_lsblk_info(lsblk_version)
+          # lsblk 2.25 added support for GPT partition type GUIDs
+          stdout = if lsblk_version >= 2.25
+                     Facter::Core::Execution.execute('lsblk -p -P -o NAME,FSTYPE,UUID,LABEL,PARTUUID,PARTLABEL,PARTTYPE', logger: log)
+                   else
+                     Facter::Core::Execution.execute('lsblk -p -P -o NAME,FSTYPE,LABEL,UUID,PARTUUID,PARTLABEL', logger: log)
+                   end
+
+          output_hash = Hash[*stdout.split(/^(NAME=\S+)/)[1..-1]]
+          output_hash.transform_keys! { |key| key.delete('NAME=')[1..-2] }
+          output_hash.each do |key, value|
+            output_hash[key] = Hash[*value.chomp.rstrip.split(/ ([^= ]+)=/)[1..-1].each { |x| x.delete!('"') }]
+          end
+          output_hash.each_value { |value_hash| value_hash.delete_if { |_k, v| v.empty? } }
+          output_hash.delete_if { |_k, v| v.empty? }
         end
       end
     end
