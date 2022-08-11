@@ -1,0 +1,8 @@
+---
+one:
+  test:
+    a: &a1
+      - foo
+two:
+  TEST:
+    A: *a1
