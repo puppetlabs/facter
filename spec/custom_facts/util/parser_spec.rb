@@ -318,6 +318,16 @@ describe LegacyFacter::Util::Parser do
     let(:yaml_parser) { LegacyFacter::Util::Parser::YamlParser.new(nil, yaml_content) }
 
     describe '#parse_results' do
+      context 'when yaml anchors are present' do
+        let(:yaml_content) { load_fixture('external_fact_yaml_anchor').read }
+
+        it 'parses the yaml anchors' do
+          expected_result = { 'one' => { 'test' => { 'a' => ['foo'] } }, 'two' => { 'TEST' => { 'A' => ['foo'] } } }
+
+          expect(yaml_parser.parse_results).to eq(expected_result)
+        end
+      end
+
       context 'when yaml contains Time formatted fields' do
         context 'when time zone is present' do
           let(:yaml_content) { load_fixture('external_fact_yaml').read }

@@ -119,9 +119,9 @@ module LegacyFacter
           cont = content.gsub(TIME, '"\1"')
 
           if Gem::Version.new(Psych::VERSION) >= Gem::Version.new('3.1.0') # Ruby 2.6+
-            YAML.safe_load(cont, permitted_classes: [Date])
+            YAML.safe_load(cont, permitted_classes: [Date], aliases: true)
           else
-            YAML.safe_load(cont, [Date])
+            YAML.safe_load(cont, [Date], [], [], true)
           end
         end
       end
