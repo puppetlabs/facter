@@ -205,6 +205,10 @@ namespace facter { namespace facts {
         * The PhotonOS operating system.
         */
         constexpr static char const* photon_os = "PhotonOS";
+       /**
+        * The CBL-Mariner operating system.
+        */
+        constexpr static char const* mariner = "Mariner";
     };
 
 }}

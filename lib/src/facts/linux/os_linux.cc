@@ -154,6 +154,7 @@ namespace facter { namespace facts { namespace linux {
             make_tuple(string(release_file::alpine),         string(os::alpine)),
             make_tuple(string(release_file::vmware_esx),     string(os::vmware_esx)),
             make_tuple(string(release_file::slackware),      string(os::slackware)),
+            make_tuple(string(release_file::mariner),        string(os::mariner)),
         };
 
         for (auto const& file : files) {
@@ -234,6 +235,7 @@ namespace facter { namespace facts { namespace linux {
             { string(os::xcp_ng),                   string(os_family::redhat) },
             { string(os::virtuozzo_linux),          string(os_family::redhat) },
             { string(os::photon_os),                string(os_family::redhat) },
+            { string(os::mariner),                  string(os_family::redhat) },
             { string(os::huawei),                   string(os_family::debian) },
             { string(os::linux_mint),               string(os_family::debian) },
             { string(os::ubuntu),                   string(os_family::debian) },
@@ -273,6 +275,7 @@ namespace facter { namespace facts { namespace linux {
                 { string(os::xcp_ng),                   string(release_file::redhat) },
                 { string(os::virtuozzo_linux),          string(release_file::redhat) },
                 { string(os::fedora),                   string(release_file::fedora) },
+                { string(os::mariner),                  string(release_file::mariner) },
                 { string(os::meego),                    string(release_file::meego) },
                 { string(os::oracle_linux),             string(release_file::oracle_linux) },
                 { string(os::oracle_enterprise_linux),  string(release_file::oracle_enterprise_linux) },
@@ -361,6 +364,9 @@ namespace facter { namespace facts { namespace linux {
             if (name == os::ubuntu) {
                 file = release_file::lsb;
                 pattern = "(?m)^DISTRIB_RELEASE=(\\d+\\.\\d+)(?:\\.\\d+)*";
+            } else if (name == os::mariner) {
+                file = release_file::lsb;
+                pattern = "DISTRIB_RELEASE=\"(\\d+\\.\\d+\\.\\d+)\"";
             } else if (name == os::slackware) {
                 file = release_file::slackware;
                 pattern = "Slackware ([0-9.]+)";

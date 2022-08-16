@@ -119,6 +119,10 @@ namespace facter { namespace facts { namespace linux {
          * Release file for HuaweiOS.
          */
         constexpr static char const* huawei = "/etc/huawei-release";
+        /**
+         * Release file for CBL-Mariner.
+         */
+        constexpr static char const* mariner = "/etc/mariner-release";
     };
 
 }}}  // namespace facter::facts::linux
