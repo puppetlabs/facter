@@ -36,6 +36,16 @@ describe Facter::Core::Execution::Windows do
       allow(ENV).to receive(:[]).with('PATHEXT').and_return nil
     end
 
+    context 'when trying to use builtin windows commands' do
+      it 'allows echo' do
+        expect(executor.which('echo')).to eq 'echo'
+      end
+
+      it 'disallows other builtin windows commands' do
+        expect(executor.which('dir')).to eq nil
+      end
+    end
+
     context 'when it is provided with an absolute path' do
       it 'returns the path to binary if executable' do
         allow(File).to receive(:executable?).with('C:\Tools\foo.exe').and_return true
