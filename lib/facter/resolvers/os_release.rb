@@ -85,6 +85,8 @@ module Facter
           @fact_list[:name] = if os_name.downcase.start_with?('red', 'oracle', 'arch', 'manjaro')
                                 os_name = os_name.split(' ')[0..1].join
                                 os_name
+                              elsif os_name.downcase.end_with?('mariner')
+                                os_name.split(' ')[-1].strip
                               else
                                 os_name.split(' ')[0].strip
                               end
