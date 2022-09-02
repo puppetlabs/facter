@@ -9,6 +9,10 @@ module Facter
         DEFAULT_COMMAND_EXTENSIONS = %w[.COM .EXE .BAT .CMD].freeze
 
         def which(bin)
+          # `echo` is allowed for facter 3.x compatibility, otherwise
+          # all commands much be found on the PATH or absolute.
+          return bin if /^echo$/i =~ bin
+
           if absolute_path?(bin)
             return bin if File.executable?(bin)
           else
