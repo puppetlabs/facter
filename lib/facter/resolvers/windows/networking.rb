@@ -137,10 +137,11 @@ module Facter
           end
 
           def retrieve_domain_from_registry
-            ::Win32::Registry::HKEY_LOCAL_MACHINE.open('SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters') do |rg|
-              rg.each do |name, _value|
-                @fact_list[:domain] = rg[name] if name == 'Domain'
-              end
+            ::Win32::Registry::HKEY_LOCAL_MACHINE.open(
+              'SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters'
+            ) do |key|
+              domain = key['Domain']
+              @fact_list[:domain] = domain if domain
             end
           rescue Win32::Registry::Error
             @log.debug('Could not read TCPIP Parameters from registry')
