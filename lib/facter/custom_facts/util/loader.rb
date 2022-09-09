@@ -59,9 +59,6 @@ module LegacyFacter
       # 2. ENV['FACTERLIB'] is split and used verbatim
       # 3. Entries from Facter.search_path are used verbatim
       #
-      # A warning will be generated for paths in Facter.search_path that are not
-      # absolute directories.
-      #
       # @api public
       # @return [Array<String>]
       def search_path
@@ -72,14 +69,8 @@ module LegacyFacter
           search_paths += @environment_vars['FACTERLIB'].split(File::PATH_SEPARATOR)
         end
 
-        search_paths.delete_if { |path| !valid_search_path?(path) }
-
         Facter::Options.custom_dir.each do |path|
-          if valid_search_path?(path)
-            search_paths << path
-          else
-            log.debug "Excluding #{path} from search path. Fact file paths must be an absolute directory"
-          end
+          search_paths << path
         end
 
         search_paths.delete_if { |path| !File.directory?(path) }
@@ -91,15 +82,6 @@ module LegacyFacter
 
       def log
         @log ||= Facter::Log.new(self)
-      end
-
-      # Validate that the given path is valid, ie it is an absolute path.
-      #
-      # @api private
-      # @param path [String]
-      # @return [Boolean]
-      def valid_search_path?(path)
-        Pathname.new(path).absolute?
       end
 
       # Load a file and record is paths to prevent duplicate loads.
