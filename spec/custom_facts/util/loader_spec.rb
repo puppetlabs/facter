@@ -28,55 +28,11 @@ describe LegacyFacter::Util::Loader do
     expect(LegacyFacter::Util::Loader.new).to respond_to(:search_path)
   end
 
-  describe '#valid_seach_path?' do
-    let(:loader) { LegacyFacter::Util::Loader.new }
-
-    # Used to have test for " " as a directory since that should
-    # be a relative directory, but on Windows in both 1.8.7 and
-    # 1.9.3 it is an absolute directory (WTF Windows). Considering
-    # we didn't have a valid use case for a " " directory, the
-    # test was removed.
-
-    [
-      '.',
-      '..',
-      '...',
-      '.foo',
-      '../foo',
-      'foo',
-      'foo/bar',
-      'foo/../bar',
-      ' /',
-      ' \/'
-    ].each do |dir|
-      it "is false for relative path #{dir}" do
-        expect(loader.send(:valid_search_path?, dir)).to be false
-      end
-    end
-    [
-      '/.',
-      '/..',
-      '/...',
-      '/.foo',
-      '/../foo',
-      '/foo',
-      '/foo/bar',
-      '/foo/../bar',
-      '/ ',
-      '/ /..'
-    ].each do |dir|
-      it "is true for absolute path #{dir}" do
-        expect(loader.send(:valid_search_path?, dir)).to be true
-      end
-    end
-  end
-
   describe 'when determining the search path' do
     let(:loader) { LegacyFacter::Util::Loader.new }
 
     it 'includes the facter subdirectory of all paths in ruby LOAD_PATH' do
       dirs = $LOAD_PATH.collect { |d| File.expand_path('facter', d) }
-      allow(loader).to receive(:valid_search_path?).and_return(true)
       allow(File).to receive(:directory?).and_return true
 
       paths = loader.search_path
@@ -87,50 +43,29 @@ describe LegacyFacter::Util::Loader do
     end
 
     it 'excludes invalid search paths' do
-      dirs = $LOAD_PATH.collect { |d| File.join(d, 'custom_facts') }
-      allow(loader).to receive(:valid_search_path?).and_return(false)
+      dirs = $LOAD_PATH.collect { |d| File.expand_path('custom_facts', d) }
+      allow(File).to receive(:directory?).and_return false
+
       paths = loader.search_path
+
       dirs.each do |dir|
         expect(paths).not_to include(dir)
       end
     end
 
     it 'includes all search paths registered with Facter' do
-      allow(Facter::Options).to receive(:custom_dir).and_return %w[/one /two]
-
-      allow(loader).to receive(:valid_search_path?).and_return true
-
-      allow(File).to receive(:directory?).and_return false
-      allow(File).to receive(:directory?).with('/one').and_return true
-      allow(File).to receive(:directory?).with('/two').and_return true
-
-      paths = loader.search_path
-      expect(paths).to include('/one', '/two')
-    end
-
-    it 'warns on invalid search paths registered with Facter' do
       allow(Facter::Options).to receive(:custom_dir).and_return %w[/one two/three]
 
-      allow(loader).to receive(:valid_search_path?).and_return false
-      allow(loader).to receive(:valid_search_path?).with('/one').and_return true
-      allow(loader).to receive(:valid_search_path?).with('two/three').and_return false
-      allow(logger)
-        .to receive(:warn)
-        .with('Excluding two/three from search path. Fact file paths must be an absolute directory').once
-
       allow(File).to receive(:directory?).and_return false
       allow(File).to receive(:directory?).with('/one').and_return true
+      allow(File).to receive(:directory?).with('two/three').and_return true
 
       paths = loader.search_path
-      expect(paths).to match_array(['/one'])
+      expect(paths).to include('/one', 'two/three')
     end
 
     it 'strips paths that are valid paths but are not present' do
       allow(Facter::Options).to receive(:custom_dir).and_return %w[/one /two]
-
-      allow(loader).to receive(:valid_search_path?).and_return false
-      allow(loader).to receive(:valid_search_path?).with('/one').and_return true
-      allow(loader).to receive(:valid_search_path?).with('/two').and_return true
 
       allow(File).to receive(:directory?).and_return false
       allow(File).to receive(:directory?).with('/one').and_return true
@@ -148,7 +83,6 @@ describe LegacyFacter::Util::Loader do
         allow(File).to receive(:directory?).with('/one/path').and_return true
         allow(File).to receive(:directory?).with('/two/path').and_return true
 
-        allow(loader).to receive(:valid_search_path?).and_return true
         paths = loader.search_path
         %w[/one/path /two/path].each do |dir|
           expect(paths).to include(dir)
