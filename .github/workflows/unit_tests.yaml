@@ -22,7 +22,7 @@ jobs:
           - '2.7'
           - '3.0'
           - '3.1'
-          - 'jruby'
+          - 'jruby-9.3.7.0'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout current PR
