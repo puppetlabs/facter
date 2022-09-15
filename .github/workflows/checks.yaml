@@ -11,7 +11,7 @@ on:
 
 jobs:
   rubocop_checks:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     name: RuboCop
     steps:
       - name: Checkout current PR
@@ -38,7 +38,7 @@ jobs:
           FORCE_ERROR_EXIT: true
 
   commit_checks:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     name: commit message
     steps:
       - name: Checkout current PR
