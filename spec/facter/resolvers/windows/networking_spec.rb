@@ -24,8 +24,6 @@ describe Facter::Resolvers::Windows::Networking do
       allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open)
         .with('SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters')
         .and_yield(reg)
-      allow(reg).to receive(:each)
-        .and_yield('Domain', domain)
       allow(reg).to receive(:[]).with('Domain').and_return(domain)
       allow(reg).to receive(:close)
 
