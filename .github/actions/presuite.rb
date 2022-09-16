@@ -31,9 +31,7 @@ end
 
 def beaker_platform
   {
-    'ubuntu-18.04' => 'ubuntu1804-64a',
-    'ubuntu-16.04' => 'ubuntu1604-64a',
-    'ubuntu-20.04' => 'ubuntu2004-64a',
+    'ubuntu-latest' => 'ubuntu2004-64a',
     'macos-10.15' => 'osx1015-64a',
     'windows-2016' => 'windows2016-64a',
     'windows-2019' => 'windows2019-64a'

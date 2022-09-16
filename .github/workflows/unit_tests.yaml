@@ -22,8 +22,8 @@ jobs:
           - '2.7'
           - '3.0'
           - '3.1'
-          - 'jruby'
-    runs-on: ubuntu-18.04
+          - 'jruby-9.3.7.0'
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout current PR
         uses: actions/checkout@v2
