@@ -279,10 +279,9 @@ module Facter
           if agent['platform'] =~ /arm64/
             expected_facts['os.macosx.version.full'] = /^#{expected_facts['os.macosx.version.major']}\.#{expected_facts['os.macosx.version.minor']}$/
           else
-            expected_facts['os.macosx.version.full'] = /^#{expected_facts['os.macosx.version.major']}\.#{expected_facts['os.macosx.version.minor']}\.#{expected_facts['os.macosx.version.patch']}$/
+            expected_facts['os.macosx.version.full'] = /^#{expected_facts['os.macosx.version.major']}\.#{expected_facts['os.macosx.version.minor']}\.*#{expected_facts['os.macosx.version.patch']}*$/
           end
         end
-
         expected_facts
       end
 
