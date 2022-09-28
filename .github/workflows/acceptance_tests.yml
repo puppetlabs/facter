@@ -14,7 +14,7 @@ jobs:
     name: Platform
     strategy:
       matrix:
-        os: [ windows-2019, ubuntu-latest, macos-10.15]
+        os: [ windows-2019, ubuntu-latest, macos-latest ]
     runs-on: ${{ matrix.os }}
     env:
       BEAKER_debug: true
@@ -33,7 +33,7 @@ jobs:
         with:
           ruby-version: '2.6'
 
-      - name: Fix common Linux and MacOs permissions
+      - name: Fix common Linux and macOS permissions
         if: runner.os != 'Windows'
         run: sudo chmod a-w /opt
 
@@ -49,17 +49,18 @@ jobs:
           sudo apt install dhcpcd5
           sudo dhclient
 
-      #Ipv6 is missing on the GitHub OSX machine and we need it for the networking facts tests
-      - name: Add ipv6 on OSX
+      # IPv6 is missing on the GitHub macOS image and we need it for the networking facts tests
+      # https://github.com/actions/runner-images/issues/668
+      - name: Add IPv6 on macOS
         if: runner.os == 'macOS'
         run: |
           primary_interface=`route -n get default | awk '/interface: */{print $NF}'`
           sudo ifconfig $primary_interface inet6 add ::1/64
 
-      - name: Run acceptance tests on Linux like platform
+      - name: Run acceptance tests on Linux-like platform
         if: runner.os != 'Windows'
         run: sudo -E "PATH=$PATH" ruby $FACTER_ROOT/.github/actions/presuite.rb ${{ matrix.os }}
 
-      - name: Run acceptance tests on Windows like platform
+      - name: Run acceptance tests on Windows-like platform
         if: runner.os == 'Windows'
         run: ruby $Env:FACTER_ROOT/.github/actions/presuite.rb ${{ matrix.os }}
