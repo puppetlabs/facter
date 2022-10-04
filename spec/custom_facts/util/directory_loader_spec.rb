@@ -16,7 +16,7 @@ describe LegacyFacter::Util::DirectoryLoader do
   it "does nothing bad when dir doesn't exist" do
     fakepath = '/foobar/path'
     my_loader = LegacyFacter::Util::DirectoryLoader.new(fakepath)
-    allow(FileTest).to receive(:exists?).with(my_loader.directories[0]).and_return(false)
+    allow(FileTest).to receive(:exist?).with(my_loader.directories[0]).and_return(false)
     expect { my_loader.load(collection) }.not_to raise_error
   end
 
