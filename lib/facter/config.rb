@@ -39,7 +39,8 @@ module Facter
             'Photon',
             'Slackware',
             'Mageia',
-            'Openwrt'
+            'Openwrt',
+            'Mariner'
           ]
         },
         {
