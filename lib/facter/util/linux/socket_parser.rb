@@ -88,6 +88,7 @@ module Facter
             end
           rescue StandardError => e
             @log.debug("Could not read mac for interface #{ifaddr.name}, got #{e}")
+            nil
           end
 
           def mac_from_sockaddr_of(ifaddr)
