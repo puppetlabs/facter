@@ -56,6 +56,14 @@ describe Facter::Resolvers::OsRelease do
     end
   end
 
+  context 'when /etc/os-release file has comment' do
+    let(:os_release_content) { load_fixture('os_release_redhat_linux_with_comment').readlines }
+
+    it 'does not raise an exception' do
+      expect { Facter::Resolvers::OsRelease.resolve(:name) }.not_to raise_error
+    end
+  end
+
   context 'when on Debian' do
     let(:os_release_content) { load_fixture('os_release_debian').readlines }
 
