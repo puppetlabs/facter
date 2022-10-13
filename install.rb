@@ -54,7 +54,7 @@ class Installer
     Dir.mkdir(target) unless File.directory? target
     configs.each do |cf|
       ocf = File.join(InstallOptions.config_dir, cf.gsub(/#{strip}/, ''))
-      install(cf, ocf, { mode: 0o644, preserve: true, verbose: true })
+      install(cf, ocf, mode: 0o644, preserve: true, verbose: true)
     end
   end
 
@@ -70,9 +70,9 @@ class Installer
     libs.each do |lf|
       olf = File.join(InstallOptions.site_dir, lf.gsub(/#{strip}/, ''))
       op = File.dirname(olf)
-      makedirs(op, { mode: 0o755, verbose: true })
+      makedirs(op, mode: 0o755, verbose: true)
       chmod(0o755, op)
-      install(lf, olf, { mode: 0o644, preserve: true, verbose: true })
+      install(lf, olf, mode: 0o644, preserve: true, verbose: true)
     end
   end
 
@@ -80,9 +80,9 @@ class Installer
     man.each do |mf|
       omf = File.join(InstallOptions.man_dir, mf.gsub(/#{strip}/, ''))
       om = File.dirname(omf)
-      makedirs(om, { mode: 0o755, verbose: true })
+      makedirs(om, mode: 0o755, verbose: true)
       chmod(0o755, om)
-      install(mf, omf, { mode: 0o644, preserve: true, verbose: true })
+      install(mf, omf, mode: 0o644, preserve: true, verbose: true)
 
       gzip = `which gzip`
       gzip.chomp!
