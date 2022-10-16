@@ -47,7 +47,7 @@ module Facter
           end
 
           def compute_size(size_hash)
-            physical_partitions = size_hash['TOTAL PPs'].to_i + size_hash['FREE PPs'].to_i
+            physical_partitions = size_hash['TOTAL PPs'].to_i
             size_physical_partition = size_hash['PP SIZE']
             exp = if size_physical_partition[/mega/]
                     Facter::Util::Aix::InfoExtractor::MEGABYTES_EXPONENT
