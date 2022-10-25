@@ -48,7 +48,11 @@ module Facter
           return nil if content.empty?
 
           pairs = []
-          content.each do |line|
+          content.map {
+                | line | line.strip
+              }.select {
+                | line | ! line.start_with?('#') and line.size > 0
+              }.each do |line|
             pairs << line.strip.delete('"').split('=', 2)
           end
 
