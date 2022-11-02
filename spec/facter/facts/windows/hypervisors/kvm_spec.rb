@@ -33,7 +33,9 @@ describe Facts::Windows::Hypervisors::Kvm do
         allow(Facter::Resolvers::Windows::Virtualization).to receive(:resolve).with(:virtual).and_return('kvm')
         allow(Facter::Resolvers::DMIComputerSystem).to receive(:resolve).with(:name).and_return('OpenStack')
         allow(Facter::Resolvers::DMIBios).to receive(:resolve).with(:manufacturer).and_return('value')
-        allow(Facter::ResolvedFact).to receive(:new).with('hypervisors.kvm', openstack: true).and_return(expected_fact)
+        allow(Facter::ResolvedFact).to receive(:new)
+          .with('hypervisors.kvm', { openstack: true })
+          .and_return(expected_fact)
 
         fact = Facts::Windows::Hypervisors::Kvm.new
         expect(fact.call_the_resolver).to eq(expected_fact)
@@ -47,7 +49,7 @@ describe Facts::Windows::Hypervisors::Kvm do
         allow(Facter::Resolvers::NetKVM).to receive(:resolve).with(:kvm).and_return(true)
         allow(Facter::Resolvers::DMIComputerSystem).to receive(:resolve).with(:name).and_return('value')
         allow(Facter::Resolvers::DMIBios).to receive(:resolve).with(:manufacturer).and_return('Google')
-        allow(Facter::ResolvedFact).to receive(:new).with('hypervisors.kvm', google: true).and_return(expected_fact)
+        allow(Facter::ResolvedFact).to receive(:new).with('hypervisors.kvm', { google: true }).and_return(expected_fact)
 
         fact = Facts::Windows::Hypervisors::Kvm.new
         expect(fact.call_the_resolver).to eq(expected_fact)

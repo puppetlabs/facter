@@ -5,10 +5,10 @@ describe Facter::Resolvers::Freebsd::FreebsdVersion do
 
   before do
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('/bin/freebsd-version -k', logger: freebsd_version.log)
+      .with('/bin/freebsd-version -k', { logger: freebsd_version.log })
       .and_return("13.0-CURRENT\n")
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('/bin/freebsd-version -ru', logger: freebsd_version.log)
+      .with('/bin/freebsd-version -ru', { logger: freebsd_version.log })
       .and_return("12.1-RELEASE-p3\n12.0-STABLE\n")
   end
 

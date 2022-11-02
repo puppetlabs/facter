@@ -6,7 +6,7 @@ describe Facts::Oel::Os::Release do
 
     before do
       allow(Facter::Resolvers::ReleaseFromFirstLine).to receive(:resolve)
-        .with(:release, release_file: '/etc/enterprise-release')
+        .with(:release, { release_file: '/etc/enterprise-release' })
         .and_return(value)
     end
 

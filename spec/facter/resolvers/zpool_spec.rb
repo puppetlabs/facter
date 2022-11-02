@@ -8,7 +8,7 @@ describe Facter::Resolvers::Zpool do
   before do
     zpool_resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('zpool upgrade -v', logger: log_spy)
+      .with('zpool upgrade -v', { logger: log_spy })
       .and_return(output)
   end
 

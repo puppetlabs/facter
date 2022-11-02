@@ -140,7 +140,7 @@ describe Facter::Resolvers::Mountpoints do
           .with('/proc/cmdline')
           .and_return(load_fixture('cmdline_root_device_partuuid').read)
         allow(Facter::Core::Execution).to receive(:execute)
-          .with('blkid', logger: log)
+          .with('blkid', { logger: log })
           .and_return(load_fixture('blkid_output_root_has_partuuid').read)
         Facter::Resolvers::Mountpoints.instance_variable_set(:@log, log)
       end
@@ -154,7 +154,7 @@ describe Facter::Resolvers::Mountpoints do
       context 'when blkid command is not available' do
         before do
           allow(Facter::Core::Execution).to receive(:execute)
-            .with('blkid', logger: log)
+            .with('blkid', { logger: log })
             .and_return('blkid: command not found')
           Facter::Resolvers::Mountpoints.instance_variable_set(:@log, log)
         end

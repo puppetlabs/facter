@@ -19,7 +19,7 @@ describe Facter::Resolvers::Macosx::Processors do
 
     allow(Facter::Core::Execution)
       .to receive(:execute)
-      .with(query_string, logger: log_spy)
+      .with(query_string, { logger: log_spy })
       .and_return(output)
   end
 

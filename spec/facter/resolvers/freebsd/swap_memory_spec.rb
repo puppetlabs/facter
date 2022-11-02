@@ -13,7 +13,7 @@ describe Facter::Resolvers::Freebsd::SwapMemory do
   before do
     swap_memory.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('swapinfo -k', logger: log_spy)
+      .with('swapinfo -k', { logger: log_spy })
       .and_return(load_fixture('freebsd_swapinfo').read)
   end
 

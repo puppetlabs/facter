@@ -8,7 +8,7 @@ describe Facter::Resolvers::Solaris::Zone do
   before do
     solaris_zone.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('/usr/sbin/zoneadm list -cp', logger: log_spy)
+      .with('/usr/sbin/zoneadm list -cp', { logger: log_spy })
       .and_return(output)
   end
 

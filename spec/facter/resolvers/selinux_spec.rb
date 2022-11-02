@@ -12,7 +12,7 @@ describe Facter::Resolvers::SELinux do
   before do
     selinux_resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('cat /proc/self/mounts', logger: log_spy)
+      .with('cat /proc/self/mounts', { logger: log_spy })
       .and_return(load_fixture(file).read)
   end
 

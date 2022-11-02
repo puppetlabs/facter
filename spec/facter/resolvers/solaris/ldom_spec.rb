@@ -9,7 +9,7 @@ describe Facter::Resolvers::Solaris::Ldom do
     resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution)
       .to receive(:execute)
-      .with('/usr/sbin/virtinfo  -a  -p', logger: log_spy)
+      .with('/usr/sbin/virtinfo  -a  -p', { logger: log_spy })
       .and_return(output)
   end
 

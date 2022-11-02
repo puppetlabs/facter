@@ -17,7 +17,7 @@ describe Facter::Util::Facts::UptimeParser do
       it 'returns the correct result' do
         allow(Facter::Core::Execution)
           .to receive(:execute)
-          .with(uptime_proc_file_cmd, logger: log_spy)
+          .with(uptime_proc_file_cmd, { logger: log_spy })
           .and_return(proc_uptime_value)
 
         expect(Facter::Util::Facts::UptimeParser.uptime_seconds_unix).to eq(2672)
@@ -36,12 +36,12 @@ describe Facter::Util::Facts::UptimeParser do
 
         allow(Facter::Core::Execution)
           .to receive(:execute)
-          .with(uptime_proc_file_cmd, logger: log_spy)
+          .with(uptime_proc_file_cmd, { logger: log_spy })
           .and_return('')
 
         allow(Facter::Core::Execution)
           .to receive(:execute)
-          .with(kern_boottime_cmd, logger: log_spy)
+          .with(kern_boottime_cmd, { logger: log_spy })
           .and_return(kern_boottime_value)
 
         expect(Facter::Util::Facts::UptimeParser.uptime_seconds_unix).to eq(60)
@@ -52,12 +52,12 @@ describe Facter::Util::Facts::UptimeParser do
       before do
         allow(Facter::Core::Execution)
           .to receive(:execute)
-          .with(uptime_proc_file_cmd, logger: log_spy)
+          .with(uptime_proc_file_cmd, { logger: log_spy })
           .and_return('')
 
         allow(Facter::Core::Execution)
           .to receive(:execute)
-          .with(kern_boottime_cmd, logger: log_spy)
+          .with(kern_boottime_cmd, { logger: log_spy })
           .and_return('')
       end
 
@@ -65,7 +65,7 @@ describe Facter::Util::Facts::UptimeParser do
         it 'returns the correct result' do
           allow(Facter::Core::Execution)
             .to receive(:execute)
-            .with(uptime_cmd, logger: log_spy)
+            .with(uptime_cmd, { logger: log_spy })
             .and_return(cmd_output)
 
           expect(Facter::Util::Facts::UptimeParser.uptime_seconds_unix).to eq(result)

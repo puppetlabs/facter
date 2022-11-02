@@ -6,7 +6,7 @@ describe Facts::Devuan::Os::Release do
 
     before do
       allow(Facter::Resolvers::SpecificReleaseFile).to receive(:resolve)
-        .with(:release, release_file: '/etc/devuan_version')
+        .with(:release, { release_file: '/etc/devuan_version' })
         .and_return(value)
     end
 

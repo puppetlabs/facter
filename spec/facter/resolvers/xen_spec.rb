@@ -16,7 +16,8 @@ describe Facter::Resolvers::Xen do
     allow(File).to receive(:exist?).with('/usr/lib/xen-common/bin/xen-toolstack').and_return(false)
     allow(File).to receive(:exist?).with('/usr/sbin/xl').and_return(false)
     allow(File).to receive(:exist?).with('/usr/sbin/xm').and_return(true)
-    allow(Facter::Core::Execution).to receive(:execute).with('/usr/sbin/xm list', logger: log_spy).and_return(domains)
+    allow(Facter::Core::Execution).to receive(:execute)
+      .with('/usr/sbin/xm list', { logger: log_spy }).and_return(domains)
 
     xen_resolver.invalidate_cache
   end

@@ -13,7 +13,7 @@ describe Facter::Resolvers::Uname do
             uname -p &&
             uname -r &&
             uname -s &&
-            uname -v', logger: log_spy)
+            uname -v', { logger: log_spy })
       .and_return('x86_64
         wifi.tsr.corp.puppet.net
         i386

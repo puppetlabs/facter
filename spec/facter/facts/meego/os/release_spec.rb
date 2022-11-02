@@ -6,7 +6,7 @@ describe Facts::Meego::Os::Release do
 
     before do
       allow(Facter::Resolvers::ReleaseFromFirstLine).to receive(:resolve)
-        .with(:release, release_file: '/etc/meego-release')
+        .with(:release, { release_file: '/etc/meego-release' })
         .and_return(value)
     end
 

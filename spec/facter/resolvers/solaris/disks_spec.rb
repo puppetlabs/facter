@@ -7,7 +7,7 @@ describe Facter::Resolvers::Solaris::Disks do
     allow(File).to receive(:executable?).with('/usr/bin/kstat').and_return(status)
     allow(Facter::Core::Execution)
       .to receive(:execute)
-      .with('/usr/bin/kstat sderr', logger: resolver.log)
+      .with('/usr/bin/kstat sderr', { logger: resolver.log })
       .and_return(output)
   end
 

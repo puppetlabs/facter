@@ -9,15 +9,15 @@ describe Facter::Resolvers::Solaris::Memory do
     resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution)
       .to receive(:execute)
-      .with('/usr/bin/kstat -m unix -n system_pages', logger: log_spy)
+      .with('/usr/bin/kstat -m unix -n system_pages', { logger: log_spy })
       .and_return(kstat_output)
     allow(Facter::Core::Execution)
       .to receive(:execute)
-      .with('pagesize', logger: log_spy)
+      .with('pagesize', { logger: log_spy })
       .and_return(pagesize)
     allow(Facter::Core::Execution)
       .to receive(:execute)
-      .with('/usr/sbin/swap -l', logger: log_spy)
+      .with('/usr/sbin/swap -l', { logger: log_spy })
       .and_return(swap_output)
   end
 

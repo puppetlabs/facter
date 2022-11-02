@@ -7,7 +7,8 @@ describe Facter::Resolvers::Lspci do
 
   before do
     lspci_resolver.instance_variable_set(:@log, log_spy)
-    allow(Facter::Core::Execution).to receive(:execute).with('lspci', logger: log_spy).and_return(output)
+    allow(Facter::Core::Execution).to receive(:execute)
+      .with('lspci', { logger: log_spy }).and_return(output)
   end
 
   after do

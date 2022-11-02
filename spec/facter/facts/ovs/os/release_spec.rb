@@ -6,7 +6,7 @@ describe Facts::Ovs::Os::Release do
 
     before do
       allow(Facter::Resolvers::ReleaseFromFirstLine).to receive(:resolve)
-        .with(:release, release_file: '/etc/ovs-release')
+        .with(:release, { release_file: '/etc/ovs-release' })
         .and_return(value)
     end
 
@@ -17,7 +17,7 @@ describe Facts::Ovs::Os::Release do
       it 'calls Facter::Resolvers::ReleaseFromFirstLine with version' do
         fact.call_the_resolver
         expect(Facter::Resolvers::ReleaseFromFirstLine).to have_received(:resolve)
-          .with(:release, release_file: '/etc/ovs-release')
+          .with(:release, { release_file: '/etc/ovs-release' })
       end
 
       it 'returns operating system name fact' do

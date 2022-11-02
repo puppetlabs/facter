@@ -8,7 +8,7 @@ describe Facter::Resolvers::SwVers do
   before do
     sw_vers.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('sw_vers', logger: log_spy)
+      .with('sw_vers', { logger: log_spy })
       .and_return("ProductName:\tMac OS X\nProductVersion:\t10.14.1\nBuildVersion:\t18B75\n")
   end
 

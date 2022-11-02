@@ -18,7 +18,7 @@ describe Facter::Resolvers::Augeas do
   context 'when augparse is installed' do
     before do
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('augparse --version 2>&1', logger: log_spy)
+        .with('augparse --version 2>&1', { logger: log_spy })
         .and_return('augparse 1.12.0 <http://augeas.net/>')
     end
 
@@ -32,7 +32,7 @@ describe Facter::Resolvers::Augeas do
 
     before do
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('/opt/puppetlabs/puppet/bin/augparse --version 2>&1', logger: log_spy)
+        .with('/opt/puppetlabs/puppet/bin/augparse --version 2>&1', { logger: log_spy })
         .and_return('augparse 1.12.0 <http://augeas.net/>')
     end
 
@@ -44,7 +44,7 @@ describe Facter::Resolvers::Augeas do
   context 'when augparse is not installed' do
     before do
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('augparse --version 2>&1', logger: log_spy)
+        .with('augparse --version 2>&1', { logger: log_spy })
         .and_return('sh: augparse: command not found')
     end
 

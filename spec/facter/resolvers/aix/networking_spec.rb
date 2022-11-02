@@ -15,11 +15,11 @@ describe Facter::Resolvers::Aix::Networking do
   before do
     networking_resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('netstat -rn', logger: log_spy)
+      .with('netstat -rn', { logger: log_spy })
       .and_return(netstat_rn)
 
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('netstat -in', logger: log_spy)
+      .with('netstat -in', { logger: log_spy })
       .and_return(netstat_in)
 
     allow(Facter::Resolvers::Aix::FfiHelper).to receive(:read_interfaces).and_return(ffi_interfaces)

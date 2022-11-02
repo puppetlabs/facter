@@ -7,7 +7,7 @@ describe Facter::Resolvers::Solaris::Processors do
     allow(File).to receive(:executable?).with('/usr/bin/kstat').and_return(status)
     allow(Facter::Core::Execution)
       .to receive(:execute)
-      .with('/usr/bin/kstat -m cpu_info', logger: resolver.log)
+      .with('/usr/bin/kstat -m cpu_info', { logger: resolver.log })
       .and_return(output)
   end
 

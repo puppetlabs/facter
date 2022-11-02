@@ -12,8 +12,9 @@ describe Facter::Resolvers::Solaris::Ipaddress do
 
     before do
       ipaddress.instance_variable_set(:@log, log)
-      allow(Facter::Core::Execution).to receive(:execute).with('route -n get default | grep interface',
-                                                               logger: log).and_return(route)
+      allow(Facter::Core::Execution).to receive(:execute)
+        .with('route -n get default | grep interface', { logger: log })
+        .and_return(route)
     end
 
     context 'when returns ip' do
@@ -21,7 +22,9 @@ describe Facter::Resolvers::Solaris::Ipaddress do
       let(:ifconfig) { load_fixture('solaris_ifconfig').read }
 
       before do
-        allow(Facter::Core::Execution).to receive(:execute).with('ifconfig net0', logger: log).and_return(ifconfig)
+        allow(Facter::Core::Execution).to receive(:execute)
+          .with('ifconfig net0', { logger: log })
+          .and_return(ifconfig)
       end
 
       it 'detects ipadress' do

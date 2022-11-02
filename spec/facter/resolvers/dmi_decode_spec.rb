@@ -6,7 +6,7 @@ describe Facter::Resolvers::DmiDecode do
 
     before do
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('dmidecode', logger: instance_of(Facter::Log)).and_return(command_output)
+        .with('dmidecode', { logger: instance_of(Facter::Log) }).and_return(command_output)
     end
 
     after { dmidecode.invalidate_cache }

@@ -41,9 +41,9 @@ describe LegacyFacter::Util::Collection do
 
     it 'passes resolution specific options to the fact' do
       fact = Facter::Util::Fact.new(:myname)
-      allow(Facter::Util::Fact).to receive(:new).with(:myname, timeout: 'myval').and_return(fact)
+      allow(Facter::Util::Fact).to receive(:new).with(:myname, { timeout: 'myval' }).and_return(fact)
 
-      expect(fact).to receive(:add).with(timeout: 'myval')
+      expect(fact).to receive(:add).with({ timeout: 'myval' })
 
       collection.add(:myname, timeout: 'myval') {}
     end
