@@ -223,8 +223,7 @@ module Facter
       end
 
       def log_fact_path(resolve)
-        fact = resolve.fact
-        log.debug("#{resolve.fact_type} fact #{fact.name} got resolved from: #{fact.location}")
+        log.debug("#{resolve.fact_type} fact #{resolve.fact.name} was resolved from: #{resolve.last_evaluated}")
       end
 
       def announce_when_no_suitable_resolution(resolutions)
