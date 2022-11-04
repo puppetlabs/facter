@@ -20,10 +20,12 @@ describe Facter::Resolvers::Aix::Mountpoints do
 
   before do
     Facter::Resolvers::Aix::Mountpoints.instance_variable_set(:@log, log_spy)
-    allow(Facter::Core::Execution).to receive(:execute).with('mount', logger: log_spy)
-                                                       .and_return(load_fixture('mount').read)
-    allow(Facter::Core::Execution).to receive(:execute).with('df -P', logger: log_spy)
-                                                       .and_return(load_fixture('df').read)
+    allow(Facter::Core::Execution).to receive(:execute)
+      .with('mount', { logger: log_spy })
+      .and_return(load_fixture('mount').read)
+    allow(Facter::Core::Execution).to receive(:execute)
+      .with('df -P', { logger: log_spy })
+      .and_return(load_fixture('df').read)
   end
 
   it "only skips lines containing the string 'node'" do

@@ -12,7 +12,7 @@ describe Facter::Util::Aix::ODMQuery do
   it 'creates a query' do
     odm_query.equals('name', '12345')
 
-    expect(Facter::Core::Execution).to receive(:execute).with("odmget -q \"name='12345'\" CuAt", logger: log_spy)
+    expect(Facter::Core::Execution).to receive(:execute).with("odmget -q \"name='12345'\" CuAt", { logger: log_spy })
     odm_query.execute
   end
 
@@ -20,7 +20,7 @@ describe Facter::Util::Aix::ODMQuery do
     odm_query.equals('field1', 'value').like('field2', 'value*')
 
     expect(Facter::Core::Execution).to receive(:execute)
-      .with("odmget -q \"field1='value' AND field2 like 'value*'\" CuAt", logger: log_spy)
+      .with("odmget -q \"field1='value' AND field2 like 'value*'\" CuAt", { logger: log_spy })
     odm_query.execute
   end
 end

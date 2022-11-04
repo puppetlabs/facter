@@ -22,8 +22,9 @@ describe Facts::Windows::Hypervisors::Virtualbox do
         allow(Facter::Resolvers::Windows::Virtualization)
           .to receive(:resolve).with(:oem_strings)
                                .and_return(['vboxVer_ 13.4', 'vboxRev_ 13.4'])
-        allow(Facter::ResolvedFact).to receive(:new).with('hypervisors.virtualbox', revision: ' 13.4', version: ' 13.4')
-                                                    .and_return(expected_fact)
+        allow(Facter::ResolvedFact).to receive(:new)
+          .with('hypervisors.virtualbox', { revision: ' 13.4', version: ' 13.4' })
+          .and_return(expected_fact)
 
         fact = Facts::Windows::Hypervisors::Virtualbox.new
         expect(fact.call_the_resolver).to eq(expected_fact)
@@ -37,8 +38,9 @@ describe Facts::Windows::Hypervisors::Virtualbox do
         allow(Facter::Resolvers::Windows::Virtualization).to receive(:resolve).with(:virtual).and_return('value')
         allow(Facter::Resolvers::DMIComputerSystem).to receive(:resolve).with(:name).and_return('VirtualBox')
         allow(Facter::Resolvers::Windows::Virtualization).to receive(:resolve).with(:oem_strings).and_return(['', ''])
-        allow(Facter::ResolvedFact).to receive(:new).with('hypervisors.virtualbox', revision: '', version: '')
-                                                    .and_return(expected_fact)
+        allow(Facter::ResolvedFact).to receive(:new)
+          .with('hypervisors.virtualbox', { revision: '', version: '' })
+          .and_return(expected_fact)
 
         fact = Facts::Windows::Hypervisors::Virtualbox.new
         expect(fact.call_the_resolver).to eq(expected_fact)

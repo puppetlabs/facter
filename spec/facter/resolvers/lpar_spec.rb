@@ -8,7 +8,7 @@ describe Facter::Resolvers::Lpar do
   before do
     lpar_resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('/usr/bin/lparstat -i', logger: log_spy)
+      .with('/usr/bin/lparstat -i', { logger: log_spy })
       .and_return(load_fixture('lparstat_i').read)
     lpar_resolver.invalidate_cache
   end

@@ -6,7 +6,7 @@ describe Facter::Resolvers::Wpar do
   before do
     Facter::Resolvers::Wpar.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('/usr/bin/lparstat -W', logger: log_spy)
+      .with('/usr/bin/lparstat -W', { logger: log_spy })
       .and_return(open3_result)
   end
 

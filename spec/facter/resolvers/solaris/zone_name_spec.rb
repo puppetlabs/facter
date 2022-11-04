@@ -12,7 +12,7 @@ describe Facter::Resolvers::Solaris::ZoneName do
       .with('/bin/zonename')
       .and_return(true)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('/bin/zonename', logger: log_spy)
+      .with('/bin/zonename', { logger: log_spy })
       .and_return(zone_name_output)
   end
 

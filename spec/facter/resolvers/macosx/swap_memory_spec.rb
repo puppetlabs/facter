@@ -13,7 +13,7 @@ describe Facter::Resolvers::Macosx::SwapMemory do
   before do
     swap_memory.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('sysctl -n vm.swapusage', logger: log_spy)
+      .with('sysctl -n vm.swapusage', { logger: log_spy })
       .and_return('total = 3072.00M  used = 1422.75M  free = 1649.25M  (encrypted)')
   end
 

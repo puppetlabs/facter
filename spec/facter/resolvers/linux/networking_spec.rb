@@ -9,7 +9,7 @@ describe Facter::Resolvers::Linux::Networking do
     before do
       networking_linux.instance_variable_set(:@log, log_spy)
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('ip link show', logger: log_spy).and_return(load_fixture('ip_link_show').read)
+        .with('ip link show', { logger: log_spy }).and_return(load_fixture('ip_link_show').read)
       allow(Facter::Util::Linux::SocketParser).to receive(:retrieve_interfaces)
         .with(log_spy).and_return(socket_interfaces)
       allow(Facter::Util::Linux::Dhcp).to receive(:dhcp).with('lo', '1', log_spy).and_return('10.32.22.9')

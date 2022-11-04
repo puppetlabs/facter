@@ -10,7 +10,7 @@ describe Facter::Resolvers::Solaris::Filesystem do
     filesystems_resolver.instance_variable_set(:@log, log_spy)
     allow(File).to receive(:executable?).with('/usr/sbin/sysdef').and_return(true)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('/usr/sbin/sysdef', logger: log_spy)
+      .with('/usr/sbin/sysdef', { logger: log_spy })
       .and_return(load_fixture('solaris_filesystems').read)
   end
 

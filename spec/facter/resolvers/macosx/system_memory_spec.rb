@@ -12,11 +12,11 @@ describe Facter::Resolvers::Macosx::SystemMemory do
   before do
     system_memory.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('sysctl -n hw.memsize', logger: log_spy)
+      .with('sysctl -n hw.memsize', { logger: log_spy })
       .and_return('34359738368')
 
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('vm_stat', logger: log_spy)
+      .with('vm_stat', { logger: log_spy })
       .and_return(load_fixture('vm_stat').read)
   end
 

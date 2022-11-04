@@ -7,8 +7,9 @@ describe Facter::Resolvers::Aix::Disks do
 
   before do
     resolver.instance_variable_set(:@log, logger_spy)
-    allow(Facter::Core::Execution).to receive(:execute).with('lspv', logger: logger_spy)
-                                                       .and_return(result)
+    allow(Facter::Core::Execution).to receive(:execute)
+      .with('lspv', { logger: logger_spy })
+      .and_return(result)
   end
 
   after do
@@ -31,8 +32,9 @@ describe Facter::Resolvers::Aix::Disks do
     end
 
     before do
-      allow(Facter::Core::Execution).to receive(:execute).with('lspv hdisk0', logger: logger_spy)
-                                                         .and_return(load_fixture('lspv_disk_output').read)
+      allow(Facter::Core::Execution).to receive(:execute)
+        .with('lspv hdisk0', { logger: logger_spy })
+        .and_return(load_fixture('lspv_disk_output').read)
     end
 
     it 'returns disks informations' do
@@ -41,8 +43,9 @@ describe Facter::Resolvers::Aix::Disks do
 
     context 'when second lspv call fails' do
       before do
-        allow(Facter::Core::Execution).to receive(:execute).with('lspv hdisk0', logger: logger_spy)
-                                                           .and_return('')
+        allow(Facter::Core::Execution).to receive(:execute)
+          .with('lspv hdisk0', { logger: logger_spy })
+          .and_return('')
       end
 
       it 'returns disks informations' do

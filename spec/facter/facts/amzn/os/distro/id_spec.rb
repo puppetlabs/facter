@@ -9,7 +9,7 @@ describe Facts::Amzn::Os::Distro::Id do
 
     before do
       allow(Facter::Resolvers::SpecificReleaseFile).to receive(:resolve)
-        .with(:release, release_file: '/etc/system-release').and_return(value)
+        .with(:release, { release_file: '/etc/system-release' }).and_return(value)
     end
 
     it 'calls Facter::Resolvers::SpecificReleaseFile' do

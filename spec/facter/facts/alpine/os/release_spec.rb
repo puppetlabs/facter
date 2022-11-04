@@ -6,7 +6,7 @@ describe Facts::Alpine::Os::Release do
 
     before do
       allow(Facter::Resolvers::SpecificReleaseFile).to receive(:resolve)
-        .with(:release, release_file: '/etc/alpine-release')
+        .with(:release, { release_file: '/etc/alpine-release' })
         .and_return(value)
     end
 
@@ -17,7 +17,7 @@ describe Facts::Alpine::Os::Release do
       it 'calls Facter::Resolvers::SpecificReleaseFile with version' do
         fact.call_the_resolver
         expect(Facter::Resolvers::SpecificReleaseFile).to have_received(:resolve)
-          .with(:release, release_file: '/etc/alpine-release')
+          .with(:release, { release_file: '/etc/alpine-release' })
       end
 
       it 'returns operating system name fact' do

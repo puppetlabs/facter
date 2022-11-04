@@ -11,15 +11,16 @@ describe Facter::Resolvers::Networking do
       allow(Facter::Util::Resolvers::Networking::PrimaryInterface)
         .to receive(:read_from_route)
         .and_return(primary)
-      allow(Facter::Core::Execution).to receive(:execute).with('ifconfig -a', logger: log_spy).and_return(interfaces)
       allow(Facter::Core::Execution)
-        .to receive(:execute).with('ipconfig getoption en0 server_identifier', logger: log_spy).and_return(dhcp)
+        .to receive(:execute).with('ifconfig -a', { logger: log_spy }).and_return(interfaces)
       allow(Facter::Core::Execution)
-        .to receive(:execute).with('ipconfig getoption en0.1 server_identifier', logger: log_spy).and_return(dhcp)
+        .to receive(:execute).with('ipconfig getoption en0 server_identifier', { logger: log_spy }).and_return(dhcp)
       allow(Facter::Core::Execution)
-        .to receive(:execute).with('ipconfig getoption llw0 server_identifier', logger: log_spy).and_return('')
+        .to receive(:execute).with('ipconfig getoption en0.1 server_identifier', { logger: log_spy }).and_return(dhcp)
       allow(Facter::Core::Execution)
-        .to receive(:execute).with('ipconfig getoption awdl0 server_identifier', logger: log_spy).and_return(dhcp)
+        .to receive(:execute).with('ipconfig getoption llw0 server_identifier', { logger: log_spy }).and_return('')
+      allow(Facter::Core::Execution)
+        .to receive(:execute).with('ipconfig getoption awdl0 server_identifier', { logger: log_spy }).and_return(dhcp)
     end
 
     after do

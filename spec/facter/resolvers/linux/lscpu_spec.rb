@@ -5,7 +5,7 @@ describe Facter::Resolvers::Linux::Lscpu do
     Facter::Resolvers::Linux::Lscpu.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution)
       .to receive(:execute)
-      .with("lscpu | grep -e 'Thread(s)' -e 'Core(s)'", logger: log_spy)
+      .with("lscpu | grep -e 'Thread(s)' -e 'Core(s)'", { logger: log_spy })
       .and_return(lscpu_output)
   end
 

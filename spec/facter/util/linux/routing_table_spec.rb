@@ -9,9 +9,9 @@ describe Facter::Util::Linux::RoutingTable do
     context 'when ip route show finds an IP, Socket lib did not retrieve' do
       before do
         allow(Facter::Core::Execution).to receive(:execute)
-          .with('ip route show', logger: log_spy).and_return(load_fixture('ip_route_show').read)
+          .with('ip route show', { logger: log_spy }).and_return(load_fixture('ip_route_show').read)
         allow(Facter::Core::Execution).to receive(:execute)
-          .with('ip -6 route show', logger: log_spy).and_return(load_fixture('ip_-6_route_show').read)
+          .with('ip -6 route show', { logger: log_spy }).and_return(load_fixture('ip_-6_route_show').read)
       end
 
       it 'returns the ipv4 info' do

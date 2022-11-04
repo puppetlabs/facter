@@ -15,7 +15,7 @@ describe Facter::Resolvers::Linux::DockerUptime do
     before do
       allow(Facter::Core::Execution)
         .to receive(:execute)
-        .with('ps -o etime= -p "1"', logger: log_spy)
+        .with('ps -o etime= -p "1"', { logger: log_spy })
         .and_return('20')
 
       allow(Facter::Util::Resolvers::UptimeHelper)
@@ -45,7 +45,7 @@ describe Facter::Resolvers::Linux::DockerUptime do
     before do
       allow(Facter::Core::Execution)
         .to receive(:execute)
-        .with('ps -o etime= -p "1"', logger: log_spy)
+        .with('ps -o etime= -p "1"', { logger: log_spy })
         .and_return('10:20')
 
       allow(Facter::Util::Resolvers::UptimeHelper)
@@ -75,7 +75,7 @@ describe Facter::Resolvers::Linux::DockerUptime do
     before do
       allow(Facter::Core::Execution)
         .to receive(:execute)
-        .with('ps -o etime= -p "1"', logger: log_spy)
+        .with('ps -o etime= -p "1"', { logger: log_spy })
         .and_return('3:10:20')
 
       allow(Facter::Util::Resolvers::UptimeHelper)
@@ -105,7 +105,7 @@ describe Facter::Resolvers::Linux::DockerUptime do
     before do
       allow(Facter::Core::Execution)
         .to receive(:execute)
-        .with('ps -o etime= -p "1"', logger: log_spy)
+        .with('ps -o etime= -p "1"', { logger: log_spy })
         .and_return('1-3:10:20')
 
       allow(Facter::Util::Resolvers::UptimeHelper)
@@ -135,7 +135,7 @@ describe Facter::Resolvers::Linux::DockerUptime do
     before do
       allow(Facter::Core::Execution)
         .to receive(:execute)
-        .with('ps -o etime= -p "1"', logger: log_spy)
+        .with('ps -o etime= -p "1"', { logger: log_spy })
         .and_return('2-3:10:20')
 
       allow(Facter::Util::Resolvers::UptimeHelper)

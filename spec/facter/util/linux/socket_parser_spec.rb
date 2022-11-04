@@ -27,7 +27,7 @@ describe Facter::Util::Linux::SocketParser do
       allow(Socket).to receive(:getifaddrs).and_return(ifaddrs)
       allow(Socket).to receive(:const_defined?).with(:PF_LINK).and_return(true)
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('ip -o link show', logger: log_spy).and_return(load_fixture('ip_link_show_all').read)
+        .with('ip -o link show', { logger: log_spy }).and_return(load_fixture('ip_link_show_all').read)
     end
 
     let(:result) do

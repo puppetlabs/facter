@@ -37,10 +37,12 @@ describe Facter::Resolvers::Aix::Partitions do
     end
 
     before do
-      allow(Facter::Core::Execution).to receive(:execute).with('lslv -L hd5', logger: logger_spy)
-                                                         .and_return(load_fixture('lslv_output').read)
-      allow(Facter::Core::Execution).to receive(:execute).with('lslv -L hd6', logger: logger_spy)
-                                                         .and_return('')
+      allow(Facter::Core::Execution).to receive(:execute)
+        .with('lslv -L hd5', { logger: logger_spy })
+        .and_return(load_fixture('lslv_output').read)
+      allow(Facter::Core::Execution).to receive(:execute)
+        .with('lslv -L hd6', { logger: logger_spy })
+        .and_return('')
     end
 
     it 'returns partitions informations' do

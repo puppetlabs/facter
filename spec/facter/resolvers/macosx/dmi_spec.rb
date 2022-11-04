@@ -9,7 +9,7 @@ describe Facter::Resolvers::Macosx::DmiBios do
   before do
     dmi_resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('sysctl -n hw.model', logger: log_spy)
+      .with('sysctl -n hw.model', { logger: log_spy })
       .and_return(macosx_model)
   end
 

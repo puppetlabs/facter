@@ -6,7 +6,7 @@ describe Facts::Amzn::Os::Distro::Release do
 
     before do
       allow(Facter::Resolvers::ReleaseFromFirstLine).to receive(:resolve)
-        .with(:release, release_file: '/etc/system-release')
+        .with(:release, { release_file: '/etc/system-release' })
         .and_return(value)
     end
 

@@ -7,10 +7,12 @@ describe Facter::Resolvers::Aix::Memory do
 
   before do
     resolver.instance_variable_set(:@log, log_spy)
-    allow(Facter::Core::Execution).to receive(:execute).with('svmon', logger: log_spy)
-                                                       .and_return(svmon_content)
-    allow(Facter::Core::Execution).to receive(:execute).with('pagesize', logger: log_spy)
-                                                       .and_return(pagesize_content)
+    allow(Facter::Core::Execution).to receive(:execute)
+      .with('svmon', { logger: log_spy })
+      .and_return(svmon_content)
+    allow(Facter::Core::Execution).to receive(:execute)
+      .with('pagesize', { logger: log_spy })
+      .and_return(pagesize_content)
   end
 
   after do

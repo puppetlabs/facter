@@ -8,7 +8,7 @@ describe Facter::Resolvers::ZFS do
   before do
     zfs_resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('zfs upgrade -v', logger: log_spy)
+      .with('zfs upgrade -v', { logger: log_spy })
       .and_return(output)
   end
 

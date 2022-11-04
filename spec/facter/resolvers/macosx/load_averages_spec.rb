@@ -9,7 +9,7 @@ describe Facter::Resolvers::Macosx::LoadAverages do
   before do
     load_averages.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('sysctl -n vm.loadavg', logger: log_spy)
+      .with('sysctl -n vm.loadavg', { logger: log_spy })
       .and_return('{ 0.00 0.03 0.03 }')
   end
 

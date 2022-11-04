@@ -6,7 +6,7 @@ describe Facts::Gentoo::Os::Release do
 
     before do
       allow(Facter::Resolvers::ReleaseFromFirstLine).to receive(:resolve)
-        .with(:release, release_file: '/etc/gentoo-release')
+        .with(:release, { release_file: '/etc/gentoo-release' })
         .and_return(value)
     end
 

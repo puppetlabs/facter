@@ -11,7 +11,7 @@ describe Facter::Resolvers::VirtWhat do
 
   before do
     virt_what_resolver.instance_variable_set(:@log, log_spy)
-    allow(Facter::Core::Execution).to receive(:execute).with('virt-what', logger: log_spy).and_return(content)
+    allow(Facter::Core::Execution).to receive(:execute).with('virt-what', { logger: log_spy }).and_return(content)
   end
 
   context 'when virt-what fails' do
