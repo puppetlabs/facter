@@ -338,6 +338,10 @@ module Facter
                        /#{version[1]}/
                      end
         case agent[:platform]
+        when /solaris-10/
+          os_release_full = /#{os_version}_u\d+/
+          os_kernel       = /Generic_\d+-\d+/
+          os_kernel_major = os_kernel
         when /solaris-11/
           os_release_full = /#{os_version}\.\d+/
           os_kernel       = os_release_full
