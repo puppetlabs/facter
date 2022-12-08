@@ -28,7 +28,7 @@ site](https://puppet.com/docs/puppet/latest/facter.html).
 * AIX
 
 ## Requirements
-* Ruby 2.3+
+* Ruby 2.5+
 * FFI (for facts like `mountpoints` which are resolved using C API calls)
 
 ## Basic concepts

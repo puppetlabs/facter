@@ -4,7 +4,7 @@ describe Facts::Solaris::Ruby::Version do
   describe '#call_the_resolver' do
     subject(:fact) { Facts::Solaris::Ruby::Version.new }
 
-    let(:value) { '2.4.5' }
+    let(:value) { '2.5.9' }
 
     before do
       allow(Facter::Resolvers::Ruby).to receive(:resolve).with(:version).and_return(value)
