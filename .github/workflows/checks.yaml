@@ -11,7 +11,7 @@ on:
 
 jobs:
   rubocop_checks:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     name: RuboCop
     steps:
       - name: Checkout current PR
@@ -25,7 +25,7 @@ jobs:
       - run: bundle exec rubocop --parallel
 
   rtc:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     name: RuboCop TODO
     steps:
       - uses: actions/checkout@v1
@@ -38,7 +38,7 @@ jobs:
           FORCE_ERROR_EXIT: true
 
   commit_checks:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     name: commit message
     steps:
       - name: Checkout current PR

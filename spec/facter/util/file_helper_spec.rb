@@ -98,36 +98,18 @@ describe Facter::Util::FileHelper do
   end
 
   describe '#dir_children' do
-    context 'with ruby < 2.5' do
-      before do
-        allow(Dir).to receive(:entries).with(File.dirname(path)).and_return(entries + ['.', '..'])
-        stub_const('RUBY_VERSION', '2.4.5')
-      end
-
-      it 'delegates to Dir.entries' do
-        file_helper.dir_children(File.dirname(path))
-        expect(Dir).to have_received(:entries)
-      end
-
-      it 'correctly resolves entries' do
-        expect(file_helper.dir_children(File.dirname(path))).to eq(entries)
-      end
+    before do
+      allow(Dir).to receive(:children).with(File.dirname(path)).and_return(entries)
+      stub_const('RUBY_VERSION', '2.5.9')
     end
 
-    context 'with ruby >= 2.5', if: RUBY_VERSION.to_f >= 2.5 do
-      before do
-        allow(Dir).to receive(:children).with(File.dirname(path)).and_return(entries)
-        stub_const('RUBY_VERSION', '2.5.1')
-      end
+    it 'delegates to Dir.children' do
+      file_helper.dir_children(File.dirname(path))
+      expect(Dir).to have_received(:children)
+    end
 
-      it 'delegates to Dir.children' do
-        file_helper.dir_children(File.dirname(path))
-        expect(Dir).to have_received(:children)
-      end
-
-      it 'correctly resolves entries' do
-        expect(file_helper.dir_children(File.dirname(path))).to eq(entries)
-      end
+    it 'correctly resolves entries' do
+      expect(file_helper.dir_children(File.dirname(path))).to eq(entries)
     end
   end
 

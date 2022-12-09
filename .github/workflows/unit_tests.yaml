@@ -18,12 +18,12 @@ jobs:
     strategy:
       matrix:
         ruby:
-          - '2.3'
+          - '2.5'
           - '2.7'
           - '3.0'
           - '3.2.0-preview2'
           - 'jruby-9.3.7.0'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout current PR
         uses: actions/checkout@v2
