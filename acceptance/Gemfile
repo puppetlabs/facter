@@ -19,6 +19,6 @@ gem "beaker-vmpooler", *location_for(ENV['BEAKER_VMPOOLER_VERSION'] || "~> 1")
 gem "rake", ">= 12.3.3"
 gem "multi_json", "~> 1.8"
 
-if File.exists? "#{__FILE__}.local"
+if File.exist? "#{__FILE__}.local"
   eval(File.read("#{__FILE__}.local"), binding)
 end
