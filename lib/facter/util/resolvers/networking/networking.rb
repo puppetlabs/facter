@@ -64,8 +64,23 @@ module Facter
             bindings.empty? ? nil : bindings.first
           end
 
+          IPV4_LINK_LOCAL_ADDR = IPAddr.new('169.254.0.0/16').freeze # RFC5735
+          IPV6_LINK_LOCAL_ADDR = IPAddr.new('fe80::/16').freeze # RFC4291
+
           def ignored_ip_address(addr)
-            addr.empty? || addr.start_with?('127.', '169.254.') || addr.start_with?('fe80') || addr.eql?('::1')
+            return true if addr.empty?
+
+            ip = IPAddr.new(addr)
+            return true if ip.loopback?
+
+            [
+              IPV4_LINK_LOCAL_ADDR,
+              IPV6_LINK_LOCAL_ADDR
+            ].each do |range|
+              return true if range.include?(ip)
+            end
+
+            false
           end
 
           def calculate_mask_length(netmask)
