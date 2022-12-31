@@ -65,7 +65,7 @@ module Facter
           end
 
           IPV4_LINK_LOCAL_ADDR = IPAddr.new('169.254.0.0/16').freeze # RFC5735
-          IPV6_LINK_LOCAL_ADDR = IPAddr.new('fe80::/16').freeze # RFC4291
+          IPV6_LINK_LOCAL_ADDR = IPAddr.new('fe80::/10').freeze # RFC4291
 
           def ignored_ip_address(addr)
             return true if addr.empty?

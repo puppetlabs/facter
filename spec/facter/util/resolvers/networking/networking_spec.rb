@@ -233,7 +233,7 @@ describe Facter::Util::Resolvers::Networking do
       expect(networking_facts).to include(expected)
     end
 
-    context 'when there is a global ip address' do
+    context 'when there is a link-local ip address' do
       let(:networking_facts) do
         {
           interfaces:
@@ -251,10 +251,40 @@ describe Facter::Util::Resolvers::Networking do
 
       it 'expands the correct binding' do
         expected = {
-          ip6: 'fe87::1',
+          ip6: '::1',
+          netmask6: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+          network6: '::1',
+          scope6: 'host'
+        }
+
+        networking_helper.expand_main_bindings(networking_facts)
+
+        expect(networking_facts[:interfaces]['lo0']).to include(expected)
+      end
+    end
+
+    context 'when there is a global ip address' do
+      let(:networking_facts) do
+        {
+          interfaces:
+            { 'lo0' =>
+              { mtu: 16_384,
+                bindings6:
+                  [{ address: '::1',
+                     netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+                     network: '::1' },
+                   { address: '2001:0DB8::1',
+                     netmask: 'ffff:ffff:ffff:ffff::',
+                     network: '2001:0DB8::' }] } }
+        }
+      end
+
+      it 'expands the correct binding' do
+        expected = {
+          ip6: '2001:0DB8::1',
           netmask6: 'ffff:ffff:ffff:ffff::',
-          network6: 'fe87::',
-          scope6: 'link'
+          network6: '2001:0DB8::',
+          scope6: 'global'
         }
 
         networking_helper.expand_main_bindings(networking_facts)
