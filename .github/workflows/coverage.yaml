@@ -12,7 +12,7 @@ jobs:
     name: coverage
     steps:
       - name: Checkout current PR
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Code Climate test-reporter
         run: |
