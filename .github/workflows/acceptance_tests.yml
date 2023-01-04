@@ -28,10 +28,10 @@ jobs:
         with:
           path: facter
 
-      - name: Install Ruby 2.6
+      - name: Install Ruby 2.7
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.6'
+          ruby-version: '2.7'
 
       - name: Fix common Linux and macOS permissions
         if: runner.os != 'Windows'
