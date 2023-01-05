@@ -12,7 +12,7 @@ jobs:
     name: coverage
     steps:
       - name: Checkout current PR
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Setup Code Climate test-reporter
         run: |
@@ -23,7 +23,7 @@ jobs:
       - name: Generate coverage
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.6
+          ruby-version: '2.7'
       - run: bundle install --jobs 3 --retry 3
       - run: bundle exec rake spec
 

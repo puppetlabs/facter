@@ -11,11 +11,11 @@ jobs:
     name: Snyk Monitor
     steps:
       - name: Checkout current PR
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.7
+          ruby-version: '2.7'
       - name: Install dependencies
         run: bundle install --jobs 3 --retry 3
       - name: Run Snyk to check for vulnerabilities

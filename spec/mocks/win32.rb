@@ -6,6 +6,9 @@ module Win32
 
     def close; end
 
+    module API
+    end
+
     class HKEY_LOCAL_MACHINE
       def self.open(*); end
 

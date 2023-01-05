@@ -32,7 +32,7 @@ end
 def beaker_platform
   {
     'ubuntu-20.04' => 'ubuntu2004-64a',
-    'macos-latest' => 'osx11-64a',
+    'macos-11' => 'osx11-64a',
     'windows-2016' => 'windows2016-64a',
     'windows-2019' => 'windows2019-64a'
   }[HOST_PLATFORM]
@@ -48,9 +48,19 @@ def install_puppet_agent
   message('INSTALL PUPPET AGENT')
 
   beaker_puppet_root = run('bundle info beaker-puppet --path')
-  presuite_file_path = File.join(beaker_puppet_root.chomp, 'setup', 'aio', '010_Install_Puppet_Agent.rb')
 
-  run("beaker exec pre-suite --pre-suite #{presuite_file_path} --preserve-state", './', env_path_var)
+  # Bundler/Rubygems can sometimes give output other than the filepath (deprecation warnings, etc.)
+  begin
+    if File.exist?(beaker_puppet_root.chomp)
+      presuite_file_path = File.join(beaker_puppet_root.chomp, 'setup', 'aio', '010_Install_Puppet_Agent.rb')
+
+      run("beaker exec pre-suite --pre-suite #{presuite_file_path} --preserve-state", './', env_path_var)
+    else
+      exit
+    end
+  rescue SystemExit
+    puts "`bundle info beaker-puppet --path` produced unexpected output, please address this."
+  end
 end
 
 def puppet_puppet_bin_dir
