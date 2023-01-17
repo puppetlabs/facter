@@ -47,6 +47,7 @@ test_name "C64580: Non-root default user external facts directory is searched fo
   #
   def get_home_dir(host, user_name)
     home_dir = nil
+    pending_test("PA-4843: ruby-shadow taint")
     on host, puppet_resource('user', user_name) do |result|
       home_dir = result.stdout.match(/home\s*=>\s*'([^']+)'/m)[1]
     end

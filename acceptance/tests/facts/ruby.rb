@@ -40,7 +40,12 @@ test_name "C100305: The Ruby fact should resolve as expected in AIO" do
 
       has_sitedir = !on(agent, 'ruby -e"puts RbConfig::CONFIG[\'sitedir\']"').output.chomp.empty?
 
-      ruby_version   = /2\.\d+\.\d+/
+      puppet_version = on(agent, puppet("--version")).stdout.chomp
+      ruby_version   = if puppet_version =~ /^(6|7)\./
+                         /2\.\d+\.\d+/
+                       else
+                         /3\.\d+\.\d+/
+                       end
       expected_facts = {
           'ruby.platform' => ruby_platform,
           'ruby.version'  => ruby_version
