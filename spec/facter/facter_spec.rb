@@ -212,11 +212,30 @@ describe Facter do
       expect(Facter.value('os.name')).to eq('Ubuntu')
     end
 
+    it 'call value twice and resolved once' do
+      mock_fact_manager(:resolve_fact, [os_fact])
+      expect(fact_collection_spy).to receive(:value).with('os.name').once.and_return('Ubuntu')
+      Facter.value('os.name')
+      Facter.value('os.name')
+    end
+
     it 'return no value' do
       mock_fact_manager(:resolve_fact, [])
       allow(fact_collection_spy).to receive(:value).with('os.name').and_return(nil)
-
       expect(Facter.value('os.name')).to be nil
+    end
+
+    context 'when fact value is false' do
+      let(:type) { :custom }
+      let(:fact_value) { false }
+      let(:fact_user_query) { '' }
+
+      it 'when called twice resolved once' do
+        mock_fact_manager(:resolve_fact, [os_fact])
+        expect(fact_collection_spy).to receive(:value).with('os.name').once.and_return('Ubuntu')
+        Facter.value('os.name')
+        Facter.value('os.name')
+      end
     end
 
     context 'when custom fact with nil value' do
