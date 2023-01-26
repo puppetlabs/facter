@@ -18,7 +18,7 @@ module Facter
     # Method used by puppet-agent to retrieve facts
     # @param args_as_string [string] facter cli arguments
     #
-    # @return query result
+    # @return [Hash<String, Object>]
     #
     # @api private
     def resolve(args_as_string)
@@ -42,7 +42,7 @@ module Facter
       cli_options[:show_legacy] ||= false
       Facter::Options.store(cli_options)
 
-      queried_facts(cli.args)
+      Hash[queried_facts(cli.args)]
     end
 
     # Method used by cli to set puppet paths
@@ -370,7 +370,7 @@ module Facter
     # Retrieves a fact's value. Returns `nil` if no such fact exists.
     #
     # @param user_query [String] the fact name
-    # @return [String] the value of the fact, or nil if no fact is found
+    # @return [Hash<String, Object>]
     #
     # @api public
     def to_hash
