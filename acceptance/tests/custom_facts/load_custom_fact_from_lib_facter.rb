@@ -29,7 +29,7 @@ new_contents = text.gsub(/before_update/, "after_update")
 File.open(path + '/facter/' + file_name, "w") {|file| file.puts new_contents }
 
 # if we don't reset, the fact is cached and the old value is displayed
-Facter.reset
+Facter.clear
 
 puts Facter.value('my_custom_fact')
   EOM

@@ -410,7 +410,7 @@ module Facter
     # @api public
     def value(user_query)
       user_query = user_query.to_s.downcase
-      resolve_fact(user_query)
+      resolve_fact(user_query) unless @already_searched.include?(user_query)
 
       @already_searched[user_query]&.value
     end
@@ -427,7 +427,7 @@ module Facter
     # @api public
     def fact(user_query)
       user_query = user_query.to_s.downcase
-      resolve_fact(user_query)
+      resolve_fact(user_query) unless @already_searched.include?(user_query)
 
       @already_searched[user_query]
     end
