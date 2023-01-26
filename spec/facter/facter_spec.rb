@@ -63,7 +63,11 @@ describe Facter do
     let(:cli_double) { instance_spy(Facter::Cli) }
 
     before do
-      allow(Facter).to receive(:queried_facts)
+      allow(Facter).to receive(:queried_facts).and_return({})
+    end
+
+    it 'returns hash object when API called' do
+      expect(Facter.resolve('').class).to eq(Hash)
     end
 
     context 'when user query and options in arguments' do
