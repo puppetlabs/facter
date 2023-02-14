@@ -354,9 +354,6 @@ describe LegacyFacter::Util::Parser do
         let(:yaml_content) { load_fixture('external_fact_yaml_date').read }
 
         it 'loads date' do
-          if RUBY_VERSION.to_f == 3.2 && Gem::Version.new(Timecop::VERSION) < Gem::Version.new('0.9.6')
-            pending 'There is a bug in newer versions of Psych and timecop'
-          end
           expected_result = { 'testsfact' => { 'date' => Date.parse('2020-04-28') } }
 
           expect(yaml_parser.parse_results).to eq(expected_result)
