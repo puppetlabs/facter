@@ -13,11 +13,26 @@ test_name "C100305: The Ruby fact should resolve as expected in AIO" do
 
   agents.each do |agent|
     step "Ensure the Ruby fact resolves as expected" do
+      puppet_version = on(agent, puppet("--version")).stdout.chomp
+      ruby_version   = if puppet_version =~ /^(6|7)\./
+                         /2\.\d+\.\d+/
+                       else
+                         /3\.\d+\.\d+/
+                       end
+
       case agent['platform']
         when /windows/
           ruby_platform = agent['ruby_arch'] == 'x64' ? 'x64-mingw32' : 'i386-mingw32'
         when /osx/
-          ruby_platform = /(x86_64-darwin[\d.]+|aarch64-darwin)/
+          if agent['platform'] =~ /arm64/
+            if puppet_version =~ /^(6|7)\./
+              ruby_platform = /aarch64-darwin/
+            else
+              ruby_platform = /arm64-darwin/
+            end
+          else
+            ruby_platform = /x86_64-darwin[\d.]+/
+          end
         when /aix/
           ruby_platform = /powerpc-aix[\d.]+/
         when /solaris/
@@ -40,12 +55,6 @@ test_name "C100305: The Ruby fact should resolve as expected in AIO" do
 
       has_sitedir = !on(agent, 'ruby -e"puts RbConfig::CONFIG[\'sitedir\']"').output.chomp.empty?
 
-      puppet_version = on(agent, puppet("--version")).stdout.chomp
-      ruby_version   = if puppet_version =~ /^(6|7)\./
-                         /2\.\d+\.\d+/
-                       else
-                         /3\.\d+\.\d+/
-                       end
       expected_facts = {
           'ruby.platform' => ruby_platform,
           'ruby.version'  => ruby_version
