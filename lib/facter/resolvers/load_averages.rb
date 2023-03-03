@@ -13,7 +13,7 @@ module Facter
         end
 
         def read_load_averages(fact_name)
-          require 'facter/util/resolvers/ffi/load_averages'
+          require_relative '../../facter/util/resolvers/ffi/load_averages'
 
           log.debug('loading cpu load averages')
           @fact_list[:load_averages] = %w[1m 5m 15m].zip(Facter::Util::Resolvers::Ffi::LoadAverages

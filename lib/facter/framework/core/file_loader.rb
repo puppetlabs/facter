@@ -22,18 +22,18 @@ require_relative '../../framework/core/options/config_file_options'
 require_relative '../../framework/core/options/option_store'
 require_relative '../../framework/core/options/options_validator'
 
-require 'facter/framework/core/options'
-require 'facter/framework/logging/logger_helper'
-require 'facter/framework/logging/logger'
+require_relative '../../../facter/framework/core/options'
+require_relative '../../../facter/framework/logging/logger_helper'
+require_relative '../../../facter/framework/logging/logger'
 
-require 'facter/util/file_helper'
+require_relative '../../../facter/util/file_helper'
 
-require 'facter/resolvers/base_resolver'
-require 'facter/framework/detector/os_hierarchy'
-require 'facter/framework/detector/os_detector'
+require_relative '../../../facter/resolvers/base_resolver'
+require_relative '../../../facter/framework/detector/os_hierarchy'
+require_relative '../../../facter/framework/detector/os_detector'
 
-require 'facter/framework/config/config_reader'
-require 'facter/framework/config/fact_groups'
+require_relative '../../../facter/framework/config/config_reader'
+require_relative '../../../facter/framework/config/fact_groups'
 
 require_relative '../../util/api_debugger'
 require_relative '../../util/file_helper'
@@ -141,6 +141,6 @@ os_hierarchy.each { |operating_system| load_dir(['util', operating_system.downca
 os_hierarchy.each { |operating_system| load_dir(['facts', operating_system.downcase, '**']) }
 os_hierarchy.each { |operating_system| load_dir(['resolvers', operating_system.downcase, '**']) }
 
-require 'facter/custom_facts/core/legacy_facter'
+require_relative '../../../facter/custom_facts/core/legacy_facter'
 
-require 'facter/framework/parsers/query_parser'
+require_relative '../../../facter/framework/parsers/query_parser'
