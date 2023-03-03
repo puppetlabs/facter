@@ -32,7 +32,6 @@ require 'facter/framework/detector/os_detector'
 require 'facter/framework/config/config_reader'
 require 'facter/framework/config/fact_groups'
 
-load_dir(['config'])
 
 load_dir(['util'])
 load_dir(%w[util resolvers])
@@ -41,7 +40,6 @@ load_dir(%w[util facts posix])
 load_dir(%w[util resolvers networking])
 
 load_dir(['resolvers'])
-load_dir(['facts_utils'])
 load_dir(%w[framework core])
 load_dir(['models'])
 load_dir(%w[framework benchmarking])
@@ -57,6 +55,5 @@ os_hierarchy.each { |operating_system| load_dir(['facts', operating_system.downc
 os_hierarchy.each { |operating_system| load_dir(['resolvers', operating_system.downcase, '**']) }
 
 require 'facter/custom_facts/core/legacy_facter'
-load_dir(%w[framework utils])
 
 require 'facter/framework/parsers/query_parser'
