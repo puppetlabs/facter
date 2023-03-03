@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'facter/custom_facts/core/legacy_facter'
 require 'facter/custom_facts/util/fact'
 require 'facter/custom_facts/util/collection'
 require 'facter/custom_facts/util/fact'
