@@ -1,0 +1,38 @@
+---
+name: Integration tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+env:
+  CI: true
+
+jobs:
+  integration_tests:
+    name: integration ${{ matrix.cfg.os }} (ruby ${{ matrix.cfg.ruby }})
+    strategy:
+      matrix:
+        cfg:
+          - {os: ubuntu-latest, ruby: '2.7'}
+          - {os: ubuntu-22.04, ruby: '3.2'} # with openssl 3
+          - {os: ubuntu-22.04, ruby: 'jruby-9.3.7.0'}
+          - {os: windows-2019, ruby: '2.7'}
+          - {os: windows-2019, ruby: '3.2'} # with openssl 3
+    runs-on: ${{ matrix.cfg.os }}
+    steps:
+      - name: Checkout current PR
+        uses: actions/checkout@v3
+
+      - name: Rspec checks
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.cfg.ruby }}
+      - run: gem update bundler
+      - run: bundle config set --local with integration
+      - run: bundle install --jobs 3 --retry 3
+      - run: bundle exec rake spec_integration
