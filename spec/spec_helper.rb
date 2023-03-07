@@ -22,16 +22,20 @@ require 'fileutils'
 
 require_relative '../lib/facter/resolvers/base_resolver'
 
-Dir[ROOT_DIR.join('spec/mocks/*.rb')].sort.each { |file| require file }
+unit_tests = ARGV.grep(/spec_integration/).empty?
+Dir[ROOT_DIR.join('spec/mocks/*.rb')].sort.each { |file| require file } if unit_tests
+
 require_relative 'custom_facts/puppetlabs_spec/files'
 
 require 'facter'
 require 'facter/framework/cli/cli'
 require 'facter/framework/cli/cli_launcher'
 
-Dir.glob(File.join('./lib/facter/util', '/**/*/', '*.rb'), &method(:require))
-Dir.glob(File.join('./lib/facter/facts', '/**/*/', '*.rb'), &method(:require))
-Dir.glob(File.join('./lib/facter/resolvers', '/**/*/', '*.rb'), &method(:require))
+if unit_tests
+  Dir.glob(File.join('./lib/facter/util', '/**/*/', '*.rb'), &method(:require))
+  Dir.glob(File.join('./lib/facter/facts', '/**/*/', '*.rb'), &method(:require))
+  Dir.glob(File.join('./lib/facter/resolvers', '/**/*/', '*.rb'), &method(:require))
+end
 
 default_coverage = 90
 SimpleCov.minimum_coverage ENV['COVERAGE'] || default_coverage

@@ -13,6 +13,10 @@ gem 'packaging', require: false
 local_gemfile = File.expand_path('Gemfile.local', __dir__)
 eval_gemfile(local_gemfile) if File.exist?(local_gemfile)
 
+group(:integration, optional: true) do
+  gem 'ffi', '~> 1.15', require: false
+end
+
 group(:documentation) do
   gem 'ronn', '~> 0.7.3', require: false, platforms: [:ruby]
 end
