@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require 'facter/framework/logging/logger.rb'
+require_relative '../logging/logger'
 Facter::Log.output(STDERR)
-require 'facter'
-require 'facter/framework/cli/cli'
+require_relative '../../../facter'
+require_relative 'cli'
 
 class CliLauncher
   class << self

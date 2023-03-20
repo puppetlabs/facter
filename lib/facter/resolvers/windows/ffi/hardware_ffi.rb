@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'facter/resolvers/windows/ffi/ffi'
-require 'facter/resolvers/windows/ffi/system_info'
+require_relative 'ffi'
+require_relative 'system_info'
 
 module HardwareFFI
   extend FFI::Library

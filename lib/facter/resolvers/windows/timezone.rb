@@ -31,7 +31,7 @@ module Facter
           end
 
           def codepage_from_api
-            require 'facter/resolvers/windows/ffi/winnls_ffi'
+            require_relative 'ffi/winnls_ffi'
             WinnlsFFI.GetACP.to_s
           end
         end

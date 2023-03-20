@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'facter/framework/cli/cli_launcher'
+require_relative '../facter/framework/cli/cli_launcher'
 
 cli = Facter::Cli.new([])
 

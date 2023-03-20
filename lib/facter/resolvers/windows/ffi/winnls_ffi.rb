@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'facter/resolvers/windows/ffi/ffi'
+require_relative 'ffi'
 
 module WinnlsFFI
   extend FFI::Library
