@@ -380,7 +380,14 @@ module Facter
       resolved_facts = Facter::FactManager.instance.resolve_facts
       resolved_facts.reject! { |fact| fact.type == :custom && fact.value.nil? }
       collection = Facter::FactCollection.new.build_fact_collection!(resolved_facts)
-      Hash[collection]
+
+      # Ensures order of keys in hash returned from Facter.to_hash() and
+      # Facter.resolve() is always stable
+      if collection.empty?
+        Hash[collection]
+      else
+        Hash[Facter::Utils.sort_hash_by_key(collection)]
+      end
     end
 
     # Check whether printing stack trace is enabled
@@ -510,8 +517,10 @@ module Facter
       resolved_facts = Facter::FactManager.instance.resolve_facts(user_query)
       resolved_facts.reject! { |fact| fact.type == :custom && fact.value.nil? }
 
+      # Ensures order of keys in hash returned from Facter.to_hash() and
+      # Facter.resolve() is always stable
       if user_query.count.zero?
-        Facter::FactCollection.new.build_fact_collection!(resolved_facts)
+        Facter::Utils.sort_hash_by_key(Facter::FactCollection.new.build_fact_collection!(resolved_facts))
       else
         FormatterHelper.retrieve_facts_to_display_for_user_query(user_query, resolved_facts)
       end
