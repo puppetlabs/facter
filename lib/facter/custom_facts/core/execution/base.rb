@@ -138,9 +138,9 @@ module Facter
           logger.debug(format(STDERR_MESSAGE, command, msg.strip))
         end
 
-        def builtin_command?(command)
-          output, _status = Open3.capture2("type #{command}")
-          output.chomp =~ /builtin/ ? true : false
+        # optional function to be defined in subclass if necessary
+        def builtin_command?(_command_)
+          nil
         end
       end
     end

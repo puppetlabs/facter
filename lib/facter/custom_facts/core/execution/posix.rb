@@ -11,6 +11,11 @@ module Facter
           ENV['PATH'].split(File::PATH_SEPARATOR) + DEFAULT_SEARCH_PATHS
         end
 
+        def builtin_command?(command)
+          output, _status = Open3.capture2("type #{command}")
+          output.chomp =~ /builtin/ ? true : false
+        end
+
         def which(bin)
           if absolute_path?(bin)
             return bin if File.executable?(bin) && FileTest.file?(bin)
