@@ -226,6 +226,7 @@ disks:
     description: Return the disk (block) devices attached to the system.
     resolution: |
         AIX: query the ODM for all disk devices
+        FreeBSD: rely on GEOM to get devices
         Linux: parse the contents of `/sys/block/<device>/`.
         Solaris: use the `kstat` function to query disk information.
     caveats: |
@@ -252,12 +253,15 @@ disks:
                 size_bytes:
                     type: integer
                     description: The size of the disk or block device, in bytes.
-                vendor:
-                    type: string
-                    description: The vendor of the disk or block device.
                 type:
                     type: string
                     description: The type of disk or block device (sshd or hdd). This fact is available only on Linux.
+                vendor:
+                    type: string
+                    description: The vendor of the disk or block device.
+                wwn:
+                    type: string
+                    description: The World Wide Name of the disk or block device. This fact is available only on Linux.
 
 dmi:
     type: map
@@ -1275,6 +1279,7 @@ partitions:
     description: Return the disk partitions of the system.
     resolution: |
         AIX: use the ODM to retrieve list of logical volumes; use `lvm_querylv` function to get details
+        FreeBSD: rely on GEOM to get devices
         Linux: use `libblkid` to retrieve the disk partitions.
     caveats: |
         Linux: `libfacter` must be built with `libblkid` support.
