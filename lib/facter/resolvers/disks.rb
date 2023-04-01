@@ -52,18 +52,26 @@ module Facter
 
                 next unless result
 
-                value[key] = case key
-                             when :size
-                               # Linux always considers sectors to be 512 bytes long
-                               # independently of the devices real block size.
-                               construct_size(value, result)
-                             when :type
-                               result == '0' ? 'ssd' : 'hdd'
-                             else
-                               result
-                             end
+                result = case key
+                         when :size
+                           # Linux always considers sectors to be 512 bytes long
+                           # independently of the devices real block size.
+                           construct_size(value, result)
+                         when :type
+                           result == '0' ? 'ssd' : 'hdd'
+                         else
+                           result
+                         end
+
+                add_fact(value, key, result)
               end
             end
+          end
+
+          def add_fact(disk_info, fact, value)
+            fact = :serial_number if fact == :serial
+
+            disk_info[fact] = value
           end
 
           def build_disks_hash
