@@ -8,9 +8,17 @@ describe Facter do
     # note the type is the :nil symbol
     Facter::ResolvedFact.new('missing_fact', nil, :nil, 'missing_fact')
   end
+  let(:hash_fact) do
+    Facter::ResolvedFact.new('mountpoints', { '/boot' => { 'filesystem' => 'ext4', 'device' => 'dev1' },
+                                              '/' => { 'filesystem' => 'ext4', 'device' => 'dev2' } },
+                             :core, 'mountpoints')
+  end
 
   let(:logger) { instance_spy(Facter::Log) }
   let(:config_reader_double) { class_spy(Facter::ConfigReader) }
+
+  sorted_fact_hash = { 'mountpoints' => { '/' => { 'device' => 'dev2', 'filesystem' => 'ext4' },
+                                          '/boot' => { 'device' => 'dev1', 'filesystem' => 'ext4' } } }
 
   before do
     allow(Facter::ConfigReader).to receive(:init).and_return(config_reader_double)
@@ -56,11 +64,30 @@ describe Facter do
       expect(Facter.resolve('')).to be_an_instance_of(Hash)
     end
 
+    context 'when user query in arguments' do
+      it 'returns a stable order hash' do
+        stub_facts([hash_fact])
+        expect(Facter.resolve('mountpoints')).to eq(sorted_fact_hash)
+      end
+    end
+
     context 'when user query and options in arguments' do
       it 'returns one resolved fact' do
         stub_facts([os_fact])
 
         expect(Facter.resolve('os.name --show-legacy')).to eq('os.name' => 'ubuntu')
+      end
+    end
+
+    context 'when there is no user query' do
+      let(:hash_fact_no_user_query) do
+        Facter::ResolvedFact.new('mountpoints', { '/boot' => { 'filesystem' => 'ext4', 'device' => 'dev1' },
+                                                  '/' => { 'filesystem' => 'ext4', 'device' => 'dev2' } }, :core, '')
+      end
+
+      it 'returns a stable order hash' do
+        stub_facts([hash_fact_no_user_query])
+        expect(Facter.resolve('')).to eq(sorted_fact_hash)
       end
     end
   end
@@ -84,6 +111,11 @@ describe Facter do
 
         expect(Facter.to_hash).to eq({})
       end
+    end
+
+    it 'returns a stable order hash' do
+      stub_facts([hash_fact])
+      expect(Facter.to_hash).to eq(sorted_fact_hash)
     end
   end
 
