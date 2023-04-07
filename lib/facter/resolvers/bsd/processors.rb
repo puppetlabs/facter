@@ -15,7 +15,7 @@ module Facter
           end
 
           def collect_processors_info(fact_name)
-            require 'facter/resolvers/bsd/ffi/ffi_helper'
+            require_relative '../../../facter/resolvers/bsd/ffi/ffi_helper'
 
             count = logical_count
             model = processor_model

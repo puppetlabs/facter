@@ -15,7 +15,7 @@ module Facter
           end
 
           def read_network_information(fact_name)
-            require 'facter/resolvers/windows/ffi/networking_ffi'
+            require_relative '../../../facter/resolvers/windows/ffi/networking_ffi'
 
             size_ptr = FFI::MemoryPointer.new(NetworkingFFI::BUFFER_LENGTH)
             adapter_addresses = FFI::MemoryPointer.new(IpAdapterAddressesLh.size, NetworkingFFI::BUFFER_LENGTH)

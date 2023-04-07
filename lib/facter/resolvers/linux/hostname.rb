@@ -40,7 +40,7 @@ module Facter
             output = Socket.gethostname || ''
             if output.empty? || output['0.0.0.0']
               begin
-                require 'facter/util/resolvers/ffi/hostname'
+                require_relative '../../../facter/util/resolvers/ffi/hostname'
 
                 output = Facter::Util::Resolvers::Ffi::Hostname.getffihostname
               rescue LoadError => e
@@ -76,7 +76,7 @@ module Facter
           end
 
           def retrieve_fqdn_for_host_with_ffi(host)
-            require 'facter/util/resolvers/ffi/hostname'
+            require_relative '../../../facter/util/resolvers/ffi/hostname'
 
             fqdn = Facter::Util::Resolvers::Ffi::Hostname.getffiaddrinfo(host)
             log.debug("FFI getaddrinfo was called and it retrieved: #{fqdn}")

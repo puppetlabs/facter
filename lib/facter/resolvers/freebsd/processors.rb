@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'facter/resolvers/bsd/processors'
+require_relative '../../../facter/resolvers/bsd/processors'
 
 module Facter
   module Resolvers
@@ -17,7 +17,7 @@ module Facter
           end
 
           def collect_processors_info(fact_name)
-            require 'facter/resolvers/freebsd/ffi/ffi_helper'
+            require_relative '../../../facter/resolvers/freebsd/ffi/ffi_helper'
 
             count = logical_count
             model = processors_model
