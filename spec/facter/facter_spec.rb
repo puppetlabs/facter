@@ -1,23 +1,15 @@
 # frozen_string_literal: true
 
 describe Facter do
-  let(:fact_name) { 'os.name' }
-  let(:fact_user_query) { 'os.name' }
-  let(:fact_value) { 'ubuntu' }
-  let(:type) { :core }
   let(:os_fact) do
-    instance_spy(Facter::ResolvedFact, name: fact_name, value: fact_value,
-                                       user_query: fact_user_query, type: type)
+    Facter::ResolvedFact.new('os.name', 'ubuntu', :core, 'os.name')
   end
   let(:missing_fact) do
-    instance_spy(Facter::ResolvedFact, name: 'missing_fact', value: nil,
-                                       user_query: 'missing_fact', type: :nil)
+    # note the type is the :nil symbol
+    Facter::ResolvedFact.new('missing_fact', nil, :nil, 'missing_fact')
   end
-  let(:empty_fact_collection) { Facter::FactCollection.new }
+
   let(:logger) { instance_spy(Facter::Log) }
-  let(:fact_manager_spy) { instance_spy(Facter::FactManager) }
-  let(:fact_collection_spy) { instance_spy(Facter::FactCollection) }
-  let(:key_error) { KeyError.new('key error') }
   let(:config_reader_double) { class_spy(Facter::ConfigReader) }
 
   before do
@@ -35,332 +27,265 @@ describe Facter do
     allow(Facter::Log).to receive(:new).and_return(logger)
     Facter.clear
     allow(Facter::SessionCache).to receive(:invalidate_all_caches)
-    allow(Facter::FactManager).to receive(:instance).and_return(fact_manager_spy)
-    allow(Facter::FactCollection).to receive(:new).and_return(fact_collection_spy)
   end
 
   after do
     Facter.instance_variable_set(:@logger, nil)
   end
 
-  def mock_fact_manager(method, return_value)
-    allow(fact_manager_spy).to receive(method).and_return(return_value)
-    allow(fact_collection_spy)
-      .to receive(:build_fact_collection!)
-      .with(return_value)
-      .and_return(return_value.empty? ? empty_fact_collection : fact_collection_spy)
+  def stub_facts(resolved_facts)
+    allow(Facter::FactManager.instance).to receive(:resolve_facts).and_return(resolved_facts)
   end
 
-  def mock_collection(method, os_name = nil, error = nil)
-    if error
-      allow(fact_collection_spy).to receive(method).with('os', 'name').and_raise(error)
-    else
-      allow(fact_collection_spy).to receive(method).with('os', 'name').and_return(os_name)
-    end
+  def stub_no_facts
+    stub_facts([])
+  end
+
+  def stub_one_fact(resolved_facts)
+    allow(Facter::FactManager.instance).to receive(:resolve_fact).and_return([resolved_facts])
+  end
+
+  def stub_no_fact
+    allow(Facter::FactManager.instance).to receive(:resolve_fact).and_return([])
   end
 
   describe '#resolve' do
-    let(:cli_double) { instance_spy(Facter::Cli) }
-
-    before do
-      allow(Facter).to receive(:queried_facts).and_return({})
-    end
-
     it 'returns hash object when API called' do
-      expect(Facter.resolve('').class).to eq(Hash)
+      stub_no_facts
+
+      expect(Facter.resolve('')).to be_an_instance_of(Hash)
     end
 
     context 'when user query and options in arguments' do
-      it 'calls queried_facts' do
-        Facter.resolve('os --show-legacy')
+      it 'returns one resolved fact' do
+        stub_facts([os_fact])
 
-        expect(Facter).to have_received(:queried_facts).with(['os'])
+        expect(Facter.resolve('os.name --show-legacy')).to eq('os.name' => 'ubuntu')
       end
     end
   end
 
   describe '#to_hash' do
-    before do
-      allow(Hash).to receive(:[]).with(fact_collection_spy).and_return({})
-      allow(Hash).to receive(:[]).with(empty_fact_collection).and_return({})
-    end
-
     it 'returns one resolved fact' do
-      mock_fact_manager(:resolve_facts, [os_fact])
+      stub_facts([os_fact])
 
-      expect(Facter.to_hash).to eq({})
+      expect(Facter.to_hash).to eq('os' => { 'name' => 'ubuntu' })
     end
 
     it 'return no resolved facts' do
-      mock_fact_manager(:resolve_facts, [])
+      stub_no_facts
 
       expect(Facter.to_hash).to eq({})
     end
 
     context 'when custom fact with nil value' do
-      let(:type) { :custom }
-      let(:fact_value) { nil }
-      let(:fact_user_query) { '' }
-
       it 'discards the custom fact with nil value' do
-        mock_fact_manager(:resolve_facts, [os_fact])
+        stub_facts([Facter::ResolvedFact.new('custom', nil, :custom, '')])
 
-        Facter.to_hash
-
-        expect(fact_collection_spy).to have_received(:build_fact_collection!).with([])
+        expect(Facter.to_hash).to eq({})
       end
     end
   end
 
   describe '#to_user_output' do
-    let(:json_fact_formatter) { instance_spy(Facter::JsonFactFormatter) }
-
-    before do |example|
-      resolved_fact = example.metadata[:multiple_facts] ? [os_fact, missing_fact] : [os_fact]
-      expected_json_output = if example.metadata[:multiple_facts]
-                               '{"os" : {"name": "ubuntu"}, "missing_fact": null}'
-                             else
-                               '{"os" : {"name": "ubuntu"}}'
-                             end
-
-      allow(fact_manager_spy).to receive(:resolve_facts).and_return(resolved_fact)
-      allow(json_fact_formatter).to receive(:format).with(resolved_fact).and_return(expected_json_output)
-      allow(Facter::FormatterFactory).to receive(:build).and_return(json_fact_formatter)
-    end
-
-    it 'returns one fact with value and status 0', multiple_facts: false do
+    it 'returns one fact with value and status 0' do
       user_query = ['os.name']
-      expected_json_output = '{"os" : {"name": "ubuntu"}}'
+      stub_facts([os_fact])
 
       formatted_facts = Facter.to_user_output({}, [user_query])
-
-      expect(formatted_facts).to eq([expected_json_output, 0])
+      expect(formatted_facts).to eq(['ubuntu', 0])
     end
 
-    it 'returns one fact with value, one without and status 0', multiple_facts: true do
+    it 'returns one fact with value, one without and status 0' do
       user_query = ['os.name', 'missing_fact']
-      expected_json_output = '{"os" : {"name": "ubuntu"}, "missing_fact": null}'
+      stub_facts([os_fact, missing_fact])
 
-      formated_facts = Facter.to_user_output({}, [user_query])
-
-      expect(formated_facts).to eq([expected_json_output, 0])
+      formated_facts = Facter.to_user_output({ json: true }, *user_query)
+      expect(JSON.parse(formated_facts[0])).to eq('missing_fact' => nil, 'os.name' => 'ubuntu')
+      expect(formated_facts[1]).to eq(0)
     end
 
     context 'when provided with --strict option' do
-      it 'returns one fact with value, one without and status 1', multiple_facts: true do
+      it 'returns one fact with value, one without and status 1' do
         user_query = ['os.name', 'missing_fact']
-        expected_json_output = '{"os" : {"name": "ubuntu"}, "missing_fact": null}'
+        stub_facts([os_fact, missing_fact])
+
         allow(Facter::Options).to receive(:[]).with(:strict).and_return(true)
 
-        formatted_facts = Facter.to_user_output({}, *user_query)
-
-        expect(formatted_facts).to eq([expected_json_output, 1])
+        formatted_facts = Facter.to_user_output({ json: true }, *user_query)
+        expect(JSON.parse(formatted_facts[0])).to eq('missing_fact' => nil, 'os.name' => 'ubuntu')
+        expect(formatted_facts[1]).to eq(1)
       end
 
-      it 'returns one fact and status 0', multiple_facts: false do
+      it 'returns one fact and status 0' do
         user_query = 'os.name'
-        expected_json_output = '{"os" : {"name": "ubuntu"}}'
+        stub_facts([os_fact])
         allow(Facter::Options).to receive(:[]).with(anything)
         allow(Facter::Options).to receive(:[]).with(:block_list).and_return([])
         allow(Facter::Options).to receive(:[]).with(:strict).and_return(true)
 
-        formated_facts = Facter.to_user_output({}, user_query)
-
-        expect(formated_facts).to eq([expected_json_output, 0])
+        formated_facts = Facter.to_user_output({ json: true }, user_query)
+        expect(JSON.parse(formated_facts[0])).to eq('os.name' => 'ubuntu')
+        expect(formated_facts[1]).to eq(0)
       end
     end
 
     context 'when custom fact with nil value' do
-      let(:type) { :custom }
-      let(:fact_value) { nil }
-      let(:fact_user_query) { '' }
+      it 'discards the custom fact with nil value if user query is empty' do
+        user_query = ''
+        os_fact = Facter::ResolvedFact.new('os.name', 'ubuntu', :core, user_query)
+        custom_fact = Facter::ResolvedFact.new('custom', nil, :custom, user_query)
+        stub_facts([os_fact, custom_fact])
 
-      it 'discards the custom fact with nil value' do
-        user_query = ['os.name']
+        formated_facts = Facter.to_user_output({ json: true }, user_query)
+        expect(JSON.parse(formated_facts[0])).to eq('os' => { 'name' => 'ubuntu' })
+        expect(formated_facts[1]).to eq(0)
+      end
 
-        Facter.to_user_output({}, *user_query)
+      it 'includes the custom fact with nil value if user query is not empty' do
+        user_query = %w[os custom]
+        os_fact = Facter::ResolvedFact.new('os.name', 'ubuntu', :core, 'os')
+        custom_fact = Facter::ResolvedFact.new('custom', nil, :custom, 'custom')
+        stub_facts([os_fact, custom_fact])
 
-        expect(json_fact_formatter).to have_received(:format).with([])
+        formated_facts = Facter.to_user_output({ json: true }, *user_query)
+        expect(JSON.parse(formated_facts[0])).to eq('custom' => nil, 'os' => { 'name' => 'ubuntu' })
+        expect(formated_facts[1]).to eq(0)
       end
     end
 
     context 'when no facts are returned' do
-      let(:type) { :custom }
-      let(:fact_value) { nil }
-      let(:fact_user_query) { '' }
-      let(:expected_json_output) { {} }
-
-      before do
-        allow(fact_manager_spy).to receive(:resolve_facts).and_return([])
-        allow(json_fact_formatter).to receive(:format).with([]).and_return(expected_json_output)
-      end
-
       it 'does not raise exceptions' do
-        expect { Facter.to_user_output({}, '') }.not_to raise_error
+        stub_facts([])
+
+        expect { Facter.to_user_output({ json: true }, '') }.not_to raise_error
       end
     end
   end
 
   describe '#value' do
     it 'downcases the user query' do
-      mock_fact_manager(:resolve_fact, [os_fact])
-      allow(fact_collection_spy).to receive(:value).with('os.name').and_return('Ubuntu')
+      stub_one_fact(os_fact)
 
-      expect(Facter.value('OS.NAME')).to eq('Ubuntu')
+      expect(Facter.value('OS.NAME')).to eq('ubuntu')
     end
 
     it 'returns a value' do
-      mock_fact_manager(:resolve_fact, [os_fact])
-      allow(fact_collection_spy).to receive(:value).with('os.name').and_return('Ubuntu')
+      stub_one_fact(os_fact)
 
-      expect(Facter.value('os.name')).to eq('Ubuntu')
+      expect(Facter.value('os.name')).to eq('ubuntu')
     end
 
-    it 'call value twice and resolved once' do
-      mock_fact_manager(:resolve_fact, [os_fact])
-      expect(fact_collection_spy).to receive(:value).with('os.name').once.and_return('Ubuntu')
+    it 'resolves facts once' do
+      expect(Facter::FactManager.instance).to receive(:resolve_fact).with('os.name').once.and_return([os_fact])
+
       Facter.value('os.name')
       Facter.value('os.name')
     end
 
-    it 'return no value' do
-      mock_fact_manager(:resolve_fact, [])
-      allow(fact_collection_spy).to receive(:value).with('os.name').and_return(nil)
+    it 'returns nil' do
+      stub_no_fact
+
       expect(Facter.value('os.name')).to be nil
     end
 
     context 'when fact value is false' do
-      let(:type) { :custom }
-      let(:fact_value) { false }
-      let(:fact_user_query) { '' }
+      it 'resolves facts once' do
+        boolean_fact = Facter::ResolvedFact.new('boolean', false, :core, '')
+        expect(Facter::FactManager.instance).to receive(:resolve_fact).with('boolean').once.and_return([boolean_fact])
 
-      it 'when called twice resolved once' do
-        mock_fact_manager(:resolve_fact, [os_fact])
-        expect(fact_collection_spy).to receive(:value).with('os.name').once.and_return('Ubuntu')
-        Facter.value('os.name')
-        Facter.value('os.name')
+        Facter.value('boolean')
+        Facter.value('boolean')
       end
     end
 
     context 'when custom fact with nil value' do
-      let(:type) { :custom }
-      let(:fact_value) { nil }
-      let(:fact_user_query) { '' }
-
       it 'returns the custom fact' do
-        mock_fact_manager(:resolve_fact, [os_fact])
-        allow(fact_collection_spy).to receive(:value).with('os.name').and_return('Ubuntu')
+        stub_one_fact(Facter::ResolvedFact.new('nil_fact', nil, :custom, ''))
 
-        expect(Facter.value('os.name')).to eq('Ubuntu')
+        expect(Facter.value('nil_fact')).to eq(nil)
       end
     end
   end
 
   describe '#fact' do
     it 'downcases the user query' do
-      mock_fact_manager(:resolve_fact, [os_fact])
-      allow(fact_collection_spy).to receive(:value).with('os.name').and_return('Ubuntu')
+      stub_one_fact(os_fact)
 
-      expect(Facter.fact('OS.NAME')).to be_instance_of(Facter::ResolvedFact).and have_attributes(value: 'Ubuntu')
+      expect(Facter.fact('OS.NAME')).to be_instance_of(Facter::ResolvedFact).and have_attributes(value: 'ubuntu')
     end
 
     it 'returns a fact' do
-      mock_fact_manager(:resolve_fact, [os_fact])
-      allow(fact_collection_spy).to receive(:value).with('os.name').and_return('Ubuntu')
+      stub_one_fact(os_fact)
 
-      expect(Facter.fact('os.name')).to be_instance_of(Facter::ResolvedFact).and have_attributes(value: 'Ubuntu')
+      expect(Facter.fact('os.name')).to be_instance_of(Facter::ResolvedFact).and have_attributes(value: 'ubuntu')
     end
 
     it 'can be interpolated' do
-      mock_fact_manager(:resolve_fact, [os_fact])
-      allow(fact_collection_spy).to receive(:value).with('os.name').and_return('Ubuntu')
+      stub_one_fact(os_fact)
 
-      expect("#{Facter.fact('os.name')}-test").to eq('Ubuntu-test')
+      expect("#{Facter.fact('os.name')}-test").to eq('ubuntu-test')
     end
 
-    it 'returns no value' do
-      mock_fact_manager(:resolve_fact, [])
-      allow(fact_collection_spy).to receive(:value).with('os.name').and_raise(key_error)
+    it 'returns nil' do
+      stub_no_fact
 
       expect(Facter.fact('os.name')).to be_nil
     end
 
-    context 'when there is a resolved fact with type nil' do
-      before do
-        allow(fact_manager_spy).to receive(:resolve_fact).and_return([missing_fact])
-        allow(fact_collection_spy).to receive(:build_fact_collection!).with([]).and_return(empty_fact_collection)
-        allow(fact_collection_spy).to receive(:value).and_raise(KeyError)
-      end
-
-      it 'is rejected' do
-        Facter.fact('missing_fact')
-
-        expect(fact_collection_spy).to have_received(:build_fact_collection!).with([])
-      end
-
+    context 'when there is a resolved fact with type :nil' do
       it 'returns nil' do
+        stub_one_fact(missing_fact)
+
         expect(Facter.fact('missing_fact')).to be_nil
       end
     end
 
-    context 'when custom fact with nill value' do
-      let(:type) { :custom }
-      let(:fact_value) { nil }
-      let(:fact_user_query) { '' }
-
+    context 'when custom fact with nil value' do
       it 'returns the custom fact' do
-        mock_fact_manager(:resolve_fact, [os_fact])
-        allow(fact_collection_spy).to receive(:value).with('os.name').and_return('Ubuntu')
+        custom_fact = Facter::ResolvedFact.new('custom', 'yes', :custom, '')
+        stub_one_fact(custom_fact)
 
-        expect(Facter.fact('os.name'))
+        expect(Facter.fact('custom'))
           .to be_instance_of(Facter::ResolvedFact)
-          .and have_attributes(value: 'Ubuntu')
+          .and have_attributes(value: 'yes')
       end
     end
   end
 
   describe '#[]' do
     it 'returns a fact' do
-      mock_fact_manager(:resolve_fact, [os_fact])
-      allow(fact_collection_spy).to receive(:value).with('os.name').and_return('Ubuntu')
+      stub_one_fact(os_fact)
 
-      expect(Facter['os.name']).to be_instance_of(Facter::ResolvedFact).and(having_attributes(value: 'Ubuntu'))
+      expect(Facter['os.name']).to be_instance_of(Facter::ResolvedFact).and(having_attributes(value: 'ubuntu'))
     end
 
-    it 'return no value' do
-      mock_fact_manager(:resolve_fact, [])
-      allow(fact_collection_spy).to receive(:value).with('os.name').and_raise(key_error)
+    it 'return nil' do
+      stub_no_fact
 
       expect(Facter['os.name']).to be_nil
     end
 
-    context 'when custom fact with nill value' do
-      let(:type) { :custom }
-      let(:fact_value) { nil }
-      let(:fact_user_query) { '' }
-
+    context 'when custom fact with nil value' do
       it 'returns the custom fact' do
-        mock_fact_manager(:resolve_fact, [os_fact])
-        allow(fact_collection_spy).to receive(:value).with('os.name').and_return('Ubuntu')
+        stub_one_fact(Facter::ResolvedFact.new('custom', 'yes', :custom, ''))
 
-        expect(Facter['os.name'])
+        expect(Facter['custom'])
           .to be_instance_of(Facter::ResolvedFact)
-          .and have_attributes(value: 'Ubuntu')
+          .and have_attributes(value: 'yes')
       end
     end
   end
 
   describe '#core_value' do
     it 'searched in core facts and returns a value' do
-      mock_fact_manager(:resolve_core, [os_fact])
-      mock_collection(:dig, 'Ubuntu')
+      allow(Facter::FactManager.instance).to receive(:resolve_core).with(['os.name']).and_return([os_fact])
 
-      expect(Facter.core_value('os.name')).to eq('Ubuntu')
+      expect(Facter.core_value('os.name')).to eq('ubuntu')
     end
 
-    it 'searches os core fact and returns no value' do
-      mock_fact_manager(:resolve_core, [])
-      mock_collection(:dig, nil)
+    it 'searches os core fact and returns nil' do
+      allow(Facter::FactManager.instance).to receive(:resolve_core).with(['os.name']).and_return([])
 
       expect(Facter.core_value('os.name')).to be nil
     end
@@ -795,7 +720,7 @@ describe Facter do
       allow(Facter).to receive(:to_hash).and_return({ 'up_time' => 235, 'timezone' => 'EEST', 'virtual' => 'physical' })
     end
 
-    it 'returns the resolved fact names' do
+    it 'sorts the resolved fact names' do
       result = Facter.list
 
       expect(result).to eq(%w[timezone up_time virtual])
@@ -878,12 +803,16 @@ describe Facter do
   end
 
   describe '#each' do
-    it 'returns one resolved fact' do
-      mock_fact_manager(:resolve_facts, [os_fact])
+    it 'enumerates no facts' do
+      stub_facts([])
 
-      result = {}
-      Facter.each { |name, value| result[name] = value }
-      expect(result).to eq({ fact_name => fact_value })
+      expect(Facter.enum_for(:each).to_h).to eq({})
+    end
+
+    it 'enumerates one fact' do
+      stub_facts([os_fact])
+
+      expect(Facter.enum_for(:each).to_h).to eq('os.name' => 'ubuntu')
     end
   end
 end
