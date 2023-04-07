@@ -50,7 +50,7 @@ EOM
         first_cat_output = agent.cat(first_cached_fact_file)
         assert_match(/#{cached_fact_name}/, first_cat_output.strip, "Expected cached fact file to contain fact information")
         second_cat_output = agent.cat(second_cached_fact_file)
-        assert_not_match(/#{cached_fact_name}/, second_cat_output.strip, "Expected cached fact file to not contain fact information")
+        refute_match(/#{cached_fact_name}/, second_cat_output.strip, "Expected cached fact file to not contain fact information")
       end
     end
   end
