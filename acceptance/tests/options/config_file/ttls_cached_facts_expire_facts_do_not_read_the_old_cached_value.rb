@@ -50,7 +50,7 @@ EOM
         agent.modified_at(cached_fact_file, '198001010000')
 
         on(agent, facter("#{cached_factname}")) do |facter_output|
-          assert_not_match(/#{cached_fact_value}/, facter_output.stdout, "Expected fact to not match the cached fact file")
+          refute_match(/#{cached_fact_value}/, facter_output.stdout, "Expected fact to not match the cached fact file")
         end
       end
     end
