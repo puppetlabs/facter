@@ -18,7 +18,7 @@ module Facter
 
             file_content = Facter::Core::Execution.execute('/usr/sbin/sysdef', logger: log)
             files = file_content.split("\n").map do |line|
-              line.split('/').last if line =~ /^fs\.*/
+              line.split('/').last if /^fs\.*/.match?(line)
             end
 
             @fact_list[:file_systems] = files.compact.sort.join(',')

@@ -153,7 +153,7 @@ class Installer
     # /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin
     # which is not generally where people expect executables to be installed
     # These settings are appropriate defaults for all OS X versions.
-    RbConfig::CONFIG['bindir'] = '/usr/bin' if RUBY_PLATFORM =~ /^universal-darwin[\d\.]+$/
+    RbConfig::CONFIG['bindir'] = '/usr/bin' if RUBY_PLATFORM.match?(/^universal-darwin[\d\.]+$/)
 
     # if InstallOptions.configdir
     #   configdir = InstallOptions.configdir
@@ -176,7 +176,7 @@ class Installer
         sitelibdir = $LOAD_PATH.find { |x| x =~ /site_ruby/ }
         if sitelibdir.nil?
           sitelibdir = File.join(libdir, 'site_ruby')
-        elsif sitelibdir !~ Regexp.quote(version)
+        elsif !sitelibdir&.match?(Regexp.quote(version))
           sitelibdir = File.join(sitelibdir, version)
         end
       end
@@ -232,7 +232,7 @@ class Installer
       File.open(tmp_file.path, 'w') do |op|
         op.puts "#!#{ruby}"
         contents = ip.readlines
-        contents.shift if contents[0] =~ /^#!/
+        contents.shift if /^#!/.match?(contents[0])
         op.write contents.join
       end
     end

@@ -13,7 +13,7 @@ module Facter
             description = input[:description]
             kernel_version = input[:kernel_version]
 
-            if version =~ /10.0/
+            if /10.0/.match?(version)
               check_version_10_11(consumerrel, kernel_version)
             else
               check_version_6(version, consumerrel) || check_version_5(version, consumerrel, description) || version
@@ -47,7 +47,7 @@ module Facter
           end
 
           def check_version_5(version, consumerrel, description)
-            return unless version =~ /5.2/
+            return unless /5.2/.match?(version)
             return 'XP' if consumerrel
 
             description == 'R2' ? '2003 R2' : '2003'

@@ -25,7 +25,7 @@ module Facter
 
             result.each_line do |line|
               @fact_list[:system] = populate_system(line, pagesize) if line.include?('memory')
-              @fact_list[:swap] = populate_swap(line, pagesize) if line =~ /pg\sspace/
+              @fact_list[:swap] = populate_swap(line, pagesize) if /pg\sspace/.match?(line)
             end
 
             @fact_list[fact_name]

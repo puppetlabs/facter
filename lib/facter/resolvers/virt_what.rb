@@ -28,9 +28,9 @@ module Facter
           return unless xen_info
 
           xen_info = xen_info.to_s
-          return 'xenu' if xen_info =~ /xen-domu/
-          return 'xenhvm' if xen_info =~ /xen-hvm/
-          return 'xen0' if xen_info =~ /xen-dom0/
+          return 'xenu' if /xen-domu/.match?(xen_info)
+          return 'xenhvm' if /xen-hvm/.match?(xen_info)
+          return 'xen0' if /xen-dom0/.match?(xen_info)
         end
 
         def determine_other(output)
@@ -38,8 +38,8 @@ module Facter
           other_vm = values.first
           return unless other_vm
 
-          return 'zlinux' if other_vm =~ /ibm_systemz/
-          return retrieve_vserver if other_vm =~ /linux_vserver/
+          return 'zlinux' if /ibm_systemz/.match?(other_vm)
+          return retrieve_vserver if /linux_vserver/.match?(other_vm)
           return (values - ['redhat']).first if values.include?('redhat')
 
           other_vm
@@ -53,7 +53,7 @@ module Facter
             parts = line.split("\s")
             next unless parts.size.equal?(2)
 
-            next unless parts[0] =~ /^s_context:|^VxID:/
+            next unless /^s_context:|^VxID:/.match?(parts[0])
             return @fact_list[:vserver] = 'vserver_host' if parts[1] == '0'
 
             return @fact_list[:vserver] = 'vserver'

@@ -29,7 +29,7 @@ module Facter
             parts = line.split("\s")
             next unless parts.size.equal?(2)
 
-            next unless /^envID:/ =~ parts[0]
+            next unless /^envID:/.match?(parts[0])
 
             @fact_list[:id] = parts[1]
 

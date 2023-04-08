@@ -18,7 +18,7 @@ module Facter
             return if file_content.empty?
 
             file_content = file_content.map do |line|
-              next if line =~ /#|%/ # skip lines that are comments or defaultvfs line
+              next if /#|%/.match?(line) # skip lines that are comments or defaultvfs line
 
               line.split(' ').first
             end

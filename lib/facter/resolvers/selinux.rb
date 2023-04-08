@@ -26,7 +26,7 @@ module Facter
           mountpoint = ''
 
           output.each_line do |line|
-            next unless line =~ /selinuxfs/
+            next unless /selinuxfs/.match?(line)
 
             mountpoint = line.split("\s")[1]
             break
@@ -54,8 +54,8 @@ module Facter
           file_lines = Facter::Util::FileHelper.safe_readlines('/etc/selinux/config')
 
           file_lines.map do |line|
-            @fact_list[:config_mode] = line.split('=').last.strip if line =~ /^SELINUX=/
-            @fact_list[:config_policy] = line.split('=').last.strip if line =~ /^SELINUXTYPE=/
+            @fact_list[:config_mode] = line.split('=').last.strip if /^SELINUX=/.match?(line)
+            @fact_list[:config_policy] = line.split('=').last.strip if /^SELINUXTYPE=/.match?(line)
           end
 
           !file_lines.empty? ? true : false

@@ -45,7 +45,7 @@ module Facter
 
               lease_files.select do |file|
                 content = Facter::Util::FileHelper.safe_read("#{dir}#{file}", nil)
-                next unless content =~ /interface.*#{interface_name}/
+                next unless /interface.*#{interface_name}/.match?(content)
 
                 dhcp = content.match(/dhcp-server-identifier ([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/)
                 return dhcp[1] if dhcp

@@ -10,7 +10,7 @@ module Sys
         # it the second time will make FFI log a warning message.
         remove_instance_variable(:@layout) if @layout
 
-        if RbConfig::CONFIG['host_os'] =~ /darwin|osx|mach/i
+        if /darwin|osx|mach/i.match?(RbConfig::CONFIG['host_os'])
           layout(
             :f_bsize, :ulong,
             :f_frsize, :ulong,
@@ -24,7 +24,7 @@ module Sys
             :f_flag, :ulong,
             :f_namemax, :ulong
           )
-        elsif RbConfig::CONFIG['host'] =~ /bsd/i
+        elsif /bsd/i.match?(RbConfig::CONFIG['host'])
           layout(
             :f_bavail, :uint64,
             :f_bfree, :uint64,
@@ -38,7 +38,7 @@ module Sys
             :f_fsid, :ulong,
             :f_namemax, :ulong
           )
-        elsif RbConfig::CONFIG['host'] =~ /sunos|solaris/i
+        elsif /sunos|solaris/i.match?(RbConfig::CONFIG['host'])
           layout(
             :f_bsize, :ulong,
             :f_frsize, :ulong,
@@ -55,7 +55,7 @@ module Sys
             :f_fstr, [:char, 32],
             :f_filler, [:ulong, 16]
           )
-        elsif RbConfig::CONFIG['host'] =~ /i686/i
+        elsif /i686/i.match?(RbConfig::CONFIG['host'])
           layout(
             :f_bsize, :ulong,
             :f_frsize, :ulong,
