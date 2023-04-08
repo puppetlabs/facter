@@ -64,7 +64,7 @@ module Facter
     def get_fact(fact_name)
       return @facts_ttls[fact_name] if @facts_ttls[fact_name]
 
-      result = @facts_ttls.select { |name, fact| break fact if fact_name =~ /^#{name}\..*/ }
+      result = @facts_ttls.select { |name, fact| break fact if /^#{name}\..*/.match?(fact_name) }
       return nil if result == {}
 
       result

@@ -63,13 +63,13 @@ module Facter
         def process_version_id
           return unless @fact_list[:version_id]
 
-          @fact_list[:version_id] = "#{@fact_list[:version_id]}.0" unless @fact_list[:version_id] =~ /\./
+          @fact_list[:version_id] = "#{@fact_list[:version_id]}.0" unless /\./.match?(@fact_list[:version_id])
         end
 
         def process_id
           return unless @fact_list[:id]
 
-          @fact_list[:id] = 'opensuse' if @fact_list[:id] =~ /opensuse/i
+          @fact_list[:id] = 'opensuse' if /opensuse/i.match?(@fact_list[:id])
         end
 
         def process_name

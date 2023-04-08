@@ -52,9 +52,9 @@ module Facter
     end
 
     def needs_quote?(value)
-      return false if value =~ /true|false/
+      return false if /true|false/.match?(value)
       return false if value[/^[0-9]+$/]
-      return true if value =~ /y|Y|yes|Yes|YES|n|N|no|No|NO|True|TRUE|False|FALSE|on|On|ON|off|Off|OFF|:/
+      return true if /y|Y|yes|Yes|YES|n|N|no|No|NO|True|TRUE|False|FALSE|on|On|ON|off|Off|OFF|:/.match?(value)
       return false if value[/[a-zA-Z]/]
       return false if value[/[0-9]+\.[0-9]+/]
 

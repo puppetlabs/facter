@@ -51,7 +51,7 @@ module LegacyFacter
       # @param value [String]
       # @return [void]
 
-      if RUBY_VERSION =~ /^1\.8/
+      if RUBY_VERSION.match?(/^1\.8/)
         require 'iconv'
 
         def normalize_string(value)

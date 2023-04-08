@@ -50,8 +50,8 @@ module Facter
             }
             mount = info_hash['MOUNT POINT']
             label = info_hash['LABEL']
-            part_info[:mount] = mount unless %r{N/A} =~ mount
-            part_info[:label] = label.strip unless /None/ =~ label
+            part_info[:mount] = mount unless %r{N/A}.match?(mount)
+            part_info[:label] = label.strip unless /None/.match?(label)
             part_info
           end
 

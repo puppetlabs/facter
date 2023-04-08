@@ -42,9 +42,9 @@ module Facter
             manufacturer = comp.Manufacturer
             if comp.Model =~ /^Virtual Machine/ && manufacturer =~ /^Microsoft/
               'hyperv'
-            elsif manufacturer =~ /^Xen/
+            elsif /^Xen/.match?(manufacturer)
               'xen'
-            elsif manufacturer =~ /^Amazon EC2/
+            elsif /^Amazon EC2/.match?(manufacturer)
               'kvm'
             else
               'physical'

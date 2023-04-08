@@ -45,7 +45,7 @@ module Facter
           return if output.empty?
 
           output.each_line do |line|
-            next if line =~ /Domain-0|Name/
+            next if /Domain-0|Name/.match?(line)
 
             domain = line.match(/^([^\s]*)\s/)
             domain = domain&.captures&.first

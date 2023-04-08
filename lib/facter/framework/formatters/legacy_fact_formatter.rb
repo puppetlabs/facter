@@ -95,7 +95,7 @@ module Facter
       # quotation marks that come after \ are not removed
       @log.debug('Remove unnecessary comma and quotation marks on root facts')
       output.split("\n")
-            .map! { |line| line =~ /^[\s]+/ ? line : line.gsub(/,$|(?<!\\)\"/, '').gsub('\\"', '"') }.join("\n")
+            .map! { |line| /^[\s]+/.match?(line) ? line : line.gsub(/,$|(?<!\\)\"/, '').gsub('\\"', '"') }.join("\n")
     end
   end
 end

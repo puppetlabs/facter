@@ -27,9 +27,9 @@ module Facts
 
           return { google: true } if manufacturer == 'Google'
 
-          return { openstack: true } if Facter::Resolvers::DMIComputerSystem.resolve(:name) =~ /^OpenStack/
+          return { openstack: true } if /^OpenStack/.match?(Facter::Resolvers::DMIComputerSystem.resolve(:name))
 
-          return { amazon: true } if manufacturer =~ /^Amazon/
+          return { amazon: true } if /^Amazon/.match?(manufacturer)
         end
       end
     end

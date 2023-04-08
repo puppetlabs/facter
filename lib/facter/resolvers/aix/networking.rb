@@ -43,7 +43,7 @@ module Facter
           def populate_with_mtu_and_mac!(interfaces)
             output = Facter::Core::Execution.execute('netstat -in', logger: log)
             output.each_line do |line|
-              next if line =~ /Name\s/
+              next if /Name\s/.match?(line)
 
               info = line.split("\s")
               interface_name = info[0]

@@ -44,7 +44,7 @@ module Facter
 
           return unless exe && (expanded = which(exe))
 
-          expanded = "'#{expanded}'" if expanded =~ /\s/
+          expanded = "'#{expanded}'" if /\s/.match?(expanded)
           expanded << " #{args}" if args
 
           expanded

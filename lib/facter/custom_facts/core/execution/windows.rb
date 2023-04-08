@@ -11,7 +11,7 @@ module Facter
         def which(bin)
           # `echo` is allowed for facter 3.x compatibility, otherwise
           # all commands much be found on the PATH or absolute.
-          return bin if /^echo$/i =~ bin
+          return bin if /^echo$/i.match?(bin)
 
           if absolute_path?(bin)
             return bin if File.executable?(bin)
@@ -56,7 +56,7 @@ module Facter
 
           return unless exe && (expanded = which(exe))
 
-          expanded = "\"#{expanded}\"" if expanded =~ /\s+/
+          expanded = "\"#{expanded}\"" if /\s+/.match?(expanded)
           expanded << " #{args}" if args
 
           expanded
