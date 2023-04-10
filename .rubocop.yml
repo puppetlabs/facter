@@ -127,6 +127,10 @@ Naming/FileName:
     - 'lib/facter.rb'
     - 'agent/lib/facter-ng.rb'
 
+Performance/RegexpMatch:
+  Exclude:
+    - 'install.rb'
+
 RSpec/ExampleLength:
   Enabled: false
 
