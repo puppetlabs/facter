@@ -106,6 +106,7 @@ module Facter
             raise Facter::Core::Execution::ExecutionFailure.new, message
           end
 
+          out.force_encoding(Encoding.default_external) unless out.valid_encoding?
           [out.strip, stderr]
         end
 
