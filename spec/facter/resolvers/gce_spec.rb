@@ -20,6 +20,11 @@ describe Facter::Resolvers::Gce do
       {
         'instance' => {
           'attributes' => {
+            # resolver transforms key1\nkey2 into array of keys
+            'sshKeys' => [
+              'jill_doe:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDA9D8Op48TtEiDmb+Gtna3Bs9B google-ssh {"userName":"jill.doe@puppet.com","expireOn":"2020-08-13T12:17:19+0000"}',
+              'jacob_doe:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDA9D8Op48TtEiDmb+Gtna3Bs9B google-ssh {"userName":"jacob.doe@puppet.com","expireOn":"2020-08-13T12:17:19+0000"}'
+            ]
           },
           'cpuPlatform' => 'Intel Broadwell',
           'description' => '',
@@ -122,8 +127,13 @@ describe Facter::Resolvers::Gce do
         },
         'project' => {
           'attributes' => {
+            # resolver transforms key1\nkey2 into array of keys
             'ssh-keys' => 'john_doe:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDA9D8Op48TtEiDmb+Gtna3Bs9B' \
-              " google-ssh {\"userName\":\"john.doe@puppet.com\",\"expireOn\":\"2020-08-13T12:17:19+0000\"}\n"
+              " google-ssh {\"userName\":\"john.doe@puppet.com\",\"expireOn\":\"2020-08-13T12:17:19+0000\"}\n",
+            'sshKeys' => [
+              'jill_doe:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDA9D8Op48TtEiDmb+Gtna3Bs9B google-ssh {"userName":"jill.doe@puppet.com","expireOn":"2020-08-13T12:17:19+0000"}',
+              'jacob_doe:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDA9D8Op48TtEiDmb+Gtna3Bs9B google-ssh {"userName":"jacob.doe@puppet.com","expireOn":"2020-08-13T12:17:19+0000"}'
+            ]
           },
           'numericProjectId' => 728_618_928_092,
           'projectId' => 'facter-performance-history'
