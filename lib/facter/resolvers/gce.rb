@@ -40,11 +40,13 @@ module Facter
           return if instance_data.nil? || instance_data.empty?
 
           # See https://cloud.google.com/compute/docs/metadata for information about these values
-          keys = gce_data.dig('project', 'attributes', 'sshKeys')
-          gce_data['project']['attributes']['sshKeys'] = keys.strip.split("\n") if keys
+          %w[sshKeys ssh-keys].each do |name|
+            keys = gce_data.dig('project', 'attributes', name)
+            gce_data['project']['attributes'][name] = keys.strip.split("\n") if keys
 
-          keys = instance_data.dig('attributes', 'sshKeys')
-          instance_data['attributes']['sshKeys'] = keys.strip.split("\n") if keys
+            keys = instance_data.dig('attributes', name)
+            instance_data['attributes'][name] = keys.strip.split("\n") if keys
+          end
 
           %w[image machineType zone].each do |key|
             instance_data[key] = instance_data[key].split('/').last if instance_data[key]
