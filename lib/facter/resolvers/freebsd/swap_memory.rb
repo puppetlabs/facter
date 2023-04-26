@@ -13,7 +13,7 @@ module Facter
             @fact_list.fetch(fact_name) { read_swap_memory(fact_name) }
           end
 
-          def read_swap_memory(fact_name) # rubocop:disable Metrics/AbcSize
+          def read_swap_memory(fact_name)
             output = Facter::Core::Execution.execute('swapinfo -k', logger: log)
             data = output.split("\n")[1..-1].map { |line| line.split(/\s+/) }
 

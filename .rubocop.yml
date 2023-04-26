@@ -13,6 +13,8 @@ require:
 
 Layout/LineLength:
   Max: 120
+  Exclude:
+    - spec/facter/resolvers/gce_spec.rb
 
 Lint/RaiseException:
   Enabled: true
@@ -51,25 +53,7 @@ Naming/ClassAndModuleCamelCase:
     - 'spec/mocks/**/*'
 
 Metrics/AbcSize:
-  Max: 16
-  Exclude:
-    - 'spec/custom_facts/util/parser_spec.rb'
-    - 'spec/custom_facts/core/logging_spec.rb'
-    - 'lib/facter/custom_facts/util/values.rb'
-    - 'lib/facter/custom_facts/util/loader.rb'
-    - 'lib/facter/custom_facts/util/confine.rb'
-    - 'lib/facter/custom_facts/util/confine.rb'
-    - 'lib/facter/custom_facts/core/execution/windows.rb'
-    - 'lib/facter/custom_facts/core/execution/base.rb'
-    - 'lib/facter/custom_facts/core/resolvable.rb'
-    - 'lib/facter/resolvers/bsd/ffi/ffi_helper.rb'
-    - 'install.rb'
-    - 'scripts/generate_changelog.rb'
-    - 'lib/facter/resolvers/aix/ffi/ffi_helper.rb'
-    - 'lib/facter/custom_facts/core/execution/popen3.rb'
-    - 'lib/facter.rb'
-    - 'lib/facter/framework/parsers/query_parser.rb'
-    - 'lib/facter/framework/core/fact_manager.rb'
+  Enabled: false
 
 Metrics/PerceivedComplexity:
   Exclude:

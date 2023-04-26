@@ -3,7 +3,7 @@
 module Facter
   module Util
     module ApiDebugger
-      def self.prepended(receiver) # rubocop:disable Metrics/AbcSize
+      def self.prepended(receiver)
         exclude, print_caller = parse_options(ENV['API_DEBUG'])
 
         receiver_methods = receiver.instance_methods - Object.methods

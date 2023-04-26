@@ -36,7 +36,7 @@ module Facter
             raw_hostname.read_string
           end
 
-          def self.getffiaddrinfo(hostname) # rubocop:disable  Metrics/AbcSize
+          def self.getffiaddrinfo(hostname)
             ret = FFI::MemoryPointer.new(:pointer)
 
             hints = Facter::Util::Resolvers::Ffi::AddrInfo.new

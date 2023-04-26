@@ -13,7 +13,7 @@ module Facter
             @fact_list.fetch(fact_name) { read_swap_memory(fact_name) }
           end
 
-          def read_swap_memory(fact_name) # rubocop:disable Metrics/AbcSize
+          def read_swap_memory(fact_name)
             output = Facter::Core::Execution.execute('sysctl -n vm.swapusage', logger: log)
             data = output.match(/^total = ([\d.]+)M  used = ([\d.]+)M  free = ([\d.]+)M  (\(encrypted\))$/)
 
