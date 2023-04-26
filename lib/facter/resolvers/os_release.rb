@@ -49,7 +49,7 @@ module Facter
 
           pairs = []
           content.each do |line|
-            pairs << line.strip.delete('"').split('=', 2)
+            pairs << line.strip.delete('"').split('=', 2) unless line.start_with?('#')
           end
 
           pairs
