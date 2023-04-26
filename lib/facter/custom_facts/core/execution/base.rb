@@ -98,7 +98,7 @@ module Facter
             message = "Failed while executing '#{command}': #{e.message}"
             if logger
               @log.debug(message)
-              return ''
+              return +''
             end
 
             return on_fail unless on_fail == :raise

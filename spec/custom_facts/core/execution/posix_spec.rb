@@ -126,7 +126,6 @@ describe Facter::Core::Execution::Posix, unless: LegacyFacter::Util::Config.wind
     end
 
     it 'returns a mutable stdout string' do
-      pending
       expect(posix_executor.execute_command('/bin/notgoingtofindit', nil, logger)).not_to be_frozen
     end
   end
