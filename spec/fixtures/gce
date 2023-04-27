@@ -1,7 +1,10 @@
 {
 "instance":
     {
-        "attributes":{},
+        "attributes":{
+            "ssh-keys":"john_doe:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDA9D8Op48TtEiDmb+Gtna3Bs9B google-ssh {\"userName\":\"john.doe@puppet.com\",\"expireOn\":\"2020-08-13T12:17:19+0000\"}\njane_doe:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDA9D8Op48TtEiDmb+Gtna3Bs9B google-ssh {\"userName\":\"jane.doe@puppet.com\",\"expireOn\":\"2020-08-13T12:17:19+0000\"}\n",
+            "sshKeys":"jill_doe:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDA9D8Op48TtEiDmb+Gtna3Bs9B google-ssh {\"userName\":\"jill.doe@puppet.com\",\"expireOn\":\"2020-08-13T12:17:19+0000\"}\njacob_doe:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDA9D8Op48TtEiDmb+Gtna3Bs9B google-ssh {\"userName\":\"jacob.doe@puppet.com\",\"expireOn\":\"2020-08-13T12:17:19+0000\"}"
+        },
         "cpuPlatform":"Intel Broadwell",
         "description":"",
         "disks":[{"deviceName":"instance-3","index":0,"interface":"SCSI","mode":"READ_WRITE","type":"PERSISTENT"}],
@@ -63,7 +66,8 @@
     {
         "attributes":
         {
-            "ssh-keys":"john_doe:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDA9D8Op48TtEiDmb+Gtna3Bs9B google-ssh {\"userName\":\"john.doe@puppet.com\",\"expireOn\":\"2020-08-13T12:17:19+0000\"}\n"
+            "ssh-keys":"john_doe:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDA9D8Op48TtEiDmb+Gtna3Bs9B google-ssh {\"userName\":\"john.doe@puppet.com\",\"expireOn\":\"2020-08-13T12:17:19+0000\"}\njane_doe:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDA9D8Op48TtEiDmb+Gtna3Bs9B google-ssh {\"userName\":\"jane.doe@puppet.com\",\"expireOn\":\"2020-08-13T12:17:19+0000\"}\n",
+            "sshKeys":"jill_doe:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDA9D8Op48TtEiDmb+Gtna3Bs9B google-ssh {\"userName\":\"jill.doe@puppet.com\",\"expireOn\":\"2020-08-13T12:17:19+0000\"}\njacob_doe:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDA9D8Op48TtEiDmb+Gtna3Bs9B google-ssh {\"userName\":\"jacob.doe@puppet.com\",\"expireOn\":\"2020-08-13T12:17:19+0000\"}"
         },
         "numericProjectId":728618928092,
         "projectId":"facter-performance-history"
