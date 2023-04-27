@@ -55,8 +55,15 @@ module Facter
       no_custom_facts = !options[:custom_facts]
       puppet = options[:puppet]
       custom_dir = options[:custom_dir].nil? ? false : options[:custom_dir].any?
-      external_dir = options[:external_dir].nil? ? false : options[:external_dir].any?
-
+      default_external_dir = Facter::OptionStore.default_external_dir
+      # --puppet/-p option adds an external directory and is not an explicitly
+      # set external_dir from cli or config file
+      default_external_dir += [Puppet[:pluginfactdest]] if puppet && const_defined?('Puppet')
+      external_dir = if options[:external_dir].nil? || options[:external_dir].none?
+                       false
+                     else
+                       options[:external_dir] != default_external_dir
+                     end
       [
         { 'no-ruby' => no_ruby, 'custom-dir' => custom_dir },
         { 'no-external-facts' => !options[:external_facts], 'external-dir' => external_dir },

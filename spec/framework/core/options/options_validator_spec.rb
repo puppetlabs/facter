@@ -8,7 +8,7 @@ describe Facter::OptionsValidator do
       allow(Facter::Log).to receive(:new).and_return(logger)
     end
 
-    context 'when options are invalid pairs' do
+    context 'when CLI options are invalid pairs' do
       let(:options) { ['--puppet', '--no-ruby'] }
       let(:error_code) { 1 }
 
@@ -18,6 +18,17 @@ describe Facter::OptionsValidator do
         allow(Facter::Cli).to receive(:start).with(['--help'])
 
         expect { Facter::OptionsValidator.validate(options) }.to raise_error(
+          an_instance_of(SystemExit)
+              .and(having_attributes(status: error_code))
+        )
+      end
+    end
+
+    context 'when config file options are invalid pairs' do
+      let(:error_code) { 1 }
+
+      it 'writes message and exit' do
+        expect { Facter::Options.init_from_cli({ config: 'spec/fixtures/invalid_option_pairs.conf' }) }.to raise_error(
           an_instance_of(SystemExit)
               .and(having_attributes(status: error_code))
         )
@@ -45,6 +56,20 @@ describe Facter::OptionsValidator do
 
       it 'writes message and exit' do
         expect { Facter::OptionsValidator.validate(options) }.not_to raise_error
+      end
+    end
+
+    context 'when parsing resolved options' do
+      # rubocop:disable Style/BlockDelimiters
+      let(:options) {
+        { puppet: true, external_facts: false, external_dir: Facter::OptionStore.default_external_dir + [''],
+          ruby: true, custom_facts: true }
+      }
+      # rubocop:enable Style/BlockDelimiters
+
+      it 'writes message and exit' do
+        stub_const('Puppet', { pluginfactdest: '' })
+        expect { Facter::OptionsValidator.validate_configs(options) }.not_to raise_error
       end
     end
   end
