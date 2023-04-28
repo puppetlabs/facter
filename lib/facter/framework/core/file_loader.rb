@@ -642,6 +642,10 @@ os_hierarchy.each do |os|
 
   when 'ol'
     require_relative '../../facts/ol/os/release.rb'
+    require_relative '../../facts/ol/lsbdistdescription.rb'
+    require_relative '../../facts/ol/lsbdistid.rb'
+    require_relative '../../facts/ol/os/distro/description.rb'
+    require_relative '../../facts/ol/os/distro/id.rb'
 
   when 'openwrt'
     require_relative '../../facts/openwrt/os/release.rb'
