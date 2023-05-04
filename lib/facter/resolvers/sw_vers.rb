@@ -5,6 +5,7 @@ module Facter
     class SwVers < BaseResolver
       # :productname
       # :productversion
+      # :productversionextra
       # :buildversion
 
       init_resolver
