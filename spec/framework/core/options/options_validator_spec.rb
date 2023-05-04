@@ -32,6 +32,9 @@ describe Facter::OptionsValidator do
           an_instance_of(SystemExit)
               .and(having_attributes(status: error_code))
         )
+        Facter.reset
+        Facter.clear
+        Facter::OptionStore.reset
       end
     end
 
