@@ -83,6 +83,8 @@ RSpec.configure do |config|
 
   config.after do
     Facter::OptionStore.reset
+    Facter::ConfigReader.clear
+    Facter::ConfigFileOptions.clear
   end
 
   # This will cleanup any files that were created with tmpdir or tmpfile

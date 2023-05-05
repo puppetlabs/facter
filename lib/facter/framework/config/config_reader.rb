@@ -38,6 +38,10 @@ module Facter
         @conf = {}
       end
 
+      def clear
+        @conf = {}
+      end
+
       private
 
       def log

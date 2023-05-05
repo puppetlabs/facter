@@ -28,10 +28,14 @@ describe Facter::OptionsValidator do
       let(:error_code) { 1 }
 
       it 'writes message and exit' do
-        expect { Facter::Options.init_from_cli({ config: 'spec/fixtures/invalid_option_pairs.conf' }) }.to raise_error(
-          an_instance_of(SystemExit)
+        expect do
+          expect do
+            Facter::Options.init_from_cli(config: 'spec/fixtures/invalid_option_pairs.conf')
+          end.to raise_error(
+            an_instance_of(SystemExit)
               .and(having_attributes(status: error_code))
-        )
+          )
+        end.to output(/Usage/).to_stdout
       end
     end
 
