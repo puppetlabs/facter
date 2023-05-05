@@ -16,6 +16,10 @@ module Facter
         @options || {}
       end
 
+      def clear
+        @options = {}
+      end
+
       private
 
       def augment_structured_facts(global_conf)
