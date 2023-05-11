@@ -1,4 +1,4 @@
-## Facter release notes are now provided as part of the [official Puppet documentation](https://puppet.com/docs/puppet/7/release_notes_facter.html) and are no longer tracked in this file.
+## Facter release notes are now provided as part of the [official Puppet documentation](https://www.puppet.com/docs/puppet/8/release_notes_facter.html) and are no longer tracked in this file.
 
 # Previous versions
 
