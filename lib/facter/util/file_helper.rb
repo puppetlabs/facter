@@ -15,12 +15,14 @@ module Facter
           default_return
         end
 
-        def safe_readlines(path, default_return = [])
-          return File.readlines(path, encoding: Encoding::UTF_8) if File.readable?(path)
+        # rubocop:disable Style/SpecialGlobalVars
+        def safe_readlines(path, default_return = [], sep = $/, chomp: false)
+          return File.readlines(path, sep, chomp: chomp, encoding: Encoding::UTF_8) if File.readable?(path)
 
           log_failed_to_read(path)
           default_return
         end
+        # rubocop:enable Style/SpecialGlobalVars
 
         def dir_children(path)
           children = if RUBY_VERSION.to_f < 2.5
