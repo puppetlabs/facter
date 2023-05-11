@@ -372,6 +372,7 @@ os_hierarchy.each do |os|
   when 'linux'
     require_relative '../../util/linux/dhcp'
     require_relative '../../util/linux/if_inet6'
+    require_relative '../../util/linux/proc'
     require_relative '../../util/linux/routing_table'
     require_relative '../../util/linux/socket_parser'
 
