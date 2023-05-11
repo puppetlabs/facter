@@ -21,7 +21,19 @@ module Facter
     def load(user_query, options)
       @internal_facts = load_internal_facts(user_query, options)
       @custom_facts = load_custom_facts(options)
-      @external_facts = load_external_facts(options)
+      if ENV['INSIDE_FACTER']
+        @log.debug('INSIDE_FACTER env var detected, not loading external facts to prevent recursion')
+        if options[:external_facts]
+          @log.warn('Recursion detected, skipping external facts. Silence this warning by adding --no-external-facts')
+        end
+      else
+        begin
+          ENV['INSIDE_FACTER'] = 'true'
+          @external_facts = load_external_facts(options)
+        ensure
+          ENV.delete('INSIDE_FACTER')
+        end
+      end
 
       filter_env_facts
 

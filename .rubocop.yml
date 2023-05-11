@@ -122,7 +122,7 @@ RSpec/DescribedClass:
   EnforcedStyle: explicit
 
 RSpec/MultipleExpectations:
-  Max: 2
+  Max: 3
 
 RSpec/NestedGroups:
   Max: 6

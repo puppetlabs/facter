@@ -8,7 +8,7 @@ module Facter
       class Base
         STDERR_MESSAGE = 'Command %s completed with the following stderr message: %s'
         VALID_OPTIONS = %i[on_fail expand logger timeout].freeze
-
+        DEFAULT_EXECUTION_TIMEOUT = 300
         def initialize
           @log = Log.new(self)
         end
@@ -65,7 +65,7 @@ module Facter
         end
 
         def execute_command(command, on_fail = nil, logger = nil, timeout = nil)
-          timeout ||= 300
+          timeout ||= DEFAULT_EXECUTION_TIMEOUT
           begin
             # Set LC_ALL and LANG to force i18n to C for the duration of this exec;
             # this ensures that any code that parses the
