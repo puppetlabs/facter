@@ -11,6 +11,10 @@ module Facts
 
       def partitions
         parts = Facter::Resolvers::Partitions.resolve(:partitions)
+        # We should exit early if we are running on a node with no partitions
+        # (e.g. a diskless, netbooted VM)
+        return nil unless parts
+
         mountpoints = Facter::Resolvers::Mountpoints.resolve(:mountpoints)
         return parts unless mountpoints
 
