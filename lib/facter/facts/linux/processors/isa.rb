@@ -9,16 +9,7 @@ module Facts
 
         def call_the_resolver
           fact_value = Facter::Resolvers::Uname.resolve(:processor)
-          isa = get_isa(fact_value)
-
-          [Facter::ResolvedFact.new(FACT_NAME, isa), Facter::ResolvedFact.new(ALIASES, isa, :legacy)]
-        end
-
-        private
-
-        def get_isa(fact_value)
-          value_split = fact_value.split('.')
-          value_split.last
+          [Facter::ResolvedFact.new(FACT_NAME, fact_value), Facter::ResolvedFact.new(ALIASES, fact_value, :legacy)]
         end
       end
     end
