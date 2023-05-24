@@ -85,7 +85,8 @@ module Facter
 
         return false if fact_with_wildcard && !query_fact.match("^#{fact_name}$")
 
-        return false unless fact_with_wildcard || fact_name.match("^#{processed_equery_fact}($|\\.)")
+        # Must escape metacharacters (like dots) to ensure the correct fact is found
+        return false unless fact_with_wildcard || fact_name.match("^#{Regexp.escape(processed_equery_fact)}($|\\.)")
 
         true
       end

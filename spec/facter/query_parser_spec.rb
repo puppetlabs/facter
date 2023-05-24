@@ -79,6 +79,25 @@ describe Facter::QueryParser do
         contain_exactly(an_instance_of(Facter::SearchedFact).and(having_attributes(fact_class: path_class)))
     end
 
+    context 'when user query contains metacharacters (like dots)' do
+      it 'finds the structured fact and not the alias' do
+        query_list = ['ldom.domainrole.impl']
+        ldom_class = 'Facter::Solaris::Ldom'
+
+        loaded_fact_ldom = double(Facter::LoadedFact, name: 'ldom', klass: ldom_class, type: :core, file: nil)
+        ldom_fact_ldom_alias = double(Facter::LoadedFact, name: 'ldom_domainrole_impl', klass: ldom_class,
+                                                          type: :legacy, file: nil)
+        loaded_facts = [loaded_fact_ldom, ldom_fact_ldom_alias]
+
+        matched_facts = Facter::QueryParser.parse(query_list, loaded_facts)
+
+        expect(matched_facts).to be_an_instance_of(Array).and \
+          contain_exactly(an_instance_of(Facter::SearchedFact)
+          .and(having_attributes(name: 'ldom', user_query: 'ldom.domainrole.impl', fact_class: ldom_class,
+                                 type: :core)))
+      end
+    end
+
     context 'when fact does not exist' do
       let(:query_list) { ['non_existing_fact'] }
       let(:loaded_facts) { [] }
