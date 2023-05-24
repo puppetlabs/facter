@@ -131,7 +131,7 @@ module Facter
       #
       # @param on_fail[Object] How to behave when the command could
       #   not be run. Specifying :raise will raise an error, anything else will
-      #   return that object on failure. Default is :raise.
+      #   return that object on failure. Default is to not raise.
       # @param logger Optional logger used to log the command's stderr.
       # @param timeout Optional time out for the specified command. If no timeout is passed,
       #   a default of 300 seconds is used.

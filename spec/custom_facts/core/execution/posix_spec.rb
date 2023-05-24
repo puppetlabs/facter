@@ -103,4 +103,30 @@ describe Facter::Core::Execution::Posix, unless: LegacyFacter::Util::Config.wind
       end
     end
   end
+
+  context 'when calling execute_command' do
+    let(:logger) { instance_spy(Logger) }
+
+    it 'executes a command' do
+      expect(posix_executor.execute_command('/bin/true', nil, logger)).to eq(['', ''])
+    end
+
+    it "raises if 'on_fail' argument is specified" do
+      expect do
+        posix_executor.execute_command('/bin/notgoingtofindit', :raise)
+      end.to raise_error(Facter::Core::Execution::ExecutionFailure, %r{Failed while executing '/bin/notgoingtofindit'})
+    end
+
+    it 'returns nil if the command fails by default' do
+      expect(posix_executor.execute_command('/bin/notgoingtofindit')).to be_nil
+    end
+
+    it 'returns stdout string if the command fails and a logger was specified (!?)' do
+      expect(posix_executor.execute_command('/bin/notgoingtofindit', nil, logger)).to eq('')
+    end
+
+    it 'returns a mutable stdout string' do
+      expect(posix_executor.execute_command('/bin/notgoingtofindit', nil, logger)).not_to be_frozen
+    end
+  end
 end

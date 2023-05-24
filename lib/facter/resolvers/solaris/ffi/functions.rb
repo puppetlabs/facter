@@ -15,9 +15,11 @@ module Facter
 
           def self.ioctl(call_const, pointer, address_family = AF_INET)
             fd = Ioctl.open_socket(address_family, SOCK_DGRAM, 0)
-            result = ioctl_base(fd, call_const, pointer)
-            Ioctl.close_socket(fd, 2)
-            result
+            begin
+              ioctl_base(fd, call_const, pointer)
+            ensure
+              Ioctl.close_socket(fd, 2)
+            end
           end
         end
       end
