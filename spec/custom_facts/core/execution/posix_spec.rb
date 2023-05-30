@@ -108,7 +108,7 @@ describe Facter::Core::Execution::Posix, unless: LegacyFacter::Util::Config.wind
     let(:logger) { instance_spy(Logger) }
 
     it 'executes a command' do
-      expect(posix_executor.execute_command('/bin/true', nil, logger)).to eq(['', ''])
+      expect(posix_executor.execute_command('/usr/bin/true', nil, logger)).to eq(['', ''])
     end
 
     it "raises if 'on_fail' argument is specified" do
