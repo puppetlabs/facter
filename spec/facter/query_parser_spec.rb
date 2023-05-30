@@ -109,5 +109,17 @@ describe Facter::QueryParser do
         )
       end
     end
+
+    context 'when a fact name contains a regex special character' do
+      let(:query_list) { ['regex(string'] }
+      let(:loaded_facts) { [double(Facter::LoadedFact, name: 'a_loaded_fact', klass: nil, type: :custom, file: nil)] }
+
+      it 'is escaped correctly and does not result in an unexpected regex parse error' do
+        matched_facts = Facter::QueryParser.parse(query_list, loaded_facts)
+        expect(matched_facts).to be_an_instance_of(Array).and contain_exactly(
+          an_object_having_attributes(name: 'regex(string', user_query: 'regex(string', type: :nil)
+        )
+      end
+    end
   end
 end
