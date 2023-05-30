@@ -806,7 +806,6 @@ os_hierarchy.each do |os|
     require_relative '../../util/windows/win32ole.rb'
 
     require_relative '../../facts/windows/aio_agent_version.rb'
-    require_relative '../../facts/windows/augeas/version.rb'
     require_relative '../../facts/windows/az_metadata.rb'
     require_relative '../../facts/windows/cloud/provider.rb'
     require_relative '../../facts/windows/dhcp_servers.rb'
