@@ -48,8 +48,10 @@ module Facter
               info = line.split("\s")
               interface_name = info[0]
               mac = info[3][/^([0-9a-f]{1,2}[\.:-]){5}([0-9a-f]{1,2})$/]
-              interfaces[interface_name][:mtu] = info[1].to_i
-              interfaces[interface_name][:mac] = format_mac_address(mac) if mac
+              if interfaces[interface_name]
+                interfaces[interface_name][:mtu] = info[1].to_i
+                interfaces[interface_name][:mac] = format_mac_address(mac) if mac
+              end
             end
           end
 

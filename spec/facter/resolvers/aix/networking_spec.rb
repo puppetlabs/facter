@@ -79,4 +79,22 @@ describe Facter::Resolvers::Aix::Networking do
       expect(networking_resolver.resolve(:mtu)).to be_nil
     end
   end
+
+  context 'when interface is down' do
+    let(:netstat_in) { load_fixture('netstat_in').read }
+    let(:netstat_rn) { load_fixture('netstat_rn_two').read }
+    let(:ffi_interfaces) do
+      {
+        'lo0' => { bindings: [{ address: '127.0.0.1', netmask: '255.0.0.0', network: '127.0.0.0' }],
+                   bindings6: [{ address: '::1', netmask: '::', network: '::', scope6: 'host' }], ip: '127.0.0.1',
+                   ip6: '::1', mtu: 16_896, netmask: '255.0.0.0', netmask6: '::', network: '127.0.0.0',
+                   network6: '::', scope6: 'host' }
+      }
+    end
+
+    it 'returns a nil MTU' do
+      expect(networking_resolver.resolve(:mtu)).to be_nil
+      expect(log_spy).not_to have_received(:debug).with(/undefined method/)
+    end
+  end
 end
