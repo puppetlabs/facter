@@ -56,6 +56,23 @@ describe LegacyFacter::Util::Normalization do
         expect do
           normalization.normalize(str)
         end.to raise_error(LegacyFacter::Util::Normalization::NormalizationError,
+                           /String \"\\xADay!\" doesn't match the reported encoding UTF-8/)
+      end
+
+      it 'rejects strings that only have the start of a valid UTF-8 sequence' do
+        str = "\xc3\x28"
+        expect do
+          normalization.normalize(str)
+        end.to raise_error(LegacyFacter::Util::Normalization::NormalizationError,
+                           /String \"\\xC3\(\" doesn't match the reported encoding UTF-8/)
+      end
+
+      it 'rejects valid non-UTF-8 encoded strings that claim to be UTF-8 encoded' do
+        str = 'Mitteleuropäische Zeit'.encode(Encoding::UTF_16LE)
+        str.force_encoding(Encoding::UTF_8)
+        expect do
+          normalization.normalize(str)
+        end.to raise_error(LegacyFacter::Util::Normalization::NormalizationError,
                            /String.*doesn't match the reported encoding UTF-8/)
       end
     end
