@@ -1,9 +1,0 @@
-#!/usr/bin/env ruby
-# frozen_string_literal: true
-
-require 'facter/framework/cli/cli_launcher.rb'
-
-Facter::OptionsValidator.validate(ARGV)
-processed_arguments = CliLauncher.prepare_arguments(ARGV)
-
-CliLauncher.start(processed_arguments)

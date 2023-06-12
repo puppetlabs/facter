@@ -8,12 +8,5 @@ describe Facter do
 
       expect(gemspec_facter_version).to eq(Facter::VERSION)
     end
-
-    it 'checks that reported and facter-ng.gemspec versions are the same' do
-      gemspec_file_path = File.join(File.dirname(__FILE__), '..', '..', 'agent', 'facter-ng.gemspec')
-      gemspec_facter_version = Gem::Specification.load(gemspec_file_path).version.to_s
-
-      expect(gemspec_facter_version).to eq(Facter::VERSION)
-    end
   end
 end
