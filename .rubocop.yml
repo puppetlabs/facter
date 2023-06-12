@@ -40,7 +40,6 @@ Metrics/ModuleLength:
   Max: 100
   Exclude:
     - 'lib/facter.rb'
-    - 'agent/lib/facter-ng.rb'
     - 'lib/facter/config.rb'
     - 'lib/facter/resolvers/aix/ffi/ffi_helper.rb'
 
@@ -109,7 +108,6 @@ Naming/PredicateName:
 Naming/FileName:
   Exclude:
     - 'lib/facter.rb'
-    - 'agent/lib/facter-ng.rb'
 
 Performance/RegexpMatch:
   Exclude:
