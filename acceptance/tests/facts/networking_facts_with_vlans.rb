@@ -11,6 +11,13 @@ test_name 'networking facts with vlans' do
   # This test is intended to ensure that networking facts resolve vlans
   # as expected across supported platforms.
   #
+  teardown do
+    agents.each do |agent|
+      interface = fact_on(agent, 'networking.primary')
+      on(agent, "ip link delete #{vlan(interface, 1)}", accept_all_exit_codes: true)
+      on(agent, "ip link delete #{vlan(interface, 2)}", accept_all_exit_codes: true)
+    end
+  end
 
   @ip_regex       = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
   @netmask_regex  = /^(((128|192|224|240|248|252|254)\.0\.0\.0)|(255\.(0|128|192|224|240|248|252|254)\.0\.0)|(255\.255\.(0|128|192|224|240|248|252|254)\.0)|(255\.255\.255\.(0|128|192|224|240|248|252|254)))$/
@@ -63,9 +70,5 @@ test_name 'networking facts with vlans' do
       end
     end
 
-    teardown do
-      on(agent, "ip link delete #{vlan(interface, 1)}")
-      on(agent, "ip link delete #{vlan(interface, 2)}")
-    end
   end
 end
