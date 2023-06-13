@@ -5,12 +5,19 @@ test_name 'networking facts with vlans' do
   confine :except, :platform => 'aix'
   confine :except, :platform => 'osx'
   confine :except, :platform => 'solaris'
-  skip_test "FACT-3204 skip test due to issue with ubuntu 2204 image"  if hosts.any? { |host| host['platform'] =~ /ubuntu-22\.04/ }
+  # skip_test "FACT-3204 skip test due to issue with ubuntu 2204 image"  if hosts.any? { |host| host['platform'] =~ /ubuntu-22\.04/ }
 
   #
   # This test is intended to ensure that networking facts resolve vlans
   # as expected across supported platforms.
   #
+  teardown do
+    agents.each do |agent|
+      interface = fact_on(agent, 'networking.primary')
+      on(agent, "ip link delete #{vlan(interface, 1)}", accept_all_exit_codes: true)
+      on(agent, "ip link delete #{vlan(interface, 2)}", accept_all_exit_codes: true)
+    end
+  end
 
   @ip_regex       = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/
   @netmask_regex  = /^(((128|192|224|240|248|252|254)\.0\.0\.0)|(255\.(0|128|192|224|240|248|252|254)\.0\.0)|(255\.255\.(0|128|192|224|240|248|252|254)\.0)|(255\.255\.255\.(0|128|192|224|240|248|252|254)))$/
@@ -51,6 +58,12 @@ test_name 'networking facts with vlans' do
     step "Add two vlans" do
       on(agent, "ip link add link #{interface} name #{vlan(interface, 1)} type vlan id 1")
       on(agent, "ip addr add 11.0.0.1/24 dev #{vlan(interface, 1)}")
+      if on(agent, "ip address show #{vlan(interface, 1)} | grep inet[[:space:]]", acceptable_exit_codes: [0,1]).stdout.empty?
+        @logger.warn("Attempted to update #{vlan(interface, 1)} but ipv4 address not found, outputting recent syslog and retrying.")
+        on(agent, 'tail /var/log/syslog')
+        on(agent, "ip addr add 11.0.0.1/24 dev #{vlan(interface, 1)}")
+        fail_test("Unable to update ip address for #{vlan(interface, 1)}") if on(agent, "ip address show #{vlan(interface, 1)} | grep inet[[:space:]]").stdout.empty?
+      end
       on(agent, "ip link add link #{interface} name #{vlan(interface, 2)} type vlan id 2")
       on(agent, "ip addr add 11.0.0.2/24 dev #{vlan(interface, 2)}")
     end
@@ -63,9 +76,5 @@ test_name 'networking facts with vlans' do
       end
     end
 
-    teardown do
-      on(agent, "ip link delete #{vlan(interface, 1)}")
-      on(agent, "ip link delete #{vlan(interface, 2)}")
-    end
   end
 end
