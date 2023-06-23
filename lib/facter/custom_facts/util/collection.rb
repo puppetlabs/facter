@@ -32,7 +32,7 @@ module LegacyFacter
 
         fact
       rescue StandardError => e
-        log.log_exception("Unable to add fact #{name}: #{e}")
+        log.log_exception(e)
       end
 
       # Add a resolution mechanism for a named fact.  This does not distinguish
@@ -48,6 +48,8 @@ module LegacyFacter
         fact.add(options, &block)
 
         fact
+      rescue StandardError => e
+        log.log_exception(e)
       end
 
       include Enumerable

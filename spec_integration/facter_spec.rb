@@ -55,6 +55,38 @@ describe 'Facter' do
     end
 
     context 'with custom facts' do
+      context 'with null bytes' do
+        let(:logger) { instance_spy(Facter::Log) }
+
+        normalization_error = LegacyFacter::Util::Normalization::NormalizationError
+
+        it 'logs an error when a fact keyname contains a null byte' do
+          facter_code = proc do
+            Facter.add("key\0bad_name") do
+              setcode { 'valid_value' }
+            end
+          end
+          facter_code.call do
+            expect(logger).to receive(:log_exception).with(an_instance_of(normalization_error)) do |exception|
+              expect(exception.message).to match(/contains a null byte reference/)
+            end
+          end
+        end
+
+        it 'logs an error when a fact value contains a null byte' do
+          facter_code = proc do
+            Facter.add('keyname') do
+              setcode { "bad\0value" }
+            end
+          end
+          facter_code.call do
+            expect(logger).to receive(:log_exception).with(an_instance_of(normalization_error)) do |exception|
+              expect(exception.message).to match(/contains a null byte reference/)
+            end
+          end
+        end
+      end
+
       context 'with array as value' do
         before do
           Facter.add('arr_fact') do
@@ -99,6 +131,27 @@ describe 'Facter' do
     end
 
     context 'with external facts' do
+      context 'with facts that have null bytes' do
+        before do
+          Facter.search_external([ext_facts_dir])
+          data = { "bad_key\u0000" => 'valid value',
+                   'valid_key' => "\x00" }
+          write_to_file(tmp_filename('bad_facts.yaml'), YAML.dump(data))
+        end
+
+        it 'shows errors in the logs when trying to read in the facts with bad keys' do
+          expect { Facter.value("bad_key\u0000") }.to raise_error(ArgumentError)
+        end
+
+        it 'shows errors in the logs when trying to read in the facts with bad values' do
+          allow(Facter).to receive(:log_exception) do |exception, message|
+            expect(exception).to be_a_kind_of(LegacyFacter::Util::Normalization::NormalizationError)
+            expect(message).to match(/contains a null byte reference/)
+          end
+          expect(Facter.value('valid_key')).to be_nil
+        end
+      end
+
       context 'with array as value' do
         before do
           Facter.search_external([ext_facts_dir])
