@@ -13,7 +13,7 @@ module Facter
           # Is_Virtual
 
           MODEL_HASH = { 'VirtualBox' => 'virtualbox', 'VMware' => 'vmware', 'KVM' => 'kvm',
-                         'Bochs' => 'bochs', 'Google' => 'gce', 'OpenStack' => 'openstack' }.freeze
+                         'Bochs' => 'bochs', 'Google' => 'gce', 'OpenStack' => 'openstack', 'AHV' => 'ahv' }.freeze
 
           private
 
