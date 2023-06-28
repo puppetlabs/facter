@@ -54,6 +54,10 @@ module LegacyFacter
           raise NormalizationError, "String #{value.inspect} doesn't match the reported encoding #{value.encoding}"
         end
 
+        if value.codepoints.include?(0)
+          raise NormalizationError, "String #{value.inspect} contains a null byte reference; unsupported for all facts."
+        end
+
         value
       rescue EncodingError
         raise NormalizationError, "String encoding #{value.encoding} is not UTF-8 and could not be converted to UTF-8"

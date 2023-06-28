@@ -75,6 +75,19 @@ describe LegacyFacter::Util::Normalization do
         end.to raise_error(LegacyFacter::Util::Normalization::NormalizationError,
                            /String.*doesn't match the reported encoding UTF-8/)
       end
+
+      it 'rejects UTF-8 strings that contain null bytes' do
+        test_strings = ["\u0000",
+                        "\0",
+                        "\x00",
+                        "null byte \x00 in the middle"]
+        test_strings.each do |str|
+          expect do
+            normalization.normalize(str)
+          end.to raise_error(LegacyFacter::Util::Normalization::NormalizationError,
+                             /String.*contains a null byte reference/)
+        end
+      end
     end
 
     describe 'and string encoding is not supported', unless: String.instance_methods.include?(:encoding) do

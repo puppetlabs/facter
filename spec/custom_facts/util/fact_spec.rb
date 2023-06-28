@@ -16,6 +16,12 @@ describe Facter::Util::Fact do
     expect { Facter::Util::Fact.new }.to raise_error(ArgumentError)
   end
 
+  it 'raises a normalization error when trying a name has a UTF-8 null byte' do
+    expect do
+      Facter::Util::Fact.new("Cool \0 name")
+    end.to raise_error(LegacyFacter::Util::Normalization::NormalizationError)
+  end
+
   describe '#initialize' do
     it 'persists options' do
       fact = Facter::Util::Fact.new('yay', options)

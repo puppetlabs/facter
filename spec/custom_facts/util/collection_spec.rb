@@ -91,8 +91,19 @@ describe LegacyFacter::Util::Collection do
       expect(fact.ldapname).to eq 'NewFact'
     end
 
+    it 'logs an error if the fact name contains the utf-8 null byte' do
+      name = "Uncool\0Name"
+      normalization_error = LegacyFacter::Util::Normalization::NormalizationError
+      expect(logger).to receive(:log_exception).with(an_instance_of(normalization_error)) do |exception|
+        expect(exception.message).to match(/contains a null byte reference/)
+      end
+      collection.define_fact(name)
+    end
+
     it 'logs an error if the fact could not be defined' do
-      expect(logger).to receive(:log_exception).with('Unable to add fact newfact: kaboom!')
+      expect(logger).to receive(:log_exception).with(RuntimeError) do |exception|
+        expect(exception.message).to equal('kaboom!')
+      end
 
       collection.define_fact(:newfact) do
         raise 'kaboom!'

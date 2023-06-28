@@ -35,7 +35,7 @@ module Facter
       #
       # @api private
       def initialize(name, options = {})
-        @name = name.to_s.downcase.intern
+        @name = LegacyFacter::Util::Normalization.normalize(name.to_s.downcase).intern
 
         @options = options.dup
         extract_ldapname_option!(options)
