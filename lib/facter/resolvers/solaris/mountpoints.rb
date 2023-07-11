@@ -25,7 +25,7 @@ module Facter
             @mounts = []
             @auto_home_paths = []
 
-            Facter::Util::Resolvers::FilesystemHelper.read_mountpoints.each do |fs|
+            Facter::Util::Resolvers::FilesystemHelper.read_mountpoints&.each do |fs|
               if fs.name == 'auto_home'
                 @auto_home_paths << fs.mount_point
                 next

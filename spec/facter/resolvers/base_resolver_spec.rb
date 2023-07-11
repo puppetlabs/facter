@@ -77,13 +77,13 @@ describe Facter::Resolvers::BaseResolver do
     context 'when Load Error is raised' do
       before do
         allow(resolver).to receive(:post_resolve).and_raise(LoadError)
-        allow(Facter::Log).to receive(:new).with(resolver).and_return(instance_double(Facter::Log, debug: nil))
+        allow(Facter::Log).to receive(:new).with(resolver).and_return(instance_double(Facter::Log, error: nil))
       end
 
-      it 'logs the Load Error exception' do
+      it 'logs the Load Error exception at the error level' do
         resolver.resolve(fact)
 
-        expect(resolver.log).to have_received(:debug).with(/Resolving fact #{fact}, but got LoadError/)
+        expect(resolver.log).to have_received(:error).with(/Resolving fact #{fact}, but got LoadError/)
       end
 
       it 'sets the fact to nil' do

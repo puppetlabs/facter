@@ -77,7 +77,7 @@ describe Facter::Resolvers::Augeas do
         allow(Facter::Resolvers::Augeas).to receive(:require).with('augeas').and_raise(exception)
       end
 
-      it 'raises a LoadError error' do
+      it 'rescues LoadError error and logs at debug level' do
         augeas.resolve(:augeas_version)
 
         expect(log_spy).to have_received(:debug).with(/Resolving fact augeas_version, but got load_error_message/)
