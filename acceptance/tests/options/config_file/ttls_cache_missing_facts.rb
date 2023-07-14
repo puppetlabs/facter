@@ -1,6 +1,8 @@
 test_name 'missing facts should not invalidate cache' do
   tag 'risk:high'
 
+  confine :except, :platform => 'aix-7.2-power' # FACT-3209
+
   require 'facter/acceptance/user_fact_utils'
   extend Facter::Acceptance::UserFactUtils
 
