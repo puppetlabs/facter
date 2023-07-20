@@ -33,7 +33,7 @@ module Facter
           private
 
           def force_utf(mounts)
-            mounts.each do |mount|
+            mounts&.each do |mount|
               mount.name.force_encoding('UTF-8')
               mount.mount_type.force_encoding('UTF-8')
               mount.mount_point.force_encoding('UTF-8')

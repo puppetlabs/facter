@@ -17,6 +17,9 @@ module Facter
           @fact_list[:augeas_version] ||= read_augeas_from_gem
 
           @fact_list[fact_name]
+        rescue LoadError => e
+          log.debug("Resolving fact #{fact_name}, but got #{e} at #{e.backtrace[0]}")
+          @fact_list[:augeas_version] = nil
         end
 
         def read_augeas_from_cli

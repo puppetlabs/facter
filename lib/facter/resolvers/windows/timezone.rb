@@ -22,7 +22,7 @@ module Facter
 
           def codepage
             result = codepage_from_api
-            result.empty? ? codepage_from_registry : result
+            result&.empty? ? codepage_from_registry : result
           end
 
           def codepage_from_registry
