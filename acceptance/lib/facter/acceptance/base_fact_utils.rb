@@ -276,7 +276,7 @@ module Facter
           expected_facts['os.macosx.version.full'] = /#{expected_facts['os.macosx.version.major']}\.#{expected_facts['os.macosx.version.minor']}/
         else
           expected_facts['os.macosx.version.patch'] = /\d+/
-          if agent['platform'] =~ /arm64/
+          if agent['platform'] =~ /arm64/ && agent['platform'].split('-')[1].to_i < 13
             expected_facts['os.macosx.version.full'] = /^#{expected_facts['os.macosx.version.major']}\.#{expected_facts['os.macosx.version.minor']}$/
           else
             expected_facts['os.macosx.version.full'] = /^#{expected_facts['os.macosx.version.major']}\.#{expected_facts['os.macosx.version.minor']}\.*#{expected_facts['os.macosx.version.patch']}*$/

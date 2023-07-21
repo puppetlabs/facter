@@ -25,7 +25,7 @@ test_name "C100305: The Ruby fact should resolve as expected in AIO" do
           ruby_platform = agent['ruby_arch'] == 'x64' ? 'x64-mingw32' : 'i386-mingw32'
         when /osx/
           if agent['platform'] =~ /arm64/
-            if puppet_version =~ /^(6|7)\./
+            if puppet_version =~ /^(6|7)\./ && agent['platform'].split('-')[1].to_i < 13
               ruby_platform = /aarch64-darwin/
             else
               ruby_platform = /arm64-darwin/
