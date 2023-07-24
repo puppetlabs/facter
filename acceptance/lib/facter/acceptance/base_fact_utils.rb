@@ -248,7 +248,7 @@ module Facter
           os_arch                 = 'arm64'
           os_hardware             = 'arm64'
           processors_isa          = 'arm'
-          processors_models       = /"Apple M1.*"/
+          processors_models       = /"Apple.*"/
         end
         expected_facts = {
           'os.architecture' => os_arch,
