@@ -256,7 +256,7 @@ module Facter
           'os.hardware' => os_hardware,
           'os.name' => 'Darwin',
           'os.macosx.build' => /\d+[A-Z]\d{1,4}\w?/,
-          'os.macosx.product' => agent['platform'] =~ /osx-10/ ? 'Mac OS X' : 'macOS',
+          'os.macosx.product' => 'macOS',
           'os.macosx.version.major' => major_version,
           'os.macosx.version.minor' => /\d+/,
           'os.release.full' => /\d+\.\d+\.\d+/,
@@ -272,15 +272,11 @@ module Facter
           'kernelmajversion' => /\d+\.\d+/
         }
 
-        if agent['platform'] =~ /osx-10/
-          expected_facts['os.macosx.version.full'] = /#{expected_facts['os.macosx.version.major']}\.#{expected_facts['os.macosx.version.minor']}/
+        expected_facts['os.macosx.version.patch'] = /\d+/
+        if agent['platform'] =~ /arm64/ && agent['platform'].split('-')[1].to_i < 13
+          expected_facts['os.macosx.version.full'] = /^#{expected_facts['os.macosx.version.major']}\.#{expected_facts['os.macosx.version.minor']}$/
         else
-          expected_facts['os.macosx.version.patch'] = /\d+/
-          if agent['platform'] =~ /arm64/ && agent['platform'].split('-')[1].to_i < 13
-            expected_facts['os.macosx.version.full'] = /^#{expected_facts['os.macosx.version.major']}\.#{expected_facts['os.macosx.version.minor']}$/
-          else
-            expected_facts['os.macosx.version.full'] = /^#{expected_facts['os.macosx.version.major']}\.#{expected_facts['os.macosx.version.minor']}\.*#{expected_facts['os.macosx.version.patch']}*$/
-          end
+          expected_facts['os.macosx.version.full'] = /^#{expected_facts['os.macosx.version.major']}\.#{expected_facts['os.macosx.version.minor']}\.*#{expected_facts['os.macosx.version.patch']}*$/
         end
         expected_facts
       end
