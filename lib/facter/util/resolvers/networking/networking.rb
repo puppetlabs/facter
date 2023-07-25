@@ -36,7 +36,9 @@ module Facter
             interfaces = networking_facts[:interfaces]
 
             expand_interfaces(interfaces) unless interfaces.nil?
-            expand_primary_interface(networking_facts, primary) unless primary.nil? || interfaces.nil?
+            return if primary.nil? || interfaces.nil? || networking_facts.nil?
+
+            expand_primary_interface(networking_facts, primary)
           end
 
           def get_scope(ip)
@@ -105,7 +107,7 @@ module Facter
           end
 
           def expand_primary_interface(networking_facts, primary)
-            networking_facts[:interfaces][primary].each do |key, value|
+            networking_facts[:interfaces][primary]&.each do |key, value|
               networking_facts[key] = value unless %i[bindings bindings6].include?(key)
             end
           end
