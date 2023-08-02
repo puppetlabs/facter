@@ -138,6 +138,26 @@ describe Facter::Resolvers::OsRelease do
     end
   end
 
+  context 'when on SLES' do
+    let(:os_release_content) { load_fixture('os_release_sles').readlines }
+
+    it 'returns os NAME' do
+      result = Facter::Resolvers::OsRelease.resolve(:name)
+
+      expect(result).to eq('SLES')
+    end
+  end
+
+  context 'when on SLES_SAP' do
+    let(:os_release_content) { load_fixture('os_release_sles_sap').readlines }
+
+    it 'returns os NAME' do
+      result = Facter::Resolvers::OsRelease.resolve(:name)
+
+      expect(result).to eq('SLES')
+    end
+  end
+
   context 'when on Manjarolinux' do
     let(:os_release_content) { load_fixture('os_release_manjarolinux').readlines }
 
