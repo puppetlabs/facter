@@ -75,9 +75,19 @@ module Facter
         def process_name
           return unless @fact_list[:name]
 
+          normalize_os_name
           join_os_name
           capitalize_os_name
           append_linux_to_os_name
+        end
+
+        def normalize_os_name
+          os_name = @fact_list[:name]
+          @fact_list[:name] = if os_name.downcase.start_with?('sles')
+                                'SLES'
+                              else
+                                os_name
+                              end
         end
 
         def join_os_name
