@@ -132,9 +132,7 @@ def run(command, dir = './', env = {})
   output
 end
 
-# temporary workaround for change in minitest: https://github.com/minitest/minitest/commit/a2c6c18570f6f0a1bf6af70fe3b6d9599a13fdd6
 ENV['DEBIAN_DISABLE_RUBYGEMS_INTEGRATION'] = 'no_warnings'
-ENV['MT_COMPAT'] = 'true'
 if_no_env_vars_set_defaults
 ACCEPTANCE_PATH = File.join(ENV['FACTER_ROOT'], 'acceptance')
 HOST_PLATFORM = ARGV[0]
