@@ -69,6 +69,7 @@ module Facter
         def process_id
           return unless @fact_list[:id]
 
+          @fact_list[:id] = 'sles' if /sles_sap/i.match?(@fact_list[:id])
           @fact_list[:id] = 'opensuse' if /opensuse/i.match?(@fact_list[:id])
         end
 
