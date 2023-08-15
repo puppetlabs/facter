@@ -156,6 +156,12 @@ describe Facter::Resolvers::OsRelease do
 
       expect(result).to eq('SLES')
     end
+
+    it 'returns os ID' do
+      result = Facter::Resolvers::OsRelease.resolve(:id)
+
+      expect(result).to eq('sles')
+    end
   end
 
   context 'when on Manjarolinux' do
