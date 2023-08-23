@@ -132,12 +132,21 @@ def run(command, dir = './', env = {})
   output
 end
 
+def verify_facter_standalone_exits_0
+  Dir.chdir(ENV['FACTER_ROOT']) do
+    run('bundle install --without development')
+    run('bundle exec facter')
+  end
+end
+
 ENV['DEBIAN_DISABLE_RUBYGEMS_INTEGRATION'] = 'no_warnings'
 if_no_env_vars_set_defaults
 ACCEPTANCE_PATH = File.join(ENV['FACTER_ROOT'], 'acceptance')
 HOST_PLATFORM = ARGV[0]
 
 install_bundler
+
+verify_facter_standalone_exits_0
 
 Dir.chdir(ACCEPTANCE_PATH) do
   install_facter_acceptance_dependencies
