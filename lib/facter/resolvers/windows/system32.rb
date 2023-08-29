@@ -31,6 +31,8 @@ module Facter
           end
 
           @fact_list[:system32] = construct_path(bool_ptr, windows_path)
+        rescue LoadError => e
+          @log.debug("Could not retrieve: #{e}")
         end
 
         def construct_path(bool_ptr, windows)

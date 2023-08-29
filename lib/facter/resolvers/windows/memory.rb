@@ -28,6 +28,8 @@ module Facter
           @long_living_pointer = state_ptr
 
           PerformanceInformation.new(state_ptr)
+        rescue LoadError => e
+          @log.debug("Could not resolve memory facts: #{e}")
         end
 
         def calculate_memory

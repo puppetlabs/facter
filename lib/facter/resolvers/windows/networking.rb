@@ -31,6 +31,8 @@ module Facter
             Facter::Util::Resolvers::Networking.expand_main_bindings(@fact_list)
 
             @fact_list[fact_name]
+          rescue LoadError => e
+            @log.debug("The ffi gem has not been installed: #{e}")
           end
 
           def get_adapter_addresses(size_ptr, adapter_addresses, flags)

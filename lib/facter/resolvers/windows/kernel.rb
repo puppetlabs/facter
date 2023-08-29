@@ -30,6 +30,8 @@ module Facter
           build_facts_list(result)
 
           @fact_list[fact_name]
+        rescue LoadError => e
+          @log.debug("Could not get OS version information: #{e}")
         end
 
         def build_facts_list(result)
