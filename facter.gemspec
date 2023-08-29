@@ -29,10 +29,12 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
 
-  # While we require sys-filesystem in filesystem_helpers we leave it as a
-  # development, not runtime, dependency. We do this so we do not also pull in
-  # sys-filesystem's dependency ffi, which contains native extensions which in
-  # turn would mean Facter would require a compiler to install as a gem.
+  # While we require both ffi and sys-filesystem in parts of Facter, we specify
+  # them as development, not runtime, dependencies. Both gems either directly
+  # or indirectly contain native extensions. The intent behind excluding these
+  # gems from runtime dependencies is to allow users to be able to install
+  # Facter without a compiler.
+  spec.add_development_dependency 'ffi'
   spec.add_development_dependency 'rake', '~> 13.0', '>= 13.0.6'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rubocop', '~> 0.81.0'
