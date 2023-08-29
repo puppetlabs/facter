@@ -45,14 +45,18 @@ module Facter
 
         def read_mounts(fact_name)
           mounts = []
-          Facter::Util::Resolvers::FilesystemHelper.read_mountpoints.each do |file_system|
-            mount = {}
-            get_mount_data(file_system, mount)
+          begin
+            Facter::Util::Resolvers::FilesystemHelper.read_mountpoints.each do |file_system|
+              mount = {}
+              get_mount_data(file_system, mount)
 
-            next if mount[:path] =~ %r{^/(proc|sys)} && mount[:filesystem] != 'tmpfs' || mount[:filesystem] == 'autofs'
+              next if mount[:path] =~ %r{^/(proc|sys)} && mount[:filesystem] != 'tmpfs' || mount[:filesystem] == 'autofs'
 
-            get_mount_sizes(mount)
-            mounts << mount
+              get_mount_sizes(mount)
+              mounts << mount
+            end
+          rescue LoadError => e
+            @log.debug("Could not read mounts: #{e}")
           end
 
           @fact_list[:mountpoints] = mounts
@@ -70,7 +74,7 @@ module Facter
           begin
             stats = Facter::Util::Resolvers::FilesystemHelper.read_mountpoint_stats(mount[:path])
             get_bytes_data(mount, stats)
-          rescue Sys::Filesystem::Error => e
+          rescue LoadError, Sys::Filesystem::Error => e
             @log.debug("Could not get stats for mountpoint #{mount[:path]}, got #{e}")
             mount[:size_bytes] = mount[:available_bytes] = mount[:used_bytes] = 0
           end
