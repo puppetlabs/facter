@@ -7,6 +7,8 @@ module Facter
         include Facter::Util::Resolvers::FilesystemHelper
         init_resolver
 
+        @log = Facter::Log.new(self)
+
         class << self
           private
 
@@ -24,31 +26,34 @@ module Facter
           def read_mounts(fact_name) # rubocop:disable Metrics/MethodLength
             @mounts = []
             @auto_home_paths = []
+            begin
+              Facter::Util::Resolvers::FilesystemHelper.read_mountpoints&.each do |fs|
+                if fs.name == 'auto_home'
+                  @auto_home_paths << fs.mount_point
+                  next
+                end
 
-            Facter::Util::Resolvers::FilesystemHelper.read_mountpoints&.each do |fs|
-              if fs.name == 'auto_home'
-                @auto_home_paths << fs.mount_point
-                next
+                next if fs.mount_type == 'autofs'
+
+                mounts = {}
+                device = fs.name
+                filesystem = fs.mount_type
+                path = fs.mount_point
+                options = fs.options.split(',').map(&:strip)
+
+                mounts = read_stats(path).tap do |hash|
+                  hash[:device] = device
+                  hash[:filesystem] = filesystem
+                  hash[:path] = path
+                  hash[:options] = options if options.any?
+                end
+
+                @mounts << Hash[Facter::Util::Resolvers::FilesystemHelper::MOUNT_KEYS
+                                .zip(Facter::Util::Resolvers::FilesystemHelper::MOUNT_KEYS
+                  .map { |v| mounts[v] })]
               end
-
-              next if fs.mount_type == 'autofs'
-
-              mounts = {}
-              device = fs.name
-              filesystem = fs.mount_type
-              path = fs.mount_point
-              options = fs.options.split(',').map(&:strip)
-
-              mounts = read_stats(path).tap do |hash|
-                hash[:device] = device
-                hash[:filesystem] = filesystem
-                hash[:path] = path
-                hash[:options] = options if options.any?
-              end
-
-              @mounts << Hash[Facter::Util::Resolvers::FilesystemHelper::MOUNT_KEYS
-                              .zip(Facter::Util::Resolvers::FilesystemHelper::MOUNT_KEYS
-                .map { |v| mounts[v] })]
+            rescue LoadError => e
+              @log.debug("Could not read mounts: #{e}")
             end
 
             exclude_auto_home_mounts!
@@ -64,7 +69,7 @@ module Facter
               available_bytes = stats.bytes_available.abs
               used_bytes = stats.bytes_used.abs
               total_bytes = used_bytes + available_bytes
-            rescue Sys::Filesystem::Error
+            rescue Sys::Filesystem::Error, LoadError
               size_bytes = used_bytes = available_bytes = 0
             end
 

@@ -32,6 +32,8 @@ module Facter
           end
 
           { user: name_ptr.read_wide_string_with_length(size_ptr.read_uint32), privileged: IdentityFFI.privileged? }
+        rescue LoadError => e
+          @log.debug("Could not find username: #{e}")
         end
 
         def retrieve_facts(fact_name)

@@ -23,6 +23,9 @@ module Facter
           arch = determine_architecture(hard)
           build_facts_list(hardware: hard, architecture: arch)
           @fact_list[fact_name]
+        rescue LoadError => e
+          log = Facter::Log.new(self)
+          log.debug("The ffi gem has not been installed: #{e}")
         end
 
         def determine_hardware(sys_info)
