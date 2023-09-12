@@ -125,7 +125,7 @@ test_name 'Facter should handle aggregated custom facts' do
           test_array_fact value is wrong'
         )
         assert_match(
-          /custom fact test_array_fact got resolved from.*no_aggregate_block\.rb\", 1\]/,
+          /custom fact test_array_fact was resolved from.*no_aggregate_block\.rb:1/,
           facter_result.stderr.chomp,
           'resolution location not found on debug'
         )
@@ -138,7 +138,7 @@ test_name 'Facter should handle aggregated custom facts' do
           'test_hash_fact value is wrong'
         )
         assert_match(
-          /custom fact test_hash_fact got resolved from.*no_aggregate_block\.rb\", 12\]/,
+          /custom fact test_hash_fact was resolved from.*no_aggregate_block\.rb:12/,
           facter_result.stderr.chomp,
           'resolution location not found on debug'
         )

@@ -53,6 +53,13 @@ module Facter
       # @api private
       attr_reader :fact
 
+      # @!attribute [r] last_evaluated
+      #
+      # @return [String]
+      #
+      # @api public
+      attr_reader :last_evaluated
+
       # Create a new aggregated resolution mechanism.
       #
       # @param name [String] The name of the resolution.
@@ -101,7 +108,22 @@ module Facter
       #
       # @api private
       def evaluate(&block)
+        if @last_evaluated
+          msg = "Already evaluated #{@name}"
+          msg << " at #{@last_evaluated}" if msg.is_a? String
+          msg << ', reevaluating anyways'
+          log.warn msg
+        end
         instance_eval(&block)
+
+        # Ruby 1.9+ provides the source location of procs which can provide useful
+        # debugging information if a resolution is being evaluated twice. Since 1.8
+        # doesn't support this we opportunistically provide this information.
+        @last_evaluated = if block.respond_to? :source_location
+                            block.source_location.join(':')
+                          else
+                            true
+                          end
       end
 
       # Define a new chunk for the given aggregate
