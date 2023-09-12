@@ -21,6 +21,8 @@ describe Facter::Resolvers::Linux::Networking do
       allow(File).to receive(:exist?).with('/proc/net/if_inet6').and_return(true)
       allow(Facter::Util::FileHelper).to receive(:safe_read)
         .with('/proc/net/if_inet6', nil).and_return(load_fixture('proc_net_if_inet6').read)
+      allow(File).to receive(:exist?).with('/sys/class/net/lo/device').and_return(false)
+      allow(File).to receive(:exist?).with('/sys/class/net/ens160/device').and_return(true)
     end
 
     after do
@@ -68,6 +70,7 @@ describe Facter::Resolvers::Linux::Networking do
           netmask6: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
           network: '127.0.0.0',
           network6: '::1',
+          physical: false,
           scope6: 'host'
         },
         'ens160' => {
@@ -88,6 +91,7 @@ describe Facter::Resolvers::Linux::Networking do
           netmask6: 'ffff:ffff:ffff:ffff::',
           network: '10.16.112.0',
           network6: 'fe80::',
+          physical: true,
           scope6: 'link'
         }
       }
@@ -158,6 +162,7 @@ describe Facter::Resolvers::Linux::Networking do
           netmask6: 'ffff:ffff:ffff:ffff::',
           network: '10.16.112.0',
           network6: 'fe80::',
+          physical: true,
           scope6: 'link'
         }
       end
@@ -207,7 +212,8 @@ describe Facter::Resolvers::Linux::Networking do
           mac: '00:50:56:9a:61:46',
           mtu: 1500,
           netmask: '255.255.240.0',
-          network: '10.16.112.0'
+          network: '10.16.112.0',
+          physical: true
         }
 
         expect(networking_linux.resolve(:interfaces)['ens160']).to eq(expected)
@@ -270,6 +276,7 @@ describe Facter::Resolvers::Linux::Networking do
             mtu: 65_536,
             netmask6: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
             network6: '::1',
+            physical: false,
             scope6: 'host'
           },
           'ens160' => {
@@ -282,6 +289,7 @@ describe Facter::Resolvers::Linux::Networking do
             mtu: 1500,
             netmask6: 'ffff:ffff:ffff:ffff::',
             network6: 'fe80::',
+            physical: true,
             scope6: 'link'
           }
         }
