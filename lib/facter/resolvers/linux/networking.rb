@@ -31,6 +31,7 @@ module Facter
             @fact_list[:interfaces].keys.each do |interface_name|
               mtu(interface_name, mtu_and_indexes)
               dhcp(interface_name, mtu_and_indexes)
+              operstate(interface_name)
               physical(interface_name)
 
               @log.debug("Found interface #{interface_name} with #{@fact_list[:interfaces][interface_name]}")
@@ -46,6 +47,11 @@ module Facter
               parse_ip_command_line(line, mtu_and_indexes)
             end
             mtu_and_indexes
+          end
+
+          def operstate(interface_name)
+            state = Facter::Util::FileHelper.safe_read("/sys/class/net/#{interface_name}/operstate", nil)
+            @fact_list[:interfaces][interface_name][:operational_state] = state.strip if state
           end
 
           def physical(ifname)
