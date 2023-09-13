@@ -33,6 +33,8 @@ module Facter
               dhcp(interface_name, mtu_and_indexes)
               operstate(interface_name)
               physical(interface_name)
+              linkspeed(interface_name)
+              duplex(interface_name)
 
               @log.debug("Found interface #{interface_name} with #{@fact_list[:interfaces][interface_name]}")
             end
@@ -60,6 +62,30 @@ module Facter
                                                          else
                                                            false
                                                          end
+          end
+
+          def duplex(interface_name)
+            return unless @fact_list[:interfaces][interface_name][:physical]
+
+            # not all interfaces support this, wifi for example causes an EINVAL (Invalid argument)
+            begin
+              plex = Facter::Util::FileHelper.safe_read("/sys/class/net/#{interface_name}/duplex", nil)
+              @fact_list[:interfaces][interface_name][:duplex] = plex.strip if plex
+            rescue StandardError => e
+              @log.debug("Failed to read '/sys/class/net/#{interface_name}/duplex': #{e.message}")
+            end
+          end
+
+          def linkspeed(interface_name)
+            return unless @fact_list[:interfaces][interface_name][:physical]
+
+            # not all interfaces support this, wifi for example causes an EINVAL (Invalid argument)
+            begin
+              speed = Facter::Util::FileHelper.safe_read("/sys/class/net/#{interface_name}/speed", nil)
+              @fact_list[:interfaces][interface_name][:speed] = speed.strip if speed
+            rescue StandardError => e
+              @log.debug("Failed to read '/sys/class/net/#{interface_name}/speed': #{e.message}")
+            end
           end
 
           def parse_ip_command_line(line, mtu_and_indexes)
