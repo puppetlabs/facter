@@ -78,20 +78,7 @@ Metrics/CyclomaticComplexity:
     - 'lib/facter/resolvers/aix/ffi/ffi_helper.rb'
 
 Metrics/ClassLength:
-  Exclude:
-    - 'lib/facter/resolvers/partitions.rb'
-    - 'lib/facter/custom_facts/core/execution/base.rb'
-    - 'lib/facter/custom_facts/util/fact.rb'
-    - 'lib/facter/resolvers/windows/networking.rb'
-    - 'lib/facter/custom_facts/util/collection.rb'
-    - 'lib/facter/framework/core/options/option_store.rb'
-    - 'lib/facter/framework/cli/cli.rb'
-    - 'lib/facter/framework/core/cache_manager.rb'
-    - 'install.rb'
-    - 'scripts/generate_changelog.rb'
-    - 'lib/facter/resolvers/solaris/networking.rb'
-    - 'lib/facter/framework/logging/logger.rb'
-    - 'lib/facter/framework/core/fact_manager.rb'
+  Enabled: false
 
 Naming/AccessorMethodName:
   Exclude:
