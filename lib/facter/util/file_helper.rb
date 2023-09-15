@@ -22,13 +22,12 @@ module Facter
           default_return
         end
 
+        # This previously acted as a helper method for versions of Ruby older
+        # than 2.5, before Dir.children was added. As it isn't a private
+        # method, we can't remove it entirely until the next major Facter
+        # release (presumably Facter 5).
         def dir_children(path)
-          children = if RUBY_VERSION.to_f < 2.5
-                       Dir.entries(path).reject { |dir| ['.', '..'].include?(dir) }
-                     else
-                       Dir.children(path)
-                     end
-
+          children = Dir.children(path)
           children
         end
 
