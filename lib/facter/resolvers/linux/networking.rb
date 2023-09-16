@@ -28,13 +28,13 @@ module Facter
             @fact_list[:interfaces] = Facter::Util::Linux::SocketParser.retrieve_interfaces(log)
             mtu_and_indexes = interfaces_mtu_and_index
 
-            @fact_list[:interfaces].keys.each do |interface_name|
-              mtu(interface_name, mtu_and_indexes)
-              dhcp(interface_name, mtu_and_indexes)
-              operstate(interface_name)
-              physical(interface_name)
-              linkspeed(interface_name)
-              duplex(interface_name)
+            @fact_list[:interfaces].each_pair do |interface_name, iface|
+              mtu(interface_name, mtu_and_indexes, iface)
+              dhcp(interface_name, mtu_and_indexes, iface)
+              operstate(interface_name, iface)
+              physical(interface_name, iface)
+              linkspeed(interface_name, iface)
+              duplex(interface_name, iface)
 
               @log.debug("Found interface #{interface_name} with #{@fact_list[:interfaces][interface_name]}")
             end
@@ -51,38 +51,38 @@ module Facter
             mtu_and_indexes
           end
 
-          def operstate(interface_name)
+          def operstate(interface_name, iface)
             state = Facter::Util::FileHelper.safe_read("/sys/class/net/#{interface_name}/operstate", nil)
-            @fact_list[:interfaces][interface_name][:operational_state] = state.strip if state
+            iface[:operational_state] = state.strip if state
           end
 
-          def physical(ifname)
-            @fact_list[:interfaces][ifname][:physical] = if File.exist?("/sys/class/net/#{ifname}/device")
-                                                           true
-                                                         else
-                                                           false
-                                                         end
+          def physical(ifname, iface)
+            iface[:physical] = if File.exist?("/sys/class/net/#{ifname}/device")
+                                 true
+                               else
+                                 false
+                               end
           end
 
-          def duplex(interface_name)
-            return unless @fact_list[:interfaces][interface_name][:physical]
+          def duplex(interface_name, iface)
+            return unless iface[:physical]
 
             # not all interfaces support this, wifi for example causes an EINVAL (Invalid argument)
             begin
               plex = Facter::Util::FileHelper.safe_read("/sys/class/net/#{interface_name}/duplex", nil)
-              @fact_list[:interfaces][interface_name][:duplex] = plex.strip if plex
+              iface[:duplex] = plex.strip if plex
             rescue StandardError => e
               @log.debug("Failed to read '/sys/class/net/#{interface_name}/duplex': #{e.message}")
             end
           end
 
-          def linkspeed(interface_name)
-            return unless @fact_list[:interfaces][interface_name][:physical]
+          def linkspeed(interface_name, iface)
+            return unless iface[:physical]
 
             # not all interfaces support this, wifi for example causes an EINVAL (Invalid argument)
             begin
               speed = Facter::Util::FileHelper.safe_read("/sys/class/net/#{interface_name}/speed", nil)
-              @fact_list[:interfaces][interface_name][:speed] = speed.strip.to_i if speed
+              iface[:speed] = speed.strip.to_i if speed
             rescue StandardError => e
               @log.debug("Failed to read '/sys/class/net/#{interface_name}/speed': #{e.message}")
             end
@@ -97,14 +97,14 @@ module Facter
             mtu_and_indexes[name] = { index: index, mtu: mtu }
           end
 
-          def mtu(interface_name, mtu_and_indexes)
+          def mtu(interface_name, mtu_and_indexes, iface)
             mtu = mtu_and_indexes.dig(interface_name, :mtu)
-            @fact_list[:interfaces][interface_name][:mtu] = mtu unless mtu.nil?
+            iface[:mtu] = mtu unless mtu.nil?
           end
 
-          def dhcp(interface_name, mtu_and_indexes)
+          def dhcp(interface_name, mtu_and_indexes, iface)
             dhcp = Facter::Util::Linux::Dhcp.dhcp(interface_name, mtu_and_indexes.dig(interface_name, :index), log)
-            @fact_list[:interfaces][interface_name][:dhcp] = dhcp unless dhcp.nil?
+            iface[:dhcp] = dhcp unless dhcp.nil?
           end
 
           def add_info_from_routing_table
