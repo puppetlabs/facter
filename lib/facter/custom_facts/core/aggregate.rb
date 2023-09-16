@@ -53,6 +53,13 @@ module Facter
       # @api private
       attr_reader :fact
 
+      # @!attribute [r] last_evaluated
+      #
+      # @return [String]
+      #
+      # @api public
+      attr_reader :last_evaluated
+
       # Create a new aggregated resolution mechanism.
       #
       # @param name [String] The name of the resolution.
@@ -101,7 +108,15 @@ module Facter
       #
       # @api private
       def evaluate(&block)
+        if @last_evaluated
+          msg = "Already evaluated #{@name}"
+          msg << " at #{@last_evaluated}" if msg.is_a? String
+          msg << ', reevaluating anyways'
+          log.warn msg
+        end
         instance_eval(&block)
+
+        @last_evaluated = block.source_location.join(':')
       end
 
       # Define a new chunk for the given aggregate
