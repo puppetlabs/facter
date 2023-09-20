@@ -18,6 +18,7 @@ describe Facter::Resolvers::Linux::Networking do
         .with(log_spy).and_return([[{ interface: 'ens192', ip: '10.16.125.217' }], []])
       allow(Facter::Util::Resolvers::Networking::PrimaryInterface).to receive(:read_from_proc_route)
         .and_return('ens160')
+      allow(File).to receive(:exist?).and_call_original
       allow(File).to receive(:exist?).with('/proc/net/if_inet6').and_return(true)
       allow(Facter::Util::FileHelper).to receive(:safe_read)
         .with('/proc/net/if_inet6', nil).and_return(load_fixture('proc_net_if_inet6').read)
@@ -28,7 +29,7 @@ describe Facter::Resolvers::Linux::Networking do
       allow(Facter::Util::FileHelper).to receive(:safe_read)
         .with('/sys/class/net/ens160/operstate', nil).and_return('up')
       allow(Facter::Util::FileHelper).to receive(:safe_read)
-        .with('/sys/class/net/ens160/speed', nil).and_return(1000)
+        .with('/sys/class/net/ens160/speed', nil).and_return('1000')
       allow(Facter::Util::FileHelper).to receive(:safe_read)
         .with('/sys/class/net/ens160/duplex', nil).and_return('full')
     end
@@ -103,7 +104,8 @@ describe Facter::Resolvers::Linux::Networking do
           network6: 'fe80::',
           operational_state: 'up',
           physical: true,
-          scope6: 'link'
+          scope6: 'link',
+          speed: 1000
         }
       }
     end
@@ -176,7 +178,8 @@ describe Facter::Resolvers::Linux::Networking do
           network6: 'fe80::',
           operational_state: 'up',
           physical: true,
-          scope6: 'link'
+          scope6: 'link',
+          speed: 1000
         }
       end
 
@@ -228,7 +231,8 @@ describe Facter::Resolvers::Linux::Networking do
           netmask: '255.255.240.0',
           network: '10.16.112.0',
           operational_state: 'up',
-          physical: true
+          physical: true,
+          speed: 1000
         }
 
         expect(networking_linux.resolve(:interfaces)['ens160']).to eq(expected)
@@ -308,7 +312,8 @@ describe Facter::Resolvers::Linux::Networking do
             network6: 'fe80::',
             operational_state: 'up',
             physical: true,
-            scope6: 'link'
+            scope6: 'link',
+            speed: 1000
           }
         }
       end

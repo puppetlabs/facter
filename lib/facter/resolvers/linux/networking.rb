@@ -82,7 +82,7 @@ module Facter
             # not all interfaces support this, wifi for example causes an EINVAL (Invalid argument)
             begin
               speed = Facter::Util::FileHelper.safe_read("/sys/class/net/#{interface_name}/speed", nil)
-              @fact_list[:interfaces][interface_name][:speed] = speed.strip if speed
+              @fact_list[:interfaces][interface_name][:speed] = speed.strip.to_i if speed
             rescue StandardError => e
               @log.debug("Failed to read '/sys/class/net/#{interface_name}/speed': #{e.message}")
             end
