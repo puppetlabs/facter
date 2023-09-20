@@ -18,6 +18,7 @@ describe Facter::Resolvers::Linux::Networking do
         .with(log_spy).and_return([[{ interface: 'ens192', ip: '10.16.125.217' }], []])
       allow(Facter::Util::Resolvers::Networking::PrimaryInterface).to receive(:read_from_proc_route)
         .and_return('ens160')
+      allow(File).to receive(:exist?).and_call_original
       allow(File).to receive(:exist?).with('/proc/net/if_inet6').and_return(true)
       allow(Facter::Util::FileHelper).to receive(:safe_read)
         .with('/proc/net/if_inet6', nil).and_return(load_fixture('proc_net_if_inet6').read)
@@ -27,6 +28,10 @@ describe Facter::Resolvers::Linux::Networking do
         .with('/sys/class/net/lo/operstate', nil).and_return('unknown')
       allow(Facter::Util::FileHelper).to receive(:safe_read)
         .with('/sys/class/net/ens160/operstate', nil).and_return('up')
+      allow(Facter::Util::FileHelper).to receive(:safe_read)
+        .with('/sys/class/net/ens160/speed', nil).and_return('1000')
+      allow(Facter::Util::FileHelper).to receive(:safe_read)
+        .with('/sys/class/net/ens160/duplex', nil).and_return('full')
     end
 
     after do
@@ -88,6 +93,7 @@ describe Facter::Resolvers::Linux::Networking do
               network: 'fe80::', scope6: 'link', flags: ['permanent'] }
           ],
           dhcp: '10.32.22.10',
+          duplex: 'full',
           ip: '10.16.119.155',
           ip6: 'fe80::250:56ff:fe9a:8481',
           mac: '00:50:56:9a:61:46',
@@ -98,7 +104,8 @@ describe Facter::Resolvers::Linux::Networking do
           network6: 'fe80::',
           operational_state: 'up',
           physical: true,
-          scope6: 'link'
+          scope6: 'link',
+          speed: 1000
         }
       }
     end
@@ -160,6 +167,7 @@ describe Facter::Resolvers::Linux::Networking do
               scope6: 'link', flags: ['permanent'] }
           ],
           dhcp: '10.32.22.10',
+          duplex: 'full',
           ip: '10.16.127.70',
           ip6: 'fe80::250:56ff:fe9a:8481',
           mac: '00:50:56:9a:61:46',
@@ -170,7 +178,8 @@ describe Facter::Resolvers::Linux::Networking do
           network6: 'fe80::',
           operational_state: 'up',
           physical: true,
-          scope6: 'link'
+          scope6: 'link',
+          speed: 1000
         }
       end
 
@@ -215,13 +224,15 @@ describe Facter::Resolvers::Linux::Networking do
             { address: '10.16.125.217' }
           ],
           dhcp: '10.32.22.10',
+          duplex: 'full',
           ip: '10.16.119.155',
           mac: '00:50:56:9a:61:46',
           mtu: 1500,
           netmask: '255.255.240.0',
           network: '10.16.112.0',
           operational_state: 'up',
-          physical: true
+          physical: true,
+          speed: 1000
         }
 
         expect(networking_linux.resolve(:interfaces)['ens160']).to eq(expected)
@@ -293,6 +304,7 @@ describe Facter::Resolvers::Linux::Networking do
               { address: 'fe80::250:56ff:fe9a:8481', netmask: 'ffff:ffff:ffff:ffff::',
                 network: 'fe80::', scope6: 'link', flags: ['permanent'] }
             ],
+            duplex: 'full',
             ip6: 'fe80::250:56ff:fe9a:8481',
             mac: '00:50:56:9a:61:46',
             mtu: 1500,
@@ -300,7 +312,8 @@ describe Facter::Resolvers::Linux::Networking do
             network6: 'fe80::',
             operational_state: 'up',
             physical: true,
-            scope6: 'link'
+            scope6: 'link',
+            speed: 1000
           }
         }
       end
