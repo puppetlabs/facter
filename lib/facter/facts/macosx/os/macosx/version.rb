@@ -10,23 +10,27 @@ module Facts
                        macosx_productversion_patch].freeze
 
           def call_the_resolver
-            fact_value = Facter::Resolvers::SwVers.resolve(:productversion)
-            ver = version_hash(fact_value)
+            version_value = Facter::Resolvers::SwVers.resolve(:productversion)
+            extra_value = Facter::Resolvers::SwVers.resolve(:productversionextra)
+            ver = version_hash(version_value, extra_value)
 
             [Facter::ResolvedFact.new(FACT_NAME, ver),
-             Facter::ResolvedFact.new(ALIASES[0], fact_value, :legacy),
+             Facter::ResolvedFact.new(ALIASES[0], version_value, :legacy),
              Facter::ResolvedFact.new(ALIASES[1], ver['major'], :legacy),
              Facter::ResolvedFact.new(ALIASES[2], ver['minor'], :legacy),
              Facter::ResolvedFact.new(ALIASES[3], ver['patch'], :legacy)]
           end
 
-          def version_hash(fact_value)
-            versions = fact_value.split('.')
+          def version_hash(version_value, extra_value)
+            versions = version_value.split('.')
             if versions[0] == '10'
-              { 'full' => fact_value, 'major' => "#{versions[0]}.#{versions[1]}", 'minor' => versions[-1] }
-            else
-              { 'full' => fact_value, 'major' => versions[0], 'minor' => versions.fetch(1, '0'),
+              { 'full' => version_value, 'major' => "#{versions[0]}.#{versions[1]}", 'minor' => versions[-1] }
+            elsif /11|12/.match?(versions[0]) || extra_value.nil?
+              { 'full' => version_value, 'major' => versions[0], 'minor' => versions.fetch(1, '0'),
                 'patch' => versions.fetch(2, '0') }
+            else
+              { 'full' => version_value, 'major' => versions[0], 'minor' => versions.fetch(1, '0'),
+                'patch' => versions.fetch(2, '0'), 'extra' => extra_value }
             end
           end
         end
