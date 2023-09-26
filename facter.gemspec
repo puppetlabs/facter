@@ -34,7 +34,7 @@ Gem::Specification.new do |spec|
   # or indirectly contain native extensions. The intent behind excluding these
   # gems from runtime dependencies is to allow users to be able to install
   # Facter without a compiler.
-  spec.add_development_dependency 'ffi'
+  spec.add_development_dependency 'ffi', '1.15.5'
   spec.add_development_dependency 'rake', '~> 13.0', '>= 13.0.6'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rubocop', '~> 0.81.0'
