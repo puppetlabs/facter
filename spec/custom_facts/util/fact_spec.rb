@@ -107,12 +107,15 @@ describe Facter::Util::Fact do
       expect(fact.resolution('named')).to be_a_kind_of Facter::Core::Aggregate
     end
 
-    # it "raises an error if there is an existing resolution with a different type" do
-    #   pending "We need to stop rescuing all errors when instantiating resolutions"
-    #   fact.define_resolution('named')
-    #   expect(fact.define_resolution('named', :type => :aggregate))
-    #     .to raise_error(ArgumentError, /Cannot return resolution.*already defined as simple/)
-    # end
+    it 'raises an error if there is an existing resolution with a different type' do
+      expect(logger).to receive(:error).with(
+        "Unable to add resolve \"named\" for fact 'yay': Cannot return resolution named with type aggregate; already "\
+          'defined as simple', true
+      )
+
+      fact.define_resolution('named', type: :simple)
+      fact.define_resolution('named', type: :aggregate)
+    end
 
     it 'returns existing resolutions by name' do
       allow(Facter::Util::Resolution).to receive(:new).once.with('named', fact).and_return(res)
