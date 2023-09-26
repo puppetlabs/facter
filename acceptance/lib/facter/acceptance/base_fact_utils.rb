@@ -144,11 +144,7 @@ module Facter
           os_distro_release_full = /#{os_version}\.\d+/
         else
           os_name = 'RedHat'
-          if '9'.match?(os_version) # FIXME: special case to be removed when ISO is updated to release ISO
-            os_distro_description = /Red Hat Enterprise Linux( Server)? release #{os_version}\.\d+ Beta \(\w+\)/
-          else
-            os_distro_description = /Red Hat Enterprise Linux( Server)? release #{os_version}\.\d+ \(\w+\)/
-          end
+          os_distro_description = /Red Hat Enterprise Linux( Server)? release #{os_version}\.\d+ \(\w+\)/
           os_distro_id = /^RedHatEnterprise(Server)?$/
           os_distro_release_full = /#{os_version}\.\d+/
         end
