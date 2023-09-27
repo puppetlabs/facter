@@ -93,7 +93,12 @@ module LegacyFacter
           if data == false
             log.warn "Could not interpret fact file #{fact.file}"
           elsif (data == {}) || data.nil?
-            log.debug("Fact file #{fact.file} was parsed but no key=>value data was returned")
+            log.debug(
+              "Structured data fact file #{fact.file} was parsed but was either empty or an invalid filetype "\
+                '(valid filetypes are .yaml, .json, and .txt).'
+            )
+          elsif !data.is_a?(Hash)
+            log.error("Structured data fact file #{fact.file} was parsed but no key=>value data was returned.")
           else
             add_data(data, collection, fact, weight)
           end

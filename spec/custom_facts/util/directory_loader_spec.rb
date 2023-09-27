@@ -46,6 +46,31 @@ describe LegacyFacter::Util::DirectoryLoader do
       expect(collection_double).to have_received(:add).with('f1', value: 'one', fact_type: :external, file: file)
     end
 
+    it 'ignores when a structured data fact contains empty hash' do
+      data = {}
+      write_to_file('data.yaml', YAML.dump(data))
+      file = File.join(dir_loader.directories[0], 'data.yaml')
+
+      expect(log_spy).to receive(:debug).with(
+        "Structured data fact file #{file} was parsed but was either empty or an invalid filetype (valid filetypes "\
+          'are .yaml, .json, and .txt).'
+      )
+
+      dir_loader.load(collection)
+    end
+
+    it 'ignores when fact with external type contains invalid data type' do
+      data = 'foo'
+      write_to_file('data.yaml', YAML.dump(data))
+      file = File.join(dir_loader.directories[0], 'data.yaml')
+
+      expect(log_spy).to receive(:error).with(
+        "Structured data fact file #{file} was parsed but no key=>value data was returned."
+      )
+
+      dir_loader.load(collection)
+    end
+
     it "ignores files that begin with '.'" do
       not_to_be_used_collection = double('collection should not be used')
       expect(not_to_be_used_collection).not_to receive(:add)
