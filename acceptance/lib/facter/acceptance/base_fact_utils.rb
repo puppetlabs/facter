@@ -144,7 +144,7 @@ module Facter
           os_distro_release_full = /#{os_version}\.\d+/
         else
           os_name = 'RedHat'
-          os_distro_description = /Red Hat Enterprise Linux( Server)? release #{os_version}\.\d+ \(\w+\)/
+          os_distro_description = /Red Hat Enterprise Linux( Server)? release #{os_version}\.\d+( Beta)? \(\w+\)/
           os_distro_id = /^RedHatEnterprise(Server)?$/
           os_distro_release_full = /#{os_version}\.\d+/
         end
