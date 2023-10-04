@@ -28,12 +28,16 @@ module Facter
         def build_fact_list(output)
           uname_results = output.split("\n")
 
-          @fact_list[:machine] = uname_results[0].strip
-          @fact_list[:nodename] = uname_results[1].strip
-          @fact_list[:processor] = uname_results[2].strip
-          @fact_list[:kernelrelease] = uname_results[3].strip
-          @fact_list[:kernelname] = uname_results[4].strip
-          @fact_list[:kernelversion] = uname_results[5].strip
+          if !uname_results.empty?
+            @fact_list[:machine],
+            @fact_list[:nodename],
+            @fact_list[:processor],
+            @fact_list[:kernelrelease],
+            @fact_list[:kernelname],
+            @fact_list[:kernelversion] = uname_results.map(&:strip)
+          else
+            log.warn('Request to uname returned no output. Uname related facts are not populated.')
+          end
         end
       end
     end
