@@ -23,7 +23,7 @@ module Facter
           private
 
           def output_to_hash(output)
-            output.scan(/.*:[ ].*$/).map { |e| e.strip.match(/(.*?): (.*)/).captures }.to_h
+            output.scan(/.*: .*$/).map { |e| e.strip.match(/(.*?): (.*)/).captures }.to_h
           end
 
           def normalize_keys(system_profiler_hash)
