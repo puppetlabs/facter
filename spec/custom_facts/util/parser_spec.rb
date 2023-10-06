@@ -273,7 +273,7 @@ describe LegacyFacter::Util::Parser do
 
         let(:sysnative_regexp)  { /^"#{Regexp.escape(sysnative_powershell)}"/ }
         let(:system32_regexp)   { /^"#{Regexp.escape(system32_powershell)}"/ }
-        let(:powershell_regexp) { /^"#{Regexp.escape("powershell.exe")}"/ }
+        let(:powershell_regexp) { /^"#{Regexp.escape('powershell.exe')}"/ }
 
         it 'prefers the sysnative alias to resolve 64-bit powershell on 32-bit ruby' do
           allow(File).to receive(:readable?).with(sysnative_powershell).and_return(true)
