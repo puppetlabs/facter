@@ -205,19 +205,6 @@ Style/FormatStringToken:
     - 'lib/facter/resolvers/amzn/os_release_rpm.rb'
     - 'spec/facter/resolvers/amzn/os_release_rpm_spec.rb'
 
-# Offense count: 6
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: always, always_true, never
-Style/FrozenStringLiteralComment:
-  Exclude:
-    - 'lib/facter/custom_facts/core/execution/posix.rb'
-    - 'lib/facter/custom_facts/core/execution/windows.rb'
-    - 'lib/facter/custom_facts/util/resolution.rb'
-    - 'spec/custom_facts/core/execution/posix_spec.rb'
-    - 'spec/custom_facts/core/execution/windows_spec.rb'
-    - 'spec/custom_facts/util/normalization_spec.rb'
-
 # Offense count: 5
 # This cop supports unsafe autocorrection (--autocorrect-all).
 Style/GlobalStdStream:

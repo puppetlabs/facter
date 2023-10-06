@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Facter
   module Core
     module Execution
@@ -44,7 +46,8 @@ module Facter
 
           return unless exe && (expanded = which(exe))
 
-          expanded = "'#{expanded}'" if /\s/.match?(expanded)
+          expanded = expanded.dup
+          expanded = +"'#{expanded}'" if /\s/.match?(expanded)
           expanded << " #{args}" if args
 
           expanded

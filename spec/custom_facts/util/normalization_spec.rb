@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe LegacyFacter::Util::Normalization do
   subject(:normalization) { LegacyFacter::Util::Normalization }
 
@@ -44,7 +46,7 @@ describe LegacyFacter::Util::Normalization do
       end
 
       it 'rejects strings that are not UTF-8 and do not match their claimed encoding' do
-        invalid_shift_jis = "\xFF\x5C!".force_encoding(Encoding::SHIFT_JIS)
+        invalid_shift_jis = (+"\xFF\x5C!").force_encoding(Encoding::SHIFT_JIS)
         expect do
           normalization.normalize(invalid_shift_jis)
         end.to raise_error(LegacyFacter::Util::Normalization::NormalizationError,
@@ -52,7 +54,7 @@ describe LegacyFacter::Util::Normalization do
       end
 
       it "rejects strings that claim to be UTF-8 encoded but aren't" do
-        str = "\255ay!".force_encoding(Encoding::UTF_8)
+        str = (+"\255ay!").force_encoding(Encoding::UTF_8)
         expect do
           normalization.normalize(str)
         end.to raise_error(LegacyFacter::Util::Normalization::NormalizationError,

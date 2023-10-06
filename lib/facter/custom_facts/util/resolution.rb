@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This represents a fact resolution. A resolution is a concrete
 # implementation of a fact. A single fact can have many resolutions and
 # the correct resolution will be chosen at runtime. Each time
@@ -88,7 +90,7 @@ module Facter
       # @api private
       def evaluate(&block)
         if @last_evaluated
-          msg = "Already evaluated #{@name}"
+          msg = +"Already evaluated #{@name}"
           msg << " at #{@last_evaluated}" if msg.is_a? String
           msg << ', reevaluating anyways'
           log.warn msg

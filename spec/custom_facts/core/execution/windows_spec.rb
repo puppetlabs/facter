@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Facter::Core::Execution::Windows do
   let(:executor) { Facter::Core::Execution::Windows.new }
 
