@@ -22,10 +22,8 @@ module LegacyFacter
 
       alias tsort_each_node each_key
 
-      def tsort_each_child(node)
-        fetch(node, []).each do |child|
-          yield child
-        end
+      def tsort_each_child(node, &block)
+        fetch(node, []).each(&block)
       end
 
       def tsort

@@ -212,13 +212,6 @@ Style/CommentAnnotation:
 Style/Documentation:
   Enabled: false
 
-# Offense count: 2
-# This cop supports safe autocorrection (--autocorrect).
-Style/ExplicitBlockArgument:
-  Exclude:
-    - 'lib/facter/custom_facts/core/directed_graph.rb'
-    - 'lib/facter/framework/benchmarking/timer.rb'
-
 # Offense count: 8
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: EnforcedStyle, MaxUnannotatedPlaceholdersAllowed, AllowedMethods, AllowedPatterns.

@@ -7,9 +7,9 @@ module Facter
     module Benchmarking
       class Timer
         class << self
-          def measure(fact_name, prefix_message = '')
+          def measure(fact_name, prefix_message = '', &block)
             if Options[:timing]
-              time = Benchmark.measure { yield }
+              time = Benchmark.measure(&block)
 
               log = "fact '#{fact_name}', took: #{time.format('%r')} seconds"
               prefix_message = "#{prefix_message} " unless prefix_message.empty?
