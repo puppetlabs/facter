@@ -336,12 +336,6 @@ Style/RedundantReturn:
     - 'lib/facter/resolvers/solaris/os_release.rb'
     - 'lib/facter/resolvers/virt_what.rb'
 
-# Offense count: 4
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Style/RedundantSelfAssignment:
-  Exclude:
-    - 'lib/facter/framework/core/fact_manager.rb'
-
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: ConvertCodeThatCanStartToReturnNil, AllowedMethods, MaxChainLength.
