@@ -72,12 +72,6 @@ Lint/ElseLayout:
   Exclude:
     - 'lib/facter/util/resolvers/networking/networking.rb'
 
-# Offense count: 3
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Lint/NonDeterministicRequireOrder:
-  Exclude:
-    - 'spec/spec_helper.rb'
-
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
 Lint/RedundantCopDisableDirective:

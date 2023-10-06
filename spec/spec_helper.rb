@@ -32,9 +32,9 @@ require 'facter/framework/cli/cli'
 require 'facter/framework/cli/cli_launcher'
 
 if unit_tests
-  Dir.glob(File.join('./lib/facter/util', '/**/*/', '*.rb'), &method(:require))
-  Dir.glob(File.join('./lib/facter/facts', '/**/*/', '*.rb'), &method(:require))
-  Dir.glob(File.join('./lib/facter/resolvers', '/**/*/', '*.rb'), &method(:require))
+  Dir.glob(File.join('./lib/facter/util', '/**/*/', '*.rb')).sort.each(&method(:require))
+  Dir.glob(File.join('./lib/facter/facts', '/**/*/', '*.rb')).sort.each(&method(:require))
+  Dir.glob(File.join('./lib/facter/resolvers', '/**/*/', '*.rb')).sort.each(&method(:require))
 end
 
 default_coverage = 90
