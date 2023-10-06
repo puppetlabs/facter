@@ -23,7 +23,7 @@ module Facter
             end
           end
 
-          def read_mounts(fact_name) # rubocop:disable Metrics/MethodLength
+          def read_mounts(fact_name)
             @mounts = []
             @auto_home_paths = []
             begin

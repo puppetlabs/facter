@@ -119,13 +119,13 @@ describe Facter::Util::Resolvers::Networking do
         primary_interface: 'en0',
         interfaces:
            { 'alw0' => {
-             mtu: 1484,
-             mac: '2e:ba:e4:83:4b:b7',
-             bindings6:
+               mtu: 1484,
+               mac: '2e:ba:e4:83:4b:b7',
+               bindings6:
               [{ address: 'fe80::2cba:e4ff:fe83:4bb7',
                  netmask: 'ffff:ffff:ffff:ffff::',
                  network: 'fe80::' }]
-           },
+             },
              'bridge0' => { mtu: 1500, mac: '82:17:0e:93:9d:00' },
              'en0' =>
            { mtu: 1500,

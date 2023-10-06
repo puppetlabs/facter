@@ -15,8 +15,7 @@ describe Facts::Linux::Gce do
         {
           'oslogin' => {
             'authenticate' => {
-              'sessions' => {
-              }
+              'sessions' => {}
             }
           },
           'project' => {

@@ -37,9 +37,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'ffi', '1.15.5'
   spec.add_development_dependency 'rake', '~> 13.0', '>= 13.0.6'
   spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_development_dependency 'rubocop', '~> 0.81.0'
+  spec.add_development_dependency 'rubocop', '~> 1.28' # last version to support 2.5
   spec.add_development_dependency 'rubocop-performance', '~> 1.5.2'
-  spec.add_development_dependency 'rubocop-rspec', '~> 1.38'
+  spec.add_development_dependency 'rubocop-rspec', '~> 2.10' # last version to support 2.5
   spec.add_development_dependency 'simplecov', '~> 0.17.1'
   spec.add_development_dependency 'sys-filesystem', '~> 1.4'
   spec.add_development_dependency 'webmock', '~> 3.12'
