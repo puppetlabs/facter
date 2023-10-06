@@ -60,12 +60,6 @@ Lint/ConstantDefinitionInBlock:
     - 'spec/facter/resolvers/macosx/mountpoints_spec.rb'
     - 'spec/facter/util/windows/network_utils_spec.rb'
 
-# Offense count: 3
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Lint/DuplicateRequire:
-  Exclude:
-    - 'lib/facter/custom_facts/core/file_loader.rb'
-
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
 Lint/ElseLayout:
