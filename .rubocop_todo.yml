@@ -305,20 +305,6 @@ Style/RedundantRegexpCharacterClass:
     - 'lib/facter/framework/formatters/legacy_fact_formatter.rb'
     - 'lib/facter/util/macosx/system_profile_executor.rb'
 
-# Offense count: 10
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: AllowMultipleReturnValues.
-Style/RedundantReturn:
-  Exclude:
-    - 'lib/facter/custom_facts/util/resolution.rb'
-    - 'lib/facter/facts/macosx/is_virtual.rb'
-    - 'lib/facter/facts/macosx/virtual.rb'
-    - 'lib/facter/facts/windows/hypervisors/kvm.rb'
-    - 'lib/facter/framework/formatters/hocon_fact_formatter.rb'
-    - 'lib/facter/resolvers/linux/hostname.rb'
-    - 'lib/facter/resolvers/solaris/os_release.rb'
-    - 'lib/facter/resolvers/virt_what.rb'
-
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
 # Configuration parameters: ConvertCodeThatCanStartToReturnNil, AllowedMethods, MaxChainLength.

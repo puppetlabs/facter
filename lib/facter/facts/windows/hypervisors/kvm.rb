@@ -29,7 +29,7 @@ module Facts
 
           return { openstack: true } if /^OpenStack/.match?(Facter::Resolvers::DMIComputerSystem.resolve(:name))
 
-          return { amazon: true } if /^Amazon/.match?(manufacturer)
+          { amazon: true } if /^Amazon/.match?(manufacturer)
         end
       end
     end

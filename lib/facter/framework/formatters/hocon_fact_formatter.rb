@@ -14,7 +14,8 @@ module Facter
 
       user_query = user_queries.first
       return format_for_no_query(resolved_facts) if user_query.empty?
-      return format_for_single_user_query(user_queries.first, resolved_facts) unless user_query.empty?
+
+      format_for_single_user_query(user_queries.first, resolved_facts) unless user_query.empty?
     end
 
     private

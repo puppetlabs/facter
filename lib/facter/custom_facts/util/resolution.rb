@@ -157,9 +157,11 @@ module Facter
       #
       # @api private
       def <=>(other)
-        return compare_equal_weights(other) if weight == other.weight
-        return 1 if weight > other.weight
-        return -1 if weight < other.weight
+        if weight == other.weight
+          compare_equal_weights(other)
+        else
+          weight <=> other.weight
+        end
       end
 
       private
