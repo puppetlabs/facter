@@ -60,10 +60,8 @@ module Facter
       def augment_custom(file_global_conf)
         return unless file_global_conf
 
-        if Options.cli?
-          unless file_global_conf['no-custom-facts'].nil?
-            @options[:no_custom_facts] = file_global_conf['no-custom-facts']
-          end
+        if Options.cli? && !file_global_conf['no-custom-facts'].nil?
+          @options[:no_custom_facts] = file_global_conf['no-custom-facts']
         end
 
         @options[:custom_dir] = file_global_conf['custom-dir'] unless file_global_conf['custom-dir'].nil?
@@ -73,8 +71,8 @@ module Facter
       def augment_external(global_conf)
         return unless global_conf
 
-        if Options.cli?
-          @options[:no_external_facts] = global_conf['no-external-facts'] unless global_conf['no-external-facts'].nil?
+        if Options.cli? && !global_conf['no-external-facts'].nil?
+          @options[:no_external_facts] = global_conf['no-external-facts']
         end
 
         @options[:external_dir] = [global_conf['external-dir']].flatten unless global_conf['external-dir'].nil?

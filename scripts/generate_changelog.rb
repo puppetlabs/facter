@@ -79,8 +79,8 @@ class ChangelogGenerator
     prs.each do |pr|
       next if pr[:state] != 'closed' && pr[:merged_at].nil?
 
-      if pr[:labels].nil? || pr[:labels].empty?
-        unlabeled_prs << pr[:html_url] unless unlabeled_prs.include?(pr[:html_url])
+      if (pr[:labels].nil? || pr[:labels].empty?) && !unlabeled_prs.include?(pr[:html_url])
+        unlabeled_prs << pr[:html_url]
       end
 
       pr[:labels].each do |label|
