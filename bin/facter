@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 require 'pathname'
-require 'facter/framework/cli/cli_launcher.rb'
+require 'facter/framework/cli/cli_launcher'
 
 Facter::OptionsValidator.validate(ARGV)
 processed_arguments = CliLauncher.prepare_arguments(ARGV)

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'ffi/ffi.rb'
+require_relative 'ffi/ffi'
 module Facter
   module Resolvers
     module Solaris
