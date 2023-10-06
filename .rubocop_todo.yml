@@ -260,15 +260,6 @@ Style/MissingRespondToMissing:
   Exclude:
     - 'lib/facter.rb'
 
-# Offense count: 3
-# Configuration parameters: AllowedMethods.
-# AllowedMethods: respond_to_missing?
-Style/OptionalBooleanParameter:
-  Exclude:
-    - 'lib/facter/framework/logging/logger.rb'
-    - 'lib/facter/util/resolvers/networking/networking.rb'
-    - 'lib/facter/util/utils.rb'
-
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
 Style/RedundantParentheses:

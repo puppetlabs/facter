@@ -149,7 +149,7 @@ module Facter
       warn(message_string)
     end
 
-    def error(msg, colorize = false)
+    def error(msg, colorize = false) # rubocop:disable Style/OptionalBooleanParameter
       @@has_errors = true
 
       if @@message_callback && Options[:allow_external_loggers]

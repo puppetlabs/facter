@@ -103,7 +103,7 @@ module Facter
           def expand_interfaces(interfaces)
             interfaces.each_value do |values|
               expand_binding(values, values[:bindings]) if values[:bindings]
-              expand_binding(values, values[:bindings6], false) if values[:bindings6]
+              expand_binding(values, values[:bindings6], ipv4_type: false) if values[:bindings6]
             end
           end
 
@@ -113,7 +113,7 @@ module Facter
             end
           end
 
-          def expand_binding(values, bindings, ipv4_type = true)
+          def expand_binding(values, bindings, ipv4_type: true)
             binding = find_valid_binding(bindings)
             ip_protocol_type = ipv4_type ? '' : '6'
 
