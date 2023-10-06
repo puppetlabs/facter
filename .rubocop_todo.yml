@@ -187,14 +187,6 @@ Style/CaseEquality:
   Exclude:
     - 'lib/facter/custom_facts/util/confine.rb'
 
-# Offense count: 1
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: AllowedMethods, AllowedPatterns.
-# AllowedMethods: ==, equal?, eql?
-Style/ClassEqualityComparison:
-  Exclude:
-    - 'lib/facter/framework/formatters/hocon_fact_formatter.rb'
-
 # Offense count: 24
 Style/ClassVars:
   Exclude:

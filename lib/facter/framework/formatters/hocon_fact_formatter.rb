@@ -39,7 +39,7 @@ module Facter
 
       return '' unless fact_value
 
-      fact_value.class == Hash ? hash_to_hocon(fact_value) : fact_value
+      fact_value.instance_of?(Hash) ? hash_to_hocon(fact_value) : fact_value
     end
 
     def hash_to_hocon(fact_collection)
