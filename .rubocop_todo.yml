@@ -62,12 +62,6 @@ Lint/ConstantDefinitionInBlock:
 
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
-Lint/ElseLayout:
-  Exclude:
-    - 'lib/facter/util/resolvers/networking/networking.rb'
-
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
 Lint/RedundantCopDisableDirective:
   Exclude:
     - 'spec/facter/util/linux/socket_parser_spec.rb'
