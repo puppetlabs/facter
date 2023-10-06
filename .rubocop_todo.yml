@@ -75,13 +75,6 @@ RSpec/MultipleMemoizedHelpers:
 RSpec/NestedGroups:
   Max: 6
 
-# Offense count: 3
-RSpec/StubbedMock:
-  Exclude:
-    - 'spec/custom_facts/core/execution/fact_manager_spec.rb'
-    - 'spec/custom_facts/util/confine_spec.rb'
-    - 'spec/custom_facts/util/parser_spec.rb'
-
 # Offense count: 6
 RSpec/SubjectStub:
   Exclude:
