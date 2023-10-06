@@ -300,15 +300,6 @@ Style/OptionalBooleanParameter:
     - 'lib/facter/util/resolvers/networking/networking.rb'
     - 'lib/facter/util/utils.rb'
 
-# Offense count: 4
-# This cop supports safe autocorrection (--autocorrect).
-Style/RedundantAssignment:
-  Exclude:
-    - 'lib/facter/framework/core/cache_manager.rb'
-    - 'lib/facter/framework/core/fact_loaders/fact_loader.rb'
-    - 'lib/facter/framework/logging/logger_helper.rb'
-    - 'lib/facter/util/file_helper.rb'
-
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
 Style/RedundantParentheses:

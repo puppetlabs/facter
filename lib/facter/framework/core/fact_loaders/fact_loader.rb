@@ -100,13 +100,11 @@ module Facter
 
       reject_list_core, reject_list_legacy = construct_reject_lists(blocked_facts, facts)
 
-      facts = facts.reject do |fact|
+      facts.reject do |fact|
         reject_list_core.include?(fact) || reject_list_core.find do |fact_to_block|
           fact_to_block.klass == fact.klass
         end || reject_list_legacy.include?(fact)
       end
-
-      facts
     end
 
     def construct_reject_lists(blocked_facts, facts)
