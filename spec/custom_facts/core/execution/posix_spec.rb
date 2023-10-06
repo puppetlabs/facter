@@ -6,7 +6,7 @@ describe Facter::Core::Execution::Posix, unless: LegacyFacter::Util::Config.wind
   describe '#search_paths' do
     it 'uses the PATH environment variable plus /sbin and /usr/sbin on unix' do
       allow(ENV).to receive(:[]).with('PATH').and_return '/bin:/usr/bin'
-      expect(posix_executor.search_paths). to eq %w[/bin /usr/bin /sbin /usr/sbin]
+      expect(posix_executor.search_paths).to eq %w[/bin /usr/bin /sbin /usr/sbin]
     end
   end
 

@@ -34,20 +34,6 @@ Layout/MultilineMethodCallIndentation:
   Exclude:
     - 'lib/facter/resolvers/networking.rb'
 
-# Offense count: 19
-# This cop supports safe autocorrection (--autocorrect).
-Layout/SpaceAroundMethodCallOperator:
-  Exclude:
-    - 'spec/custom_facts/core/execution/posix_spec.rb'
-    - 'spec/custom_facts/util/collection_spec.rb'
-    - 'spec/facter/facts/linux/system_uptime/days_spec.rb'
-    - 'spec/facter/facts/linux/system_uptime/hours_spec.rb'
-    - 'spec/facter/facts/linux/system_uptime/seconds_spec.rb'
-    - 'spec/facter/facts/linux/system_uptime/uptime_spec.rb'
-    - 'spec/facter/resolvers/lpar_spec.rb'
-    - 'spec/facter/util/facts/posix/virtual_detector_spec.rb'
-    - 'spec/facter/util/resolvers/filesystem_helper_spec.rb'
-
 # Offense count: 1
 # Configuration parameters: AllowedNames.
 # AllowedNames: module_parent

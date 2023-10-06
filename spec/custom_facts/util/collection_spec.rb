@@ -401,11 +401,11 @@ describe LegacyFacter::Util::Collection do
       end
 
       it 'loads one fact' do
-        expect(collection.custom_facts.size). to eq(1)
+        expect(collection.custom_facts.size).to eq(1)
       end
 
       it 'loads the new fact' do
-        expect(collection.custom_facts.first[0]). to eq(:new_fact)
+        expect(collection.custom_facts.first[0]).to eq(:new_fact)
       end
     end
 
@@ -424,11 +424,11 @@ describe LegacyFacter::Util::Collection do
       end
 
       it 'loads one fact' do
-        expect(collection.custom_facts.size). to eq(1)
+        expect(collection.custom_facts.size).to eq(1)
       end
 
       it 'loads the new fact' do
-        expect(collection.custom_facts.first[0]). to eq(:new_fact)
+        expect(collection.custom_facts.first[0]).to eq(:new_fact)
       end
     end
   end

@@ -33,19 +33,19 @@ describe Facter::Util::Resolvers::FilesystemHelper do
     let(:mount_points) { Facter::Util::Resolvers::FilesystemHelper.read_mountpoints }
 
     it 'converts name from ASCII-8BIT to UTF-8' do
-      expect(mount_points.first.name.encoding.name). to eq('UTF-8')
+      expect(mount_points.first.name.encoding.name).to eq('UTF-8')
     end
 
     it 'converts mount_type from ASCII-8BIT to UTF-8' do
-      expect(mount_points.first.mount_type.encoding.name). to eq('UTF-8')
+      expect(mount_points.first.mount_type.encoding.name).to eq('UTF-8')
     end
 
     it 'converts mount_point from ASCII-8BIT to UTF-8' do
-      expect(mount_points.first.mount_point.encoding.name). to eq('UTF-8')
+      expect(mount_points.first.mount_point.encoding.name).to eq('UTF-8')
     end
 
     it 'converts options from ASCII-8BIT to UTF-8' do
-      expect(mount_points.first.options.encoding.name). to eq('UTF-8')
+      expect(mount_points.first.options.encoding.name).to eq('UTF-8')
     end
   end
 end

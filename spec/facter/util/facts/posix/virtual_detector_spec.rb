@@ -80,7 +80,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
       it 'calls Facter::Resolvers::VirtWhat' do
         detector.platform
 
-        expect(Facter::Resolvers::VirtWhat). to have_received(:resolve).with(:vm)
+        expect(Facter::Resolvers::VirtWhat).to have_received(:resolve).with(:vm)
       end
 
       it 'returns xen' do

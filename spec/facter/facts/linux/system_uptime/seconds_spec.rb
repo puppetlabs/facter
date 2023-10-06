@@ -8,7 +8,7 @@ describe Facts::Linux::SystemUptime::Seconds do
 
     context 'when on linux' do
       before do
-        allow(Facter::Resolvers::Containers).to receive(:resolve) .with(:hypervisor).and_return(nil)
+        allow(Facter::Resolvers::Containers).to receive(:resolve).with(:hypervisor).and_return(nil)
         allow(Facter::Resolvers::Uptime).to receive(:resolve).with(:seconds).and_return(value)
       end
 
@@ -21,7 +21,7 @@ describe Facts::Linux::SystemUptime::Seconds do
 
     context 'when in docker container' do
       before do
-        allow(Facter::Resolvers::Containers).to receive(:resolve) .with(:hypervisor).and_return({ docker: '123' })
+        allow(Facter::Resolvers::Containers).to receive(:resolve).with(:hypervisor).and_return({ docker: '123' })
         allow(Facter::Resolvers::Linux::DockerUptime).to receive(:resolve).with(:seconds).and_return(value)
       end
 
