@@ -1,13 +1,12 @@
 # frozen_string_literal: true
 
-describe Facter::Resolvers::Macosx::Mountpoints do
-  module Sys
-    class Filesystem
-      class Error < StandardError
-      end
-    end
+module Sys
+  class Filesystem
+    class Error < StandardError; end
   end
+end
 
+describe Facter::Resolvers::Macosx::Mountpoints do
   let(:mount) do
     double(Sys::Filesystem::Mount, mount_type: 'ext4', mount_point: '/proc/a', options: mount_options,
                                    name: '/dev/nvme0n1p2', dump_frequency: 0, pass_number: 0)

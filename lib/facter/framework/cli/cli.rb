@@ -183,8 +183,6 @@ module Facter
         Facter::Util::FileHelper.safe_read("#{path}fixtures/facter_help_header")
       end
 
-      IGNORE_OPTIONS = %w[log_level color no_color].freeze
-
       def add_class_options_to_help
         help_class_options = +''
         class_options = Cli.class_options

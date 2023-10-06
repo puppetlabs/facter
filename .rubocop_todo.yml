@@ -48,18 +48,6 @@ Layout/SpaceAroundMethodCallOperator:
     - 'spec/facter/util/facts/posix/virtual_detector_spec.rb'
     - 'spec/facter/util/resolvers/filesystem_helper_spec.rb'
 
-# Offense count: 7
-# Configuration parameters: AllowedMethods.
-# AllowedMethods: enums
-Lint/ConstantDefinitionInBlock:
-  Exclude:
-    - 'lib/facter/framework/cli/cli.rb'
-    - 'spec/custom_facts/core/resolvable_spec.rb'
-    - 'spec/custom_facts/core/suitable_spec.rb'
-    - 'spec/custom_facts/util/collection_spec.rb'
-    - 'spec/facter/resolvers/macosx/mountpoints_spec.rb'
-    - 'spec/facter/util/windows/network_utils_spec.rb'
-
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
 Lint/RedundantCopDisableDirective:
