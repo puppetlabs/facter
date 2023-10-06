@@ -90,7 +90,7 @@ module LegacyFacter
 
         if structure.is_a? Hash
           structure.each_pair do |name, value|
-            new_path = "#{path}_#{name}".gsub(%r{\-|/}, '_')
+            new_path = "#{path}_#{name}".gsub(%r{-|/}, '_')
             results.merge! flatten_structure(new_path, value)
           end
         elsif structure.is_a? Array

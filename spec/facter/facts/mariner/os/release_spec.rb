@@ -7,12 +7,12 @@ describe Facts::Mariner::Os::Release do
     before do
       allow(Facter::Resolvers::SpecificReleaseFile).to receive(:resolve)
         .with(:release, { release_file: '/etc/mariner-release',
-                          regex: /CBL\-Mariner ([0-9.]+)/ })
+                          regex: /CBL-Mariner ([0-9.]+)/ })
         .and_return(value)
     end
 
     context 'when version is retrieved from specific file' do
-      let(:value) { /CBL\-Mariner ([0-9.]+)/.match('CBL-Mariner 2.0.20220824') }
+      let(:value) { /CBL-Mariner ([0-9.]+)/.match('CBL-Mariner 2.0.20220824') }
       let(:release) { { 'full' => '2.0.20220824', 'major' => '2', 'minor' => '0' } }
 
       it 'returns operating system name fact' do

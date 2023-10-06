@@ -39,12 +39,12 @@ module Facter
           # convert ip ranges into single ip. eg. 10.16.132.213 -->  10.16.132.213 is converted to 10.16.132.213
           # convert ip6 ranges into single ip. eg. 2001:db8:cafe::132:213 -->
           # 2001:db8:cafe::132:213 is converted to 2001:db8:cafe::132:213
-          response.gsub!(/([\da-fA-F]+([\.:]+[\da-fA-F]+)*)\s+-->\s+[\da-fA-F]+([\.:]+[\da-fA-F]+)*/, '\\1')
+          response.gsub!(/([\da-fA-F]+([.:]+[\da-fA-F]+)*)\s+-->\s+[\da-fA-F]+([.:]+[\da-fA-F]+)*/, '\\1')
         end
 
         def parse_interfaces_response(response)
           parsed_interfaces_data = {}
-          interfaces_data = Hash[*response.split(/^([A-Za-z0-9_\.]+): /)[1..-1]]
+          interfaces_data = Hash[*response.split(/^([A-Za-z0-9_.]+): /)[1..-1]]
 
           interfaces_data.each do |interface_name, raw_data|
             parsed_interface_data = {}
