@@ -199,14 +199,6 @@ Style/ClassVars:
     - 'spec/framework/core/fact/internal/internal_fact_manager_spec.rb'
     - 'spec/framework/logging/logger_spec.rb'
 
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: Keywords, RequireColon.
-# Keywords: TODO, FIXME, OPTIMIZE, HACK, REVIEW, NOTE
-Style/CommentAnnotation:
-  Exclude:
-    - 'spec/facter/facter_spec.rb'
-
 # Offense count: 910
 # Configuration parameters: AllowedConstants.
 Style/Documentation:
