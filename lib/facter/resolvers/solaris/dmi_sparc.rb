@@ -19,6 +19,12 @@ module Facter
 
             matches = output.match(/System Configuration:\s+(.+?)\s+sun\d+\S+\s+(.+)/)&.captures
 
+            # There are circumstances (e.g. in non-global zones) when prtdiag
+            # will return text, but it's an error message or some other string
+            # that isn't parsed by the above match/capture. In that case, we
+            # simply return.
+            return if matches.nil?
+
             @fact_list[:manufacturer] = matches[0]&.strip
             @fact_list[:product_name] = matches[1]&.strip
 
