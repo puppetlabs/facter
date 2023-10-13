@@ -33,4 +33,34 @@ describe Facter::Resolvers::Solaris::DmiSparc do
       expect(resolver.resolve(:serial_number)).to eq('random_string')
     end
   end
+
+  describe '#reolve under a non-global zone' do
+    subject(:resolver) { Facter::Resolvers::Solaris::DmiSparc }
+
+    let(:log_spy) { instance_spy(Facter::Log) }
+
+    before do
+      resolver.instance_variable_set(:@log, log_spy)
+      allow(File).to receive(:executable?).with('/usr/sbin/prtdiag').and_return(true)
+      allow(Facter::Core::Execution).to receive(:execute)
+        .with('/usr/sbin/prtdiag', { logger: log_spy })
+        .and_return('prtdiag can only be run in the global zone')
+    end
+
+    after do
+      Facter::Resolvers::Solaris::DmiSparc.invalidate_cache
+    end
+
+    it 'does not return manufacturer' do
+      expect(resolver.resolve(:manufacturer)).to eq(nil)
+    end
+
+    it 'does not return product_name' do
+      expect(resolver.resolve(:product_name)).to eq(nil)
+    end
+
+    it 'does not return serial_number' do
+      expect(resolver.resolve(:serial_number)).to eq(nil)
+    end
+  end
 end
