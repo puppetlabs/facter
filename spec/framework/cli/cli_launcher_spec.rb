@@ -9,11 +9,13 @@ describe CliLauncher do
 
   describe '#prepare_arguments' do
     let(:task_list) do
-      { 'help' => Thor::Command.new('help', 'description', 'long_description', 'usage'),
-        'query' => Thor::Command.new('query', 'description', 'long_description', 'usage'),
-        'version' => Thor::Command.new('version', 'description', 'long_description', 'usage'),
-        'list_block_groups' => Thor::Command.new('list_block_groups', 'description', 'long_description', 'usage'),
-        'list_cache_groups' => Thor::Command.new('list_cache_groups', 'description', 'long_description', 'usage') }
+      { 'help' => Thor::Command.new('help', 'description', 'long_description', 'wrap_long_description', 'usage'),
+        'query' => Thor::Command.new('query', 'description', 'long_description', 'wrap_long_description', 'usage'),
+        'version' => Thor::Command.new('version', 'description', 'long_description', 'wrap_long_description', 'usage'),
+        'list_block_groups' => Thor::Command.new('list_block_groups', 'description', 'wrap_long_description',
+                                                 'long_description', 'usage'),
+        'list_cache_groups' => Thor::Command.new('list_cache_groups', 'description', 'wrap_long_description',
+                                                 'long_description', 'usage') }
     end
 
     let(:map) do
