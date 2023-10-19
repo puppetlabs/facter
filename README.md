@@ -40,7 +40,19 @@ Facts are the nuggets of information that will be provided by facter e.g. `os.na
 Resolvers have the role of gathering data from the system.
 For example a resolver can execute a command on the system, can read a file or any operation that retrieves some data from a single source on the system.
 
-![Facter user interaction](docs/diagrams/facter_user_interaction.png?raw=true)
+```mermaid
+sequenceDiagram
+    participant user
+    participant framework
+    participant fact
+    participant resolver
+    user->>framework: user query
+    framework->>fact: create
+    fact->>resolver: resolve
+    resolver->>fact: system information
+    fact->>framework: fact value
+    framework->>user: formatted user output
+````
 
 ## Getting started
 After cloning the project, run `bundle install` to install all dependencies.
