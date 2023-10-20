@@ -8,9 +8,7 @@ module Facts
         ALIASES = 'architecture'
 
         def call_the_resolver
-          fact_value = Facter::Resolvers::Uname.resolve(:machine)
-          fact_value = 'amd64' if fact_value == 'x86_64'
-          fact_value = 'i386' if /i[3456]86|pentium/.match?(fact_value)
+          fact_value = Facter::Core::Execution.execute('dpkg --print-architecture')
 
           [Facter::ResolvedFact.new(FACT_NAME, fact_value), Facter::ResolvedFact.new(ALIASES, fact_value, :legacy)]
         end
