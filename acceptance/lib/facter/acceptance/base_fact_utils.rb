@@ -81,7 +81,7 @@ module Facter
           os_hardware = 'x86_64'
           processor_model_pattern = /(Intel\(R\).*)|(AMD.*)/
         elsif agent['platform'] =~ /aarch64/
-          os_arch     = 'aarch64'
+          os_arch     = 'arm64'
           os_hardware = 'aarch64'
           processor_model_pattern = // # FACT-3439 - facter doesn't figure out the processor type on these machines 
         else
@@ -391,7 +391,7 @@ module Facter
           os_hardware = 'x86_64'
           processor_model_pattern = /(Intel\(R\).*)|(AMD.*)/
         elsif agent['platform'] =~ /aarch64/
-          os_arch                 = 'aarch64'
+          os_arch                 = 'arm64'
           os_hardware             = 'aarch64'
           processor_model_pattern = // # facter doesn't figure out the processor type on these machines
         else
