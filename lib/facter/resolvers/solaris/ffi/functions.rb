@@ -10,7 +10,7 @@ module Facter
 
           attach_function :ioctl_base, :ioctl, %i[int int pointer], :int
           attach_function :open_socket, :socket, %i[int int int], :int
-          attach_function :close_socket, :shutdown, %i[int int], :int
+          attach_function :close_socket, :close, %i[int], :int
           attach_function :inet_ntop, %i[int pointer pointer uint], :string
 
           def self.ioctl(call_const, pointer, address_family = AF_INET)
@@ -18,7 +18,7 @@ module Facter
             begin
               ioctl_base(fd, call_const, pointer)
             ensure
-              Ioctl.close_socket(fd, 2)
+              Ioctl.close_socket(fd)
             end
           end
         end

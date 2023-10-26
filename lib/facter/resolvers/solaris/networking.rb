@@ -79,7 +79,7 @@ module Facter
             ioctl = FFI::Ioctl.ioctl(FFI::SIOCGLIFMTU, lifreq, lifreq.ss_family)
 
             if ioctl == -1
-              @log.error("Cold not read MTU, error code is #{::FFI::LastError.error}")
+              @log.error("Could not read MTU, error code is: #{::FFI::LastError.error}")
               return
             end
 
