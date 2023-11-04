@@ -61,7 +61,7 @@ module Facter
           properties = PROPERTIES[cmd]
           properties.each do |property|
             str = (properties - [property]).join('|')
-            matcher = content.match(/#{Regexp.escape(property)}([^\n]*?)(#{str}|\n|$)/s)
+            matcher = content.match(/(?:^|^[^:]+:[^:]+)#{Regexp.escape(property)}([^\n]*?)(#{str}|\n|$)/s)
             if matcher
               value = matcher[1].strip
               property_hash[property.split(':').first] = value

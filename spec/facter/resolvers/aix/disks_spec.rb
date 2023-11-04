@@ -28,7 +28,7 @@ describe Facter::Resolvers::Aix::Disks do
     let(:result) { load_fixture('lspv_output').read }
 
     let(:disks) do
-      { 'hdisk0' => { size: '30.00 GiB', size_bytes: 32_212_254_720 } }
+      { 'hdisk0' => { size: '29.97 GiB', size_bytes: 32_178_700_288 } }
     end
 
     before do
