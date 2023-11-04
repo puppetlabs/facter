@@ -26,6 +26,8 @@ class OsDetector
                    detect_distro
                  when /freebsd/
                    :freebsd
+                 when /openbsd/i
+                   :openbsd
                  when /bsd/
                    :bsd
                  when /solaris/
