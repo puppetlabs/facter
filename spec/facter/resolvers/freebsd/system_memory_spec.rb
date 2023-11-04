@@ -12,12 +12,17 @@ describe Facter::Resolvers::Freebsd::SystemMemory do
   before do
     system_memory.instance_variable_set(:@log, log_spy)
     allow(Facter::Freebsd::FfiHelper).to receive(:sysctl_by_name)
-      .with(:long, 'hw.physmem')
-      .and_return(17_043_554_304)
-
-    allow(Facter::Core::Execution).to receive(:execute)
-      .with('vmstat -H --libxo json', { logger: log_spy })
-      .and_return(load_fixture('freebsd_vmstat').read)
+      .with(:long, 'vm.stats.vm.v_page_size')
+      .and_return(4096)
+    allow(Facter::Freebsd::FfiHelper).to receive(:sysctl_by_name)
+      .with(:long, 'vm.stats.vm.v_page_count')
+      .and_return(4_161_024)
+    allow(Facter::Freebsd::FfiHelper).to receive(:sysctl_by_name)
+      .with(:long, 'vm.stats.vm.v_active_count')
+      .and_return(2_335_139)
+    allow(Facter::Freebsd::FfiHelper).to receive(:sysctl_by_name)
+      .with(:long, 'vm.stats.vm.v_wire_count')
+      .and_return(1_167_569)
   end
 
   it 'returns available system memory in bytes' do
