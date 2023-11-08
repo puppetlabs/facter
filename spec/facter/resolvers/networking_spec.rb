@@ -5,10 +5,6 @@ describe Facter::Resolvers::Networking do
 
   let(:log_spy) { instance_spy(Facter::Log) }
 
-  before do
-    pending 'contains failing tests to reproduce a bug'
-  end
-
   describe '#resolve' do
     before do
       networking.instance_variable_set(:@log, log_spy)
@@ -44,7 +40,7 @@ describe Facter::Resolvers::Networking do
     end
 
     it 'detects all interfaces' do
-      expected = %w[lo0 gif0 stf0 en0 en0.1 en1 en2 bridge0 p2p0 awdl0 llw0 utun0 utun1 utun2 utun3 ib0 ib1]
+      expected = %w[lo0 gif0 stf0 en0 en0.1 en1 en2 bridge0 p2p0 awdl0 llw0 utun0 utun1 utun2 utun3 utun4 utun5 ib0 ib1]
       expect(networking.resolve(:interfaces).keys).to match_array(expected)
     end
 
@@ -142,6 +138,19 @@ describe Facter::Resolvers::Networking do
       expect(networking.resolve(:interfaces)['utun3']).to include(expected)
     end
 
+    it 'checks interface utun4' do
+      expected = { bindings: [{ address: '192.0.2.100', netmask: '255.255.255.255', network: '192.0.2.100' }] }
+      expect(networking.resolve(:interfaces)['utun4']).to include(expected)
+    end
+
+    it 'checks interface utun5' do
+      expected = { bindings6: [
+        { address: '2001:db8::1', netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+          network: '2001:db8::1', scope6: 'global' }
+      ] }
+      expect(networking.resolve(:interfaces)['utun5']).to include(expected)
+    end
+
     it 'checks interface ib0 has the expected mac' do
       expected = { mac: '80:00:02:08:FA:81:00:00:00:00:00:00:00:00:00:00:00:00:00:00' }
       expect(networking.resolve(:interfaces)['ib0']).to include(expected)
@@ -160,7 +169,6 @@ describe Facter::Resolvers::Networking do
 
       it 'returns dhcp server ip as nil' do
         expect(networking.resolve(:dhcp)).to be(nil)
-        raise
       end
     end
 
@@ -169,7 +177,6 @@ describe Facter::Resolvers::Networking do
 
       it 'returns interfaces as nil' do
         expect(networking.resolve(:interfaces)).to be(nil)
-        raise
       end
     end
   end
