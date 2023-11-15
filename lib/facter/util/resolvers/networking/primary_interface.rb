@@ -57,6 +57,8 @@ module Facter
             end
 
             def find_in_interfaces(interfaces)
+              return if interfaces.nil?
+
               interfaces.each do |iface_name, interface|
                 interface[:bindings]&.each do |binding|
                   return iface_name unless Facter::Util::Resolvers::Networking.ignored_ip_address(binding[:address])
