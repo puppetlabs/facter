@@ -47,11 +47,12 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
       end
     end
 
-    context 'when OpenBSD' do
+    context 'when in OpenBSD' do
       let(:value) { 'vmm' }
 
       before do
         allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Openbsd::Virtual).to receive(:resolve).with(:vm).and_return('vmm')
       end
 
@@ -72,6 +73,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
       before do
         allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Openbsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return('Google Engine')
       end
 
