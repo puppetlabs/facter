@@ -44,9 +44,8 @@ module Facter
           ]
         },
         {
-          'Bsd' => %w[
-            Freebsd
-            Openbsd
+          'Bsd' => [
+            'Freebsd'
           ]
         },
         'Solaris',

@@ -55,10 +55,27 @@ Metrics/AbcSize:
   Enabled: false
 
 Metrics/PerceivedComplexity:
-  Enabled: false
+  Exclude:
+    - 'lib/facter/custom_facts/util/values.rb'
+    - 'lib/facter/custom_facts/util/confine.rb'
+    - 'lib/facter/custom_facts/core/execution/windows.rb'
+    - 'lib/facter/custom_facts/core/execution/posix.rb'
+    - 'install.rb'
+    - 'lib/facter/resolvers/aix/ffi/ffi_helper.rb'
 
 Metrics/CyclomaticComplexity:
-  Enabled: false
+  Exclude:
+    - 'lib/facter/resolvers/windows/product_release.rb'
+    - 'lib/facter/custom_facts/util/values.rb'
+    - 'lib/facter/custom_facts/util/confine.rb'
+    - 'lib/facter/custom_facts/core/execution/windows.rb'
+    - 'lib/facter/custom_facts/core/execution/posix.rb'
+    - 'lib/facter/facts/linux/cloud/provider.rb'
+    - 'lib/facter/facts/windows/cloud/provider.rb'
+    - 'lib/facter/framework/detector/os_detector.rb'
+    - 'install.rb'
+    - 'scripts/generate_changelog.rb'
+    - 'lib/facter/resolvers/aix/ffi/ffi_helper.rb'
 
 Metrics/ClassLength:
   Enabled: false

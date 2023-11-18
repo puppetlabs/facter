@@ -1,3 +1,0 @@
-/dev/sd0a on / type ffs (local)
-/dev/sd0d on /usr type ffs (local, nodev)
-/dev/sd0e on /usr/local type ffs (local, nodev, wxallowed)
