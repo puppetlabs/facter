@@ -9,7 +9,7 @@ module Facter
             def platform
               @@fact_value ||= check_docker_lxc || check_freebsd || check_gce || retrieve_from_virt_what
               @@fact_value ||= check_vmware || check_open_vz || check_vserver || check_xen || check_other_facts
-              @@fact_value ||= check_openbsd || check_lspci || 'physical'
+              @@fact_value ||= check_lspci || 'physical'
 
               @@fact_value
             end
@@ -49,12 +49,6 @@ module Facter
               return unless Object.const_defined?('Facter::Resolvers::Freebsd::Virtual')
 
               Facter::Resolvers::Freebsd::Virtual.resolve(:vm)
-            end
-
-            def check_openbsd
-              return unless Object.const_defined?('Facter::Resolvers::Openbsd::Virtual')
-
-              Facter::Resolvers::Openbsd::Virtual.resolve(:vm)
             end
 
             def check_other_facts
