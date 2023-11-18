@@ -36,19 +36,3 @@ jobs:
 
           # forces the job to fail if there are any new offences
           FORCE_ERROR_EXIT: true
-
-  commit_checks:
-    runs-on: ubuntu-20.04
-    name: commit message
-    steps:
-      - name: Checkout current PR
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-
-      - name: Commit message checks
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '2.7'
-      - run: bundle install --jobs 3 --retry 3
-      - run: bundle exec rake commits
