@@ -10,7 +10,7 @@ module Facter
           aix_expected_facts(agent)
         elsif agent['platform'] =~ /debian-/
           debian_expected_facts(agent)
-        elsif agent['platform'] =~ /el-|centos-/
+        elsif agent['platform'] =~ /amazon-|el-|centos-/
           el_expected_facts(agent)
         elsif agent['platform'] =~ /fedora-/
           fedora_expected_facts(agent)
