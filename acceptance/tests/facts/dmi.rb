@@ -25,13 +25,13 @@ test_name "C96148: verify dmi facts" do
                             })
     end
     ## gce does not set the dmi.chassis.asset_flag
-    unless agent['platform'] =~ /windows|cisco|aarch64|el-/ || on(agent, facter('virtual')).stdout.chomp =~ /gce/
+    unless agent['platform'] =~ /windows|cisco|aarch64|el-|amazon-2023-x86_64/ || on(agent, facter('virtual')).stdout.chomp =~ /gce/
       expected_facts.merge!({'dmi.chassis.asset_tag' => /\w+/})
     end
     unless agent['platform'] =~ /cisco|aarch64|el-/
       expected_facts.merge!({'dmi.product.serial_number' => /\w+/})
     end
-    unless agent['platform'] =~ /windows|cisco|solaris|aarch64|el-/
+    unless agent['platform'] =~ /windows|cisco|solaris|aarch64|el-|amazon-2023-x86_64/
       expected_facts.merge!({'dmi.board.asset_tag'     => /\w+|/,
                              'dmi.board.manufacturer'  => /\w+/,
                              'dmi.board.product'       => /\w+/,
