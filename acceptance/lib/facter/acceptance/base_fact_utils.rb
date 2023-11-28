@@ -181,7 +181,7 @@ module Facter
           expected_facts['os.distro.release.major'] = os_version
           # Minor versions are not available in Amazon Linux < 2023 and has not
           # yet been implemented in Facter for >= 2023
-          expected_facts['os.distro.release.minor'] = /\d/ unless os_name = 'Amazon'
+          expected_facts['os.distro.release.minor'] = /\d/ unless os_name == 'Amazon'
           expected_facts['os.family'] = 'RedHat'
           expected_facts['os.hardware'] = os_hardware
           expected_facts['os.name'] = os_name
