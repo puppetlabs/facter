@@ -87,4 +87,16 @@ describe Facter::Resolvers::Xen do
       expect(xen_resolver.resolve(:domains)).to be_nil
     end
   end
+
+  context 'when /dev/xvda1 is a symlink' do
+    let(:evtchn_file) { false }
+
+    before do
+      allow(File).to receive(:symlink?).with('/dev/xvda1').and_return(true)
+    end
+
+    it 'returns nil' do
+      expect(xen_resolver.resolve(:vm)).to be_nil
+    end
+  end
 end

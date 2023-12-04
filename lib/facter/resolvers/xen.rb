@@ -26,7 +26,9 @@ module Facter
 
         def detect_xen_type
           xen_type = 'xen0' if File.exist?('/dev/xen/evtchn')
-          xen_type = 'xenu' if !xen_type && (File.exist?('/proc/xen') || File.exist?('/dev/xvda1'))
+          if !xen_type && (File.exist?('/proc/xen') || (File.exist?('/dev/xvda1') && !File.symlink?('/dev/xvda1')))
+            xen_type = 'xenu'
+          end
 
           xen_type
         end
