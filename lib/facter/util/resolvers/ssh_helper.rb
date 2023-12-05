@@ -9,6 +9,7 @@ module Facter
       class SshHelper
         class << self
           SSH_NAME = { 'ssh-dss' => 'dsa', 'ecdsa-sha2-nistp256' => 'ecdsa',
+                       'ecdsa-sha2-nistp384' => 'ecdsa', 'ecdsa-sha2-nistp521' => 'ecdsa',
                        'ssh-ed25519' => 'ed25519', 'ssh-rsa' => 'rsa' }.freeze
           SSH_FINGERPRINT = { 'rsa' => 1, 'dsa' => 2, 'ecdsa' => 3, 'ed25519' => 4 }.freeze
 

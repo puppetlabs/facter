@@ -75,6 +75,51 @@ describe Facter::Resolvers::Ssh do
       end
     end
 
+    context 'when ssh_host_ecdsa_key is 384 bit' do
+      let(:ecdsa_content) { load_fixture('ecdsa384').read.strip! }
+
+      let(:ecdsa_fingerprint) do
+        Facter::Util::Resolvers::FingerPrint.new(
+          'SSHFP 3 1 40e73aa13173931be732ecac43f3cac7b8bab56c',
+          'SSHFP 3 2 a2a1e30f31522bcb3fcda2e6898541ff44141b6c9f4c601c6b29fa476380823d'
+        )
+      end
+
+      let(:ecdsa_result) do
+        Facter::Util::Resolvers::Ssh.new(ecdsa_fingerprint, 'ecdsa-sha2-nistp384', ecdsa_content, 'ecdsa')
+      end
+
+      it 'returns resolved ssh' do
+        allow(Facter::Util::Resolvers::SshHelper).to receive(:create_ssh)
+          .with('ecdsa-sha2-nistp384', load_fixture('ecdsa384_key').read.strip!)
+          .and_return(ecdsa_result)
+
+        expect(Facter::Resolvers::Ssh.resolve(:ssh)).to eq([rsa_result, ecdsa_result, ed25519_result])
+      end
+    end
+
+    context 'when ssh_host_ecdsa_key is 521 bit' do
+      let(:ecdsa_content) { load_fixture('ecdsa521').read.strip! }
+
+      let(:ecdsa_fingerprint) do
+        Facter::Util::Resolvers::FingerPrint.new(
+          'SSHFP 3 1 70ef5390b9f2c3005c1029b7d7bf559b05c8b302',
+          'SSHFP 3 2 4cda4a78826bd671fc1028fb252a940446dba025e7a73b6bc900cf1058be90c6'
+        )
+      end
+      let(:ecdsa_result) do
+        Facter::Util::Resolvers::Ssh.new(ecdsa_fingerprint, 'ecdsa-sha2-nistp521', ecdsa_content, 'ecdsa')
+      end
+
+      it 'returns resolved ssh' do
+        allow(Facter::Util::Resolvers::SshHelper).to receive(:create_ssh)
+          .with('ecdsa-sha2-nistp521', load_fixture('ecdsa521_key').read.strip!)
+          .and_return(ecdsa_result)
+
+        expect(Facter::Resolvers::Ssh.resolve(:ssh)).to eq([rsa_result, ecdsa_result, ed25519_result])
+      end
+    end
+
     context 'when ssh_host_ecdsa_key.pub file is also not readable' do
       before do
         allow(Facter::Util::FileHelper).to receive(:safe_read)
