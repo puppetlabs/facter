@@ -5,22 +5,22 @@ describe Facts::Amzn::Os::Release do
     subject(:fact) { Facts::Amzn::Os::Release.new }
 
     before do
-      allow(Facter::Resolvers::ReleaseFromFirstLine).to receive(:resolve)
-        .with(:release, { release_file: '/etc/system-release' })
+      allow(Facter::Resolvers::Amzn::OsReleaseRpm).to receive(:resolve)
+        .with(:version)
         .and_return(value)
     end
 
-    context 'when version is retrieved from specific file' do
+    context 'when version is retrieved from rpm' do
       let(:value) { '2.13.0' }
       let(:release) { { 'full' => '2.13.0', 'major' => '2', 'minor' => '13' } }
 
-      it 'calls Facter::Resolvers::ReleaseFromFirstLine with version' do
+      it 'calls Facter::Resolvers::Amzn::OsReleaseRpm with version' do
         fact.call_the_resolver
-        expect(Facter::Resolvers::ReleaseFromFirstLine).to have_received(:resolve)
-          .with(:release, release_file: '/etc/system-release')
+        expect(Facter::Resolvers::Amzn::OsReleaseRpm).to have_received(:resolve)
+          .with(:version)
       end
 
-      it 'returns operating system name fact' do
+      it 'returns os release fact' do
         expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
           contain_exactly(an_object_having_attributes(name: 'os.release', value: release),
                           an_object_having_attributes(name: 'operatingsystemmajrelease',
@@ -44,7 +44,7 @@ describe Facts::Amzn::Os::Release do
         expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:version_id)
       end
 
-      it 'returns operating system name fact' do
+      it 'returns os release fact' do
         expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
           contain_exactly(an_object_having_attributes(name: 'os.release', value: release),
                           an_object_having_attributes(name: 'operatingsystemmajrelease',
@@ -53,10 +53,10 @@ describe Facts::Amzn::Os::Release do
                                                       value: release['full'], type: :legacy))
       end
 
-      context 'when release can\'t be received' do
+      context 'when version can\'t be retrieved' do
         let(:os_release) { nil }
 
-        it 'returns operating system name fact' do
+        it 'returns os release fact as nil' do
           expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
             have_attributes(name: 'os.release', value: nil)
         end

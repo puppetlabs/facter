@@ -119,6 +119,11 @@ Style/ClassVars:
   Exclude:
     - !ruby/regexp /(?:(?!.+_resolver.rb).)*$/
 
+Style/FormatStringToken:
+  Exclude:
+    - 'lib/facter/resolvers/amzn/os_release_rpm.rb'
+    - 'spec/facter/resolvers/amzn/os_release_rpm_spec.rb'
+
 Style/FrozenStringLiteralComment:
   Exclude:
     - 'spec/custom_facts/util/normalization_spec.rb'
