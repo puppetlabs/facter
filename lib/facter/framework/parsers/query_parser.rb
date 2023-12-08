@@ -50,9 +50,11 @@ module Facter
         query_tokens = query.end_with?('.*') ? [query] : query.split('.')
         size = query_tokens.size
 
+        # Try to match the most specific query_tokens to the least, returning the first match
         size.times do |i|
           query_token_range = 0..size - i - 1
-          resolvable_fact_list = get_facts_matching_tokens(query_tokens, query_token_range, loaded_fact_hash)
+          query_fact = query_tokens[query_token_range].join('.')
+          resolvable_fact_list = get_facts_matching_tokens(query_tokens, query_fact, loaded_facts_hash)
 
           return resolvable_fact_list if resolvable_fact_list.any?
         end
@@ -62,12 +64,10 @@ module Facter
         resolvable_fact_list
       end
 
-      def get_facts_matching_tokens(query_tokens, query_token_range, loaded_fact_hash)
+      def get_facts_matching_tokens(query_tokens, query_fact, loaded_facts_hash)
         resolvable_fact_list = []
 
         loaded_fact_hash.each do |loaded_fact|
-          query_fact = query_tokens[query_token_range].join('.')
-
           next unless found_fact?(loaded_fact.name, query_fact)
 
           searched_fact = construct_loaded_fact(query_tokens, loaded_fact)
