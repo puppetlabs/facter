@@ -79,16 +79,20 @@ module Facter
       end
 
       def found_fact?(fact_name, query_fact)
+        # This is the case where the fact_name contains a wildcard like
+        # blockdevice_.*_model and we're querying for the legacy fact
+        # specifically using 'blockdevice_sba_model' and we don't want the query
+        # 'blockdevice.sba.model' to match
         fact_with_wildcard = fact_name.include?('.*') && !query_fact.include?('.')
 
-        processed_equery_fact = query_fact.gsub('\\', '\\\\\\\\')
-
-        return false if fact_with_wildcard && !query_fact.match("^#{fact_name}$")
-
-        # Must escape metacharacters (like dots) to ensure the correct fact is found
-        return false unless fact_with_wildcard || fact_name.match("^#{Regexp.escape(processed_equery_fact)}($|\\.)")
-
-        true
+        if fact_with_wildcard
+          # fact_name contains wildcard, so we're intentially not escaping.
+          query_fact.match("^#{fact_name}$")
+        else
+          processed_equery_fact = query_fact.gsub('\\', '\\\\\\\\')
+          # Must escape metacharacters (like dots) to ensure the correct fact is found
+          fact_name.match("^#{Regexp.escape(processed_equery_fact)}($|\\.)")
+        end
       end
 
       def construct_loaded_fact(query_tokens, loaded_fact)
