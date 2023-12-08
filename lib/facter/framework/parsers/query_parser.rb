@@ -18,18 +18,18 @@ module Facter
       # Because a root fact will always be resolved by a collection of child facts,
       # we can return one or more child facts for each parent.
       #
-      # query -  is the user input used to search for facts
-      # loaded_fact - is a list with all facts for the current operating system
+      # @param query_list [Array] The list of facts to search for
+      # @param loaded_facts [Array] All of the fact definitions for the current operating system
       #
-      # Returns a list of SearchedFact objects that resolve the users query.
-      def parse(query_list, loaded_fact)
+      # @return [Array<SearchedFact>] a list of searchable facts that resolve the user's query
+      def parse(query_list, loaded_facts)
         matched_facts = []
         @query_list = query_list
 
-        return no_user_query(loaded_fact) unless query_list.any?
+        return no_user_query(loaded_facts) unless query_list.any?
 
         query_list.each do |query|
-          found_facts = search_for_facts(query, loaded_fact)
+          found_facts = search_for_facts(query, loaded_facts)
           matched_facts << found_facts
         end
 
@@ -44,7 +44,7 @@ module Facter
         searched_facts
       end
 
-      def search_for_facts(query, loaded_fact_hash)
+      def search_for_facts(query, loaded_facts)
         resolvable_fact_list = []
         query = query.to_s
         query_tokens = query.end_with?('.*') ? [query] : query.split('.')
@@ -54,7 +54,7 @@ module Facter
         size.times do |i|
           query_token_range = 0..size - i - 1
           query_fact = query_tokens[query_token_range].join('.')
-          resolvable_fact_list = get_facts_matching_tokens(query_tokens, query_fact, loaded_facts_hash)
+          resolvable_fact_list = get_facts_matching_tokens(query_tokens, query_fact, loaded_facts)
 
           return resolvable_fact_list if resolvable_fact_list.any?
         end
@@ -64,10 +64,10 @@ module Facter
         resolvable_fact_list
       end
 
-      def get_facts_matching_tokens(query_tokens, query_fact, loaded_facts_hash)
+      def get_facts_matching_tokens(query_tokens, query_fact, loaded_facts)
         resolvable_fact_list = []
 
-        loaded_fact_hash.each do |loaded_fact|
+        loaded_facts.each do |loaded_fact|
           next unless found_fact?(loaded_fact.name, query_fact)
 
           searched_fact = construct_loaded_fact(query_tokens, loaded_fact)
