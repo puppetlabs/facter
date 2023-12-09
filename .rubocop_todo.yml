@@ -35,12 +35,6 @@ RSpec/LeakyConstantDeclaration:
     - 'spec/facter/resolvers/macosx/mountpoints_spec.rb'
     - 'spec/facter/util/windows/network_utils_spec.rb'
 
-# Offense count: 51
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: have_received, receive
-RSpec/MessageSpies:
-  Enabled: false
-
 # Offense count: 13
 RSpec/MultipleExpectations:
   Max: 3

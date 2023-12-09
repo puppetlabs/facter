@@ -82,3 +82,8 @@ RSpec/DescribedClass:
 
 RSpec/ExampleLength:
   Enabled: false
+
+# It is sometimes better to expect().to receive().and_return
+# or to receive different messages.
+RSpec/MessageSpies:
+  Enabled: false
