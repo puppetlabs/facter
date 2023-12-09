@@ -181,10 +181,21 @@ Style/ClassVars:
     - 'spec/framework/core/fact/internal/internal_fact_manager_spec.rb'
     - 'spec/framework/logging/logger_spec.rb'
 
-# Offense count: 910
-# Configuration parameters: AllowedConstants.
 Style/Documentation:
-  Enabled: false
+  Exclude:
+    - 'lib/facter.rb' # should be documented
+    - 'lib/facter/config.rb' # should be documented
+    - 'lib/facter/custom_facts/**/*' # should be documented
+    - 'lib/facter/facts/**/*' # don't care
+    - 'lib/facter/framework/**/*' # should be documented
+    - 'lib/facter/models/**/*' # should be documented
+    - 'lib/facter/resolvers/**/*' # don't care
+    - 'lib/facter/util/**/*'
+    - 'lib/facter/version.rb' # auto updated
+    - 'spec/**/*'
+    - 'spec_integration/**/*'
+    - 'scripts/*'
+    - 'install.rb'
 
 # Offense count: 8
 # This cop supports safe autocorrection (--autocorrect).
