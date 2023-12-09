@@ -74,9 +74,6 @@ Style/GlobalStdStream:
     - 'spec/framework/core/fact/internal/internal_fact_manager_spec.rb'
     - 'spec/framework/logging/logger_spec.rb'
 
-RSpec/NestedGroups:
-  Max: 6
-
 RSpec/DescribedClass:
   EnforcedStyle: explicit
 
@@ -87,3 +84,12 @@ RSpec/ExampleLength:
 # or to receive different messages.
 RSpec/MessageSpies:
   Enabled: false
+
+RSpec/MultipleExpectations:
+  Max: 3
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Enabled: 6

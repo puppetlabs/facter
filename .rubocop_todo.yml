@@ -35,10 +35,6 @@ RSpec/LeakyConstantDeclaration:
     - 'spec/facter/resolvers/macosx/mountpoints_spec.rb'
     - 'spec/facter/util/windows/network_utils_spec.rb'
 
-# Offense count: 13
-RSpec/MultipleExpectations:
-  Max: 3
-
 # Offense count: 6
 RSpec/SubjectStub:
   Exclude:
