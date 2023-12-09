@@ -205,11 +205,6 @@ Style/FormatStringToken:
     - 'lib/facter/resolvers/amzn/os_release_rpm.rb'
     - 'spec/facter/resolvers/amzn/os_release_rpm_spec.rb'
 
-# Offense count: 31
-# This cop supports safe autocorrection (--autocorrect).
-Style/IfUnlessModifier:
-  Enabled: false
-
 # Offense count: 8
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, AllowedPatterns.

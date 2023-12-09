@@ -32,6 +32,9 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Enabled: false
 
+Style/IfUnlessModifier:
+  Enabled: false
+
 # $stdout is preferred because it refers to the *current* stdout stream, while
 # STDOUT refers to the original stream. However, we can't just switch to using
 # $stdout, because it may have been assigned to a different object than STDOUT,
