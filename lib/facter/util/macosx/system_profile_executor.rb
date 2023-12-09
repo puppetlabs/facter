@@ -27,8 +27,8 @@ module Facter
           end
 
           def normalize_keys(system_profiler_hash)
-            system_profiler_hash.map do |k, v|
-              [k.downcase.tr(' ', '_').delete("\(\)").to_sym, v]
+            system_profiler_hash.transform_keys do |k|
+              k.downcase.tr(' ', '_').delete("\(\)").to_sym
             end.to_h
           end
         end

@@ -205,12 +205,6 @@ Style/FormatStringToken:
     - 'lib/facter/resolvers/amzn/os_release_rpm.rb'
     - 'spec/facter/resolvers/amzn/os_release_rpm_spec.rb'
 
-# Offense count: 1
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Style/HashTransformKeys:
-  Exclude:
-    - 'lib/facter/util/macosx/system_profile_executor.rb'
-
 # Offense count: 31
 # This cop supports safe autocorrection (--autocorrect).
 Style/IfUnlessModifier:
