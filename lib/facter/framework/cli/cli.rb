@@ -198,9 +198,9 @@ module Facter
 
       def add_commands_to_help
         help_command_options = +''
-        Cli.commands
-           .select { |_k, command_class| command_class.instance_of?(Thor::Command) }
-           .each do |_k, command|
+        Cli.commands.values
+           .select { |command_class| command_class.instance_of?(Thor::Command) }
+           .each do |command|
           help_command_options << build_option(
             command['name'],
             [command['usage'].split(',')[1]],

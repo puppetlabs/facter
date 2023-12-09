@@ -110,7 +110,7 @@ class ChangelogGenerator
 
       new_lines << "\n### #{type[:name]}\n"
 
-      type[:entries].each do |_, entry|
+      type[:entries].each_value do |entry|
         new_lines << "- #{entry[:title].strip} [\##{entry[:number]}](#{entry[:url]})" \
                      " ([#{entry[:author]}](#{entry[:profile]}))"
       end

@@ -20,12 +20,6 @@ describe Facter::Resolvers::ProductRelease do
         .and_yield('ReleaseId', release)
         .and_yield('DisplayVersion', display_version)
 
-      allow(reg).to receive(:[]).with('EditionID').and_return(ed)
-      allow(reg).to receive(:[]).with('InstallationType').and_return(install)
-      allow(reg).to receive(:[]).with('ProductName').and_return(prod)
-      allow(reg).to receive(:[]).with('ReleaseId').and_return(release)
-      allow(reg).to receive(:[]).with('DisplayVersion').and_return(display_version)
-
       allow(reg).to receive(:close)
     end
 
@@ -86,8 +80,6 @@ describe Facter::Resolvers::ProductRelease do
           .and_return(reg)
         allow(reg).to receive(:each)
           .and_yield('ReleaseId', release)
-
-        allow(reg).to receive(:[]).with('ReleaseId').and_return(release)
 
         allow(reg).to receive(:close)
       end

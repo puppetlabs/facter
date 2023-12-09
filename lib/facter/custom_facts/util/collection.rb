@@ -80,7 +80,7 @@ module LegacyFacter
 
       # Flush all cached values.
       def flush
-        @facts.each { |_name, fact| fact.flush }
+        @facts.each_value(&:flush)
         @external_facts_loaded = nil
       end
 

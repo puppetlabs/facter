@@ -96,8 +96,8 @@ describe Facter::Resolvers::Linux::Disks do
         end
 
         before do
-          paths.each do |_key, value|
-            disks.each do |disk, _values|
+          paths.each_value do |value|
+            disks.each_key do |disk|
               if value == '/size'
                 allow(Facter::Util::FileHelper).to receive(:safe_read)
                   .with("/sys/block/#{disk}#{value}", nil).and_return(nil)
@@ -118,8 +118,8 @@ describe Facter::Resolvers::Linux::Disks do
         end
 
         before do
-          paths.each do |_key, value|
-            disks.each do |disk, _values|
+          paths.each_value do |value|
+            disks.each_key do |disk|
               if value != '/size'
                 allow(Facter::Util::FileHelper).to receive(:safe_read)
                   .with("/sys/block/#{disk}#{value}", nil).and_return(nil)
@@ -141,7 +141,7 @@ describe Facter::Resolvers::Linux::Disks do
 
         before do
           paths.each do |fact, value|
-            disks.each do |disk, _values|
+            disks.each_key do |disk|
               next unless value == 'false'
 
               allow(Facter::Core::Execution).to receive(:execute)

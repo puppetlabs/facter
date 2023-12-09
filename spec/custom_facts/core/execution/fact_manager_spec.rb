@@ -7,7 +7,7 @@ describe Facter::Core::Execution::Base do
     it "executes the caller's block with the specified env vars" do
       test_env = { 'LANG' => 'C', 'LC_ALL' => 'C', 'FOO' => 'BAR' }
       executor.with_env test_env do
-        test_env.keys.each do |key|
+        test_env.each_key do |key|
           expect(ENV[key]).to eq test_env[key]
         end
       end
@@ -29,7 +29,7 @@ describe Facter::Core::Execution::Base do
 
       # verify that, during the 'with_env', the new values are used
       executor.with_env new_env do
-        orig_env.keys.each do |key|
+        orig_env.each_key do |key|
           expect(ENV[key]).to eq new_env[key]
         end
       end
@@ -50,7 +50,7 @@ describe Facter::Core::Execution::Base do
       end
 
       # verify that, after the 'with_env', the old values are restored
-      orig_env.keys.each do |key|
+      orig_env.each_key do |key|
         expect(ENV[key]).to eq orig_env[key]
       end
     end

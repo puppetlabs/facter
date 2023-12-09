@@ -215,22 +215,6 @@ Style/GlobalStdStream:
     - 'spec/framework/core/fact/internal/internal_fact_manager_spec.rb'
     - 'spec/framework/logging/logger_spec.rb'
 
-# Offense count: 15
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: AllowedReceivers.
-# AllowedReceivers: Thread.current
-Style/HashEachMethods:
-  Exclude:
-    - 'lib/facter/custom_facts/core/execution/base.rb'
-    - 'lib/facter/custom_facts/util/collection.rb'
-    - 'lib/facter/framework/cli/cli.rb'
-    - 'lib/facter/resolvers/aix/ffi/ffi_helper.rb'
-    - 'lib/facter/resolvers/windows/product_release.rb'
-    - 'scripts/generate_changelog.rb'
-    - 'spec/custom_facts/core/execution/fact_manager_spec.rb'
-    - 'spec/custom_facts/util/collection_spec.rb'
-    - 'spec/facter/resolvers/disks_spec.rb'
-
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
 Style/HashTransformKeys:
