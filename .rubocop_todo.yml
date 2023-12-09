@@ -35,14 +35,6 @@ RSpec/LeakyConstantDeclaration:
     - 'spec/facter/resolvers/macosx/mountpoints_spec.rb'
     - 'spec/facter/util/windows/network_utils_spec.rb'
 
-# Offense count: 6
-RSpec/SubjectStub:
-  Exclude:
-    - 'spec/custom_facts/core/aggregate_spec.rb'
-    - 'spec/custom_facts/core/resolvable_spec.rb'
-    - 'spec/custom_facts/util/fact_spec.rb'
-    - 'spec/custom_facts/util/resolution_spec.rb'
-
 # Offense count: 114
 # Configuration parameters: IgnoreNameless, IgnoreSymbolicNames.
 RSpec/VerifiedDoubles:

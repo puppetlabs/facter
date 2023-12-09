@@ -93,3 +93,10 @@ RSpec/MultipleMemoizedHelpers:
 
 RSpec/NestedGroups:
   Enabled: 6
+
+RSpec/SubjectStub:
+  Exclude:
+    - 'spec/custom_facts/core/aggregate_spec.rb'
+    - 'spec/custom_facts/core/resolvable_spec.rb'
+    - 'spec/custom_facts/util/fact_spec.rb'
+    - 'spec/custom_facts/util/resolution_spec.rb'
