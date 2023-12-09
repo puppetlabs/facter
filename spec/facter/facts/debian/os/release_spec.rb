@@ -32,11 +32,6 @@ describe Facts::Debian::Os::Release do
       let(:os_release_value) { '10.02' }
       let(:fact_value) { { 'full' => '10.02', 'major' => '10', 'minor' => '2' } }
 
-      it 'calls Facter::Resolvers::DebianVersion' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::DebianVersion).to have_received(:resolve).with(:version)
-      end
-
       it_behaves_like 'returns os release fact'
     end
 

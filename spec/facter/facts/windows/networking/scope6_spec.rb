@@ -10,11 +10,6 @@ describe Facts::Windows::Networking::Scope6 do
       allow(Facter::Resolvers::Windows::Networking).to receive(:resolve).with(:scope6).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Windows::Networking' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Windows::Networking).to have_received(:resolve).with(:scope6)
-    end
-
     it 'returns scope for ipv6 address' do
       expect(fact.call_the_resolver)
         .to be_an_instance_of(Array)

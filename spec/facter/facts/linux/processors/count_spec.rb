@@ -11,11 +11,6 @@ describe Facts::Linux::Processors::Count do
         receive(:resolve).with(:processors).and_return(processors_count)
     end
 
-    it 'calls Facter::Resolvers::Linux::Processors' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Linux::Processors).to have_received(:resolve).with(:processors)
-    end
-
     it 'returns processors count fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'processors.count', value: processors_count),

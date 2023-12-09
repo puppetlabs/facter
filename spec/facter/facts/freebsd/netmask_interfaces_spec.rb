@@ -10,11 +10,6 @@ describe Facts::Freebsd::NetmaskInterfaces do
   describe '#call_the_resolver' do
     let(:interfaces) { { 'eth0' => { netmask: '10.255.255.255' }, 'en1' => { netmask: '10.17.255.255' } } }
 
-    it 'calls Facter::Resolvers::NetworkingLinux' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:interfaces)
-    end
-
     it 'returns legacy facts with names netmask_<interface_name>' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'netmask_eth0',

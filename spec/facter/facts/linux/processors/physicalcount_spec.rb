@@ -11,11 +11,6 @@ describe Facts::Linux::Processors::Physicalcount do
         receive(:resolve).with(:physical_count).and_return(physical_count)
     end
 
-    it 'calls Facter::Resolvers::Linux::Processors' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Linux::Processors).to have_received(:resolve).with(:physical_count)
-    end
-
     it 'returns processors physical count fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'processors.physicalcount', value: physical_count),

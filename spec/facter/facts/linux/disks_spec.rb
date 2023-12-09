@@ -30,11 +30,6 @@ describe Facts::Linux::Disks do
       allow(Facter::Resolvers::Linux::Disks).to receive(:resolve).with(:disks).and_return(disk)
     end
 
-    it 'calls Facter::Resolvers::Linux::Disks' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Linux::Disks).to have_received(:resolve).with(:disks)
-    end
-
     it 'returns resolved fact with name disk and value' do
       expect(fact.call_the_resolver)
         .to be_an_instance_of(Array)

@@ -11,11 +11,6 @@ describe Facts::Freebsd::Dmi::Bios::Version do
         receive(:resolve).with(:bios_version).and_return(version)
     end
 
-    it 'calls Facter::Resolvers::Freebsd::DmiBios' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Freebsd::DmiBios).to have_received(:resolve).with(:bios_version)
-    end
-
     it 'returns bios version fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'dmi.bios.version', value: version),

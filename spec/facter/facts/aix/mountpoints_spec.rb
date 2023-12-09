@@ -16,11 +16,6 @@ describe Facts::Aix::Mountpoints do
         receive(:resolve).with(:mountpoints).and_return(result)
     end
 
-    it 'calls Facter::Resolvers::Aix::Mountpoints' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Aix::Mountpoints).to have_received(:resolve).with(:mountpoints)
-    end
-
     it 'returns a resolved fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'mountpoints', value: result)

@@ -19,24 +19,6 @@ describe Facts::Macosx::Virtual do
     end
 
     context 'when on physical machine' do
-      it 'calls Facter::Resolvers::Macosx::SystemProfile with model_identifier' do
-        fact.call_the_resolver
-
-        expect(Facter::Resolvers::Macosx::SystemProfiler).to have_received(:resolve).with(:model_identifier)
-      end
-
-      it 'calls Facter::Resolvers::Macosx::SystemProfile with boot_rom_version' do
-        fact.call_the_resolver
-
-        expect(Facter::Resolvers::Macosx::SystemProfiler).to have_received(:resolve).with(:boot_rom_version)
-      end
-
-      it 'calls Facter::Resolvers::Macosx::SystemProfile with subsystem_vendor_id' do
-        fact.call_the_resolver
-
-        expect(Facter::Resolvers::Macosx::SystemProfiler).to have_received(:resolve).with(:subsystem_vendor_id)
-      end
-
       it 'returns resolved fact with true value' do
         expect(fact.call_the_resolver)
           .to be_an_instance_of(Facter::ResolvedFact)

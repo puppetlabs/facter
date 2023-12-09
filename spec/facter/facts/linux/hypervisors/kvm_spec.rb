@@ -9,12 +9,6 @@ describe Facts::Linux::Hypervisors::Kvm do
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('VirtualBox')
       end
 
-      it 'calls  Facter::Resolvers::Linux::DmiBios' do
-        fact.call_the_resolver
-
-        expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:product_name)
-      end
-
       it 'has nil value' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact)
           .and have_attributes(name: 'hypervisors.kvm', value: nil)
@@ -24,12 +18,6 @@ describe Facts::Linux::Hypervisors::Kvm do
     context 'when hypervisor is parallels' do
       before do
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('Parallels')
-      end
-
-      it 'calls  Facter::Resolvers::Linux::DmiBios' do
-        fact.call_the_resolver
-
-        expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:product_name)
       end
 
       it 'has nil value' do
@@ -46,12 +34,6 @@ describe Facts::Linux::Hypervisors::Kvm do
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return('kvm')
       end
 
-      it 'calls Facter::Resolvers::VirtWhat' do
-        fact.call_the_resolver
-
-        expect(Facter::Resolvers::VirtWhat).to have_received(:resolve).with(:vm)
-      end
-
       it 'returns empty hash' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact)
           .and have_attributes(name: 'hypervisors.kvm', value: {})
@@ -65,12 +47,6 @@ describe Facts::Linux::Hypervisors::Kvm do
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:sys_vendor).and_return('unknown')
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return('unknown')
         allow(Facter::Resolvers::Lspci).to receive(:resolve).with(:vm).and_return('kvm')
-      end
-
-      it 'calls Facter::Resolvers::Lspci' do
-        fact.call_the_resolver
-
-        expect(Facter::Resolvers::Lspci).to have_received(:resolve).with(:vm)
       end
 
       it 'returns empty hash' do

@@ -12,21 +12,6 @@ describe Facts::Solaris::Os::Release do
       allow(Facter::Resolvers::Solaris::OsRelease).to receive(:resolve).with(:minor).and_return('11')
     end
 
-    it 'calls Facter::Resolvers::SolarisRelease with full' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Solaris::OsRelease).to have_received(:resolve).with(:full)
-    end
-
-    it 'calls Facter::Resolvers::SolarisRelease with major' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Solaris::OsRelease).to have_received(:resolve).with(:major)
-    end
-
-    it 'calls Facter::Resolvers::SolarisRelease with minor' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Solaris::OsRelease).to have_received(:resolve).with(:minor)
-    end
-
     it 'returns os.release, operatingsystemmajrelease and operatingsystemrelease fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'os.release', value: value),

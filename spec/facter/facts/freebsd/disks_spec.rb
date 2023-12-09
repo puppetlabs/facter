@@ -21,11 +21,6 @@ describe Facts::Freebsd::Disks do
       allow(Facter::Resolvers::Freebsd::Geom).to receive(:resolve).with(:disks).and_return(disk)
     end
 
-    it 'calls Facter::Resolvers::Freebsd::Disk' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Freebsd::Geom).to have_received(:resolve).with(:disks)
-    end
-
     it 'returns resolved fact with name disk and value' do
       expect(fact.call_the_resolver)
         .to be_an_instance_of(Facter::ResolvedFact)

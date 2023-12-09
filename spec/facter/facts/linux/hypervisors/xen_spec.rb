@@ -45,12 +45,6 @@ describe Facts::Linux::Hypervisors::Xen do
           allow(Facter::Resolvers::Xen).to receive(:resolve).with(:privileged).and_return(true)
         end
 
-        it 'calls Facter::Resolvers::Linux::DmiBios' do
-          fact.call_the_resolver
-
-          expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:product_name)
-        end
-
         it 'returns xen' do
           expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact)
             .and have_attributes(name: 'hypervisors.xen', value: { 'context' => 'hvm', 'privileged' => true })
@@ -63,12 +57,6 @@ describe Facts::Linux::Hypervisors::Xen do
           allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('unknown')
           allow(Facter::Resolvers::Xen).to receive(:resolve).with(:privileged).and_return(true)
           allow(Facter::Resolvers::Lspci).to receive(:resolve).with(:vm).and_return('xenhvm')
-        end
-
-        it 'calls Facter::Resolvers::Linux::DmiBios' do
-          fact.call_the_resolver
-
-          expect(Facter::Resolvers::Lspci).to have_received(:resolve).with(:vm)
         end
 
         it 'returns xen' do

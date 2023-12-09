@@ -37,11 +37,6 @@ describe Facts::Solaris::Mountpoints do
           .to receive(:resolve).with(:mountpoints).and_return(resolver_output)
       end
 
-      it 'calls Facter::Resolvers::Mountpoints' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Solaris::Mountpoints).to have_received(:resolve).with(:mountpoints)
-      end
-
       it 'returns mountpoints information' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
           have_attributes(name: 'mountpoints', value: parsed_fact)

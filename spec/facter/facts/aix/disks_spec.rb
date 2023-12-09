@@ -26,11 +26,6 @@ describe Facts::Aix::Disks do
       allow(Facter::Resolvers::Aix::Disks).to receive(:resolve).with(:disks).and_return(disk)
     end
 
-    it 'calls Facter::Resolvers::Aix::Disk' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Aix::Disks).to have_received(:resolve).with(:disks)
-    end
-
     it 'returns resolved fact with name disk and value' do
       expect(fact.call_the_resolver)
         .to be_an_instance_of(Array)

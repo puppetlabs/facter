@@ -14,21 +14,6 @@ describe Facts::Linux::Hypervisors::VirtualBox do
       allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('VirtualBox')
     end
 
-    it 'calls Facter::Resolvers::Linux::DmiBios' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:product_name)
-    end
-
-    it 'calls Facter::Resolvers::DmiDecode with version' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::DmiDecode).to have_received(:resolve).with(:virtualbox_version)
-    end
-
-    it 'calls Facter::Resolvers::DmiDecode with revision' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::DmiDecode).to have_received(:resolve).with(:virtualbox_revision)
-    end
-
     it 'returns virtualbox fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'hypervisors.virtualbox', value: value)

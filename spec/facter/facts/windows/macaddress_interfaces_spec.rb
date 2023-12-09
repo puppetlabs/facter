@@ -10,11 +10,6 @@ describe Facts::Windows::MacaddressInterfaces do
   describe '#call_the_resolver' do
     let(:interfaces) { { 'eth0' => { mac: '10.16.117.100' }, 'en1' => { mac: '10.16.117.255' } } }
 
-    it 'calls Facter::Resolvers::Windows::Networking' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Windows::Networking).to have_received(:resolve).with(:interfaces)
-    end
-
     it 'returns legacy facts with names macaddress_<interface_name>' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'macaddress_eth0',

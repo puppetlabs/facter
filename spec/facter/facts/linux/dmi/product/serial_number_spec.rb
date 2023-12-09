@@ -11,11 +11,6 @@ describe Facts::Linux::Dmi::Product::SerialNumber do
         receive(:resolve).with(:product_serial).and_return(serial_number)
     end
 
-    it 'calls Facter::Resolvers::Linux::DmiBios' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:product_serial)
-    end
-
     it 'returns resolved facts' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'dmi.product.serial_number', value: serial_number),

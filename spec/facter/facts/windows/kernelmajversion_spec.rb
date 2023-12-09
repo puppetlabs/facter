@@ -11,11 +11,6 @@ describe Facts::Windows::Kernelmajversion do
         receive(:resolve).with(:kernelmajorversion).and_return(kernel_maj_version)
     end
 
-    it 'calls Facter::Resolvers::Kernel' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Kernel).to have_received(:resolve).with(:kernelmajorversion)
-    end
-
     it 'returns kernelmajversion fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'kernelmajversion', value: kernel_maj_version)

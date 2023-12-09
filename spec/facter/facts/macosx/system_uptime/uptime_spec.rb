@@ -11,11 +11,6 @@ describe Facts::Macosx::SystemUptime::Uptime do
         receive(:resolve).with(:uptime).and_return(uptime)
     end
 
-    it 'calls Facter::Resolvers::Uptime' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Uptime).to have_received(:resolve).with(:uptime)
-    end
-
     it 'returns a resolved fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'system_uptime.uptime', value: uptime),

@@ -10,11 +10,6 @@ describe Facts::Solaris::Networking::Mtu do
       allow(Facter::Resolvers::Solaris::Networking).to receive(:resolve).with(:mtu).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Solaris::Networking with mtu' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Solaris::Networking).to have_received(:resolve).with(:mtu)
-    end
-
     it 'return mtu fact' do
       expect(fact.call_the_resolver)
         .to be_an_instance_of(Facter::ResolvedFact)

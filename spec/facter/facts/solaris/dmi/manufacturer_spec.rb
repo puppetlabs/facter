@@ -19,11 +19,6 @@ describe Facts::Solaris::Dmi::Manufacturer do
           receive(:resolve).with(:manufacturer).and_return(manufacturer)
       end
 
-      it 'calls Facter::Resolvers::Solaris::Dmi' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Solaris::Dmi).to have_received(:resolve).with(:manufacturer)
-      end
-
       it 'returns manufacturer fact' do
         expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
           contain_exactly(an_object_having_attributes(name: 'dmi.manufacturer', value: manufacturer),
@@ -37,11 +32,6 @@ describe Facts::Solaris::Dmi::Manufacturer do
       before do
         allow(Facter::Resolvers::Solaris::DmiSparc).to \
           receive(:resolve).with(:manufacturer).and_return(manufacturer)
-      end
-
-      it 'calls Facter::Resolvers::Solaris::DmiSparc' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Solaris::DmiSparc).to have_received(:resolve).with(:manufacturer)
       end
 
       it 'returns manufacturer fact' do

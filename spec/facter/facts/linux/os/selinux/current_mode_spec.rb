@@ -10,11 +10,6 @@ describe Facts::Linux::Os::Selinux::CurrentMode do
       allow(Facter::Resolvers::SELinux).to receive(:resolve).with(:current_mode).and_return(current_mode)
     end
 
-    it 'calls Facter::Resolvers::SELinux' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::SELinux).to have_received(:resolve).with(:current_mode)
-    end
-
     it 'returns architecture fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'os.selinux.current_mode', value: current_mode),

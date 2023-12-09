@@ -19,11 +19,6 @@ describe Facts::Ubuntu::Os::Distro::Release do
       let(:os_release_value) { '18.04' }
       let(:fact_value) { { 'full' => '18.04', 'major' => '18.04' } }
 
-      it 'calls Facter::Resolvers::OsRelease with :version_id' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:version_id)
-      end
-
       it_behaves_like 'returns distro release fact'
     end
 

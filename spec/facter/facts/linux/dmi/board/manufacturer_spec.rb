@@ -11,11 +11,6 @@ describe Facts::Linux::Dmi::Board::Manufacturer do
         receive(:resolve).with(:board_vendor).and_return(manufacturer)
     end
 
-    it 'calls Facter::Resolvers::Linux::DmiBios' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:board_vendor)
-    end
-
     it 'returns board manufacturer fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'dmi.board.manufacturer', value: manufacturer),

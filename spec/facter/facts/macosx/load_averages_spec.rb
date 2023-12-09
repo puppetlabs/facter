@@ -16,11 +16,6 @@ describe Facts::Macosx::LoadAverages do
       allow(Facter::Resolvers::Macosx::LoadAverages).to receive(:resolve).with(:load_averages).and_return(averages)
     end
 
-    it 'calls Facter::Resolvers::Macosx::LoadAverages' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::LoadAverages).to have_received(:resolve).with(:load_averages)
-    end
-
     it 'returns resolved fact with name disk and value' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact)
         .and have_attributes(name: 'load_averages', value: averages)

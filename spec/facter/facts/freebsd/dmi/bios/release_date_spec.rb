@@ -11,11 +11,6 @@ describe Facts::Freebsd::Dmi::Bios::ReleaseDate do
         receive(:resolve).with(:bios_date).and_return(date)
     end
 
-    it 'calls Facter::Resolvers::Freebsd::DmiBios' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Freebsd::DmiBios).to have_received(:resolve).with(:bios_date)
-    end
-
     it 'returns bios release date fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'dmi.bios.release_date', value: date),

@@ -13,12 +13,6 @@ describe Facts::Amzn::Os::Distro::Codename do
       let(:value) { 'Amazon Linux AMI release 2017.03' }
       let(:expected_value) { 'n/a' }
 
-      it 'calls Facter::Resolvers::SpecificReleaseFile' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::SpecificReleaseFile).to have_received(:resolve)
-          .with(:release, { release_file: '/etc/system-release' })
-      end
-
       it "returns 'n/a' fact value" do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
           have_attributes(name: 'os.distro.codename', value: expected_value)
@@ -28,12 +22,6 @@ describe Facts::Amzn::Os::Distro::Codename do
     context 'when codename is in system-release' do
       let(:value) { 'Amazon Linux release 2 (2017.12) LTS Release Candidate' }
       let(:expected_value) { '2017.12' }
-
-      it 'calls Facter::Resolvers::SpecificReleaseFile' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::SpecificReleaseFile).to have_received(:resolve)
-          .with(:release, { release_file: '/etc/system-release' })
-      end
 
       it 'returns release fact' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \

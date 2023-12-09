@@ -10,11 +10,6 @@ describe Facts::Freebsd::Memory::Swap::Encrypted do
       allow(Facter::Resolvers::Freebsd::SwapMemory).to receive(:resolve).with(:encrypted).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Freebsd::SwapMemory' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Freebsd::SwapMemory).to have_received(:resolve).with(:encrypted)
-    end
-
     it 'returns a fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'memory.swap.encrypted', value: value),

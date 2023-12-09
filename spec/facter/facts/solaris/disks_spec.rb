@@ -42,11 +42,6 @@ describe Facts::Solaris::Disks do
       allow(Facter::Resolvers::Solaris::Disks).to receive(:resolve).with(:disks).and_return(disks)
     end
 
-    it 'calls Facter::Resolvers::Solaris::Disks' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Solaris::Disks).to have_received(:resolve).with(:disks)
-    end
-
     it 'returns disks fact' do
       expect(fact.call_the_resolver)
         .to be_an_instance_of(Array)

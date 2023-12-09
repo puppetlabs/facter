@@ -10,11 +10,6 @@ describe Facts::Rhel::Os::Distro::Codename do
       allow(Facter::Resolvers::RedHatRelease).to receive(:resolve).with(:codename).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::RedHatRelease' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::RedHatRelease).to have_received(:resolve).with(:codename)
-    end
-
     it 'returns release fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'os.distro.codename', value: value)

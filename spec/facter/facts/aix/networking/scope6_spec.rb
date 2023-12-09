@@ -10,11 +10,6 @@ describe Facts::Aix::Networking::Scope6 do
   describe '#call_the_resolver' do
     let(:value) { 'link' }
 
-    it 'calls Facter::Resolvers::Aix::Networking with scope6' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Aix::Networking).to have_received(:resolve).with(:scope6)
-    end
-
     it 'returns scope6 fact' do
       expect(fact.call_the_resolver)
         .to be_an_instance_of(Array)

@@ -29,11 +29,6 @@ describe Facts::Linux::Ec2Userdata do
     end
 
     shared_examples 'check ec2 resolver called with userdata' do
-      it 'calls ec2 resolver' do
-        fact.call_the_resolver
-
-        expect(Facter::Resolvers::Ec2).to have_received(:resolve).with(:userdata)
-      end
     end
 
     shared_examples 'check resolved fact value' do

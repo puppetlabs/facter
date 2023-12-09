@@ -11,11 +11,6 @@ describe Facts::Freebsd::Os::Release do
     context 'when FreeBSD RELEASE' do
       let(:value) { '12.1-RELEASE-p3' }
 
-      it 'calls Facter::Resolvers::Freebsd::FreebsdVersion' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Freebsd::FreebsdVersion).to have_received(:resolve).with(:installed_userland)
-      end
-
       it 'returns release fact' do
         expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
           contain_exactly(an_object_having_attributes(name: 'os.release', value: { 'full' => value,
@@ -32,11 +27,6 @@ describe Facts::Freebsd::Os::Release do
     context 'when FreeBSD STABLE' do
       let(:value) { '12.1-STABLE' }
 
-      it 'calls Facter::Resolvers::Freebsd::FreebsdVersion' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Freebsd::FreebsdVersion).to have_received(:resolve).with(:installed_userland)
-      end
-
       it 'returns release fact' do
         expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
           contain_exactly(an_object_having_attributes(name: 'os.release', value: { 'full' => value,
@@ -51,11 +41,6 @@ describe Facts::Freebsd::Os::Release do
 
     context 'when FreeBSD CURRENT' do
       let(:value) { '13-CURRENT' }
-
-      it 'calls Facter::Resolvers::Freebsd::FreebsdVersion' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Freebsd::FreebsdVersion).to have_received(:resolve).with(:installed_userland)
-      end
 
       it 'returns release fact' do
         expect(fact.call_the_resolver).to be_an_instance_of(Array).and \

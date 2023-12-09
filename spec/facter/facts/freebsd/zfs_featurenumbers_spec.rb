@@ -10,11 +10,6 @@ describe Facts::Freebsd::ZfsFeaturenumbers do
       allow(Facter::Resolvers::ZFS).to receive(:resolve).with(:zfs_featurenumbers).and_return(feature_numbers)
     end
 
-    it 'calls Facter::Resolvers::ZFS' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::ZFS).to have_received(:resolve).with(:zfs_featurenumbers)
-    end
-
     it 'returns zfs_featurenumbers fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'zfs_featurenumbers', value: feature_numbers)

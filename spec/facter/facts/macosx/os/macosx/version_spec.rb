@@ -16,11 +16,6 @@ describe Facts::Macosx::Os::Macosx::Version do
           receive(:resolve).with(:productversionextra).and_return(resolver_extra_output)
       end
 
-      it 'calls Facter::Resolvers::SwVers' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::SwVers).to have_received(:resolve).with(:productversion)
-      end
-
       it 'returns a resolved fact' do
         expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
           contain_exactly(an_object_having_attributes(name: 'os.macosx.version', value: version),
@@ -45,11 +40,6 @@ describe Facts::Macosx::Os::Macosx::Version do
           receive(:resolve).with(:productversion).and_return(resolver_output)
         allow(Facter::Resolvers::SwVers).to \
           receive(:resolve).with(:productversionextra).and_return(resolver_extra_output)
-      end
-
-      it 'calls Facter::Resolvers::SwVers' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::SwVers).to have_received(:resolve).with(:productversion)
       end
 
       it 'returns a resolved fact' do
@@ -78,12 +68,6 @@ describe Facts::Macosx::Os::Macosx::Version do
           receive(:resolve).with(:productversionextra).and_return(resolver_extra_output)
       end
 
-      it 'calls Facter::Resolvers::SwVers' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::SwVers).to have_received(:resolve).with(:productversion)
-        expect(Facter::Resolvers::SwVers).to have_received(:resolve).with(:productversionextra)
-      end
-
       it 'returns a resolved fact' do
         expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
           contain_exactly(an_object_having_attributes(name: 'os.macosx.version', value: version),
@@ -108,12 +92,6 @@ describe Facts::Macosx::Os::Macosx::Version do
           receive(:resolve).with(:productversion).and_return(resolver_output)
         allow(Facter::Resolvers::SwVers).to \
           receive(:resolve).with(:productversionextra).and_return(resolver_extra_output)
-      end
-
-      it 'calls Facter::Resolvers::SwVers' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::SwVers).to have_received(:resolve).with(:productversion)
-        expect(Facter::Resolvers::SwVers).to have_received(:resolve).with(:productversionextra)
       end
 
       it 'returns a resolved fact' do

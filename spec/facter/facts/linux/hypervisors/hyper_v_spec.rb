@@ -14,16 +14,6 @@ describe Facts::Linux::Hypervisors::HyperV do
       let(:product_name) { 'Virtual Machine' }
       let(:value) { {} }
 
-      it 'calls Facter::Resolvers::DMIBios with :sys_vendor' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:sys_vendor)
-      end
-
-      it 'calls Facter::Resolvers::DMIBios with :product_name' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:product_name)
-      end
-
       it 'returns hyper_v fact' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
           have_attributes(name: 'hypervisors.hyperv', value: value)

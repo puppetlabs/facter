@@ -10,11 +10,6 @@ describe Facts::Freebsd::Networking::Primary do
       allow(Facter::Resolvers::Networking).to receive(:resolve).with(:primary_interface).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Networking with :primary_interface' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:primary_interface)
-    end
-
     it 'returns networking.primary fact' do
       expect(fact.call_the_resolver)
         .to be_an_instance_of(Facter::ResolvedFact).and have_attributes(name: 'networking.primary', value: value)

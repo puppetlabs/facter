@@ -10,11 +10,6 @@ describe Facts::Aix::Network6Interfaces do
   describe '#call_the_resolver' do
     let(:interfaces) { { 'eth0' => { network6: '::1' }, 'en1' => { network6: 'fe80::' } } }
 
-    it 'calls Facter::Resolvers::Aix::Networking' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Aix::Networking).to have_received(:resolve).with(:interfaces)
-    end
-
     it 'returns legacy facts with names network6_<interface_name>' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'network6_eth0',

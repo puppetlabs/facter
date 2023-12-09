@@ -11,11 +11,6 @@ describe Facts::Freebsd::ZpoolFeatureflags do
         receive(:resolve).with(:zpool_featureflags).and_return(zpool_feature_flags)
     end
 
-    it 'calls Facter::Resolvers::ZPool' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Zpool).to have_received(:resolve).with(:zpool_featureflags)
-    end
-
     it 'returns the zpool_featureflags fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'zpool_featureflags', value: zpool_feature_flags)

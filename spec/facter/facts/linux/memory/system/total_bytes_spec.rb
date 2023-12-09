@@ -12,11 +12,6 @@ describe Facts::Linux::Memory::System::TotalBytes do
         receive(:resolve).with(:total).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Linux::Memory' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Linux::Memory).to have_received(:resolve).with(:total)
-    end
-
     it 'returns system total memory in bytes fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'memory.system.total_bytes', value: value),

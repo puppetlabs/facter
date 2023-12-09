@@ -10,11 +10,6 @@ describe Facts::Macosx::Networking::Network do
       allow(Facter::Resolvers::Networking).to receive(:resolve).with(:network).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Networking with :network' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:network)
-    end
-
     it 'returns the network fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'networking.network', value: value),

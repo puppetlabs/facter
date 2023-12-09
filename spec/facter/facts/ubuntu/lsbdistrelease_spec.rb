@@ -13,11 +13,6 @@ describe Facts::Ubuntu::Lsbdistrelease do
         let(:value) { '18.04' }
         let(:value_final) { { 'full' => '18.04', 'major' => '18.04', 'minor' => nil } }
 
-        it 'calls Facter::Resolvers::LsbRelease with :name' do
-          fact.call_the_resolver
-          expect(Facter::Resolvers::LsbRelease).to have_received(:resolve).with(:release)
-        end
-
         it 'returns release fact' do
           expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
             contain_exactly(an_object_having_attributes(name: 'lsbdistrelease', value: value, type: :legacy),

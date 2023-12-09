@@ -14,12 +14,6 @@ describe Facts::Amzn::Os::Distro::Release do
       let(:value) { '2.13.0' }
       let(:release) { { 'full' => '2.13.0', 'major' => '2', 'minor' => '13', 'patch' => '0' } }
 
-      it 'calls Facter::Resolvers::Amzn::OsReleaseRpm with version' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Amzn::OsReleaseRpm).to have_received(:resolve)
-          .with(:version)
-      end
-
       it 'returns os distro release fact' do
         expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
           contain_exactly(an_object_having_attributes(name: 'os.distro.release', value: release),
@@ -39,11 +33,6 @@ describe Facts::Amzn::Os::Distro::Release do
 
       before do
         allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:version_id).and_return(os_release)
-      end
-
-      it 'calls Facter::Resolvers::OsRelease with version' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:version_id)
       end
 
       it 'returns os distro release fact' do

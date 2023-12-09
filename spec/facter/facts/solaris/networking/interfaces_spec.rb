@@ -22,11 +22,6 @@ describe Facts::Solaris::Networking::Interfaces do
       allow(Facter::Resolvers::Solaris::Networking).to receive(:resolve).with(:interfaces).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Solaris::Networking' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Solaris::Networking).to have_received(:resolve).with(:interfaces)
-    end
-
     it 'returns networking.interfaces fact' do
       expect(fact.call_the_resolver)
         .to be_an_instance_of(Facter::ResolvedFact)

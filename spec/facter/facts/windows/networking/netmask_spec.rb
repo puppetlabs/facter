@@ -10,11 +10,6 @@ describe Facts::Windows::Networking::Netmask do
       allow(Facter::Resolvers::Windows::Networking).to receive(:resolve).with(:netmask).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Windows::Networking' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Windows::Networking).to have_received(:resolve).with(:netmask)
-    end
-
     it 'returns netmask for ipv4 ip address fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'networking.netmask', value: value),

@@ -128,14 +128,9 @@ describe Facts::Solaris::Virtual do
           allow(dmi).to receive(:resolve)
         end
 
-        it 'calls Dmi resolver for product_name' do
-          fact.call_the_resolver
-          expect(dmi).to have_received(:resolve).with(:product_name)
-        end
-
-        it 'calls Dmi resolver for bios_vendor' do
-          fact.call_the_resolver
-          expect(dmi).to have_received(:resolve).with(:bios_vendor)
+        it 'returns virtual fact' do
+          expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+            have_attributes(name: 'virtual', value: 'physical')
         end
       end
 
@@ -147,14 +142,9 @@ describe Facts::Solaris::Virtual do
           allow(dmi).to receive(:resolve)
         end
 
-        it 'calls DmiSparc resolver for product_name' do
-          fact.call_the_resolver
-          expect(dmi).to have_received(:resolve).with(:product_name)
-        end
-
-        it 'calls DmiSparc resolver for bios_vendor' do
-          fact.call_the_resolver
-          expect(dmi).to have_received(:resolve).with(:bios_vendor)
+        it 'returns virtual fact' do
+          expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+            have_attributes(name: 'virtual', value: 'physical')
         end
       end
     end

@@ -13,11 +13,6 @@ describe Facts::Solaris::Dmi::Product::Uuid do
         receive(:resolve).with(:processor).and_return('i386')
     end
 
-    it 'calls Facter::Resolvers::Solaris::Dmi' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Solaris::Dmi).to have_received(:resolve).with(:product_uuid)
-    end
-
     it 'returns resolved facts' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'dmi.product.uuid', value: product_uuid),

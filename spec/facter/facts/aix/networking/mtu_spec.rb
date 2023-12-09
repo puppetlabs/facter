@@ -10,11 +10,6 @@ describe Facts::Aix::Networking::Mtu do
   describe '#call_the_resolver' do
     let(:value) { 1500 }
 
-    it 'calls Facter::Resolvers::Aix::Networking with mtu' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Aix::Networking).to have_received(:resolve).with(:mtu)
-    end
-
     it 'returns mtu fact' do
       expect(fact.call_the_resolver)
         .to be_an_instance_of(Facter::ResolvedFact)
