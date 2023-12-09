@@ -4,39 +4,39 @@ describe Facter::Resolvers::Solaris::Mountpoints do
   let(:resolver) { Facter::Resolvers::Solaris::Mountpoints }
   let(:mounts) do
     [
-      object_double(Sys::Filesystem::Mount,
-                    mount_point: '/', mount_time: nil,
-                    mount_type: 'zfs', options: 'dev=4490002', name:
-                    'rpool/ROOT/solaris', dump_frequency: nil, pass_number: nil),
-      object_double(Sys::Filesystem::Mount,
-                    mount_point: '/devices', mount_time: nil,
-                    mount_type: 'devfs', options: 'dev=8580000', name:
-                    '/devices', dump_frequency: nil, pass_number: nil),
-      object_double(Sys::Filesystem::Mount,
-                    mount_point: '/proc', mount_time: nil,
-                    mount_type: 'proc', options: 'dev=8600000', name:
-                    'proc', dump_frequency: nil, pass_number: nil),
-      object_double(Sys::Filesystem::Mount,
-                    mount_point: '/net', mount_time: nil,
-                    mount_type: 'autofs', options: 'nosuid,indirect,ignore,nobrowse,dev=8900007', name:
-                    '-hosts', dump_frequency: nil, pass_number: nil),
-      object_double(Sys::Filesystem::Mount,
-                    mount_point: '/home', mount_time: nil,
-                    mount_type: 'autofs', options: 'indirect,ignore,nobrowse,dev=8900008', name:
-                    'auto_home', dump_frequency: nil, pass_number: nil),
-      object_double(Sys::Filesystem::Mount,
-                    mount_point: '/home/user', mount_time: nil,
-                    mount_type: 'zfs', options: 'dev=8900009', name:
-                    'rpool/user', dump_frequency: nil, pass_number: nil)
+      instance_double(Sys::Filesystem::Mount,
+                      mount_point: '/', mount_time: nil,
+                      mount_type: 'zfs', options: 'dev=4490002', name:
+                      'rpool/ROOT/solaris', dump_frequency: nil, pass_number: nil),
+      instance_double(Sys::Filesystem::Mount,
+                      mount_point: '/devices', mount_time: nil,
+                      mount_type: 'devfs', options: 'dev=8580000', name:
+                      '/devices', dump_frequency: nil, pass_number: nil),
+      instance_double(Sys::Filesystem::Mount,
+                      mount_point: '/proc', mount_time: nil,
+                      mount_type: 'proc', options: 'dev=8600000', name:
+                      'proc', dump_frequency: nil, pass_number: nil),
+      instance_double(Sys::Filesystem::Mount,
+                      mount_point: '/net', mount_time: nil,
+                      mount_type: 'autofs', options: 'nosuid,indirect,ignore,nobrowse,dev=8900007', name:
+                      '-hosts', dump_frequency: nil, pass_number: nil),
+      instance_double(Sys::Filesystem::Mount,
+                      mount_point: '/home', mount_time: nil,
+                      mount_type: 'autofs', options: 'indirect,ignore,nobrowse,dev=8900008', name:
+                      'auto_home', dump_frequency: nil, pass_number: nil),
+      instance_double(Sys::Filesystem::Mount,
+                      mount_point: '/home/user', mount_time: nil,
+                      mount_type: 'zfs', options: 'dev=8900009', name:
+                      'rpool/user', dump_frequency: nil, pass_number: nil)
     ]
   end
 
   let(:mount) { mounts.first }
 
   let(:stat) do
-    object_double('Sys::Filesystem::Stat',
-                  path: '/', base_type: 'zfs', fragment_size: 512, block_size: 131_072, blocks: 20_143_706,
-                  blocks_available: 11_731_043, blocks_free: 11_731_043)
+    instance_double('Sys::Filesystem::Stat',
+                    path: '/', base_type: 'zfs', fragment_size: 512, block_size: 131_072, blocks: 20_143_706,
+                    blocks_available: 11_731_043, blocks_free: 11_731_043)
   end
 
   let(:fact) do

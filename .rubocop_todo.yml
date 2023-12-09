@@ -35,11 +35,6 @@ RSpec/LeakyConstantDeclaration:
     - 'spec/facter/resolvers/macosx/mountpoints_spec.rb'
     - 'spec/facter/util/windows/network_utils_spec.rb'
 
-# Offense count: 114
-# Configuration parameters: IgnoreNameless, IgnoreSymbolicNames.
-RSpec/VerifiedDoubles:
-  Enabled: false
-
 # Need to remove logger class variables
 Style/ClassVars:
   Exclude:

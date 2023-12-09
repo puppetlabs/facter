@@ -5,8 +5,8 @@ describe Facts::Windows::Dmi::Product::SerialNumber do
     subject(:fact) { Facts::Windows::Dmi::Product::SerialNumber.new }
 
     let(:value) { 'VMware-42 1a 0d 03 0a b7 98 28-78 98 5e 85 a0 ad 18 47' }
-    let(:expected_resolved_fact) { double(Facter::ResolvedFact, name: 'dmi.product.serial_number', value: value) }
-    let(:resolved_legacy_fact) { double(Facter::ResolvedFact, name: 'serialnumber', value: value, type: :legacy) }
+    let(:expected_resolved_fact) { instance_double(Facter::ResolvedFact, name: 'dmi.product.serial_number', value: value) }
+    let(:resolved_legacy_fact) { instance_double(Facter::ResolvedFact, name: 'serialnumber', value: value, type: :legacy) }
 
     before do
       allow(Facter::Resolvers::DMIBios).to receive(:resolve).with(:serial_number).and_return(value)

@@ -4,7 +4,7 @@ describe Facts::Windows::Hypervisors::Virtualbox do
   describe '#call_the_resolver' do
     context 'when is not Virtualbox hypervisor' do
       it 'returns nil' do
-        expected_fact = double(Facter::ResolvedFact, name: 'hypervisors.virtualbox', value: nil)
+        expected_fact = instance_double(Facter::ResolvedFact, name: 'hypervisors.virtualbox', value: nil)
         allow(Facter::Resolvers::Windows::Virtualization).to receive(:resolve).with(:virtual).and_return('value')
         allow(Facter::Resolvers::DMIComputerSystem).to receive(:resolve).with(:name).and_return('value')
         allow(Facter::ResolvedFact).to receive(:new).with('hypervisors.virtualbox', nil).and_return(expected_fact)
@@ -16,7 +16,7 @@ describe Facts::Windows::Hypervisors::Virtualbox do
 
     context 'when is VirtualBox hypervisor and CpuidSource resolver returns the required output' do
       it 'returns a fact' do
-        expected_fact = double(Facter::ResolvedFact, name: 'hypervisors.virtualbox', value:
+        expected_fact = instance_double(Facter::ResolvedFact, name: 'hypervisors.virtualbox', value:
             { revision: ' 13.4', version: ' 13.4' })
         allow(Facter::Resolvers::Windows::Virtualization).to receive(:resolve).with(:virtual).and_return('virtualbox')
         allow(Facter::Resolvers::Windows::Virtualization)
@@ -33,7 +33,7 @@ describe Facts::Windows::Hypervisors::Virtualbox do
 
     context 'when is VirtualBox hypervisor and DMIComputerSystem resolver returns the required output' do
       it 'returns a fact' do
-        expected_fact = double(Facter::ResolvedFact, name: 'hypervisors.virtualbox', value:
+        expected_fact = instance_double(Facter::ResolvedFact, name: 'hypervisors.virtualbox', value:
             { revision: '', version: '' })
         allow(Facter::Resolvers::Windows::Virtualization).to receive(:resolve).with(:virtual).and_return('value')
         allow(Facter::Resolvers::DMIComputerSystem).to receive(:resolve).with(:name).and_return('VirtualBox')

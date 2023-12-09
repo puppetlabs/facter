@@ -100,3 +100,16 @@ RSpec/SubjectStub:
     - 'spec/custom_facts/core/resolvable_spec.rb'
     - 'spec/custom_facts/util/fact_spec.rb'
     - 'spec/custom_facts/util/resolution_spec.rb'
+
+# Prefer instance_double/instance_spy over double/spy because only methods
+# defined on the underlying object can be stubbed. FFI and some Windows
+# code can't be verified because of the way we fake out those classes.
+RSpec/VerifiedDoubles:
+  Enabled: true
+  Exclude:
+    - 'spec/custom_facts/**/*'
+    - 'spec/facter/resolvers/aix/hardware_spec.rb'
+    - 'spec/facter/resolvers/*/ffi_helper_spec.rb'
+    - 'spec/facter/resolvers/windows/*'
+    - 'spec/facter/util/windows/network_utils_spec.rb'
+    - 'spec/facter/util/windows/win32ole_spec.rb'

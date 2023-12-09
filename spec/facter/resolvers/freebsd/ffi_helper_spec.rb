@@ -36,7 +36,7 @@ describe Facter::Freebsd::FfiHelper do
 
     context 'when expecting an uint32_t' do
       let(:result) { 42 }
-      let(:oldlen) { double('Integer') }
+      let(:oldlen) { instance_double(Integer) }
 
       before do
         allow(FFI::MemoryPointer).to receive(:new)
