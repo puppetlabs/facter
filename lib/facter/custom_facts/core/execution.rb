@@ -3,7 +3,7 @@
 module Facter
   module Core
     module Execution
-      @@impl = if LegacyFacter::Util::Config.windows?
+      @@impl = if LegacyFacter::Util::Config.windows? # rubocop:disable Style/ClassVars
                  Facter::Core::Execution::Windows.new
                else
                  Facter::Core::Execution::Posix.new

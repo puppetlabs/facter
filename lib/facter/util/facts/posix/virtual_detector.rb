@@ -7,11 +7,10 @@ module Facter
         module VirtualDetector
           class << self
             def platform
-              @@fact_value ||= check_docker_lxc || check_freebsd || check_gce || retrieve_from_virt_what
-              @@fact_value ||= check_vmware || check_open_vz || check_vserver || check_xen || check_other_facts
-              @@fact_value ||= check_lspci || 'physical'
-
-              @@fact_value
+              @fact_value ||= # rubocop:disable Naming/MemoizedInstanceVariableName
+                check_docker_lxc || check_freebsd || check_gce || retrieve_from_virt_what || \
+                check_vmware || check_open_vz || check_vserver || check_xen || check_other_facts || \
+                check_lspci || 'physical'
             end
 
             private

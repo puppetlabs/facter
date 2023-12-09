@@ -172,14 +172,11 @@ RSpec/SubjectStub:
 RSpec/VerifiedDoubles:
   Enabled: false
 
-# Offense count: 24
+# Need to remove logger class variables
 Style/ClassVars:
   Exclude:
-    - 'lib/facter/custom_facts/core/execution.rb'
     - 'lib/facter/framework/logging/logger.rb'
-    - 'lib/facter/util/facts/posix/virtual_detector.rb'
     - 'spec/custom_facts/puppetlabs_spec/files.rb'
-    - 'spec/facter/util/facts/posix/virtual_detector_spec.rb'
     - 'spec/facter/util/file_helper_spec.rb'
     - 'spec/framework/core/fact/internal/internal_fact_manager_spec.rb'
     - 'spec/framework/logging/logger_spec.rb'
