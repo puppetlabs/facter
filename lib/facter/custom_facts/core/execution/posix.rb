@@ -38,7 +38,8 @@ module Facter
           exe = nil
           args = nil
 
-          if (match = (command.match(DOUBLE_QUOTED_COMMAND) || command.match(SINGLE_QUOTED_COMMAND)))
+          match = command.match(DOUBLE_QUOTED_COMMAND) || command.match(SINGLE_QUOTED_COMMAND)
+          if match
             exe, args = match.captures
           else
             exe, args = command.split(/ /, 2)
