@@ -70,6 +70,23 @@ describe Facter::Util::Resolvers::Networking::PrimaryInterface do
     end
   end
 
+  describe '#read_from_ip6_route' do
+    before do
+      allow(Facter::Core::Execution).to receive(:execute)
+        .and_return(load_fixture('ip_-json_-6_route_show_default').read)
+    end
+
+    it 'parses output from `ip -json -6 route show default`' do
+      allow(Facter::Core::Execution).to receive(:which).with('ip').and_return('/some/path')
+      expect(primary_interface.read_from_ip6_route).to eq('ens3')
+    end
+
+    it 'returns nil if route command does not exist' do
+      allow(Facter::Core::Execution).to receive(:which).with('ip').and_return(nil)
+      expect(primary_interface.read_from_ip6_route).to be_nil
+    end
+  end
+
   describe '#find_in_interfaces' do
     let(:interfaces) do
       { 'lo' =>

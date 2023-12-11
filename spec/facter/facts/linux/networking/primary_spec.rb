@@ -10,7 +10,7 @@ describe Facts::Linux::Networking::Primary do
       allow(Facter::Resolvers::Linux::Networking).to receive(:resolve).with(:primary_interface).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::NetworkingLinux' do
+    it 'calls Facter::Resolvers::Linux::Networking' do
       fact.call_the_resolver
       expect(Facter::Resolvers::Linux::Networking).to have_received(:resolve).with(:primary_interface)
     end

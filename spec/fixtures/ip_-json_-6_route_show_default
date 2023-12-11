@@ -1,0 +1,1 @@
+[{"dst":"default","gateway":"fe80::fc00:2ff:fedb:a0d4","dev":"ens3","protocol":"ra","metric":1024,"flags":[],"expires":1634,"metrics":[{"mtu":1500}],"pref":"medium"}]
