@@ -21,9 +21,10 @@ module Facter
 
     def find_nested_classes(mod, discovered_classes)
       mod.constants.each do |constant_name|
-        if mod.const_get(constant_name).instance_of? Class
-          discovered_classes << mod.const_get(constant_name)
-        elsif mod.const_get(constant_name).instance_of? Module
+        obj = mod.const_get(constant_name)
+        if obj.instance_of? Class
+          discovered_classes << obj
+        elsif obj.instance_of? Module
           find_nested_classes(Module.const_get("#{mod.name}::#{constant_name}"), discovered_classes)
         end
       end

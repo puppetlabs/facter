@@ -18,18 +18,18 @@ module Facter
       # Because a root fact will always be resolved by a collection of child facts,
       # we can return one or more child facts for each parent.
       #
-      # query -  is the user input used to search for facts
-      # loaded_fact - is a list with all facts for the current operating system
+      # @param query_list [Array] The list of facts to search for
+      # @param loaded_facts [Array] All of the fact definitions for the current operating system
       #
-      # Returns a list of SearchedFact objects that resolve the users query.
-      def parse(query_list, loaded_fact)
+      # @return [Array<SearchedFact>] a list of searchable facts that resolve the user's query
+      def parse(query_list, loaded_facts)
         matched_facts = []
         @query_list = query_list
 
-        return no_user_query(loaded_fact) unless query_list.any?
+        return no_user_query(loaded_facts) unless query_list.any?
 
         query_list.each do |query|
-          found_facts = search_for_facts(query, loaded_fact)
+          found_facts = search_for_facts(query, loaded_facts)
           matched_facts << found_facts
         end
 
@@ -44,15 +44,17 @@ module Facter
         searched_facts
       end
 
-      def search_for_facts(query, loaded_fact_hash)
+      def search_for_facts(query, loaded_facts)
         resolvable_fact_list = []
         query = query.to_s
         query_tokens = query.end_with?('.*') ? [query] : query.split('.')
         size = query_tokens.size
 
+        # Try to match the most specific query_tokens to the least, returning the first match
         size.times do |i|
           query_token_range = 0..size - i - 1
-          resolvable_fact_list = get_facts_matching_tokens(query_tokens, query_token_range, loaded_fact_hash)
+          query_fact = query_tokens[query_token_range].join('.')
+          resolvable_fact_list = get_facts_matching_tokens(query_tokens, query_fact, loaded_facts)
 
           return resolvable_fact_list if resolvable_fact_list.any?
         end
@@ -62,12 +64,10 @@ module Facter
         resolvable_fact_list
       end
 
-      def get_facts_matching_tokens(query_tokens, query_token_range, loaded_fact_hash)
+      def get_facts_matching_tokens(query_tokens, query_fact, loaded_facts)
         resolvable_fact_list = []
 
-        loaded_fact_hash.each do |loaded_fact|
-          query_fact = query_tokens[query_token_range].join('.')
-
+        loaded_facts.each do |loaded_fact|
           next unless found_fact?(loaded_fact.name, query_fact)
 
           searched_fact = construct_loaded_fact(query_tokens, loaded_fact)
@@ -79,16 +79,20 @@ module Facter
       end
 
       def found_fact?(fact_name, query_fact)
+        # This is the case where the fact_name contains a wildcard like
+        # blockdevice_.*_model and we're querying for the legacy fact
+        # specifically using 'blockdevice_sba_model' and we don't want the query
+        # 'blockdevice.sba.model' to match
         fact_with_wildcard = fact_name.include?('.*') && !query_fact.include?('.')
 
-        processed_equery_fact = query_fact.gsub('\\', '\\\\\\\\')
-
-        return false if fact_with_wildcard && !query_fact.match("^#{fact_name}$")
-
-        # Must escape metacharacters (like dots) to ensure the correct fact is found
-        return false unless fact_with_wildcard || fact_name.match("^#{Regexp.escape(processed_equery_fact)}($|\\.)")
-
-        true
+        if fact_with_wildcard
+          # fact_name contains wildcard, so we're intentially not escaping.
+          query_fact.match("^#{fact_name}$")
+        else
+          processed_equery_fact = query_fact.gsub('\\', '\\\\\\\\')
+          # Must escape metacharacters (like dots) to ensure the correct fact is found
+          fact_name.match("^#{Regexp.escape(processed_equery_fact)}($|\\.)")
+        end
       end
 
       def construct_loaded_fact(query_tokens, loaded_fact)
