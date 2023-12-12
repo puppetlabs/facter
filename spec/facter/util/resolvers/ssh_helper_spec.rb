@@ -15,5 +15,9 @@ describe Facter::Util::Resolvers::SshHelper do
       expect(ssh_helper.create_ssh('ssh-rsa', key)).to be_an_instance_of(Facter::Util::Resolvers::Ssh).and \
         have_attributes(name: 'rsa', type: 'ssh-rsa', fingerprint: fingerprint)
     end
+
+    it 'implements value semantics' do
+      expect(ssh_helper.create_ssh('ssh-rsa', key)).to eq(ssh_helper.create_ssh('ssh-rsa', key))
+    end
   end
 end
