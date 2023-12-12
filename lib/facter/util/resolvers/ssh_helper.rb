@@ -17,6 +17,7 @@ module Facter
             key_name = SSH_NAME[key_type]
             return unless key_name
 
+            # decode64 ignores non-base64 characters including newlines
             decoded_key = Base64.decode64(key)
             ssh_fp = SSH_FINGERPRINT[key_name]
             sha1 = "SSHFP #{ssh_fp} 1 #{Digest::SHA1.new.update(decoded_key)}"
