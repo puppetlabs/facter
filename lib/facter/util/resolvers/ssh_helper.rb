@@ -9,6 +9,7 @@ module Facter
       class SshHelper
         class << self
           SSH_NAME = { 'ssh-dss' => 'dsa', 'ecdsa-sha2-nistp256' => 'ecdsa',
+                       'ecdsa-sha2-nistp384' => 'ecdsa', 'ecdsa-sha2-nistp521' => 'ecdsa',
                        'ssh-ed25519' => 'ed25519', 'ssh-rsa' => 'rsa' }.freeze
           SSH_FINGERPRINT = { 'rsa' => 1, 'dsa' => 2, 'ecdsa' => 3, 'ed25519' => 4 }.freeze
 
@@ -16,6 +17,7 @@ module Facter
             key_name = SSH_NAME[key_type]
             return unless key_name
 
+            # decode64 ignores non-base64 characters including newlines
             decoded_key = Base64.decode64(key)
             ssh_fp = SSH_FINGERPRINT[key_name]
             sha1 = "SSHFP #{ssh_fp} 1 #{Digest::SHA1.new.update(decoded_key)}"
