@@ -25,7 +25,7 @@ module Facter
           os
         end
 
-        def release_hash_from_string(output)
+        def release_hash_from_string(output, include_patch: false)
           return unless output
 
           versions = output.split('.')
@@ -33,6 +33,7 @@ module Facter
             release['full'] = output
             release['major'] = versions[0]
             release['minor'] = versions[1] if versions[1]
+            release['patch'] = versions[2] if versions[2] && include_patch
           end
         end
 

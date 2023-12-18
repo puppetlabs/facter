@@ -62,6 +62,18 @@ describe Facter::Util::Facts do
       expect(facts_util.release_hash_from_string('6')['minor']).to be_nil
     end
 
+    it 'returns valid patch release if requested' do
+      expect(facts_util.release_hash_from_string('6.2.1', include_patch: true)['patch']).to eq('1')
+    end
+
+    it 'returns patch release as nil if not requested' do
+      expect(facts_util.release_hash_from_string('6.2.1')['patch']).to be_nil
+    end
+
+    it 'returns patch release as nil if requested but not in version' do
+      expect(facts_util.release_hash_from_string('6.2')['patch']).to be_nil
+    end
+
     it 'returns nil if data is nil' do
       expect(facts_util.release_hash_from_string(nil)).to be_nil
     end

@@ -18,7 +18,7 @@ module Facts
         end
 
         def determine_release_version
-          version = Facter::Resolvers::ReleaseFromFirstLine.resolve(:release, release_file: '/etc/system-release')
+          version = Facter::Resolvers::Amzn::OsReleaseRpm.resolve(:version)
           version ||= Facter::Resolvers::OsRelease.resolve(:version_id)
 
           Facter::Util::Facts.release_hash_from_string(version)

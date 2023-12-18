@@ -244,6 +244,8 @@ os_hierarchy.each do |os|
     require_relative '../../facts/amzn/os/distro/release.rb'
     require_relative '../../facts/amzn/os/release.rb'
 
+    require_relative '../../resolvers/amzn/os_release_rpm'
+
   when 'bsd'
     require_relative '../../facts/bsd/kernelmajversion.rb'
     require_relative '../../facts/bsd/kernelversion.rb'
