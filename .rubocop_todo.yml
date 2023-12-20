@@ -12,18 +12,6 @@ Performance/RegexpMatch:
   Exclude:
     - 'install.rb'
 
-# Offense count: 1490
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: SkipBlocks, EnforcedStyle.
-# SupportedStyles: described_class, explicit
-RSpec/DescribedClass:
-  Enabled: false
-
-# Offense count: 192
-# Configuration parameters: CountAsOne.
-RSpec/ExampleLength:
-  Max: 34
-
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: CustomTransform, IgnoredWords, DisallowedExamples.
@@ -64,11 +52,6 @@ RSpec/MessageSpies:
 # Offense count: 13
 RSpec/MultipleExpectations:
   Max: 3
-
-# Offense count: 241
-# Configuration parameters: AllowedGroups.
-RSpec/NestedGroups:
-  Max: 6
 
 # Offense count: 6
 RSpec/SubjectStub:
