@@ -21,17 +21,6 @@ Naming/MethodName:
   Exclude:
     - 'spec/mocks/**/*'
 
-# Offense count: 1
-# Configuration parameters: NamePrefix, ForbiddenPrefixes, AllowedMethods, MethodDefinitionMacros.
-# NamePrefix: is_, has_, have_
-# ForbiddenPrefixes: is_, has_, have_
-# AllowedMethods: is_a?
-# MethodDefinitionMacros: define_method, define_singleton_method
-Naming/PredicateName:
-  Exclude:
-    - 'spec/**/*'
-    - 'lib/facter/custom_facts/core/suitable.rb'
-
 # Offense count: 3
 # This cop supports safe autocorrection (--autocorrect).
 Performance/RegexpMatch:
