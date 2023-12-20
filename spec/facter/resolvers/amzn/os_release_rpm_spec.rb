@@ -8,7 +8,7 @@ describe Facter::Resolvers::Amzn::OsReleaseRpm do
   before do
     os_release_resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with("rpm -q --qf '%{NAME}\\n%{VERSION}\\n%{RELEASE}\\n%{VENDOR}' -f /etc/os-release", { logger: log_spy })
+      .with("rpm -q --qf '%<NAME>s\\n%<VERSION>s\\n%<RELEASE>s\\n%<VENDOR>s' -f /etc/os-release", { logger: log_spy })
       .and_return(os_release_content)
   end
 

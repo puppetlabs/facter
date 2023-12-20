@@ -15,7 +15,7 @@ module Facter
 
           def rpm_system_call(fact_name)
             output = Facter::Core::Execution.execute(
-              'rpm -q --qf \'%{NAME}\n%{VERSION}\n%{RELEASE}\n%{VENDOR}\' -f /etc/os-release',
+              'rpm -q --qf \'%<NAME>s\n%<VERSION>s\n%<RELEASE>s\n%<VENDOR>s\' -f /etc/os-release',
               logger: log
             )
             build_fact_list(output)
