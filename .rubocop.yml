@@ -11,6 +11,9 @@ require:
   - rubocop-performance
   - rubocop-rspec
 
+Layout/LineLength:
+  Enabled: false
+
 Metrics/AbcSize:
   Enabled: false
 
