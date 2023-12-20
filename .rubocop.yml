@@ -35,6 +35,11 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Enabled: false
 
+Naming/VariableNumber:
+  Exclude:
+    - 'lib/facter/resolvers/windows/ffi/networking_ffi.rb'
+    - 'lib/facter/util/facts/windows_release_finder.rb'
+
 Style/IfUnlessModifier:
   Enabled: false
 
