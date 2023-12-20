@@ -8,12 +8,10 @@
 
 # Offense count: 2
 # This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: AllowAliasSyntax, AllowedMethods.
-# AllowedMethods: alias_method, public, protected, private
-Layout/EmptyLinesAroundAttributeAccessor:
-  Exclude:
-    - 'spec/custom_facts/core/resolvable_spec.rb'
-    - 'spec/custom_facts/core/suitable_spec.rb'
+# Configuration parameters: IndentationWidth.
+# SupportedStyles: special_inside_parentheses, consistent, align_braces
+Layout/FirstHashElementIndentation:
+  EnforcedStyle: special_inside_parentheses
 
 # Offense count: 6
 # This cop supports safe autocorrection (--autocorrect).
