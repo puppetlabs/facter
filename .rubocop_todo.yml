@@ -26,14 +26,6 @@ RSpec/ExampleWording:
 RSpec/FilePath:
   Enabled: false
 
-# Offense count: 15
-# Configuration parameters: AssignmentOnly.
-RSpec/InstanceVariable:
-  Exclude:
-    - 'spec/custom_facts/core/execution/fact_manager_spec.rb'
-    - 'spec/custom_facts/util/collection_spec.rb'
-    - 'spec/custom_facts/util/confine_spec.rb'
-
 # Offense count: 8
 RSpec/LeakyConstantDeclaration:
   Exclude:
