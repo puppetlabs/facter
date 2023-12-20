@@ -84,42 +84,6 @@ Lint/RedundantCopDisableDirective:
   Exclude:
     - 'spec/facter/util/linux/socket_parser_spec.rb'
 
-# Offense count: 43
-# Configuration parameters: AllowedMethods, AllowedPatterns, CountRepeatedAttributes.
-Metrics/AbcSize:
-  Max: 78
-
-# Offense count: 3
-# Configuration parameters: CountComments, CountAsOne, AllowedMethods, AllowedPatterns, inherit_mode.
-# AllowedMethods: refine
-Metrics/BlockLength:
-  Max: 751
-
-# Offense count: 15
-# Configuration parameters: CountComments, CountAsOne.
-Metrics/ClassLength:
-  Max: 291
-
-# Offense count: 20
-# Configuration parameters: AllowedMethods, AllowedPatterns.
-Metrics/CyclomaticComplexity:
-  Max: 19
-
-# Offense count: 133
-# Configuration parameters: CountComments, CountAsOne, AllowedMethods, AllowedPatterns.
-Metrics/MethodLength:
-  Max: 75
-
-# Offense count: 3
-# Configuration parameters: CountComments, CountAsOne.
-Metrics/ModuleLength:
-  Max: 396
-
-# Offense count: 16
-# Configuration parameters: AllowedMethods, AllowedPatterns.
-Metrics/PerceivedComplexity:
-  Max: 18
-
 # Offense count: 1
 # Configuration parameters: AllowedNames.
 # AllowedNames: module_parent
