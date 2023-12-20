@@ -73,7 +73,7 @@ describe LegacyFacter::Util::Parser do
 
     it 'handles exceptions' do
       allow(Facter::Util::FileHelper).to receive(:safe_read)
-        .with(data_file, nil).and_return(data_in_yaml + '}')
+        .with(data_file, nil).and_return("#{data_in_yaml}}")
       allow(Facter).to receive(:log_exception).at_least(:once)
 
       expect { LegacyFacter::Util::Parser.parser_for(data_file).results }.not_to raise_error

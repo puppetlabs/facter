@@ -38,7 +38,7 @@ module Facter
         end
 
         def query
-          'odmget -q "' + @conditions.join(' AND ') + '"'
+          "odmget -q \"#{@conditions.join(' AND ')}\""
         end
       end
     end

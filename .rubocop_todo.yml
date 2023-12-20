@@ -283,12 +283,6 @@ Style/SoleNestedConditional:
     - 'lib/facter/framework/core/options/config_file_options.rb'
     - 'scripts/generate_changelog.rb'
 
-# Offense count: 32
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: Mode.
-Style/StringConcatenation:
-  Enabled: false
-
 # Offense count: 8
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, AllowedPatterns.

@@ -124,7 +124,7 @@ module Facter
     end
 
     def append_s(unit)
-      return unit + 's' if unit.length > 2 && unit[-1] != 's'
+      return "#{unit}s" if unit.length > 2 && unit[-1] != 's'
 
       unit
     end

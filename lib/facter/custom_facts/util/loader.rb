@@ -18,7 +18,7 @@ module LegacyFacter
         shortname = fact.to_s.downcase
         load_env(shortname)
 
-        filename = shortname + '.rb'
+        filename = "#{shortname}.rb"
 
         paths = search_path
         paths&.each do |dir|

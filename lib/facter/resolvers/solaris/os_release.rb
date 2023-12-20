@@ -26,7 +26,7 @@ module Facter
 
               @fact_list[:major] = major
               @fact_list[:minor] = minor
-              @fact_list[:full] = major == '10' ? major + '_u' + minor : major + '.' + minor
+              @fact_list[:full] = major == '10' ? "#{major}_u#{minor}" : "#{major}.#{minor}"
               break
             end
             @fact_list[fact_name]
