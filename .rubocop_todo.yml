@@ -210,11 +210,6 @@ Style/FormatStringToken:
 Style/IfUnlessModifier:
   Enabled: false
 
-# Offense count: 1
-Style/MissingRespondToMissing:
-  Exclude:
-    - 'lib/facter.rb'
-
 # Offense count: 8
 # This cop supports safe autocorrection (--autocorrect).
 # Configuration parameters: AllowHeredoc, AllowURI, URISchemes, IgnoreCopDirectives, AllowedPatterns.
