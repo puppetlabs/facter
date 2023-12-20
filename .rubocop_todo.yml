@@ -205,16 +205,6 @@ Style/FormatStringToken:
     - 'lib/facter/resolvers/amzn/os_release_rpm.rb'
     - 'spec/facter/resolvers/amzn/os_release_rpm_spec.rb'
 
-# Offense count: 5
-# This cop supports unsafe autocorrection (--autocorrect-all).
-Style/GlobalStdStream:
-  Exclude:
-    - 'lib/facter.rb'
-    - 'lib/facter/framework/cli/cli_launcher.rb'
-    - 'lib/facter/framework/logging/logger.rb'
-    - 'spec/framework/core/fact/internal/internal_fact_manager_spec.rb'
-    - 'spec/framework/logging/logger_spec.rb'
-
 # Offense count: 1
 # This cop supports unsafe autocorrection (--autocorrect-all).
 Style/HashTransformKeys:

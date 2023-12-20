@@ -31,3 +31,15 @@ Metrics/ModuleLength:
 
 Metrics/PerceivedComplexity:
   Enabled: false
+
+# $stdout is preferred because it refers to the *current* stdout stream, while
+# STDOUT refers to the original stream. However, we can't just switch to using
+# $stdout, because it may have been assigned to a different object than STDOUT,
+# such as a IO to a file.
+Style/GlobalStdStream:
+  Exclude:
+    - 'lib/facter.rb'
+    - 'lib/facter/framework/cli/cli_launcher.rb'
+    - 'lib/facter/framework/logging/logger.rb'
+    - 'spec/framework/core/fact/internal/internal_fact_manager_spec.rb'
+    - 'spec/framework/logging/logger_spec.rb'
