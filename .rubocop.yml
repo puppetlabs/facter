@@ -53,6 +53,9 @@ Naming/VariableNumber:
     - 'lib/facter/resolvers/windows/ffi/networking_ffi.rb'
     - 'lib/facter/util/facts/windows_release_finder.rb'
 
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
 RSpec/StubbedMock:
   Enabled: false
 
