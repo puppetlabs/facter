@@ -35,6 +35,15 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Enabled: false
 
+Naming/ClassAndModuleCamelCase:
+  Exclude:
+    - 'spec/mocks/win32.rb'
+
+Naming/MethodName:
+  Exclude:
+    - 'spec/mocks/win32ole.rb'
+    - 'spec/mocks/ffi.rb'
+
 Naming/PredicateName:
   Exclude:
     - 'spec/**/*'
