@@ -53,11 +53,6 @@ describe Facts::Macosx::Networking::Interfaces do
       allow(Facter::Resolvers::Networking).to receive(:resolve).with(:interfaces).and_return(interfaces)
     end
 
-    it 'calls Facter::Resolvers::Networking with interfaces' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Networking).to have_received(:resolve).with(:interfaces)
-    end
-
     it 'returns networking.interfaces fact' do
       expect(fact.call_the_resolver)
         .to be_an_instance_of(Facter::ResolvedFact)

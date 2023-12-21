@@ -14,11 +14,6 @@ describe Facts::Linux::Lsbdistrelease do
           let(:value) { '10' }
           let(:value_final) { { 'full' => '10', 'major' => '10', 'minor' => nil } }
 
-          it 'calls Facter::Resolvers::LsbRelease with :name' do
-            fact.call_the_resolver
-            expect(Facter::Resolvers::LsbRelease).to have_received(:resolve).with(:release)
-          end
-
           it 'returns release fact' do
             expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
               contain_exactly(an_object_having_attributes(name: 'lsbdistrelease', value: value, type: :legacy),
@@ -32,11 +27,6 @@ describe Facts::Linux::Lsbdistrelease do
         context 'when versin consists of both major and minor' do
           let(:value) { '10.08' }
           let(:value_final) { { 'full' => '10.08', 'major' => '10', 'minor' => '08' } }
-
-          it 'calls Facter::Resolvers::LsbRelease with :name' do
-            fact.call_the_resolver
-            expect(Facter::Resolvers::LsbRelease).to have_received(:resolve).with(:release)
-          end
 
           it 'returns release fact' do
             expect(fact.call_the_resolver).to be_an_instance_of(Array).and \

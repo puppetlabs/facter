@@ -19,11 +19,6 @@ describe Facts::Freebsd::Partitions do
       allow(Facter::Resolvers::Freebsd::Geom).to receive(:resolve).with(:partitions).and_return(partitions)
     end
 
-    it 'calls Facter::Resolvers::Freebsd::Partitions' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Freebsd::Geom).to have_received(:resolve).with(:partitions)
-    end
-
     it 'returns resolved fact with name partitions and value' do
       expect(fact.call_the_resolver)
         .to be_an_instance_of(Facter::ResolvedFact)

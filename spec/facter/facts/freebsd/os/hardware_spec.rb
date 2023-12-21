@@ -10,11 +10,6 @@ describe Facts::Freebsd::Os::Hardware do
       allow(Facter::Resolvers::Uname).to receive(:resolve).with(:machine).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::HardwareArchitecture' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Uname).to have_received(:resolve).with(:machine)
-    end
-
     it 'returns hardware model fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'os.hardware', value: value),

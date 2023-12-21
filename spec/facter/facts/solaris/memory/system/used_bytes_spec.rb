@@ -12,11 +12,6 @@ describe Facts::Solaris::Memory::System::UsedBytes do
         receive(:resolve).with(:system).and_return(resolver_output)
     end
 
-    it 'calls Facter::Resolvers::Solaris::Memory' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Solaris::Memory).to have_received(:resolve).with(:system)
-    end
-
     it 'returns system used memory in bytes fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'memory.system.used_bytes', value: value)

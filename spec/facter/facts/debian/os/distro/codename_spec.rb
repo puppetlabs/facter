@@ -11,11 +11,6 @@ describe Facts::Debian::Os::Distro::Codename do
         allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:version_codename).and_return(value)
       end
 
-      it 'calls Facter::Resolvers::OsRelease' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:version_codename)
-      end
-
       it 'returns os.distro.codename fact' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
           have_attributes(name: 'os.distro.codename', value: value)
@@ -30,16 +25,6 @@ describe Facts::Debian::Os::Distro::Codename do
       before do
         allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:version_codename).and_return(value)
         allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:version).and_return(version)
-      end
-
-      it 'calls Facter::Resolvers::OsRelease with version_codename' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:version_codename)
-      end
-
-      it 'calls Facter::Resolvers::OsRelease with version' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:version)
       end
 
       it 'returns os.distro.codename fact' do
@@ -58,16 +43,6 @@ describe Facts::Debian::Os::Distro::Codename do
         allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:version).and_return(version)
       end
 
-      it 'calls Facter::Resolvers::OsRelease with version_codename' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:version_codename)
-      end
-
-      it 'calls Facter::Resolvers::OsRelease with version' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:version)
-      end
-
       it 'returns os.distro.codename fact' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
           have_attributes(name: 'os.distro.codename', value: result)
@@ -82,16 +57,6 @@ describe Facts::Debian::Os::Distro::Codename do
       before do
         allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:version_codename).and_return(value)
         allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:version).and_return(version)
-      end
-
-      it 'calls Facter::Resolvers::OsRelease with version_codename' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:version_codename)
-      end
-
-      it 'calls Facter::Resolvers::OsRelease with version' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:version)
       end
 
       it 'returns os.distro.codename fact' do

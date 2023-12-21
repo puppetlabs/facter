@@ -12,11 +12,6 @@ describe Facts::Macosx::Processors::Models do
         receive(:resolve).with(:models).and_return(models)
     end
 
-    it 'calls Facter::Resolvers::Macosx::Processors' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::Processors).to have_received(:resolve).with(:models)
-    end
-
     it 'returns a resolved fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'processors.models', value: models),

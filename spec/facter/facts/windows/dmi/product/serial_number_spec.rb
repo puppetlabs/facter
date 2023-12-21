@@ -12,11 +12,6 @@ describe Facts::Windows::Dmi::Product::SerialNumber do
       allow(Facter::Resolvers::DMIBios).to receive(:resolve).with(:serial_number).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::DMIBios' do
-      expect(Facter::Resolvers::DMIBios).to receive(:resolve).with(:serial_number)
-      fact.call_the_resolver
-    end
-
     it 'returns serial_number fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'dmi.product.serial_number', value: value),

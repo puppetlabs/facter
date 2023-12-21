@@ -10,11 +10,6 @@ describe Facts::Aix::IpaddressInterfaces do
   describe '#call_the_resolver' do
     let(:interfaces) { { 'eth0' => { ip: '10.16.117.100' }, 'en1' => { ip: '10.16.117.255' } } }
 
-    it 'calls Facter::Resolvers::Aix::Networking' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Aix::Networking).to have_received(:resolve).with(:interfaces)
-    end
-
     it 'returns legacy facts with names ipaddress_<interface_name>' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'ipaddress_eth0',

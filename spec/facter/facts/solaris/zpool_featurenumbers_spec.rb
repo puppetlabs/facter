@@ -11,11 +11,6 @@ describe Facts::Solaris::ZpoolFeaturenumbers do
         receive(:resolve).with(:zpool_featurenumbers).and_return(zpool_featurenumbers)
     end
 
-    it 'calls Facter::Resolvers::ZPool' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Zpool).to have_received(:resolve).with(:zpool_featurenumbers)
-    end
-
     it 'returns the zpool_featurenumbers fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'zpool_featurenumbers', value: zpool_featurenumbers)

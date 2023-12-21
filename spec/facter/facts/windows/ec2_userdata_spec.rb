@@ -30,11 +30,6 @@ describe Facts::Windows::Ec2Userdata do
       context 'when resolver returns a value' do
         let(:value) { 'some custom value' }
 
-        it 'calls Facter::Resolvers::Ec2' do
-          fact.call_the_resolver
-          expect(Facter::Resolvers::Ec2).to have_received(:resolve).with(:userdata)
-        end
-
         it 'returns ec2 userdata fact' do
           expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
             have_attributes(name: 'ec2_userdata', value: value)

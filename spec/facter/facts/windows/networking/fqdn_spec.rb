@@ -14,16 +14,6 @@ describe Facts::Windows::Networking::Fqdn do
       let(:hostname) { 'hostname' }
       let(:value) { "#{hostname}.#{domain_name}" }
 
-      it 'calls Facter::Resolvers::Windows::Networking' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Windows::Networking).to have_received(:resolve).with(:domain)
-      end
-
-      it 'calls Facter::Resolvers::Hostname' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Hostname).to have_received(:resolve).with(:hostname)
-      end
-
       it 'returns fqdn fact' do
         expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
           contain_exactly(an_object_having_attributes(name: 'networking.fqdn', value: value),

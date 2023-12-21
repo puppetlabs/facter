@@ -11,11 +11,6 @@ describe Facts::Solaris::Processors::Cores do
         receive(:resolve).with(:cores_per_socket).and_return(cores_per_socket)
     end
 
-    it 'calls Facter::Resolvers::Solaris::Processors' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Solaris::Processors).to have_received(:resolve).with(:cores_per_socket)
-    end
-
     it 'returns a resolved fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'processors.cores', value: cores_per_socket)

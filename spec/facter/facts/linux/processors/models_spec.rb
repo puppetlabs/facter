@@ -11,11 +11,6 @@ describe Facts::Linux::Processors::Models do
         receive(:resolve).with(:models).and_return(models)
     end
 
-    it 'calls Facter::Resolvers::Linux::Processors' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Linux::Processors).to have_received(:resolve).with(:models)
-    end
-
     it 'returns processors models fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'processors.models', value: models)

@@ -11,11 +11,6 @@ describe Facts::Bsd::Processors::Count do
         receive(:resolve).with(:logical_count).and_return(processors)
     end
 
-    it 'calls Facter::Resolvers::Bsd::Processors' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Bsd::Processors).to have_received(:resolve).with(:logical_count)
-    end
-
     it 'returns a resolved fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'processors.count', value: processors),

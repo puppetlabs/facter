@@ -11,11 +11,6 @@ describe Facts::Windows::Memory::System::TotalBytes do
     let(:value) { 3_331_551_232 }
     let(:value_mb) { 3177.21484375 }
 
-    it 'calls Facter::Resolvers::Memory' do
-      expect(Facter::Resolvers::Memory).to receive(:resolve).with(:total_bytes)
-      fact.call_the_resolver
-    end
-
     it 'returns total memory im bytes fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'memory.system.total_bytes', value: value),

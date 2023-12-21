@@ -14,12 +14,6 @@ describe Facts::Sles::Os::Distro::Release do
       let(:value) { '12.1' }
       let(:release) { { 'full' => '12.1', 'major' => '12', 'minor' => '1' } }
 
-      it 'calls Facter::Resolvers::OsRelease with version_id' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::OsRelease).to have_received(:resolve)
-          .with(:version_id)
-      end
-
       it 'returns operating system name fact' do
         expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
           contain_exactly(an_object_having_attributes(name: 'os.distro.release', value: release),
@@ -38,11 +32,6 @@ describe Facts::Sles::Os::Distro::Release do
 
       before do
         allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:version_id).and_return(value)
-      end
-
-      it 'calls Facter::Resolvers::OsRelease with version' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:version_id)
       end
 
       it 'returns operating system name fact' do

@@ -13,11 +13,6 @@ describe Facts::Linux::Hypervisors::Docker do
       let(:hv) { { docker: { 'id' => 'testid' } } }
       let(:value) { { 'id' => 'testid' } }
 
-      it 'calls Facter::Resolvers::Containers' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Containers).to have_received(:resolve).with(:hypervisor)
-      end
-
       it 'returns virtual fact' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
           have_attributes(name: 'hypervisors.docker', value: value)

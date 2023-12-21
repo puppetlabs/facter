@@ -12,11 +12,6 @@ describe Facts::Aix::Memory::Swap::Used do
         receive(:resolve).with(:swap).and_return(resolver_value)
     end
 
-    it 'calls Facter::Resolvers::Aix::Memory' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Aix::Memory).to have_received(:resolve).with(:swap)
-    end
-
     it 'returns swap used memory fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'memory.swap.used', value: value)

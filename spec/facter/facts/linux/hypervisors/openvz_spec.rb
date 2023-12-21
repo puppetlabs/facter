@@ -12,11 +12,6 @@ describe Facts::Linux::Hypervisors::Openvz do
     context 'when resolver returns nil' do
       let(:ovz) { nil }
 
-      it 'calls Facter::Resolvers::OpenVz' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::OpenVz).to have_received(:resolve).with(:vm)
-      end
-
       it 'returns virtual fact as nil' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
           have_attributes(name: 'hypervisors.openvz', value: nil)

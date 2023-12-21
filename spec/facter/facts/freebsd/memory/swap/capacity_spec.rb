@@ -10,11 +10,6 @@ describe Facts::Freebsd::Memory::Swap::Capacity do
       allow(Facter::Resolvers::Freebsd::SwapMemory).to receive(:resolve).with(:capacity).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Freebsd::SwapMemory' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Freebsd::SwapMemory).to have_received(:resolve).with(:capacity)
-    end
-
     it 'returns a fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'memory.swap.capacity', value: value)

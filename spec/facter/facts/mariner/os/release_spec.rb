@@ -15,15 +15,6 @@ describe Facts::Mariner::Os::Release do
       let(:value) { /CBL\-Mariner ([0-9.]+)/.match('CBL-Mariner 2.0.20220824') }
       let(:release) { { 'full' => '2.0.20220824', 'major' => '2', 'minor' => '0' } }
 
-      it 'calls Facter::Resolvers::SpecificReleaseFile with version' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::SpecificReleaseFile).to have_received(:resolve)
-        receive(:resolve)
-          .with(:release, { release_file: '/etc/mariner-release',
-                            regex: /CBL\-Mariner ([0-9.]+)/ })
-          .and_return(value)
-      end
-
       it 'returns operating system name fact' do
         expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
           contain_exactly(an_object_having_attributes(name: 'os.release', value: release),
@@ -41,11 +32,6 @@ describe Facts::Mariner::Os::Release do
 
       before do
         allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:version_id).and_return(os_release)
-      end
-
-      it 'calls Facter::Resolvers::OsRelease with version' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::OsRelease).to have_received(:resolve).with(:version_id)
       end
 
       it 'returns operating system name fact' do

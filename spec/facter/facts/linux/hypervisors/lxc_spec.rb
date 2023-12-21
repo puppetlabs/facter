@@ -13,11 +13,6 @@ describe Facts::Linux::Hypervisors::Lxc do
       let(:hv) { { lxc: { 'name' => 'test_name' } } }
       let(:value) { { 'name' => 'test_name' } }
 
-      it 'calls Facter::Resolvers::Containers' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Containers).to have_received(:resolve).with(:hypervisor)
-      end
-
       it 'returns virtual fact' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
           have_attributes(name: 'hypervisors.lxc', value: value)

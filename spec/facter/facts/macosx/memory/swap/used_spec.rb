@@ -11,11 +11,6 @@ describe Facts::Macosx::Memory::Swap::Used do
       allow(Facter::Resolvers::Macosx::SwapMemory).to receive(:resolve).with(:used_bytes).and_return(resolver_result)
     end
 
-    it 'calls Facter::Resolvers::Macosx::SwapMemory' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Macosx::SwapMemory).to have_received(:resolve).with(:used_bytes)
-    end
-
     it 'returns a memory.swap.used fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'memory.swap.used', value: fact_value)

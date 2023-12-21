@@ -36,12 +36,6 @@ describe Facts::Linux::AzMetadata do
       end
 
       context 'when on Azure' do
-        it 'calls the az resolver' do
-          fact.call_the_resolver
-
-          expect(Facter::Resolvers::Az).to have_received(:resolve).with(:metadata)
-        end
-
         it 'returns az_metadata fact' do
           expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
             have_attributes(name: 'az_metadata', value: value)

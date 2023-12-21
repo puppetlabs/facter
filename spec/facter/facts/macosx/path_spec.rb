@@ -11,11 +11,6 @@ describe Facts::Macosx::Path do
         receive(:resolve).with(:path).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Path' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Path).to have_received(:resolve).with(:path)
-    end
-
     it 'returns path fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'path', value: value)

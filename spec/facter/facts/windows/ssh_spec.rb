@@ -21,16 +21,6 @@ describe Facts::Windows::Ssh do
         allow(Facter::Resolvers::Windows::Ssh).to receive(:resolve).with(:ssh).and_return(ssh)
       end
 
-      it 'calls Facter::Resolvers::Windows::Ssh' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Windows::Ssh).to have_received(:resolve).with(:ssh)
-      end
-
-      it 'calls Facter::Resolvers::Windows::Identity' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Identity).to have_received(:resolve).with(:privileged)
-      end
-
       it 'returns ssh fact' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
           have_attributes(name: 'ssh', value: value)
@@ -43,16 +33,6 @@ describe Facts::Windows::Ssh do
       before do
         allow(Facter::Resolvers::Identity).to receive(:resolve).with(:privileged).and_return(true)
         allow(Facter::Resolvers::Windows::Ssh).to receive(:resolve).with(:ssh).and_return({})
-      end
-
-      it 'calls Facter::Resolvers::Windows::Ssh' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Windows::Ssh).to have_received(:resolve).with(:ssh)
-      end
-
-      it 'calls Facter::Resolvers::Windows::Identity' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Identity).to have_received(:resolve).with(:privileged)
       end
 
       it 'returns ssh fact' do
@@ -72,11 +52,6 @@ describe Facts::Windows::Ssh do
       it "doesn't call Facter::Resolvers::Windows::Ssh" do
         fact.call_the_resolver
         expect(Facter::Resolvers::Windows::Ssh).not_to have_received(:resolve).with(:ssh)
-      end
-
-      it 'calls Facter::Resolvers::Windows::Identity' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Identity).to have_received(:resolve).with(:privileged)
       end
 
       it 'returns ssh fact' do

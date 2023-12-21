@@ -12,11 +12,6 @@ describe Facts::Solaris::Memory::Swap::UsedBytes do
         receive(:resolve).with(:swap).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Solaris::Memory' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Solaris::Memory).to have_received(:resolve).with(:swap)
-    end
-
     it 'returns swap used memory in bytes fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'memory.swap.used_bytes', value: result)

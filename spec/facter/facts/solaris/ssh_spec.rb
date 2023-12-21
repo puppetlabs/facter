@@ -20,11 +20,6 @@ describe Facts::Solaris::Ssh do
         receive(:resolve).with(:ssh).and_return(ssh)
     end
 
-    it 'calls Facter::Resolvers::Ssh' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Ssh).to have_received(:resolve).with(:ssh)
-    end
-
     it 'returns a resolved fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'ssh', value: value)

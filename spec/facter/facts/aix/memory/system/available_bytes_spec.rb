@@ -13,11 +13,6 @@ describe Facts::Aix::Memory::System::AvailableBytes do
         receive(:resolve).with(:system).and_return(resolver_output)
     end
 
-    it 'calls Facter::Resolvers::Aix::Memory' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Aix::Memory).to have_received(:resolve).with(:system)
-    end
-
     it 'returns system available memory in bytes fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'memory.system.available_bytes', value: value),

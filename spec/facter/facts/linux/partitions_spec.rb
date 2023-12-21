@@ -35,16 +35,6 @@ describe Facts::Linux::Partitions do
                                                                  .and_return(partitions_resolver_output)
       end
 
-      it 'calls Facter::Resolvers::Mountpoints' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Mountpoints).to have_received(:resolve).with(:mountpoints)
-      end
-
-      it 'calls Facter::Resolvers::Partitions' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Partitions).to have_received(:resolve).with(:partitions)
-      end
-
       it 'returns partitions information' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
           have_attributes(name: 'partitions', value: final_result)
@@ -136,16 +126,6 @@ describe Facts::Linux::Partitions do
                                                                   .and_return(mountpoints_resolver_output)
         allow(Facter::Resolvers::Partitions).to receive(:resolve).with(:partitions)
                                                                  .and_return(partitions_resolver_output)
-      end
-
-      it 'calls Facter::Resolvers::Mountpoints' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Mountpoints).to have_received(:resolve).with(:mountpoints)
-      end
-
-      it 'calls Facter::Resolvers::Partitions' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Partitions).to have_received(:resolve).with(:partitions)
       end
 
       it 'returns partitions information from the first mountpoint' do

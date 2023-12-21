@@ -9,11 +9,6 @@ describe Facts::Solaris::Kernelmajversion do
     allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelversion).and_return(resolver_value)
   end
 
-  it 'calls Facter::Resolvers::Uname' do
-    fact.call_the_resolver
-    expect(Facter::Resolvers::Uname).to have_received(:resolve).with(:kernelversion)
-  end
-
   shared_examples 'kernelmajversion fact expectation' do
     it 'returns the correct kernelmajversion fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \

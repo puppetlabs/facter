@@ -10,11 +10,6 @@ describe Facts::Solaris::Networking::Ip6 do
       allow(Facter::Resolvers::Solaris::Networking).to receive(:resolve).with(:ip6).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::Solaris::Networking with ip6' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Solaris::Networking).to have_received(:resolve).with(:ip6)
-    end
-
     it 'returns ipv6 address fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'networking.ip6', value: value),

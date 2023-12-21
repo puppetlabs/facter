@@ -26,16 +26,6 @@ describe Facts::Linux::Gce do
         }
       end
 
-      it 'calls Facter::Resolvers::Linux::Gce' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Gce).to have_received(:resolve).with(:metadata)
-      end
-
-      it 'calls Facter::Resolvers::Linux::DmiBios' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Linux::DmiBios).to have_received(:resolve).with(:bios_vendor)
-      end
-
       it 'returns gce fact' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
           have_attributes(name: 'gce', value: value)

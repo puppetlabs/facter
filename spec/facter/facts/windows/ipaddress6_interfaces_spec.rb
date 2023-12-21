@@ -10,11 +10,6 @@ describe Facts::Windows::Ipaddress6Interfaces do
   describe '#call_the_resolver' do
     let(:interfaces) { { 'eth0' => { ip6: 'fe80::99bf:da20:ad3:9bfe' }, 'en1' => { ip6: 'fe80::99bf:da20:ad3:9bfe' } } }
 
-    it 'calls Facter::Resolvers::Windows::Networking' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Windows::Networking).to have_received(:resolve).with(:interfaces)
-    end
-
     it 'returns legacy facts with names ipaddress6_<interface_name>' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'ipaddress6_eth0',

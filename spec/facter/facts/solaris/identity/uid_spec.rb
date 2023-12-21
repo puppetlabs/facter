@@ -10,11 +10,6 @@ describe Facts::Solaris::Identity::Uid do
       allow(Facter::Resolvers::PosxIdentity).to receive(:resolve).with(:uid).and_return(value)
     end
 
-    it 'calls Facter::Resolvers::PosxIdentity' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::PosxIdentity).to have_received(:resolve).with(:uid)
-    end
-
     it 'returns identity uid fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'identity.uid', value: value)

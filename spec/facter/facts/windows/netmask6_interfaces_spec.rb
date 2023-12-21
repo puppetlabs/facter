@@ -13,11 +13,6 @@ describe Facts::Windows::Netmask6Interfaces do
         'en1' => { netmask6: 'fe80::99bf:da20:ad3:9bfe' } }
     end
 
-    it 'calls Facter::Resolvers::Windows::Networking' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Windows::Networking).to have_received(:resolve).with(:interfaces)
-    end
-
     it 'returns legacy facts with names netmask6_<interface_name>' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'netmask6_eth0',

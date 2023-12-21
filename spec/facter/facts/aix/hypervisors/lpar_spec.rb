@@ -13,16 +13,6 @@ describe Facts::Aix::Hypervisors::Lpar do
                                                          .and_return(value['partition_name'])
     end
 
-    it 'calls Facter::Resolvers::Lpar with lpar_partition_number' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Lpar).to have_received(:resolve).with(:lpar_partition_number)
-    end
-
-    it 'calls Facter::Resolvers::Lpar with lpar_partition_name' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Lpar).to have_received(:resolve).with(:lpar_partition_name)
-    end
-
     it 'returns a hypervisors.lpar fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
         have_attributes(name: 'hypervisors.lpar', value: value)

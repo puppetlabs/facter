@@ -12,11 +12,6 @@ describe Facts::Linux::Memory::Swap::Available do
         receive(:resolve).with(:swap_free).and_return(resolver_value)
     end
 
-    it 'calls Facter::Resolvers::Linux::Memory' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Linux::Memory).to have_received(:resolve).with(:swap_free)
-    end
-
     it 'returns swap available memory fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'memory.swap.available', value: value),

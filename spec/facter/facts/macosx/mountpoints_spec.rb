@@ -36,11 +36,6 @@ describe Facts::Macosx::Mountpoints do
           receive(:resolve).with(:mountpoints).and_return(resolver_output)
       end
 
-      it 'calls Facter::Resolvers::Macosx::Mountpoints' do
-        expect(Facter::Resolvers::Macosx::Mountpoints).to receive(:resolve).with(:mountpoints)
-        fact.call_the_resolver
-      end
-
       it 'returns mountpoints information' do
         expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
           have_attributes(name: 'mountpoints', value: parsed_fact)

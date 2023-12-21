@@ -10,11 +10,6 @@ describe Facts::Aix::Networking::Network do
   describe '#call_the_resolver' do
     let(:value) { '10.16.122.163' }
 
-    it 'calls Facter::Resolvers::Aix::Networking with network' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Aix::Networking).to have_received(:resolve).with(:network)
-    end
-
     it 'returns network fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array)
         .and contain_exactly(an_object_having_attributes(name: 'networking.network', value: value),

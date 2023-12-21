@@ -19,16 +19,6 @@ describe Facts::Windows::Sshalgorithmkey do
         allow(Facter::Resolvers::Windows::Ssh).to receive(:resolve).with(:ssh).and_return(ssh)
       end
 
-      it 'calls Facter::Resolvers::Windows::Identity' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Identity).to have_received(:resolve).with(:privileged)
-      end
-
-      it 'calls Facter::Resolvers::Windows::Ssh' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Windows::Ssh).to have_received(:resolve).with(:ssh)
-      end
-
       it 'returns a list of resolved facts' do
         expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
           contain_exactly(
@@ -46,16 +36,6 @@ describe Facts::Windows::Sshalgorithmkey do
         allow(Facter::Resolvers::Windows::Ssh).to receive(:resolve).with(:ssh).and_return(nil)
       end
 
-      it 'calls Facter::Resolvers::Windows::Ssh' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Windows::Ssh).to have_received(:resolve).with(:ssh)
-      end
-
-      it 'calls Facter::Resolvers::Windows::Identity' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Identity).to have_received(:resolve).with(:privileged)
-      end
-
       it 'returns no facts' do
         expect(fact.call_the_resolver).to be_an_instance_of(Array).and contain_exactly
       end
@@ -67,11 +47,6 @@ describe Facts::Windows::Sshalgorithmkey do
       before do
         allow(Facter::Resolvers::Identity).to receive(:resolve).with(:privileged).and_return(false)
         allow(Facter::Resolvers::Windows::Ssh).to receive(:resolve).with(:ssh).and_return(value)
-      end
-
-      it 'calls Facter::Resolvers::Windows::Identity' do
-        fact.call_the_resolver
-        expect(Facter::Resolvers::Identity).to have_received(:resolve).with(:privileged)
       end
 
       it "doesn't call Facter::Resolvers::Windows::Ssh" do

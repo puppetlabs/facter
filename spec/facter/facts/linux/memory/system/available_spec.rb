@@ -12,11 +12,6 @@ describe Facts::Linux::Memory::System::Available do
         receive(:resolve).with(:memfree).and_return(resolver_value)
     end
 
-    it 'calls Facter::Resolvers::Linux::Memory' do
-      fact.call_the_resolver
-      expect(Facter::Resolvers::Linux::Memory).to have_received(:resolve).with(:memfree)
-    end
-
     it 'returns system available memory fact' do
       expect(fact.call_the_resolver).to be_an_instance_of(Array).and \
         contain_exactly(an_object_having_attributes(name: 'memory.system.available', value: value),
