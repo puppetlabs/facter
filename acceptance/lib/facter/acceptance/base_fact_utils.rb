@@ -263,6 +263,9 @@ module Facter
           'os.macosx.product' => 'macOS',
           'os.macosx.version.major' => major_version,
           'os.macosx.version.minor' => /\d+/,
+          'os.macosx.version.patch' => /\d+/,
+          # If "patch" is 0, then the third component will be omitted
+          'os.macosx.version.full' => /^#{major_version}\.\d+(\.\d+)?$/,
           'os.release.full' => /\d+\.\d+\.\d+/,
           'os.release.major' => /\d+/,
           'os.release.minor' => /\d+/,
@@ -275,13 +278,6 @@ module Facter
           'kernelversion' => /\d+\.\d+\.\d+/,
           'kernelmajversion' => /\d+\.\d+/
         }
-
-        expected_facts['os.macosx.version.patch'] = /\d+/
-        if agent['platform'] =~ /arm64/ && agent['platform'].split('-')[1].to_i < 13
-          expected_facts['os.macosx.version.full'] = /^#{expected_facts['os.macosx.version.major']}\.#{expected_facts['os.macosx.version.minor']}$/
-        else
-          expected_facts['os.macosx.version.full'] = /^#{expected_facts['os.macosx.version.major']}\.#{expected_facts['os.macosx.version.minor']}\.*#{expected_facts['os.macosx.version.patch']}*$/
-        end
         expected_facts
       end
 
