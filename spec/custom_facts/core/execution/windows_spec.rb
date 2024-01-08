@@ -82,7 +82,7 @@ describe Facter::Core::Execution::Windows do
         expect(executor.which('foo.exe')).to eq 'C:\Windows\foo.exe'
       end
 
-      it "won't check all paths if one is executable" do
+      it 'does not check all paths if one is executable' do
         allow(File).to receive(:executable?).with('C:\Windows\system32\foo.exe').and_return false
         allow(File).to receive(:executable?).with('C:\Windows\foo.exe').and_return true
 
