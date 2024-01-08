@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+Ps = Struct.new(:PhysicalAddress, :PhysicalAddressLength)
+
 describe NetworkUtils do
   describe '#address_to_strig' do
     let(:logger) { instance_spy(Facter::Log) }
@@ -68,7 +70,6 @@ describe NetworkUtils do
   describe '#find_mac_address' do
     context 'with a char array' do
       let(:adapter) do
-        Ps = Struct.new(:PhysicalAddress, :PhysicalAddressLength)
         Ps.new([0, 80, 86, 154, 248, 107, 0, 0], 6)
       end
 

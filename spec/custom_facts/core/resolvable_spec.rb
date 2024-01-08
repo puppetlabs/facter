@@ -1,17 +1,23 @@
 # frozen_string_literal: true
 
-describe LegacyFacter::Core::Resolvable do
+module FacterSpec
   class ResolvableClass
+    include LegacyFacter::Core::Resolvable
+
+    attr_accessor :name, :resolve_value
+    attr_reader :fact
+
     def initialize(name)
       @name = name
       @fact = Facter::Util::Fact.new('stub fact')
     end
-    attr_accessor :name, :resolve_value
-    attr_reader :fact
-    include LegacyFacter::Core::Resolvable
   end
 
-  subject(:resolvable) { ResolvableClass.new('resolvable') }
+  class FlushFakeError < StandardError; end
+end
+
+describe LegacyFacter::Core::Resolvable do
+  subject(:resolvable) { FacterSpec::ResolvableClass.new('resolvable') }
 
   it 'has a default timeout of 0 seconds' do
     expect(resolvable.limit).to eq 0
@@ -83,8 +89,6 @@ describe LegacyFacter::Core::Resolvable do
   end
 
   describe 'callbacks when flushing facts' do
-    class FlushFakeError < StandardError; end
-
     describe '#on_flush' do
       it 'accepts a block with on_flush' do
         resolvable.on_flush { raise NotImplementedError }

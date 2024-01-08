@@ -1,6 +1,19 @@
 #! /usr/bin/env ruby
 # frozen_string_literal: true
 
+module FacterSpec
+  class SingleFactLoader
+    def initialize(name, value)
+      @name = name
+      @value = value
+    end
+
+    def load(collection)
+      collection.add(@name, value: @value)
+    end
+  end
+end
+
 describe LegacyFacter::Util::Collection do
   let(:external_loader) { instance_spy(LegacyFacter::Util::NothingLoader) }
   let(:internal_loader) do
@@ -305,7 +318,7 @@ describe LegacyFacter::Util::Collection do
   end
 
   describe 'external facts' do
-    let(:external_loader) { SingleFactLoader.new(:test_fact, 'fact value') }
+    let(:external_loader) { FacterSpec::SingleFactLoader.new(:test_fact, 'fact value') }
     let(:collection) { LegacyFacter::Util::Collection.new(internal_loader, external_loader) }
 
     it 'loads when a specific fact is requested' do
@@ -460,17 +473,6 @@ describe LegacyFacter::Util::Collection do
       it 'returns external fact' do
         expect(collection.external_facts.first).to eq(:my_external_fact)
       end
-    end
-  end
-
-  class SingleFactLoader
-    def initialize(name, value)
-      @name = name
-      @value = value
-    end
-
-    def load(collection)
-      collection.add(@name, value: @value)
     end
   end
 end

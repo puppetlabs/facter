@@ -11,164 +11,23 @@ require:
   - rubocop-performance
   - rubocop-rspec
 
-Layout/LineLength:
-  Max: 120
-  Exclude:
-    - spec/facter/resolvers/gce_spec.rb
-
-Lint/RaiseException:
-  Enabled: true
-
-Lint/StructNewOverride:
-  Enabled: true
-
-Metrics/MethodLength:
-  Max: 20
-  Exclude:
-    - 'lib/facter/custom_facts/util/values.rb'
-    - 'lib/facter/custom_facts/util/confine.rb'
-    - 'lib/facter/custom_facts/core/execution/windows.rb'
-    - 'lib/facter/custom_facts/core/execution/base.rb'
-    - 'lib/facter/framework/detector/os_detector.rb'
-    - 'lib/facter/resolvers/bsd/ffi/ffi_helper.rb'
-    - 'install.rb'
-    - 'scripts/generate_changelog.rb'
-    - 'lib/facter/resolvers/aix/ffi/ffi_helper.rb'
-
-
-Metrics/ModuleLength:
-  Max: 100
-  Exclude:
-    - 'lib/facter.rb'
-    - 'lib/facter/config.rb'
-    - 'lib/facter/resolvers/aix/ffi/ffi_helper.rb'
-
-Metrics/BlockLength:
-  Exclude:
-    - !ruby/regexp /(?:(?!.+_spec.rb).)*$/
-
-Naming/ClassAndModuleCamelCase:
-  Exclude:
-    - 'spec/mocks/**/*'
-
 Metrics/AbcSize:
   Enabled: false
 
-Metrics/PerceivedComplexity:
-  Exclude:
-    - 'lib/facter/custom_facts/util/values.rb'
-    - 'lib/facter/custom_facts/util/confine.rb'
-    - 'lib/facter/custom_facts/core/execution/windows.rb'
-    - 'lib/facter/custom_facts/core/execution/posix.rb'
-    - 'install.rb'
-    - 'lib/facter/resolvers/aix/ffi/ffi_helper.rb'
-
-Metrics/CyclomaticComplexity:
-  Exclude:
-    - 'lib/facter/resolvers/windows/product_release.rb'
-    - 'lib/facter/custom_facts/util/values.rb'
-    - 'lib/facter/custom_facts/util/confine.rb'
-    - 'lib/facter/custom_facts/core/execution/windows.rb'
-    - 'lib/facter/custom_facts/core/execution/posix.rb'
-    - 'lib/facter/facts/linux/cloud/provider.rb'
-    - 'lib/facter/facts/windows/cloud/provider.rb'
-    - 'lib/facter/framework/detector/os_detector.rb'
-    - 'install.rb'
-    - 'scripts/generate_changelog.rb'
-    - 'lib/facter/resolvers/aix/ffi/ffi_helper.rb'
+Metrics/BlockLength:
+  Enabled: false
 
 Metrics/ClassLength:
   Enabled: false
 
-Naming/AccessorMethodName:
-  Exclude:
-    - 'lib/facter/custom_facts/core/suitable.rb'
-
-Naming/MethodName:
-  Exclude:
-    - 'spec/mocks/**/*'
-
-Naming/PredicateName:
-  Exclude:
-    - 'lib/facter/custom_facts/core/suitable.rb'
-
-Naming/FileName:
-  Exclude:
-    - 'lib/facter.rb'
-
-Performance/RegexpMatch:
-  Exclude:
-    - 'install.rb'
-
-RSpec/ExampleLength:
+Metrics/CyclomaticComplexity:
   Enabled: false
 
-RSpec/DescribedClass:
-  EnforcedStyle: explicit
-
-RSpec/MultipleExpectations:
-  Max: 3
-
-RSpec/NestedGroups:
-  Max: 6
-
-Style/Documentation:
+Metrics/MethodLength:
   Enabled: false
 
-Style/ClassVars:
-  Exclude:
-    - !ruby/regexp /(?:(?!.+_resolver.rb).)*$/
+Metrics/ModuleLength:
+  Enabled: false
 
-Style/FormatStringToken:
-  Exclude:
-    - 'lib/facter/resolvers/amzn/os_release_rpm.rb'
-    - 'spec/facter/resolvers/amzn/os_release_rpm_spec.rb'
-
-Style/FrozenStringLiteralComment:
-  Exclude:
-    - 'spec/custom_facts/util/normalization_spec.rb'
-    - 'spec/custom_facts/core/execution/windows_spec.rb'
-    - 'spec/custom_facts/core/execution/posix_spec.rb'
-    - 'lib/facter/custom_facts/util/resolution.rb'
-    - 'lib/facter/custom_facts/core/execution/windows.rb'
-    - 'lib/facter/custom_facts/core/execution/posix.rb'
-
-Style/TrivialAccessors:
-  AllowDSLWriters: true
-
-Style/CaseEquality:
-  Exclude:
-    - 'spec/custom_facts/util/confine_spec.rb'
-    - 'lib/facter/custom_facts/util/confine.rb'
-
-Style/DoubleNegation:
-  Exclude:
-    - 'lib/facter/custom_facts/util/confine.rb'
-    - 'lib/facter/custom_facts/util/confine.rb'
-    - 'lib/facter/custom_facts/core/execution/windows.rb'
-    - 'lib/facter/custom_facts/core/execution/posix.rb'
-
-Style/MethodMissingSuper:
-  Exclude:
-    - 'lib/facter.rb'
-
-Style/MissingRespondToMissing:
-  Exclude:
-    - 'lib/facter.rb'
-
-Style/StderrPuts:
-  Exclude:
-    - 'lib/facter/custom_facts/core/logging.rb'
-
-Style/ModuleFunction:
-  Exclude:
-    - 'lib/facter/custom_facts/core/logging.rb'
-
-Style/HashEachMethods:
-  Enabled: false  # not implemented in ruby 2.3
-
-Style/HashTransformKeys:
-  Enabled: false  # not implemented in ruby 2.3
-
-Style/HashTransformValues:
-  Enabled: false  # not implemented in ruby 2.3
+Metrics/PerceivedComplexity:
+  Enabled: false

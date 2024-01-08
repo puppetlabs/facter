@@ -1,15 +1,19 @@
 # frozen_string_literal: true
 
-describe LegacyFacter::Core::Suitable do
+module FacterSpec
   class SuitableClass
+    include LegacyFacter::Core::Suitable
+
+    attr_reader :confines
+
     def initialize
       @confines = []
     end
-    attr_reader :confines
-    include LegacyFacter::Core::Suitable
   end
+end
 
-  subject(:suitable_obj) { SuitableClass.new }
+describe LegacyFacter::Core::Suitable do
+  subject(:suitable_obj) { FacterSpec::SuitableClass.new }
 
   describe 'confining on facts' do
     it 'can add confines with a fact and a single value' do

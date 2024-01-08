@@ -41,8 +41,7 @@ describe Facter::Resolvers::Gce do
               'type' => 'PERSISTENT'
             }
           ],
-          'guestAttributes' => {
-          },
+          'guestAttributes' => {},
           'hostname' => 'instance-3.c.facter-performance-history.internal',
           'id' => 2_206_944_706_428_651_580,
           'image' => 'ubuntu-2004-focal-v20200810',
@@ -125,8 +124,7 @@ describe Facter::Resolvers::Gce do
         },
         'oslogin' => {
           'authenticate' => {
-            'sessions' => {
-            }
+            'sessions' => {}
           }
         },
         'project' => {

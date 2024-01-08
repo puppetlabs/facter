@@ -19,12 +19,12 @@ module Facter
 
             validated_speed, metric_prefix = determine_metric_prefix(speed)
 
-            format('%<displayed_speed>.2f', displayed_speed: validated_speed.round(2)).to_s + ' ' + metric_prefix + 'Hz'
+            "#{format('%<displayed_speed>.2f', displayed_speed: validated_speed.round(2))} #{metric_prefix}Hz"
           end
 
           def bytes_to_human_readable(bytes)
             return unless bytes
-            return bytes.to_s + ' bytes' if bytes < 1024
+            return "#{bytes} bytes" if bytes < 1024
 
             number, multiple = determine_exponent(bytes)
 

@@ -54,7 +54,8 @@ module Facter
                         'site'
                       elsif addrinfo.ipv6_loopback?
                         'host'
-                      else 'global'
+                      else
+                        'global'
                       end
             scope6.join
           end
