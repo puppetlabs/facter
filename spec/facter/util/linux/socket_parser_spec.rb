@@ -18,7 +18,7 @@ describe Facter::Util::Linux::SocketParser do
       ifaddr_obj('ens160', '10.16.119.155', '00:50:56:9a:61:46', '255.255.240.0', true),
       ifaddr_obj('ens160', '10.16.127.70', '00:50:56:9a:61:46', '255.255.240.0', true),
       ifaddr_obj('ens160', 'fe80::250:56ff:fe9a:8481', '00:50:56:9a:61:46', 'ffff:ffff:ffff:ffff::', false),
-      ifaddr_obj('ib0', '192.168.2.12', '80:00:02:08:fa:81:00:00:00:00:00:00:00:23:7d:ff:ff:94:73:fd', '255.255.255.0', true) # rubocop:disable Layout/LineLength
+      ifaddr_obj('ib0', '192.168.2.12', '80:00:02:08:fa:81:00:00:00:00:00:00:00:23:7d:ff:ff:94:73:fd', '255.255.255.0', true)
     ]
   end
 

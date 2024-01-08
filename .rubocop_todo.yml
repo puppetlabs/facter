@@ -49,12 +49,6 @@ Layout/SpaceAroundMethodCallOperator:
     - 'spec/facter/util/resolvers/filesystem_helper_spec.rb'
 
 # Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-Lint/RedundantCopDisableDirective:
-  Exclude:
-    - 'spec/facter/util/linux/socket_parser_spec.rb'
-
-# Offense count: 1
 # Configuration parameters: AllowedNames.
 # AllowedNames: module_parent
 Naming/ClassAndModuleCamelCase:
