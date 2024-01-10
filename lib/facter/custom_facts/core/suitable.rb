@@ -18,7 +18,7 @@ module LegacyFacter
       # @return [void]
       #
       # @api public
-      def has_weight(weight)
+      def has_weight(weight) # rubocop:disable Naming/PredicateName
         @weight = weight
         self
       end

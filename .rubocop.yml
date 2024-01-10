@@ -35,6 +35,24 @@ Metrics/ModuleLength:
 Metrics/PerceivedComplexity:
   Enabled: false
 
+Naming/ClassAndModuleCamelCase:
+  Exclude:
+    - 'spec/mocks/win32.rb'
+
+Naming/MethodName:
+  Exclude:
+    - 'spec/mocks/win32ole.rb'
+    - 'spec/mocks/ffi.rb'
+
+Naming/PredicateName:
+  Exclude:
+    - 'spec/**/*'
+
+Naming/VariableNumber:
+  Exclude:
+    - 'lib/facter/resolvers/windows/ffi/networking_ffi.rb'
+    - 'lib/facter/util/facts/windows_release_finder.rb'
+
 Style/IfUnlessModifier:
   Enabled: false
 

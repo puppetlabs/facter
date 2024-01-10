@@ -6,41 +6,6 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 1
-# Configuration parameters: AllowedNames.
-# AllowedNames: module_parent
-Naming/ClassAndModuleCamelCase:
-  Exclude:
-    - 'spec/mocks/win32.rb'
-
-# Offense count: 15
-# Configuration parameters: AllowedPatterns.
-# SupportedStyles: snake_case, camelCase
-Naming/MethodName:
-  EnforcedStyle: snake_case
-  Exclude:
-    - 'spec/mocks/**/*'
-
-# Offense count: 1
-# Configuration parameters: NamePrefix, ForbiddenPrefixes, AllowedMethods, MethodDefinitionMacros.
-# NamePrefix: is_, has_, have_
-# ForbiddenPrefixes: is_, has_, have_
-# AllowedMethods: is_a?
-# MethodDefinitionMacros: define_method, define_singleton_method
-Naming/PredicateName:
-  Exclude:
-    - 'spec/**/*'
-    - 'lib/facter/custom_facts/core/suitable.rb'
-
-# Offense count: 4
-# Configuration parameters: EnforcedStyle, CheckMethodNames, CheckSymbols, AllowedIdentifiers, AllowedPatterns.
-# SupportedStyles: snake_case, normalcase, non_integer
-# AllowedIdentifiers: capture3, iso8601, rfc1123_date, rfc822, rfc2822, rfc3339, x86_64
-Naming/VariableNumber:
-  Exclude:
-    - 'lib/facter/resolvers/windows/ffi/networking_ffi.rb'
-    - 'lib/facter/util/facts/windows_release_finder.rb'
-
 # Offense count: 3
 # This cop supports safe autocorrection (--autocorrect).
 Performance/RegexpMatch:
