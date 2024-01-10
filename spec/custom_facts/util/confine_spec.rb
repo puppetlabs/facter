@@ -27,14 +27,15 @@ describe LegacyFacter::Util::Confine do
   end
 
   describe 'when evaluating' do
+    let(:fact) { double 'fact' }
+
     def confined(fact_value, *confines)
-      allow(@fact).to receive(:value).and_return fact_value
+      allow(fact).to receive(:value).and_return fact_value
       LegacyFacter::Util::Confine.new('yay', *confines).true?
     end
 
     before do
-      @fact = double 'fact'
-      allow(Facter).to receive(:[]).and_return @fact
+      allow(Facter).to receive(:[]).and_return fact
     end
 
     it 'returns false if the fact does not exist' do
@@ -44,9 +45,9 @@ describe LegacyFacter::Util::Confine do
     end
 
     it 'uses the returned fact to get the value' do
-      allow(Facter).to receive(:[]).with('yay').and_return @fact
+      allow(Facter).to receive(:[]).with('yay').and_return fact
 
-      expect(@fact).to receive(:value).and_return nil
+      expect(fact).to receive(:value).and_return nil
 
       LegacyFacter::Util::Confine.new('yay', 'test').true?
     end
@@ -120,13 +121,13 @@ describe LegacyFacter::Util::Confine do
     end
 
     it 'accepts and evaluate a block argument against the fact' do
-      allow(@fact).to receive(:value).and_return 'foo'
+      allow(fact).to receive(:value).and_return 'foo'
       confine = LegacyFacter::Util::Confine.new(:yay) { |f| f == 'foo' }
       expect(confine.true?).to be true
     end
 
     it 'returns false if the block raises a StandardError when checking a fact' do
-      allow(@fact).to receive(:value).and_return 'foo'
+      allow(fact).to receive(:value).and_return 'foo'
       confine = LegacyFacter::Util::Confine.new(:yay) { |_f| raise StandardError }
       expect(confine.true?).to be false
     end

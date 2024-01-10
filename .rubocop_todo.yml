@@ -6,93 +6,10 @@
 # Note that changes in the inspected code, or installation of new
 # versions of RuboCop, may require this file to be generated again.
 
-# Offense count: 3
-# This cop supports safe autocorrection (--autocorrect).
-Performance/RegexpMatch:
-  Exclude:
-    - 'install.rb'
-
-# Offense count: 1490
-# This cop supports unsafe autocorrection (--autocorrect-all).
-# Configuration parameters: SkipBlocks, EnforcedStyle.
-# SupportedStyles: described_class, explicit
-RSpec/DescribedClass:
-  Enabled: false
-
-# Offense count: 192
-# Configuration parameters: CountAsOne.
-RSpec/ExampleLength:
-  Max: 34
-
-# Offense count: 1
-# This cop supports safe autocorrection (--autocorrect).
-# Configuration parameters: CustomTransform, IgnoredWords, DisallowedExamples.
-# DisallowedExamples: works
-RSpec/ExampleWording:
-  Exclude:
-    - 'spec/custom_facts/core/execution/windows_spec.rb'
-
 # Offense count: 70
 # Configuration parameters: Include, CustomTransform, IgnoreMethods, SpecSuffixOnly.
 # Include: **/*_spec*rb*, **/spec/**/*
 RSpec/FilePath:
-  Enabled: false
-
-# Offense count: 15
-# Configuration parameters: AssignmentOnly.
-RSpec/InstanceVariable:
-  Exclude:
-    - 'spec/custom_facts/core/execution/fact_manager_spec.rb'
-    - 'spec/custom_facts/util/collection_spec.rb'
-    - 'spec/custom_facts/util/confine_spec.rb'
-
-# Offense count: 8
-RSpec/LeakyConstantDeclaration:
-  Exclude:
-    - 'spec/custom_facts/core/resolvable_spec.rb'
-    - 'spec/custom_facts/core/suitable_spec.rb'
-    - 'spec/custom_facts/util/collection_spec.rb'
-    - 'spec/facter/resolvers/macosx/mountpoints_spec.rb'
-    - 'spec/facter/util/windows/network_utils_spec.rb'
-
-# Offense count: 51
-# Configuration parameters: EnforcedStyle.
-# SupportedStyles: have_received, receive
-RSpec/MessageSpies:
-  Enabled: false
-
-# Offense count: 13
-RSpec/MultipleExpectations:
-  Max: 3
-
-# Offense count: 166
-# Configuration parameters: AllowSubject.
-RSpec/MultipleMemoizedHelpers:
-  Max: 16
-
-# Offense count: 241
-# Configuration parameters: AllowedGroups.
-RSpec/NestedGroups:
-  Max: 6
-
-# Offense count: 3
-RSpec/StubbedMock:
-  Exclude:
-    - 'spec/custom_facts/core/execution/fact_manager_spec.rb'
-    - 'spec/custom_facts/util/confine_spec.rb'
-    - 'spec/custom_facts/util/parser_spec.rb'
-
-# Offense count: 6
-RSpec/SubjectStub:
-  Exclude:
-    - 'spec/custom_facts/core/aggregate_spec.rb'
-    - 'spec/custom_facts/core/resolvable_spec.rb'
-    - 'spec/custom_facts/util/fact_spec.rb'
-    - 'spec/custom_facts/util/resolution_spec.rb'
-
-# Offense count: 114
-# Configuration parameters: IgnoreNameless, IgnoreSymbolicNames.
-RSpec/VerifiedDoubles:
   Enabled: false
 
 # Need to remove logger class variables

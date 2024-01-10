@@ -125,20 +125,21 @@ describe LegacyFacter::Util::Collection do
   end
 
   describe 'when retrieving facts' do
-    before do
-      @fact = collection.add('YayNess')
-    end
+    let(:fact) { collection.add('YayNess') }
+
+    # initialize
+    before { fact }
 
     it 'returns the fact instance specified by the name' do
-      expect(collection.fact('YayNess')).to equal(@fact)
+      expect(collection.fact('YayNess')).to equal(fact)
     end
 
     it 'is case-insensitive' do
-      expect(collection.fact('yayness')).to equal(@fact)
+      expect(collection.fact('yayness')).to equal(fact)
     end
 
     it 'treats strings and symbols equivalently' do
-      expect(collection.fact(:yayness)).to equal(@fact)
+      expect(collection.fact(:yayness)).to equal(fact)
     end
 
     it 'uses its loader to try to load the fact if no fact can be found' do

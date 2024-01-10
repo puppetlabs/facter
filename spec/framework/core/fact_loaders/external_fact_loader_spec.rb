@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe Facter::ExternalFactLoader do
-  let(:collection) { double(LegacyFacter::Util::Collection) }
+  let(:collection) { instance_double(LegacyFacter::Util::Collection) }
   let(:external_fact) { Facter::Util::Fact.new('external_fact', options: { fact_type: :external }) }
   let(:custom_fact) { Facter::Util::Fact.new('custom_fact', options: { fact_type: :custom }) }
 

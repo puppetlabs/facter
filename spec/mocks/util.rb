@@ -27,26 +27,26 @@ def mock_query_parser(user_query, loaded_fact_hash)
     .with(user_query, loaded_fact_hash)
 end
 
-private_methods def allow_attr_change(resolved_fact_mock, fact_name, fact_value)
+private_methods def allow_attr_change(resolved_fact_mock, fact_value)
   allow(resolved_fact_mock)
     .to receive(:value=)
     .with(fact_value)
-
-  allow(resolved_fact_mock)
-    .to receive(:name=)
-    .with(fact_name)
 
   allow(resolved_fact_mock)
     .to receive(:user_query=)
 end
 
 def mock_resolved_fact(fact_name, fact_value, user_query = nil, type = :core)
-  resolved_fact_mock = double(Facter::ResolvedFact, name: fact_name, value: fact_value,
-                                                    user_query: user_query, type: type,
-                                                    legacy?: type == :legacy, core?: type == :core, file: nil,
-                                                    resolves?: fact_name == user_query)
+  resolved_fact_mock = instance_double(
+    Facter::ResolvedFact, name: fact_name, value: fact_value,
+                          user_query: user_query, type: type,
+                          legacy?: type == :legacy,
+                          core?: type == :core,
+                          file: nil,
+                          resolves?: fact_name == user_query
+  )
 
-  allow_attr_change(resolved_fact_mock, fact_name, fact_value)
+  allow_attr_change(resolved_fact_mock, fact_value)
   resolved_fact_mock
 end
 

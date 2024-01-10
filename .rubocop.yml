@@ -53,6 +53,12 @@ Naming/VariableNumber:
     - 'lib/facter/resolvers/windows/ffi/networking_ffi.rb'
     - 'lib/facter/util/facts/windows_release_finder.rb'
 
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/StubbedMock:
+  Enabled: false
+
 Style/IfUnlessModifier:
   Enabled: false
 
@@ -67,3 +73,43 @@ Style/GlobalStdStream:
     - 'lib/facter/framework/logging/logger.rb'
     - 'spec/framework/core/fact/internal/internal_fact_manager_spec.rb'
     - 'spec/framework/logging/logger_spec.rb'
+
+RSpec/DescribedClass:
+  EnforcedStyle: explicit
+
+RSpec/ExampleLength:
+  Enabled: false
+
+# It is sometimes better to expect().to receive().and_return
+# or to receive different messages.
+RSpec/MessageSpies:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Max: 3
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Enabled: 6
+
+RSpec/SubjectStub:
+  Exclude:
+    - 'spec/custom_facts/core/aggregate_spec.rb'
+    - 'spec/custom_facts/core/resolvable_spec.rb'
+    - 'spec/custom_facts/util/fact_spec.rb'
+    - 'spec/custom_facts/util/resolution_spec.rb'
+
+# Prefer instance_double/instance_spy over double/spy because only methods
+# defined on the underlying object can be stubbed. FFI and some Windows
+# code can't be verified because of the way we fake out those classes.
+RSpec/VerifiedDoubles:
+  Enabled: true
+  Exclude:
+    - 'spec/custom_facts/**/*'
+    - 'spec/facter/resolvers/aix/hardware_spec.rb'
+    - 'spec/facter/resolvers/*/ffi_helper_spec.rb'
+    - 'spec/facter/resolvers/windows/*'
+    - 'spec/facter/util/windows/network_utils_spec.rb'
+    - 'spec/facter/util/windows/win32ole_spec.rb'

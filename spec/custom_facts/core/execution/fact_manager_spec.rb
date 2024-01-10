@@ -4,6 +4,8 @@ describe Facter::Core::Execution::Base do
   subject(:executor) { Facter::Core::Execution::Posix.new }
 
   describe '#with_env' do
+    let(:sentinel_var) { :resolution_test_foo.to_s }
+
     it "executes the caller's block with the specified env vars" do
       test_env = { 'LANG' => 'C', 'LC_ALL' => 'C', 'FOO' => 'BAR' }
       executor.with_env test_env do
@@ -56,23 +58,21 @@ describe Facter::Core::Execution::Base do
     end
 
     it "is not affected by a 'return' statement in the yield block" do
-      @sentinel_var = :resolution_test_foo.to_s
-
       # the intent of this test case is to test a yield block that contains a return statement.  However, it's illegal
       # to use a return statement outside of a method, so we need to create one here to give scope to the 'return'
       def handy_method
-        ENV[@sentinel_var] = 'foo'
-        new_env = { @sentinel_var => 'bar' }
+        ENV[sentinel_var] = 'foo'
+        new_env = { sentinel_var => 'bar' }
 
         executor.with_env new_env do
-          ENV[@sentinel_var] = 'bar'
+          ENV[sentinel_var] = 'bar'
           return
         end
       end
 
       handy_method
 
-      expect(ENV[@sentinel_var]).to eq 'foo'
+      expect(ENV[sentinel_var]).to eq 'foo'
     end
   end
 

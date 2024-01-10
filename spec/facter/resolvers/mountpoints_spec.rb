@@ -2,16 +2,16 @@
 
 describe Facter::Resolvers::Mountpoints do
   let(:mount) do
-    double(Sys::Filesystem::Mount,
-           mount_point: '/', mount_time: nil,
-           mount_type: 'ext4', options: 'rw,noatime', name:
-           '/dev/nvme0n1p2', dump_frequency: 0, pass_number: 0)
+    instance_double(Sys::Filesystem::Mount,
+                    mount_point: '/', mount_time: nil,
+                    mount_type: 'ext4', options: 'rw,noatime',
+                    name: '/dev/nvme0n1p2', dump_frequency: 0, pass_number: 0)
   end
 
   let(:stat) do
-    double(Sys::Filesystem::Stat,
-           path: '/', base_type: nil, fragment_size: 4096, block_size: 4096, blocks: 113_879_332,
-           blocks_available: -16_596_603, blocks_free: 22_398_776)
+    instance_double(Sys::Filesystem::Stat,
+                    path: '/', base_type: nil, fragment_size: 4096, block_size: 4096, blocks: 113_879_332,
+                    blocks_available: -16_596_603, blocks_free: 22_398_776)
   end
 
   let(:fact) do
@@ -29,8 +29,8 @@ describe Facter::Resolvers::Mountpoints do
   end
 
   let(:ignored_mounts) do
-    [double(Sys::Filesystem::Mount, mount_type: 'ext4', mount_point: '/proc/a', name: '/dev/ignore', options: 'rw'),
-     double(Sys::Filesystem::Mount, mount_type: 'autofs', mount_point: '/mnt/auto', name: '/dev/ignore', options: 'rw')]
+    [instance_double(Sys::Filesystem::Mount, mount_type: 'ext4', mount_point: '/proc/a', name: '/dev/ignore', options: 'rw'),
+     instance_double(Sys::Filesystem::Mount, mount_type: 'autofs', mount_point: '/mnt/auto', name: '/dev/ignore', options: 'rw')]
   end
 
   before do
@@ -109,7 +109,7 @@ describe Facter::Resolvers::Mountpoints do
 
   describe '.root_device' do
     let(:mount) do
-      double(Sys::Filesystem::Mount, mount_point: '/', mount_type: 'ext4', options: 'rw,noatime', name: '/dev/root')
+      instance_double(Sys::Filesystem::Mount, mount_point: '/', mount_type: 'ext4', options: 'rw,noatime', name: '/dev/root')
     end
 
     it 'looks up the actual device if /dev/root' do
