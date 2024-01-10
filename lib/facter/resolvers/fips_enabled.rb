@@ -4,7 +4,7 @@ module Facter
   module Resolvers
     module Linux
       class FipsEnabled < BaseResolver
-        #:fips_enabled
+        # :fips_enabled
 
         init_resolver
 

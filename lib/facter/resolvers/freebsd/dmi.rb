@@ -7,7 +7,7 @@ module Facter
         init_resolver
 
         class << self
-          #:model
+          # :model
 
           private
 

@@ -14,7 +14,7 @@ describe Facter::Resolvers::Lpar do
   end
 
   it 'returns lpar pratition number' do
-    expect(lpar_resolver.resolve(:lpar_partition_number)) .to eq(15)
+    expect(lpar_resolver.resolve(:lpar_partition_number)).to eq(15)
   end
 
   it 'returns lpar pratition name' do

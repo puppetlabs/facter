@@ -10,8 +10,8 @@ module Facter
                   cores_per_socket: "-e 'Core(s)'" }.freeze
 
         class << self
-          #:cores_per_socket
-          #:threads_per_core
+          # :cores_per_socket
+          # :threads_per_core
 
           private
 
