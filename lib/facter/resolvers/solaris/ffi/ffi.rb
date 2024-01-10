@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require 'ffi'
-require_relative 'structs.rb'
-require_relative 'functions.rb'
+require_relative 'structs'
+require_relative 'functions'
 
 module Facter
   module Resolvers

@@ -27,8 +27,7 @@ module Facter
         # method, we can't remove it entirely until the next major Facter
         # release (presumably Facter 5).
         def dir_children(path)
-          children = Dir.children(path)
-          children
+          Dir.children(path)
         end
 
         private

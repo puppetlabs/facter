@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Facter
   module Core
     module Execution
@@ -36,7 +38,8 @@ module Facter
           exe = nil
           args = nil
 
-          if (match = (command.match(DOUBLE_QUOTED_COMMAND) || command.match(SINGLE_QUOTED_COMMAND)))
+          match = command.match(DOUBLE_QUOTED_COMMAND) || command.match(SINGLE_QUOTED_COMMAND)
+          if match
             exe, args = match.captures
           else
             exe, args = command.split(/ /, 2)
@@ -44,7 +47,8 @@ module Facter
 
           return unless exe && (expanded = which(exe))
 
-          expanded = "'#{expanded}'" if /\s/.match?(expanded)
+          expanded = expanded.dup
+          expanded = +"'#{expanded}'" if /\s/.match?(expanded)
           expanded << " #{args}" if args
 
           expanded

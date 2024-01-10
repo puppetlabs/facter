@@ -42,7 +42,7 @@ module Facter
       pretty_json = handle_newlines(pretty_json)
 
       @log.debug('Remove quotes from value if value is a string')
-      pretty_json.gsub(/^(\S*) => \"(.*)\"/, '\1 => \2')
+      pretty_json.gsub(/^(\S*) => "(.*)"/, '\1 => \2')
     end
 
     def format_for_single_user_query(user_query, resolved_facts)
@@ -55,7 +55,7 @@ module Facter
       pretty_json = fact_value.nil? ? '' : hash_to_facter_format(fact_value)
 
       @log.debug('Remove quotes from value if it is a simple string')
-      pretty_json.gsub(/^"(.*)\"/, '\1')
+      pretty_json.gsub(/^"(.*)"/, '\1')
     end
 
     def hash_to_facter_format(facts_hash)
@@ -66,7 +66,7 @@ module Facter
       pretty_json.gsub!(/":\s/, '" => ')
 
       @log.debug('Remove quotes from parent nodes')
-      pretty_json.gsub!(/\"(.*)\"\ =>/, '\1 =>')
+      pretty_json.gsub!(/"(.*)"\ =>/, '\1 =>')
 
       @log.debug('Remove double backslashes from paths')
       pretty_json.gsub(/\\\\/, '\\')
@@ -95,7 +95,7 @@ module Facter
       # quotation marks that come after \ are not removed
       @log.debug('Remove unnecessary comma and quotation marks on root facts')
       output.split("\n")
-            .map! { |line| /^[\s]+/.match?(line) ? line : line.gsub(/,$|(?<!\\)\"/, '').gsub('\\"', '"') }.join("\n")
+            .map! { |line| /^\s+/.match?(line) ? line : line.gsub(/,$|(?<!\\)"/, '').gsub('\\"', '"') }.join("\n")
     end
   end
 end

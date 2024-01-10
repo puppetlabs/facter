@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Facter::Core::Execution::Posix, unless: LegacyFacter::Util::Config.windows? do
   let(:posix_executor) { Facter::Core::Execution::Posix.new }
 

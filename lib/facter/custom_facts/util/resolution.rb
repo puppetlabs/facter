@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # This represents a fact resolution. A resolution is a concrete
 # implementation of a fact. A single fact can have many resolutions and
 # the correct resolution will be chosen at runtime. Each time
@@ -88,7 +90,7 @@ module Facter
       # @api private
       def evaluate(&block)
         if @last_evaluated
-          msg = "Already evaluated #{@name}"
+          msg = +"Already evaluated #{@name}"
           msg << " at #{@last_evaluated}" if msg.is_a? String
           msg << ', reevaluating anyways'
           log.warn msg
@@ -157,9 +159,11 @@ module Facter
       #
       # @api private
       def <=>(other)
-        return compare_equal_weights(other) if weight == other.weight
-        return 1 if weight > other.weight
-        return -1 if weight < other.weight
+        if weight == other.weight
+          compare_equal_weights(other)
+        else
+          weight <=> other.weight
+        end
       end
 
       private

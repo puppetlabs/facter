@@ -107,7 +107,7 @@ module Facter
         @@message_callback.call(:debug, msg)
       else
         msg = colorize(msg, CYAN) if Options[:color]
-        @@logger.debug(@class_name + ' - ' + msg)
+        @@logger.debug("#{@class_name} - #{msg}")
       end
     end
 
@@ -128,7 +128,7 @@ module Facter
         @@message_callback.call(:info, msg)
       else
         msg = colorize(msg, GREEN) if Options[:color]
-        @@logger.info(@class_name + ' - ' + msg)
+        @@logger.info("#{@class_name} - #{msg}")
       end
     end
 
@@ -137,7 +137,7 @@ module Facter
         @@message_callback.call(:warn, msg)
       else
         msg = colorize(msg, YELLOW) if Options[:color]
-        @@logger.warn(@class_name + ' - ' + msg)
+        @@logger.warn("#{@class_name} - #{msg}")
       end
     end
 
@@ -149,20 +149,20 @@ module Facter
       warn(message_string)
     end
 
-    def error(msg, colorize = false)
+    def error(msg, colorize = false) # rubocop:disable Style/OptionalBooleanParameter
       @@has_errors = true
 
       if @@message_callback && Options[:allow_external_loggers]
         @@message_callback.call(:error, msg)
       else
         msg = colorize(msg, RED) if colorize || Options[:color]
-        @@logger.error(@class_name + ' - ' + msg)
+        @@logger.error("#{@class_name} - #{msg}")
       end
     end
 
     def log_exception(exception)
       msg = exception.message
-      msg += "\n" + exception.backtrace.join("\n") if Options[:trace]
+      msg += "\n#{exception.backtrace.join("\n")}" if Options[:trace]
 
       error(msg, true)
     end

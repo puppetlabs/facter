@@ -86,7 +86,7 @@ module Facter
         resolve
       rescue StandardError => e
         msg = "Unable to add resolve #{resolution_name.inspect} for fact '#{@name}': #{e.message}"
-        msg += "\n" + e.backtrace.join("\n") if Options[:trace]
+        msg += "\n#{e.backtrace.join("\n")}" if Options[:trace]
         log.error(msg, true)
         nil
       end

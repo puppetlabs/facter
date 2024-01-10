@@ -25,7 +25,7 @@ module Facter
 
       resolved_facts = override_core_facts(internal_facts, external_facts)
 
-      resolved_facts = resolved_facts.concat(cached_facts)
+      resolved_facts.concat(cached_facts)
       cache_manager.cache_facts(resolved_facts)
 
       FactFilter.new.filter_facts!(resolved_facts, user_query)
@@ -84,7 +84,7 @@ module Facter
       searched_facts, cached_facts = @cache_manager.resolve_facts(searched_facts)
 
       resolved_facts = @internal_fact_mgr.resolve_facts(searched_facts)
-      resolved_facts = resolved_facts.concat(cached_facts)
+      resolved_facts.concat(cached_facts)
 
       FactFilter.new.filter_facts!(resolved_facts, user_query)
 
@@ -101,7 +101,7 @@ module Facter
       searched_facts, cached_facts = @cache_manager.resolve_facts(searched_facts)
 
       resolved_facts = @external_fact_mgr.resolve_facts(searched_facts)
-      resolved_facts = resolved_facts.concat(cached_facts)
+      resolved_facts.concat(cached_facts)
       resolved_facts if resolved_facts.any?
     end
 
@@ -115,7 +115,7 @@ module Facter
 
       resolved_facts = @external_fact_mgr.resolve_facts(searched_facts)
       resolved_facts = override_core_facts(core_facts, resolved_facts)
-      resolved_facts = resolved_facts.concat(cached_facts)
+      resolved_facts.concat(cached_facts)
 
       resolved_facts unless resolved_facts.map(&:value).compact.empty?
     end

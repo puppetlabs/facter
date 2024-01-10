@@ -9,7 +9,7 @@ module Facts
       def call_the_resolver
         fact_value = Facter::Resolvers::Windows::Networking.resolve(:interfaces)
 
-        Facter::ResolvedFact.new(FACT_NAME, fact_value ? fact_value.keys.join(',') : nil, :legacy)
+        Facter::ResolvedFact.new(FACT_NAME, fact_value&.keys&.join(','), :legacy)
       end
     end
   end

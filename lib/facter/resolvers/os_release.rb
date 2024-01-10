@@ -110,7 +110,7 @@ module Facter
 
         def append_linux_to_os_name
           os_name = @fact_list[:name]
-          @fact_list[:name] = os_name + 'Linux' if os_name.downcase.start_with?('virtuozzo')
+          @fact_list[:name] = "#{os_name}Linux" if os_name.downcase.start_with?('virtuozzo')
         end
       end
     end

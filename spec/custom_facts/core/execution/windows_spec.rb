@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 describe Facter::Core::Execution::Windows do
   let(:executor) { Facter::Core::Execution::Windows.new }
 
@@ -90,11 +92,11 @@ describe Facter::Core::Execution::Windows do
 
       it 'returns the absolute path with file extension if found' do
         ['.COM', '.EXE', '.BAT', '.CMD', ''].each do |ext|
-          allow(File).to receive(:executable?).with('C:\Windows\system32\foo' + ext).and_return false
-          allow(File).to receive(:executable?).with('C:\Windows\System32\Wbem\foo' + ext).and_return false
+          allow(File).to receive(:executable?).with("C:\\Windows\\system32\\foo#{ext}").and_return false
+          allow(File).to receive(:executable?).with("C:\\Windows\\System32\\Wbem\\foo#{ext}").and_return false
         end
         ['.COM', '.BAT', '.CMD', ''].each do |ext|
-          allow(File).to receive(:executable?).with('C:\Windows\foo' + ext).and_return false
+          allow(File).to receive(:executable?).with("C:\\Windows\\foo#{ext}").and_return false
         end
         allow(File).to receive(:executable?).with('C:\Windows\foo.EXE').and_return true
 

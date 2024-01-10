@@ -5,7 +5,7 @@ describe Facter do
     Facter::ResolvedFact.new('os.name', 'ubuntu', :core, 'os.name')
   end
   let(:missing_fact) do
-    # note the type is the :nil symbol
+    # NOTE: the type is the :nil symbol
     Facter::ResolvedFact.new('missing_fact', nil, :nil, 'missing_fact')
   end
   let(:hash_fact) do

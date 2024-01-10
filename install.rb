@@ -153,7 +153,7 @@ class Installer
     # /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/bin
     # which is not generally where people expect executables to be installed
     # These settings are appropriate defaults for all OS X versions.
-    RbConfig::CONFIG['bindir'] = '/usr/bin' if RUBY_PLATFORM =~ /^universal-darwin[\d\.]+$/
+    RbConfig::CONFIG['bindir'] = '/usr/bin' if RUBY_PLATFORM =~ /^universal-darwin[\d.]+$/
 
     # if InstallOptions.configdir
     #   configdir = InstallOptions.configdir

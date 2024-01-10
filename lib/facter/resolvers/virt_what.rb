@@ -30,7 +30,8 @@ module Facter
           xen_info = xen_info.to_s
           return 'xenu' if /xen-domu/.match?(xen_info)
           return 'xenhvm' if /xen-hvm/.match?(xen_info)
-          return 'xen0' if /xen-dom0/.match?(xen_info)
+
+          'xen0' if /xen-dom0/.match?(xen_info)
         end
 
         def determine_other(output)

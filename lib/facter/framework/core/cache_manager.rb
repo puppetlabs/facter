@@ -43,15 +43,14 @@ module Facter
 
     def fact_cache_enabled?(fact_name)
       fact = @fact_groups.get_fact(fact_name)
-      cached = if fact
-                 !fact[:ttls].nil?
-               else
-                 false
-               end
+      if fact
+        !fact[:ttls].nil?
+      else
+        false
+      end
 
       # fact_group = @fact_groups.get_fact_group(fact_name)
       # delete_cache(fact_group) if fact_group && !cached
-      cached
     end
 
     private

@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require_relative '../../../facter/framework/logging/logger.rb'
+require_relative '../../../facter/framework/logging/logger'
 Facter::Log.output(STDERR)
 require_relative '../../../facter'
 require_relative '../../../facter/framework/cli/cli'

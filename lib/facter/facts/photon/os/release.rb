@@ -25,7 +25,7 @@ module Facts
 
           major = version[1].to_s
           minor = version[2].to_s
-          version_data = major + '.' + minor
+          version_data = "#{major}.#{minor}"
 
           {
             'full' => version_data,

@@ -77,7 +77,7 @@ module Facter
 
               family = FFI::AF_UNSPEC
 
-              addresses.each do |_k, addr|
+              addresses.each_value do |addr|
                 if family != FFI::AF_UNSPEC &&
                    addr[:sa_family] != FFI::AF_UNSPEC &&
                    family != addr[:sa_family]

@@ -14,7 +14,8 @@ module Facter
 
       user_query = user_queries.first
       return format_for_no_query(resolved_facts) if user_query.empty?
-      return format_for_single_user_query(user_queries.first, resolved_facts) unless user_query.empty?
+
+      format_for_single_user_query(user_queries.first, resolved_facts) unless user_query.empty?
     end
 
     private
@@ -39,7 +40,7 @@ module Facter
 
       return '' unless fact_value
 
-      fact_value.class == Hash ? hash_to_hocon(fact_value) : fact_value
+      fact_value.instance_of?(Hash) ? hash_to_hocon(fact_value) : fact_value
     end
 
     def hash_to_hocon(fact_collection)

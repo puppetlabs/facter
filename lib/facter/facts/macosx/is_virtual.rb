@@ -23,7 +23,7 @@ module Facts
         return 'virtualbox' if boot_rom_version&.start_with?('VirtualBox')
 
         subsystem_vendor_id = Facter::Resolvers::Macosx::SystemProfiler.resolve(:subsystem_vendor_id)
-        return 'parallels' if subsystem_vendor_id&.start_with?('0x1ab8')
+        'parallels' if subsystem_vendor_id&.start_with?('0x1ab8')
       end
     end
   end

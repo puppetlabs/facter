@@ -26,7 +26,7 @@ module Facter
 
               @fact_list[:major] = major
               @fact_list[:minor] = minor
-              @fact_list[:full] = major == '10' ? major + '_u' + minor : major + '.' + minor
+              @fact_list[:full] = major == '10' ? "#{major}_u#{minor}" : "#{major}.#{minor}"
               break
             end
             @fact_list[fact_name]
@@ -36,7 +36,7 @@ module Facter
             result = text.match(regex_pattern)
             major, minor = result.captures if result
             minor = regex_pattern == /Solaris (\d+)/ ? '0' : minor
-            return [major, minor] if major && minor
+            [major, minor] if major && minor
           end
         end
       end

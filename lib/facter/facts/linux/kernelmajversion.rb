@@ -17,7 +17,7 @@ module Facts
         versions_split = full_version.split('.')
         return versions_split[0] if versions_split.length <= 1
 
-        versions_split[0] + '.' + versions_split[1]
+        "#{versions_split[0]}.#{versions_split[1]}"
       end
     end
   end

@@ -87,7 +87,7 @@ describe Facter::Core::Aggregate do
     it 'passes all requested chunk results to the depending chunk' do
       aggregate_res.chunk(:first) { ['foo'] }
       aggregate_res.chunk(:second, require: [:first]) do |first|
-        [first[0] + ' bar']
+        ["#{first[0]} bar"]
       end
 
       output = aggregate_res.value

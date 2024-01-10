@@ -80,7 +80,7 @@ module LegacyFacter
 
       # Flush all cached values.
       def flush
-        @facts.each { |_name, fact| fact.flush }
+        @facts.each_value(&:flush)
         @external_facts_loaded = nil
       end
 
@@ -134,9 +134,7 @@ module LegacyFacter
         load_external_facts
       end
 
-      attr_reader :internal_loader
-
-      attr_reader :external_loader
+      attr_reader :internal_loader, :external_loader
 
       # Return a hash of all of our facts.
       def to_hash

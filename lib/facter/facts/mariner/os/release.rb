@@ -20,7 +20,7 @@ module Facts
         def from_specific_file
           version = Facter::Resolvers::SpecificReleaseFile.resolve(:release,
                                                                    { release_file: '/etc/mariner-release',
-                                                                     regex: /CBL\-Mariner ([0-9.]+)/ })
+                                                                     regex: /CBL-Mariner ([0-9.]+)/ })
           Facter::Util::Facts.release_hash_from_matchdata(version)
         end
 

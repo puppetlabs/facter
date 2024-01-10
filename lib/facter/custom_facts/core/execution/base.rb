@@ -30,7 +30,7 @@ module Facter
         # use an ensure block to make absolutely sure we restore the variables
         ensure
           # restore the old values
-          values.each do |var, _value|
+          values.each_key do |var|
             if old.include?(var)
               ENV[var] = old[var]
             else

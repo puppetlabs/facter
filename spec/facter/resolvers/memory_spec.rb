@@ -40,7 +40,7 @@ describe Facter::Resolvers::Linux::Memory do
       end
 
       it 'returns swap capacity' do
-        swap_capacity = format('%<swap_capacity>.2f', swap_capacity: (swap_used / swap_total.to_f * 100)) + '%'
+        swap_capacity = "#{format('%<swap_capacity>.2f', swap_capacity: (swap_used / swap_total.to_f * 100))}%"
 
         expect(resolver.resolve(:swap_capacity)).to eq(swap_capacity)
       end
@@ -50,7 +50,7 @@ describe Facter::Resolvers::Linux::Memory do
       end
 
       it 'returns system capacity' do
-        system_capacity = format('%<capacity>.2f', capacity: (used / total.to_f * 100)) + '%'
+        system_capacity = "#{format('%<capacity>.2f', capacity: (used / total.to_f * 100))}%"
 
         expect(resolver.resolve(:capacity)).to eq(system_capacity)
       end
@@ -91,7 +91,7 @@ describe Facter::Resolvers::Linux::Memory do
       end
 
       it 'returns system capacity' do
-        system_capacity = format('%<capacity>.2f', capacity: (used / total.to_f * 100)) + '%'
+        system_capacity = "#{format('%<capacity>.2f', capacity: (used / total.to_f * 100))}%"
 
         expect(resolver.resolve(:capacity)).to eq(system_capacity)
       end
@@ -127,7 +127,7 @@ describe Facter::Resolvers::Linux::Memory do
       end
 
       it 'returns swap capacity' do
-        swap_capacity = format('%<swap_capacity>.2f', swap_capacity: (swap_used / swap_total.to_f * 100)) + '%'
+        swap_capacity = "#{format('%<swap_capacity>.2f', swap_capacity: (swap_used / swap_total.to_f * 100))}%"
 
         expect(resolver.resolve(:swap_capacity)).to eq(swap_capacity)
       end
@@ -137,7 +137,7 @@ describe Facter::Resolvers::Linux::Memory do
       end
 
       it 'returns system capacity' do
-        system_capacity = format('%<capacity>.2f', capacity: (used / total.to_f * 100)) + '%'
+        system_capacity = "#{format('%<capacity>.2f', capacity: (used / total.to_f * 100))}%"
 
         expect(resolver.resolve(:capacity)).to eq(system_capacity)
       end
@@ -176,7 +176,7 @@ describe Facter::Resolvers::Linux::Memory do
       end
 
       it 'returns swap capacity' do
-        swap_capacity = format('%<swap_capacity>.2f', swap_capacity: (swap_used / swap_total.to_f * 100)) + '%'
+        swap_capacity = "#{format('%<swap_capacity>.2f', swap_capacity: (swap_used / swap_total.to_f * 100))}%"
 
         expect(resolver.resolve(:swap_capacity)).to eq(swap_capacity)
       end
@@ -186,7 +186,7 @@ describe Facter::Resolvers::Linux::Memory do
       end
 
       it 'returns system capacity' do
-        system_capacity = format('%<capacity>.2f', capacity: (used / total.to_f * 100)) + '%'
+        system_capacity = "#{format('%<capacity>.2f', capacity: (used / total.to_f * 100))}%"
 
         expect(resolver.resolve(:capacity)).to eq(system_capacity)
       end

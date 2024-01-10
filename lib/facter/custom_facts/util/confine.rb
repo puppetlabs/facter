@@ -63,7 +63,10 @@ module LegacyFacter
           end
         end
 
-        @values.any? { |v| convert(v) === value }
+        # we're intentionally using case equality (triple equals) because we
+        # support matching against anything that supports === such as ranges,
+        # regular expressions, etc
+        @values.any? { |v| convert(v) === value } # rubocop:disable Style/CaseEquality
       end
 
       private

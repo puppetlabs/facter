@@ -653,6 +653,13 @@ module Facter
       nil
     end
 
+    # We don't respond to any missing methods
+    #
+    # @api private
+    def respond_to_missing?(_method, *)
+      false
+    end
+
     prepend ApiDebugger if ENV['API_DEBUG']
   end
 end

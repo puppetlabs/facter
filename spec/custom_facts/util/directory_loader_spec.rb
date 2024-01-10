@@ -84,7 +84,7 @@ describe LegacyFacter::Util::DirectoryLoader do
     %w[bak orig].each do |ext|
       it "ignores files with an extension of '#{ext}'" do
         expect(log_spy).to receive(:debug).with(/#{ext}/)
-        write_to_file('data' + ".#{ext}", 'foo=bar')
+        write_to_file("data.#{ext}", 'foo=bar')
 
         dir_loader.load(collection)
       end
