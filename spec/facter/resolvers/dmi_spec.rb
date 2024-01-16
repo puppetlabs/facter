@@ -124,6 +124,15 @@ describe Facter::Resolvers::Linux::DmiBios do
       end
     end
 
+    context 'when product_version file exists' do
+      let(:file_content) { 'VMware 6' }
+      let(:file) { 'product_version' }
+
+      it 'returns product_version' do
+        expect(resolver.resolve(:product_version)).to eq(file_content)
+      end
+    end
+
     context 'when product_serial file exists' do
       let(:file_content) { 'VMware-42 1a 02 ea e6 27 76 b8-a1 23 a7 8a d3 12 ee cf' }
       let(:file) { 'product_serial' }
