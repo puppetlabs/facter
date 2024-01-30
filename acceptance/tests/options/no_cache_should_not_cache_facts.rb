@@ -36,7 +36,7 @@ test_name "C99968: --no-cache command-line option causes facter to not cache fac
 
     step "facter should not cache facts when --no-cache is specified" do
       on(agent, facter("--no-cache")) do |facter_output|
-        assert_no_match(/caching values for/, facter_output.stderr, "facter should not have tried to cache any facts")
+        refute_match(/caching values for/, facter_output.stderr, "facter should not have tried to cache any facts")
       end
     end
   end

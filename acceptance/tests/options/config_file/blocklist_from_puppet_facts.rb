@@ -30,9 +30,9 @@ test_name "C100036: when run from puppet facts, facts can be blocked via a list 
           assert_match(/blocking collection of .+ facts/, puppet_facts_output.stdout, "Expected stderr to contain statement about blocking fact collection")
 
           # on some platforms, file system facts are never resolved, so this will also be true in those cases
-          assert_no_match(/filesystems/, puppet_facts_output.stdout, "filesystems fact should have been blocked")
-          assert_no_match(/mountpoints/, puppet_facts_output.stdout, "mountpoints fact should have been blocked")
-          assert_no_match(/partitions/, puppet_facts_output.stdout, "partitions fact should have been blocked")
+          refute_match(/filesystems/, puppet_facts_output.stdout, "filesystems fact should have been blocked")
+          refute_match(/mountpoints/, puppet_facts_output.stdout, "mountpoints fact should have been blocked")
+          refute_match(/partitions/, puppet_facts_output.stdout, "partitions fact should have been blocked")
         end
       end
     end

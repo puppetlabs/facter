@@ -50,8 +50,8 @@ EOM
       create_remote_file(agent, cached_fact_file, bad_cached_content)
 
       on(agent, facter("--no-cache #{cached_fact_name}")) do |facter_output|
-        assert_no_match(/loading cached values for .+ fact/, facter_output.stderr, "facter should not have tried to load any cached facts")
-        assert_no_match(/#{bad_cached_fact_value}/, facter_output.stdout, "facter should not have loaded the cached value")
+        refute_match(/loading cached values for .+ fact/, facter_output.stderr, "facter should not have tried to load any cached facts")
+        refute_match(/#{bad_cached_fact_value}/, facter_output.stdout, "facter should not have loaded the cached value")
       end
     end
   end

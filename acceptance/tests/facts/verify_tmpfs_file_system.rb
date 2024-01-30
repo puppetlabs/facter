@@ -39,8 +39,8 @@ test_name 'C98163: mountpoints fact should show mounts on tmpfs' do
 
     step "Apply the manifest to mount directory '#{mount_point}'" do
       on(agent, puppet("apply #{manifest}"), :acceptable_exit_codes => [0,2]) do |puppet_apply|
-        assert_no_match(/Error/, puppet_apply.stdout, 'Unexpected error on stdout was detected!')
-        assert_no_match(/ERROR/, puppet_apply.stderr, 'Unexpected error on stderr was detected!')
+        refute_match(/Error/, puppet_apply.stdout, 'Unexpected error on stdout was detected!')
+        refute_match(/ERROR/, puppet_apply.stderr, 'Unexpected error on stderr was detected!')
       end
     end
 

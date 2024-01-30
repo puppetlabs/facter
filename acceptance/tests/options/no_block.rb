@@ -27,7 +27,7 @@ test_name "C99971: the `--no-block` command line flag prevents facts from being 
 
     step "no facts should be blocked when `--no-block` is specified" do
       on(agent, facter("--no-block")) do |facter_output|
-        assert_no_match(/blocking collection of .+ facts/, facter_output.stderr, "Expected no facts to be blocked")
+        refute_match(/blocking collection of .+ facts/, facter_output.stderr, "Expected no facts to be blocked")
       end
     end
   end
