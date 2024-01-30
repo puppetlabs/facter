@@ -3,6 +3,7 @@
 describe Facter::Resolvers::Linux::Processors do
   after do
     Facter::Resolvers::Linux::Processors.invalidate_cache
+    Facter::Resolvers::Uname.invalidate_cache
   end
 
   context 'when on x86 architecture' do
@@ -21,6 +22,9 @@ describe Facter::Resolvers::Linux::Processors do
       end
 
       let(:speed) { 2_294_000_000 }
+      let(:extensions) do
+        %w[x86_64 x86_64-v1 x86_64-v2 x86_64-v3]
+      end
 
       it 'returns number of processors' do
         result = Facter::Resolvers::Linux::Processors.resolve(:processors)
@@ -44,6 +48,16 @@ describe Facter::Resolvers::Linux::Processors do
         result = Facter::Resolvers::Linux::Processors.resolve(:speed)
 
         expect(result).to eq(speed)
+      end
+
+      it 'returns extensions supported' do
+        allow(Facter::Resolvers::Uname).to receive(:resolve)
+          .with(:processor)
+          .and_return('x86_64')
+
+        result = Facter::Resolvers::Linux::Processors.resolve(:extensions)
+
+        expect(result).to eq(extensions)
       end
     end
 
@@ -73,6 +87,7 @@ describe Facter::Resolvers::Linux::Processors do
 
       after do
         Facter::Resolvers::Linux::Processors.invalidate_cache
+        Facter::Resolvers::Uname.invalidate_cache
       end
 
       let(:physical_processors) { 2 }
@@ -129,6 +144,11 @@ describe Facter::Resolvers::Linux::Processors do
         .and_return('1')
     end
 
+    after do
+      Facter::Resolvers::Linux::Processors.invalidate_cache
+      Facter::Resolvers::Uname.invalidate_cache
+    end
+
     let(:speed) { 2_926_000_000 }
     let(:physical_processors) { 2 }
 
@@ -174,6 +194,11 @@ describe Facter::Resolvers::Linux::Processors do
       allow(Facter::Util::FileHelper).to receive(:safe_read)
         .with('/sys/devices/system/cpu/cpu1/topology/physical_package_id')
         .and_return('0')
+    end
+
+    after do
+      Facter::Resolvers::Linux::Processors.invalidate_cache
+      Facter::Resolvers::Uname.invalidate_cache
     end
 
     let(:physical_processors) { 1 }
