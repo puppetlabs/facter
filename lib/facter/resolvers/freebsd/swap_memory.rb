@@ -15,7 +15,7 @@ module Facter
 
           def read_swap_memory(fact_name)
             output = Facter::Core::Execution.execute('swapinfo -k', logger: log)
-            data = output.split("\n")[1..-1].map { |line| line.split(/\s+/) }
+            data = output.split("\n")[1..].map { |line| line.split(/\s+/) }
 
             unless data.empty?
               @fact_list[:total_bytes]     = kilobytes_to_bytes(data.map { |line| line[1].to_i }.inject(:+))

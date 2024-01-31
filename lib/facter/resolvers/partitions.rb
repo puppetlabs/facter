@@ -112,9 +112,9 @@ module Facter
 
         def execute_and_extract_blkid_info
           stdout = Facter::Core::Execution.execute('blkid', logger: log)
-          output_hash = Hash[*stdout.split(/^([^:]+):/)[1..-1]]
+          output_hash = Hash[*stdout.split(/^([^:]+):/)[1..]]
           output_hash.each do |key, value|
-            output_hash[key] = Hash[*value.delete('"').chomp.rstrip.split(/ ([^= ]+)=/)[1..-1]]
+            output_hash[key] = Hash[*value.delete('"').chomp.rstrip.split(/ ([^= ]+)=/)[1..]]
           end
         end
 
