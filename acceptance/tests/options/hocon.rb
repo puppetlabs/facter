@@ -10,9 +10,9 @@ test_name "--hocon command-line option results in valid HOCON output" do
 
   agents.each do |agent|
     step "Agent #{agent}: retrieve os fact data using the --hocon option" do
-      on(agent, facter('--hocon os')) do
+      on(agent, facter('--hocon os')) do |facter_output|
         begin
-          parsing_successful = Hocon::Parser::ConfigDocumentFactory.parse_string(stdout.chomp, options =
+          parsing_successful = Hocon::Parser::ConfigDocumentFactory.parse_string(facter_output.stdout.chomp, options =
             Hocon::ConfigParseOptions.defaults) != nil
           assert_equal(true, parsing_successful, "Output is not HOCON compatible.")
         rescue

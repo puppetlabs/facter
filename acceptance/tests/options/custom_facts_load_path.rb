@@ -22,20 +22,24 @@ end
 EOM
 
   agents.each do |agent|
+    load_path_facter_dir = nil
+
     step "Agent #{agent}: determine $LOAD_PATH and create custom fact" do
-      on(agent, "#{ruby_command(agent)} -e 'puts $LOAD_PATH[0]'")
-      load_path_facter_dir = File.join(stdout.chomp, 'facter')
-      agent.mkdir_p(load_path_facter_dir)
-      custom_fact = File.join(load_path_facter_dir, 'custom_fact.rb')
-      create_remote_file(agent, custom_fact, content)
-
-      teardown do
-        load_path_facter_dir = "\"#{load_path_facter_dir}\"" if agent.is_cygwin?
-
-        agent.rm_rf(load_path_facter_dir)
+      on(agent, "#{ruby_command(agent)} -e 'puts $LOAD_PATH[0]'") do |result|
+        load_path_facter_dir = File.join(result.stdout.chomp, 'facter')
+        agent.mkdir_p(load_path_facter_dir)
+        custom_fact = File.join(load_path_facter_dir, 'custom_fact.rb')
+        create_remote_file(agent, custom_fact, content)
       end
+    end
 
-      step("Agent #{agent}: resolve the custom fact that is in a facter directory on the $LOAD_PATH")
+    teardown do
+      load_path_facter_dir = "\"#{load_path_facter_dir}\"" if agent.is_cygwin?
+
+      agent.rm_rf(load_path_facter_dir)
+    end
+
+    step("Agent #{agent}: resolve the custom fact that is in a facter directory on the $LOAD_PATH") do
       on(agent, facter("custom_fact")) do |facter_output|
         assert_equal("load_path", facter_output.stdout.chomp, "Incorrect custom fact value for fact in $LOAD_PATH/facter")
       end

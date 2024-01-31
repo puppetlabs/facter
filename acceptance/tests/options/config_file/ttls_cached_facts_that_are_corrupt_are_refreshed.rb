@@ -41,8 +41,8 @@ EOM
         # Corrupt the cached fact file
         create_remote_file(agent, cached_fact_file, 'ThisIsNotvalidJSON')
 
-        on(agent, facter("#{cached_factname}")) do
-          assert_match(/.+/, stdout, "Expected fact to be resolved")
+        on(agent, facter("#{cached_factname}")) do |facter_output|
+          assert_match(/.+/, facter_output.stdout, "Expected fact to be resolved")
         end
         cat_output = agent.cat(cached_fact_file)
         assert_match(/#{cached_factname}/, cat_output.strip, "Expected cachced fact to contain the fact name")
