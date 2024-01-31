@@ -32,7 +32,7 @@ end
 def beaker_platform
   {
     'ubuntu-20.04' => 'ubuntu2004-64a',
-    'macos-11' => 'osx11-64a',
+    'macos-12' => 'osx12-64a',
     'windows-2016' => 'windows2016-64a',
     'windows-2019' => 'windows2019-64a'
   }[HOST_PLATFORM]
