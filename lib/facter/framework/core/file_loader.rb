@@ -394,6 +394,7 @@ os_hierarchy.each do |os|
     require_relative '../../facts/linux/dmi/product/name'
     require_relative '../../facts/linux/dmi/product/serial_number'
     require_relative '../../facts/linux/dmi/product/uuid'
+    require_relative '../../facts/linux/dmi/product/version'
     require_relative '../../facts/linux/ec2_metadata'
     require_relative '../../facts/linux/ec2_userdata'
     require_relative '../../facts/linux/facterversion'
