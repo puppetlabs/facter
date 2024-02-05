@@ -74,6 +74,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
         allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
+        allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelversion).and_return(nil)
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return(value)
       end
 
@@ -96,6 +97,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelversion).and_return(nil)
         allow(Facter::Resolvers::Vmware).to receive(:resolve).with(:vm).and_return(value)
       end
 
@@ -119,6 +121,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Vmware).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelversion).and_return(nil)
         allow(Facter::Resolvers::OpenVz).to receive(:resolve).with(:vm).and_return(value)
       end
 
@@ -143,6 +146,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Vmware).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::OpenVz).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelversion).and_return(nil)
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vserver).and_return(value)
       end
 
@@ -168,6 +172,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
         allow(Facter::Resolvers::Vmware).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::OpenVz).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vserver).and_return(nil)
+        allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelversion).and_return(nil)
         allow(Facter::Resolvers::Xen).to receive(:resolve).with(:vm).and_return(value)
       end
 
@@ -193,6 +198,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
         allow(Facter::Resolvers::OpenVz).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vserver).and_return(nil)
         allow(Facter::Resolvers::Xen).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelversion).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('Bochs Machine')
       end
@@ -227,6 +233,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
         allow(Facter::Resolvers::Xen).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return(nil)
+        allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelversion).and_return(nil)
         allow(Facter::Resolvers::Lspci).to receive(:resolve).with(:vm).and_return(value)
       end
 
@@ -237,6 +244,23 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
       end
 
       it 'returns hyper-v' do
+        expect(detector.platform).to eq(value)
+      end
+    end
+
+    context 'when illumos-lx' do
+      let(:value) { 'illumos-lx' }
+
+      before do
+        allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
+        allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return(nil)
+        allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return('lxc')
+        allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelversion).and_return('BrandZ virtual linux')
+      end
+
+      it 'returns illumos-lx' do
         expect(detector.platform).to eq(value)
       end
     end
@@ -255,6 +279,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return(nil)
         allow(Facter::Resolvers::Lspci).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelversion).and_return(nil)
       end
 
       it 'returns physical' do
@@ -274,6 +299,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vserver).and_return(nil)
         allow(Facter::Resolvers::Xen).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Lspci).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Uname).to receive(:resolve).with(:kernelversion).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return('unknown')
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return('unknown')
       end
