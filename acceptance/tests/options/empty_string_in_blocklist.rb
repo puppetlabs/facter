@@ -26,7 +26,7 @@ test_name "empty string in blocklist does not block facts" do
 
     step "no facts should be blocked is specified" do
       on(agent, facter) do |facter_output|
-        assert_no_match(/blocking collection of .+ facts/, facter_output.stderr, "Expected no facts to be blocked")
+        refute_match(/blocking collection of .+ facts/, facter_output.stderr, "Expected no facts to be blocked")
       end
     end
   end

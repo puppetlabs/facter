@@ -27,7 +27,7 @@ test_name 'Facter.value(external_fact)' do
       on(agent, "#{ruby_command(agent)} #{facter_rb}") do |result|
         output = result.stdout.strip
         assert_match(/has resolved to: 123/, output, 'Incorrect fact value for external fact')
-        assert_no_match(/in all custom facts/, output, 'Loaded all custom facts')
+        refute_match(/in all custom facts/, output, 'Loaded all custom facts')
       end
     end
   end

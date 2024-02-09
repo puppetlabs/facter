@@ -27,7 +27,7 @@ test_name 'Facter.value(not_existent)' do
 
       on(agent, "#{ruby_command(agent)} #{facter_rb}") do |result|
         output = result.stdout.strip
-        assert_no_match(/has resolved to: /, output, 'Fact was found')
+        refute_match(/has resolved to: /, output, 'Fact was found')
         assert_match(
           /Searching fact: #{fact_name} in file: #{fact_name}.rb/,
           output,
