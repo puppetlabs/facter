@@ -5,8 +5,8 @@ test_name "C99985: --log-level command-line option can be used to specify loggin
 
   agents.each do |agent|
     step "Agent #{agent}: retrieve debug info from stderr using `--log-level debug` option" do
-      on(agent, facter('--log-level debug')) do
-        assert_match(/DEBUG/, stderr, "Expected DEBUG information in stderr")
+      on(agent, facter('--log-level debug')) do |facter_output|
+        assert_match(/DEBUG/, facter_output.stderr, "Expected DEBUG information in stderr")
       end
     end
   end

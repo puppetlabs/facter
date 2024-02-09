@@ -60,7 +60,7 @@ EOM
 
         on(agent, facter("--config \"#{no_cache_config_file}\"")) do |facter_output|
           assert_match(/#{cached_fact_name}/, facter_output.stdout, "Expected to see the fact in output")
-          assert_no_match(/#{cached_fact_value}/, facter_output.stdout, "Expected to not see the cached fact value")
+          refute_match(/#{cached_fact_value}/, facter_output.stdout, "Expected to not see the cached fact value")
         end
       end
     end

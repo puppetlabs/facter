@@ -31,7 +31,7 @@ test_name 'Facter.value(custom_fact) in the same file as fact name' do
       on(agent, "#{ruby_command(agent)} #{facter_rb}") do |result|
         output = result.stdout.strip
         assert_match(/has resolved to: #{fact_name}/, output, 'Incorrect fact value for custom fact')
-        assert_no_match(/Searching fact: #{fact_name} in all custom facts/, output, 'Loaded all custom facts')
+        refute_match(/Searching fact: #{fact_name} in all custom facts/, output, 'Loaded all custom facts')
       end
     end
   end
