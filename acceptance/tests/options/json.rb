@@ -29,10 +29,10 @@ EOM
       end
 
       step "Agent #{agent}: retrieve output using the --json option" do
-        on(agent, facter("--custom-dir \"#{custom_dir}\" --json structured_fact")) do
+        on(agent, facter("--custom-dir \"#{custom_dir}\" --json structured_fact")) do |facter_output|
           begin
             expected = {"structured_fact" => {"foo" => {"nested" => "value1"}, "bar" => "value2", "baz" => "value3", "true" => true, "false" => false}}
-            assert_equal(expected, JSON.parse(stdout.chomp), "JSON output does not match expected output")
+            assert_equal(expected, JSON.parse(facter_output.stdout.chomp), "JSON output does not match expected output")
           rescue
             fail_test "Couldn't parse output as JSON"
           end

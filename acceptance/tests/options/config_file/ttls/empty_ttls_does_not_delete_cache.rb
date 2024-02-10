@@ -97,7 +97,7 @@ EOM
 
         on(agent, facter("--config \"#{no_cache_config_file}\" --external-dir \"#{external_dir}\"", environment: env)) do |facter_output|
           assert_match(/#{cached_fact_name}/, facter_output.stdout, "Expected to see the fact in output")
-          assert_no_match(/#{cached_fact_value}/, facter_output.stdout, "Expected to not see the cached fact value")
+          refute_match(/#{cached_fact_value}/, facter_output.stdout, "Expected to not see the cached fact value")
         end
 
         assert_equal(true, agent.file_exist?("#{cached_facts_dir}/cached-custom-facts"))

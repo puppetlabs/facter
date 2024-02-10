@@ -58,7 +58,7 @@ test_name "C99970: the `--list-cache-groups` command line flag prints available 
         assert_match(/#{filename}/, facter_output.stdout, "external facts script files should be listed as cacheable")
       end
       on(agent, facter("--list-cache-groups --no-external-facts")) do |facter_output|
-        assert_no_match(/#{filename}/, facter_output.stdout, "external facts script files should now be listed as cacheable when --no-external-facts is used")
+        refute_match(/#{filename}/, facter_output.stdout, "external facts script files should now be listed as cacheable when --no-external-facts is used")
       end
       agent.rm_rf(etc_factsd_path)
     end

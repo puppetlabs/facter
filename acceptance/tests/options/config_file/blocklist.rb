@@ -25,9 +25,9 @@ test_name "C99972: facts can be blocked via a blocklist in the config file" do
           assert_match(/blocking collection of .+ facts/, facter_output.stderr, "Expected stderr to contain statement about blocking fact collection")
 
           # on some platforms, file system facts are never resolved, so this will also be true in those cases
-          assert_no_match(/filesystems/, facter_output.stdout, "filesystems fact should have been blocked")
-          assert_no_match(/mountpoints/, facter_output.stdout, "mountpoints fact should have been blocked")
-          assert_no_match(/partitions/, facter_output.stdout, "partitions fact should have been blocked")
+          refute_match(/filesystems/, facter_output.stdout, "filesystems fact should have been blocked")
+          refute_match(/mountpoints/, facter_output.stdout, "mountpoints fact should have been blocked")
+          refute_match(/partitions/, facter_output.stdout, "partitions fact should have been blocked")
         end
       end
     end

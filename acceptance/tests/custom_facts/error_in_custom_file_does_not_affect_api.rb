@@ -72,14 +72,14 @@ test_name 'Facter api works when there is an error inside a custom fact file' do
     step "Agent #{agent}: Verify that custom fact 2 is missing" do
       create_api_call_file(test_vars, "puts Facter.value('custom_fact_2')")
       on(agent, "#{ruby_command(agent)} #{test_vars[:test_script_path]}") do |ruby_result|
-        assert_no_match(/custom_fact_2_value/, ruby_result.stdout.chomp)
+        refute_match(/custom_fact_2_value/, ruby_result.stdout.chomp)
       end
     end
 
     step "Agent #{agent}: Verify that custom fact 3 is missing" do
       create_api_call_file(test_vars, "puts Facter.value('custom_fact_3')")
       on(agent, "#{ruby_command(agent)} #{test_vars[:test_script_path]}") do |ruby_result|
-        assert_no_match(/custom_fact_3_value/, ruby_result.stdout.chomp)
+        refute_match(/custom_fact_3_value/, ruby_result.stdout.chomp)
       end
     end
 

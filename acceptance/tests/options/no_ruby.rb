@@ -18,9 +18,9 @@ EOM
 
   agents.each do |agent|
     step "--no-ruby option should disable Ruby and facts requiring ruby from being loaded" do
-      on(agent, facter("--no-ruby ruby")) do
-        assert_equal("", stdout.chomp, "Expected Ruby and Ruby fact to be disabled, but got output: #{stdout.chomp}")
-        assert_equal("", stderr.chomp, "Expected no warnings about Ruby on stderr, but got output: #{stderr.chomp}")
+      on(agent, facter("--no-ruby ruby")) do |facter_output|
+        assert_equal("", facter_output.stdout.chomp, "Expected Ruby and Ruby fact to be disabled, but got output: #{facter_output.stdout.chomp}")
+        assert_equal("", facter_output.stderr.chomp, "Expected no warnings about Ruby on stderr, but got output: #{facter_output.stderr.chomp}")
       end
     end
 
@@ -35,8 +35,8 @@ EOM
           agent.rm_rf(custom_fact)
         end
 
-        on(agent, facter('--no-ruby custom_fact', :environment => { 'FACTERLIB' => custom_dir })) do
-          assert_equal("", stdout.chomp, "Expected custom fact to be disabled while using --no-ruby option, but it resolved as #{stdout.chomp}")
+        on(agent, facter('--no-ruby custom_fact', :environment => { 'FACTERLIB' => custom_dir })) do |facter_output|
+          assert_equal("", facter_output.stdout.chomp, "Expected custom fact to be disabled while using --no-ruby option, but it resolved as #{facter_output.stdout.chomp}")
         end
       end
     end

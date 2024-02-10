@@ -53,7 +53,7 @@ EOM
 
         # Read cached fact file content
         cat_output = agent.cat(cached_fact_file)
-        assert_no_match(/#{cached_fact_value}/, cat_output.strip, "Expected cached fact file to be refreshed")
+        refute_match(/#{cached_fact_value}/, cat_output.strip, "Expected cached fact file to be refreshed")
       end
     end
   end

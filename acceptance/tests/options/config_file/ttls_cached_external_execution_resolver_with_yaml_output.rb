@@ -82,8 +82,8 @@ EOM
         create_remote_file(agent, cached_fact_file, cached_fact_content)
 
         on(agent, facter("--external-dir \"#{external_dir}\" --debug #{cached_fact_name}")) do |facter_output|
-          assert_match(/loading cached values for .+ facts/, stderr, "Expected debug message to state that values are read from cache")
-          assert_match(/#{cached_fact_value}/, stdout, "Expected fact to match the cached fact file")
+          assert_match(/loading cached values for .+ facts/, facter_output.stderr, "Expected debug message to state that values are read from cache")
+          assert_match(/#{cached_fact_value}/, facter_output.stdout, "Expected fact to match the cached fact file")
         end
       end
     end
