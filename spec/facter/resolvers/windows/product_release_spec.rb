@@ -8,17 +8,19 @@ describe Facter::Resolvers::ProductRelease do
     let(:prod) { 'Windows Server 2022 Standard' }
     let(:release) { '1809' }
     let(:display_version) { '21H2' }
+    # https://github.com/ruby/ruby/blob/6da8f04e01fd85e54a641c6ec4816153b9557095/ext/win32/lib/win32/registry.rb#L114
+    let(:reg_sz) { 1 }
 
     before do
       allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open)
         .with('SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion')
         .and_return(reg)
       allow(reg).to receive(:each)
-        .and_yield('EditionID', ed)
-        .and_yield('InstallationType', install)
-        .and_yield('ProductName', prod)
-        .and_yield('ReleaseId', release)
-        .and_yield('DisplayVersion', display_version)
+        .and_yield('EditionID', reg_sz, ed)
+        .and_yield('InstallationType', reg_sz, install)
+        .and_yield('ProductName', reg_sz, prod)
+        .and_yield('ReleaseId', reg_sz, release)
+        .and_yield('DisplayVersion', reg_sz, display_version)
 
       allow(reg).to receive(:close)
     end
@@ -79,7 +81,7 @@ describe Facter::Resolvers::ProductRelease do
           .with('SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion')
           .and_return(reg)
         allow(reg).to receive(:each)
-          .and_yield('ReleaseId', release)
+          .and_yield('ReleaseId', reg_sz, release)
 
         allow(reg).to receive(:close)
       end

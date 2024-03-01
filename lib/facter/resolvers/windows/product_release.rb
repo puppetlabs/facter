@@ -23,7 +23,7 @@ module Facter
         end
 
         def build_fact_list(reg)
-          reg.each do |name, value|
+          reg.each do |name, _type, value|
             case name
             when 'EditionID'
               @fact_list[:edition_id] = value
