@@ -22,6 +22,10 @@ describe Facter::Resolvers::Uname do
         Darwin Kernel Version 18.2.0: Fri Oct  5 19:41:49 PDT 2018; root:xnu-4903.221.2~2/RELEASE_X86_64')
   end
 
+  after do
+    Facter::Resolvers::Uname.invalidate_cache
+  end
+
   it 'returns machine' do
     expect(uname_resolver.resolve(:machine)).to eq('x86_64')
   end
