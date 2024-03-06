@@ -54,7 +54,7 @@ module Facts
       def create_resolved_facts_list(fact_value)
         resolved_facts = [Facter::ResolvedFact.new(FACT_NAME, fact_value)]
         ALIASES.each do |fact_alias|
-          key = fact_alias.split('_')[1..].map!(&:to_sym)
+          key = fact_alias.split('_')[1..-1].map!(&:to_sym)
           resolved_facts << Facter::ResolvedFact.new(fact_alias, fact_value.dig(*key), :legacy)
         end
 

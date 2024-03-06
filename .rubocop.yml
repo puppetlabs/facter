@@ -2,7 +2,7 @@
 inherit_from: .rubocop_todo.yml
 
 AllCops:
-  TargetRubyVersion: 2.6
+  TargetRubyVersion: 2.5
   Exclude:
     - acceptance/**/*
     - vendor/**/*
@@ -87,6 +87,9 @@ RSpec/MessageSpies:
 
 RSpec/MultipleExpectations:
   Max: 3
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
 
 RSpec/NestedGroups:
   Enabled: 6

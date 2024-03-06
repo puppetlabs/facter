@@ -22,7 +22,7 @@ module Facter
 
             result.each_line do |line|
               if line.include?('value')
-                @fact_list[:serialnumber] = line.split('=')[1].strip.delete('\"')[6..]
+                @fact_list[:serialnumber] = line.split('=')[1].strip.delete('\"')[6..-1]
                 break
               end
             end

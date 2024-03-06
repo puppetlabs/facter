@@ -208,15 +208,11 @@ class Installer
   # Join two paths. On Windows, dir must be converted to a relative path,
   # by stripping the drive letter, but only if the basedir is not empty.
   #
-  # We can't use endless ranges here because we still use older Rubies when building puppet-agent on older platforms
-  # (such as Solaris 10).
-  # rubocop:disable Style/SlicingWithRange
   def join(basedir, dir)
     return "#{basedir}#{dir[2..-1]}" if windows? && !basedir.empty? && (dir.length > 2)
 
     "#{basedir}#{dir}"
   end
-  # rubocop:enable Style/SlicingWithRange
 
   ##
   # Install file(s) from ./bin to RbConfig::CONFIG['bindir']. Patch it on the way
