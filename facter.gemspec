@@ -46,5 +46,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'yard', '~> 0.9'
 
   spec.add_runtime_dependency 'hocon', '~> 1.3'
-  spec.add_runtime_dependency 'thor', ['>= 1.0.1', '< 2.0']
+  spec.add_runtime_dependency 'thor', ['>= 1.0.1', '< 1.3'] # Thor 1.3.0 drops support for Ruby 2.5
 end
