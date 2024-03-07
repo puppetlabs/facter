@@ -26,12 +26,20 @@ module Facter
 
         def get_data_from(url)
           headers = { Metadata: 'true' }
+          headers['X-aws-ec2-metadata-token'] = v2_token if v2_token
           Facter::Util::Resolvers::Http.get_request(url, headers, { session: determine_session_timeout })
         end
 
         def determine_session_timeout
           session_env = ENV['AZ_SESSION_TIMEOUT']
           session_env ? session_env.to_i : AZ_SESSION_TIMEOUT
+        end
+
+        def v2_token
+          @v2_token ||= begin
+            token = Facter::Util::Resolvers::AwsToken.get
+            token == '' ? nil : token
+          end
         end
       end
     end
