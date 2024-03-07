@@ -17,7 +17,12 @@ def format_facts(fact_hash)
   scope = OpenStruct.new({
                            facts: fact_hash
                          })
-  erb = ERB.new(File.read(PATH_TO_TEMPLATE), trim_mode: '-')
+
+  erb = if ERB.instance_method(:initialize).parameters.assoc(:key) # Ruby 2.6+
+          ERB.new(File.read(PATH_TO_TEMPLATE), trim_mode: '-')
+        else
+          ERB.new(File.read(PATH_TO_TEMPLATE), nil, '-')
+        end
   erb.result(scope.instance_eval { binding })
 end
 

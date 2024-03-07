@@ -113,7 +113,7 @@ module Facter
       negate_options = %w[block cache custom_facts external_facts]
 
       template = File.join(File.dirname(__FILE__), '..', '..', 'templates', 'man.erb')
-      erb = ERB.new(File.read(template), trim_mode: '-')
+      erb = ERB.new(File.read(template), nil, '-')
       erb.filename = template
       puts erb.result(binding)
     end
@@ -148,7 +148,7 @@ module Facter
       options = @options.map { |(k, v)| [k.to_sym, v] }.to_h
       Facter::Options.init_from_cli(options)
 
-      block_groups = Facter::FactGroups.new.groups.to_yaml.lines[1..].join
+      block_groups = Facter::FactGroups.new.groups.to_yaml.lines[1..-1].join
       block_groups.gsub!(/:\s*\n/, "\n")
 
       puts block_groups
@@ -160,7 +160,7 @@ module Facter
       options = @options.map { |(k, v)| [k.to_sym, v] }.to_h
       Facter::Options.init_from_cli(options)
 
-      cache_groups = Facter::FactGroups.new.groups.to_yaml.lines[1..].join
+      cache_groups = Facter::FactGroups.new.groups.to_yaml.lines[1..-1].join
       cache_groups.gsub!(/:\s*\n/, "\n")
 
       puts cache_groups

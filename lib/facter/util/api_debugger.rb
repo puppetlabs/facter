@@ -34,9 +34,9 @@ module Facter
 
         options.split(',').each do |option|
           if option.start_with?('-')
-            exclude << option[1..].to_sym
+            exclude << option[1..-1].to_sym
           elsif option.start_with?('+')
-            print_caller << option[1..].to_sym
+            print_caller << option[1..-1].to_sym
           end
         end
 
