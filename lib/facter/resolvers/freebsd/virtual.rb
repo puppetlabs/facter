@@ -31,6 +31,11 @@ module Facter
 
               vm = VM_GUEST_SYSCTL_NAMES[vm] if VM_GUEST_SYSCTL_NAMES.key?(vm)
 
+              if (vm == 'generic')
+                ## may be bhyve
+                vm = Facter::Freebsd::FfiHelper.kenv(:get, 'smbios.bios.vendor').downcase
+              end
+
               @fact_list[:vm] = vm
             else
               @fact_list[:vm] = 'jail'
