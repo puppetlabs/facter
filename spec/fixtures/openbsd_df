@@ -1,0 +1,4 @@
+Filesystem   512-blocks       Used   Available Capacity Mounted on
+/dev/sd0a       2018844     404488     1513416    21%   /
+/dev/sd0d       2018844    1595216      322688    83%   /usr
+/dev/sd0e       6082908    3477752     2301012    60%   /usr/local
