@@ -1,16 +1,16 @@
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "FACTER" "8" "July 2021" "Puppet, Inc." "Facter manual"
+.TH "FACTER" "8" "March 2024" "Puppet, Inc." "Facter manual"
 .
 .SH "NAME"
-\fBfacter\fR
+\fBfacter\fR \- collect and display facts about the current system
 .
 .SH "SYNOPSIS"
-facter [options] [query] [query] [\.\.\.]
+\fBfacter\fR [options] [query] [query] [\.\.\.]
 .
 .SH "DESCRIPTION"
-Collect and display facts about the current system\. The library behind Facter is easy to extend, making Facter an easy way to collect information about a system\.
+\fBfacter\fR is a command\-line tool that gathers basic facts about nodes (systems) such as hardware details, network settings, OS type and version, and more\. These facts are made available as variables in your Puppet manifests and can be used to inform conditional expressions in Puppet\.
 .
 .P
 If no queries are given, then all facts will be returned\.
@@ -145,6 +145,12 @@ Show how much time it took to resolve each fact
 .
 .IP
 Resolve facts sequentially
+.
+.TP
+\fB\-\-http\-debug\fR:
+.
+.IP
+Whether to write HTTP request and responses to stderr\. This should never be used in production\.
 .
 .TP
 \fB\-p\fR, \fB\-\-puppet\fR:
