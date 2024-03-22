@@ -103,6 +103,26 @@ describe Facter::Resolvers::Windows::Virtualization do
     end
   end
 
+  describe '#resolve AHV VM' do
+    before do
+      allow(win32ole).to receive(:Model).and_return(model)
+      allow(win32ole).to receive(:Manufacturer).and_return(manufacturer)
+      allow(win32ole).to receive(:OEMStringArray).and_return('')
+    end
+
+    let(:query_result) { [win32ole] }
+    let(:model) { 'AHV' }
+    let(:manufacturer) {}
+
+    it 'detects virtual machine model' do
+      expect(Facter::Resolvers::Windows::Virtualization.resolve(:virtual)).to eql('ahv')
+    end
+
+    it 'detects that is virtual' do
+      expect(Facter::Resolvers::Windows::Virtualization.resolve(:is_virtual)).to be(true)
+    end
+  end
+
   describe '#resolve Microsoft VM' do
     before do
       allow(win32ole).to receive(:Model).and_return(model)
