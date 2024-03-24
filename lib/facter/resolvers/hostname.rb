@@ -68,9 +68,9 @@ module Facter
 
         def read_domain
           file_content = Facter::Util::FileHelper.safe_read('/etc/resolv.conf')
-          if file_content =~ /^domain\s+(\S+)/
+          if file_content =~ /^domain\s+([^.]\S+)/
             Regexp.last_match(1)
-          elsif file_content =~ /^search\s+(\S+)/
+          elsif file_content =~ /^search\s+([^.]\S+)/
             Regexp.last_match(1)
           end
         end
