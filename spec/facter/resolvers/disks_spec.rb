@@ -48,9 +48,9 @@ describe Facter::Resolvers::Linux::Disks do
 
     context 'when device dir for blocks exists' do
       let(:expected_output) do
-        { 'sr0' => { model: 'model1', serial: 'AJDI2491AK', wwn: '239090190.0',
+        { 'sr0' => { model: 'model1', serial_number: 'AJDI2491AK', wwn: '239090190.0',
                      size: '6.00 KiB', size_bytes: 6144, vendor: 'vendor1', type: 'ssd' },
-          'sda' => { model: 'model2', serial: 'B2EI34F1AL', wwn: '29429191.0',
+          'sda' => { model: 'model2', serial_number: 'B2EI34F1AL', wwn: '29429191.0',
                      size: '115.50 KiB', size_bytes: 118_272, vendor: 'vendor2', type: 'hdd' } }
       end
 
@@ -91,8 +91,10 @@ describe Facter::Resolvers::Linux::Disks do
 
       context 'when size files are not readable' do
         let(:expected_output) do
-          { 'sr0' => { model: 'model1', vendor: 'vendor1', type: 'ssd', serial: 'AJDI2491AK', wwn: '239090190.0' },
-            'sda' => { model: 'model2', vendor: 'vendor2', type: 'hdd', serial: 'B2EI34F1AL', wwn: '29429191.0' } }
+          { 'sr0' => { model: 'model1', vendor: 'vendor1', type: 'ssd', serial_number: 'AJDI2491AK',
+                       wwn: '239090190.0' },
+            'sda' => { model: 'model2', vendor: 'vendor2', type: 'hdd', serial_number: 'B2EI34F1AL',
+                       wwn: '29429191.0' } }
         end
 
         before do
@@ -113,8 +115,8 @@ describe Facter::Resolvers::Linux::Disks do
 
       context 'when device vendor and model files are not readable' do
         let(:expected_output) do
-          { 'sr0' => { size: '6.00 KiB', size_bytes: 6144, serial: 'AJDI2491AK', wwn: '239090190.0' },
-            'sda' => { size: '115.50 KiB', size_bytes: 118_272, serial: 'B2EI34F1AL', wwn: '29429191.0' } }
+          { 'sr0' => { size: '6.00 KiB', size_bytes: 6144, serial_number: 'AJDI2491AK', wwn: '239090190.0' },
+            'sda' => { size: '115.50 KiB', size_bytes: 118_272, serial_number: 'B2EI34F1AL', wwn: '29429191.0' } }
         end
 
         before do
