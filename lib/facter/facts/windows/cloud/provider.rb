@@ -10,11 +10,14 @@ module Facts
           virtual = Facter::Resolvers::Windows::Virtualization.resolve(:virtual)
           provider = case virtual
                      when 'hyperv'
-                       'azure' unless Facter::Resolvers::Az.resolve(:metadata).empty?
+                       metadata = Facter::Resolvers::Az.resolve(:metadata)
+                       'azure' unless metadata.nil? || metadata.empty?
                      when 'kvm', 'xen'
-                       'aws' unless Facter::Resolvers::Ec2.resolve(:metadata).empty?
+                       metadata = Facter::Resolvers::Ec2.resolve(:metadata)
+                       'aws' unless metadata.nil? || metadata.empty?
                      when 'gce'
-                       'gce' unless Facter::Resolvers::Gce.resolve(:metadata).empty?
+                       metadata = Facter::Resolvers::Gce.resolve(:metadata)
+                       'gce' unless metadata.nil? || metadata.empty?
                      end
 
           Facter::ResolvedFact.new(FACT_NAME, provider)
