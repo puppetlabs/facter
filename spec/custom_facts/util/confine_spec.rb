@@ -126,6 +126,20 @@ describe LegacyFacter::Util::Confine do
       expect(confine.true?).to be true
     end
 
+    it 'accepts and evaluate a block argument against the fact while respecting case' do
+      allow(fact).to receive(:value).and_return 'Foo'
+      confine = LegacyFacter::Util::Confine.new(:yay) { |f| f == 'Foo' }
+      expect(confine.true?).to be true
+    end
+
+    it 'accepts and evaluate multiple block arguments' do
+      allow(fact).to receive(:value).and_return 'bar'
+      first_confine = LegacyFacter::Util::Confine.new(:yay) { |f| f == 'foo' }
+      second_confine = LegacyFacter::Util::Confine.new(:yay) { |f| f == 'bar' }
+      expect(first_confine.true?).to be false
+      expect(second_confine.true?).to be true
+    end
+
     it 'returns false if the block raises a StandardError when checking a fact' do
       allow(fact).to receive(:value).and_return 'foo'
       confine = LegacyFacter::Util::Confine.new(:yay) { |_f| raise StandardError }
