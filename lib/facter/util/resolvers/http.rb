@@ -10,23 +10,24 @@ module Facter
           CONNECTION_TIMEOUT = 0.6
           SESSION_TIMEOUT = 5
 
-          # Makes a GET http request and returns its response.
+          # Makes a GET HTTP request and returns its response.
           #
-          # Params:
-          # url: String which contains the address to which the request will be made
-          # headers: Hash which contains the headers you need to add to your request.
-          #          Default headers is an empty hash
-          #          Example: { "Accept": 'application/json' }
-          # timeouts: Hash that includes the values for the session and connection timeouts.
-          #          Example: { session: 2.4. connection: 5 }
-          #
-          # Return value:
-          # is a string with the response body if the response code is 200.
-          # If the response code is not 200, an empty string is returned.
+          # @param url [String] the address to which the request will be made.
+          # @param headers [Hash] the headers you need to add to your request.
+          #   Defaults to an empty hash.
+          # @param timeouts [Hash] Values for the session and connection
+          #   timeouts.
+          # @returns [String] the response body if the response code is 200.
+          #   If the response code is not 200, an empty string is returned.
+          # @example
+          #   get_request('https://example.com', { "Accept": 'application/json' }, { session: 2.4, connection: 5 })
           def get_request(url, headers = {}, timeouts = {})
             make_request(url, headers, timeouts, 'GET')
           end
 
+          # Makes a PUT HTTP request and returns its response
+          # @param (see #get_request)
+          # @return (see #get_request)
           def put_request(url, headers = {}, timeouts = {})
             make_request(url, headers, timeouts, 'PUT')
           end
