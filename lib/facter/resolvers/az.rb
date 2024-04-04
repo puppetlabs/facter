@@ -26,7 +26,7 @@ module Facter
 
         def get_data_from(url)
           headers = { Metadata: 'true' }
-          Facter::Util::Resolvers::Http.get_request(url, headers, { session: determine_session_timeout })
+          Facter::Util::Resolvers::Http.get_request(url, headers, { session: determine_session_timeout }, http_port: nil, proxy_addr: nil)
         end
 
         def determine_session_timeout
