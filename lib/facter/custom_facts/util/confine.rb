@@ -35,7 +35,7 @@ module LegacyFacter
       end
 
       # Evaluate the fact, returning true or false.
-      # if we have a block paramter then we only evaluate that instead
+      # if we have a block parameter then we only evaluate that instead
       def true?
         if @block && !@fact
           begin
@@ -54,9 +54,11 @@ module LegacyFacter
 
         return false if value.nil?
 
+        # We call the block with both the downcased and raw fact value for
+        # backwards-compatibility.
         if @block
           begin
-            return !!@block.call(value)
+            return !@block.call(value).nil? || !@block.call(fact.value).nil?
           rescue StandardError => e
             log.debug "Confine raised #{e.class} #{e}"
             return false
