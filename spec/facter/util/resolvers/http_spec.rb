@@ -11,7 +11,7 @@ describe Facter::Util::Resolvers::Http do
     allow(Gem).to receive(:win_platform?).and_return(false)
   end
 
-  RSpec.shared_examples 'a http request' do
+  RSpec.shared_examples 'an http request' do
     context 'when success' do
       before do
         stub_request(http_verb, url).to_return(status: 200, body: 'success')
@@ -97,8 +97,8 @@ describe Facter::Util::Resolvers::Http do
     end
   end
 
-  RSpec.shared_examples 'a http request on windows' do
-    it_behaves_like 'a http request'
+  RSpec.shared_examples 'an http request on windows' do
+    it_behaves_like 'an http request'
 
     context 'when host is unreachable ' do
       before do
@@ -138,14 +138,14 @@ describe Facter::Util::Resolvers::Http do
     let(:http_verb) { :get }
     let(:client_method) { :get_request }
 
-    it_behaves_like 'a http request'
+    it_behaves_like 'an http request'
   end
 
   describe '#put_request' do
     let(:http_verb) { :put }
     let(:client_method) { :put_request }
 
-    it_behaves_like 'a http request'
+    it_behaves_like 'an http request'
   end
 
   context 'when windows' do
@@ -160,14 +160,34 @@ describe Facter::Util::Resolvers::Http do
       let(:http_verb) { :get }
       let(:client_method) { :get_request }
 
-      it_behaves_like 'a http request on windows'
+      it_behaves_like 'an http request on windows'
     end
 
     describe '#put_request' do
       let(:http_verb) { :put }
       let(:client_method) { :put_request }
 
-      it_behaves_like 'a http request on windows'
+      it_behaves_like 'an http request on windows'
+    end
+  end
+
+  context 'when using a proxy' do
+    before do
+      stub_const('ENV', { 'http_proxy' => 'http://example.com' })
+    end
+
+    describe '#get_request' do
+      let(:http_verb) { :get }
+      let(:client_method) { :get_request }
+
+      it_behaves_like 'an http request'
+    end
+
+    describe '#put_request' do
+      let(:http_verb) { :put }
+      let(:client_method) { :put_request }
+
+      it_behaves_like 'an http request'
     end
   end
 end

@@ -8,7 +8,7 @@ describe Facter::Resolvers::Az do
 
   before do
     allow(Facter::Util::Resolvers::Http).to receive(:get_request)
-      .with(uri, { Metadata: 'true' }, { session: 5 }).and_return(output)
+      .with(uri, { Metadata: 'true' }, { session: 5 }, false).and_return(output)
     az.instance_variable_set(:@log, log_spy)
   end
 
@@ -17,6 +17,18 @@ describe Facter::Resolvers::Az do
   end
 
   context 'when no exception is thrown' do
+    let(:output) { '{"azEnvironment":"AzurePublicCloud"}' }
+
+    it 'returns az metadata' do
+      expect(az.resolve(:metadata)).to eq({ 'azEnvironment' => 'AzurePublicCloud' })
+    end
+  end
+
+  context "when a proxy is set with ENV['http_proxy']" do
+    before do
+      stub_const('ENV', { 'http_proxy' => 'http://example.com' })
+    end
+
     let(:output) { '{"azEnvironment":"AzurePublicCloud"}' }
 
     it 'returns az metadata' do
