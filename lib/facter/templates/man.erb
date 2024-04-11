@@ -1,11 +1,14 @@
 <%# encoding: UTF-8%>
+facter - collect and display facts about the current system
+===========================================================
+
 SYNOPSIS
 --------
-  facter [options] [query] [query] [...]
+<b>facter</b> [options] [query] [query] [...]
 
 DESCRIPTION
 -----------
-Collect and display facts about the current system. The library behind Facter is easy to extend, making Facter an easy way to collect information about a system.
+<b>facter</b> is a command-line tool that gathers basic facts about nodes (systems) such as hardware details, network settings, OS type and version, and more. These facts are made available as variables in your Puppet manifests and can be used to inform conditional expressions in Puppet.
 
 If no queries are given, then all facts will be returned.
 
