@@ -158,4 +158,16 @@ describe Facter::Resolvers::Ec2 do
       expect(ec2.resolve(:userdata)).to eql(expected_str)
     end
   end
+
+  context "when a proxy is set with ENV['http_proxy']" do
+    before do
+      stub_const('ENV', { 'http_proxy' => 'http://example.com' })
+      stub_request(:put, token_uri).to_return(status: 200, body: token)
+    end
+
+    let(:headers) { { 'Accept' => '*/*' } }
+    let(:token) { 'v2_token' }
+
+    it_behaves_like 'ec2'
+  end
 end

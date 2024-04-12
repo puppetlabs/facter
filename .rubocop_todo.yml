@@ -42,3 +42,11 @@ Style/Documentation:
     - 'spec_integration/**/*'
     - 'scripts/*'
     - 'install.rb'
+
+# While it would be preferable to use a keyword argument for the proxy setting in #get_request and #put_request, if we
+# add keyword arguments to those methods Ruby < 3 misinterprets earlier positional arguments as a keyword arguments.
+# This is because those positional arguments are hashes that use symbols as keys.
+# TODO: revisit this after we drop Ruby < 3 support.
+Style/OptionalBooleanParameter:
+  Exclude:
+    - 'lib/facter/util/resolvers/http.rb'

@@ -52,7 +52,7 @@ module Facter
         def get_data_from(url)
           headers = {}
           headers['X-aws-ec2-metadata-token'] = v2_token if v2_token
-          Facter::Util::Resolvers::Http.get_request(url, headers, { session: determine_session_timeout })
+          Facter::Util::Resolvers::Http.get_request(url, headers, { session: determine_session_timeout }, false)
         end
 
         def determine_session_timeout
