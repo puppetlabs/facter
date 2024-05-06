@@ -229,7 +229,7 @@ module Facter
           'os.release.major' => os_version,
           'processors.count' => /[1-9]/,
           'processors.physicalcount' => /[1-9]/,
-          'processors.isa' => os_hardware,
+          'processors.isa' => /unknown|#{os_hardware}/,
           'processors.models' => /(Intel\(R\).*)|(AMD.*)/,
           'kernel' => 'Linux',
           'kernelrelease' => /\d+\.\d+\.\d+/,
