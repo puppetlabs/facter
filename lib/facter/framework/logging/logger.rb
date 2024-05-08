@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'logger'
+require 'set'
 
 module Facter
   RED     = "\e[31m"
@@ -15,8 +16,8 @@ module Facter
     @@logger = nil
     @@message_callback = nil
     @@has_errors = false
-    @@debug_messages = []
-    @@warn_messages = []
+    @@debug_messages = Set.new
+    @@warn_messages = Set.new
     @@timing = false
 
     class << self
