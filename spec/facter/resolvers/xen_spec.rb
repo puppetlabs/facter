@@ -10,6 +10,7 @@ describe Facter::Resolvers::Xen do
 
   before do
     xen_resolver.instance_variable_set(:@log, log_spy)
+    allow(File).to receive(:exist?).and_call_original
     allow(File).to receive(:exist?).with('/dev/xen/evtchn').and_return(evtchn_file)
     allow(File).to receive(:exist?).with('/proc/xen').and_return(proc_xen_file)
     allow(File).to receive(:exist?).with('/dev/xvda1').and_return(xvda1_file)
