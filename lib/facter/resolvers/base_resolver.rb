@@ -3,8 +3,8 @@
 module Facter
   module Resolvers
     class BaseResolver
-      def self.log
-        @log ||= Log.new(self)
+      class << self
+        attr_reader :log
       end
 
       def self.invalidate_cache
@@ -14,6 +14,7 @@ module Facter
       def self.init_resolver
         @fact_list = {}
         @semaphore = Mutex.new
+        @log = Log.new(self)
       end
 
       def self.subscribe_to_manager

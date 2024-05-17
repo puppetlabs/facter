@@ -7,8 +7,6 @@ module Facter
         include Facter::Util::Resolvers::FilesystemHelper
         init_resolver
 
-        @log = Facter::Log.new(self)
-
         class << self
           private
 

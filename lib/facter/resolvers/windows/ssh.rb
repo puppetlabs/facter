@@ -4,8 +4,6 @@ module Facter
   module Resolvers
     module Windows
       class Ssh < BaseResolver
-        @log = Facter::Log.new(self)
-
         init_resolver
 
         FILE_NAMES = %w[ssh_host_rsa_key.pub ssh_host_dsa_key.pub

@@ -8,8 +8,6 @@ module Facter
 
         init_resolver
 
-        @log = Facter::Log.new(self)
-
         class << self
           private
 

@@ -6,8 +6,6 @@ module Facter
       class Memory < BaseResolver
         init_resolver
 
-        @log = Facter::Log.new(self)
-
         class << self
           private
 

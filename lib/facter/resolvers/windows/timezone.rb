@@ -34,7 +34,6 @@ module Facter
             require_relative '../../../facter/resolvers/windows/ffi/winnls_ffi'
             WinnlsFFI.GetACP.to_s
           rescue LoadError => e
-            log = Facter::Log.new(self)
             log.debug("Could not retrieve codepage: #{e}")
           end
         end

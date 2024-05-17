@@ -3,7 +3,6 @@
 module Facter
   module Resolvers
     class DMIBios < BaseResolver
-      @log = Facter::Log.new(self)
       init_resolver
 
       class << self
