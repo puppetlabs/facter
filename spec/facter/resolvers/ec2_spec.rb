@@ -11,6 +11,7 @@ describe Facter::Resolvers::Ec2 do
 
   before do
     Facter::Util::Resolvers::Http.instance_variable_set(:@log, log_spy)
+    allow(Socket).to receive(:tcp) if Gem.win_platform?
   end
 
   after do
