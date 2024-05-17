@@ -3,7 +3,7 @@
 describe Facter::Resolvers::Uname do
   subject(:uname_resolver) { Facter::Resolvers::Uname }
 
-  let(:log_spy) { Facter::Log }
+  let(:log_spy) { instance_spy(Facter::Log) }
 
   before do
     uname_resolver.instance_variable_set(:@log, log_spy)

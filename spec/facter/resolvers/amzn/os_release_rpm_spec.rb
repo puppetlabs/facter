@@ -3,7 +3,7 @@
 describe Facter::Resolvers::Amzn::OsReleaseRpm do
   subject(:os_release_resolver) { Facter::Resolvers::Amzn::OsReleaseRpm }
 
-  let(:log_spy) { Facter::Log }
+  let(:log_spy) { instance_spy(Facter::Log) }
 
   before do
     os_release_resolver.instance_variable_set(:@log, log_spy)
