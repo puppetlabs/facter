@@ -37,6 +37,7 @@ Gem::Specification.new do |spec|
   # ffi 1.16.0 - 1.16.2 are broken on Windows
   spec.add_development_dependency 'ffi', '>= 1.15.5', '< 1.17.0', '!= 1.16.0', '!= 1.16.1', '!= 1.16.2'
   spec.add_development_dependency 'rake', '~> 13.0', '>= 13.0.6'
+  spec.add_development_dependency 'rexml', '>= 3.2.0', '<= 3.2.6'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rubocop', '~> 1.28' # last version to support 2.5
   spec.add_development_dependency 'rubocop-performance', '~> 1.5.2'
