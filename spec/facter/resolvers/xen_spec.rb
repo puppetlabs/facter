@@ -27,6 +27,18 @@ describe Facter::Resolvers::Xen do
     xen_resolver.invalidate_cache
   end
 
+  context 'when not xen' do
+    let(:evtchn_file) { false }
+    let(:proc_xen_file) { false }
+    let(:xvda1_file) { false }
+
+    it 'returns' do
+      allow(File).to receive(:exist?).with('/usr/sbin/xm').and_return(false)
+
+      expect(xen_resolver.resolve(:vm)).to be_nil
+    end
+  end
+
   context 'when xen is privileged' do
     context 'when /dev/xen/evtchn exists' do
       let(:domains) { load_fixture('xen_domains').read }
