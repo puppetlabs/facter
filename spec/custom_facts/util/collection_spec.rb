@@ -23,17 +23,12 @@ describe LegacyFacter::Util::Collection do
     load
   end
   let(:collection) { LegacyFacter::Util::Collection.new(internal_loader, external_loader) }
-  let(:logger) { instance_spy(Facter::Log) }
+  let(:logger) { collection.send(:log) }
 
   before do
     Singleton.__init__(Facter::FactManager)
     Singleton.__init__(Facter::FactLoader)
     Singleton.__init__(Facter::ClassDiscoverer)
-    allow(Facter::Log).to receive(:new).and_return(logger)
-  end
-
-  after do
-    LegacyFacter::Util::Collection.instance_variable_set(:@log, nil)
   end
 
   it 'delegates its load_all method to its loader' do
