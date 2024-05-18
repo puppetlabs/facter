@@ -4,6 +4,7 @@ describe Facter::Core::Aggregate do
   subject(:aggregate_res) { Facter::Core::Aggregate.new('aggregated', fact) }
 
   let(:fact) { double('stub_fact', name: 'stub_fact') }
+  let(:logger) { Facter::Log.class_variable_get(:@@logger) }
 
   it 'can be resolved' do
     expect(aggregate_res).to be_a_kind_of LegacyFacter::Core::Resolvable
@@ -135,6 +136,12 @@ describe Facter::Core::Aggregate do
     it 'evaluates the block in the context of the aggregate' do
       expect(aggregate_res).to receive(:has_weight).with(5)
       aggregate_res.evaluate { has_weight(5) }
+    end
+
+    it 'warns if the block is evaluated more than once' do
+      expect(logger).to receive(:warn).with(/Already evaluated aggregated at.*reevaluating anyways/)
+      aggregate_res.evaluate {}
+      aggregate_res.evaluate {}
     end
   end
 end
