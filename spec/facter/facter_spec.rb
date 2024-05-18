@@ -14,8 +14,8 @@ describe Facter do
                              :core, 'mountpoints')
   end
 
-  let(:logger) { instance_spy(Facter::Log) }
   let(:config_reader_double) { class_spy(Facter::ConfigReader) }
+  let(:logger) { Facter.send(:logger) }
 
   sorted_fact_hash = { 'mountpoints' => { '/' => { 'device' => 'dev2', 'filesystem' => 'ext4' },
                                           '/boot' => { 'device' => 'dev1', 'filesystem' => 'ext4' } } }
@@ -32,13 +32,8 @@ describe Facter do
     allow(Facter::Options).to receive(:[]).with(:blocked_facts).and_return([])
     allow(Facter::Options).to receive(:[]).with(:block_list).and_return([])
 
-    allow(Facter::Log).to receive(:new).and_return(logger)
     Facter.clear
     allow(Facter::SessionCache).to receive(:invalidate_all_caches)
-  end
-
-  after do
-    Facter.instance_variable_set(:@logger, nil)
   end
 
   def stub_facts(resolved_facts)
@@ -366,9 +361,9 @@ describe Facter do
       end
 
       it 'logs a debug message' do
-        Facter.load_external(true)
+        expect(logger).to receive(:debug).with('Facter.load_external(true) called. External facts will be loaded')
 
-        expect(logger).to have_received(:debug).with('Facter.load_external(true) called. External facts will be loaded')
+        Facter.load_external(true)
       end
     end
 
@@ -501,9 +496,9 @@ describe Facter do
       let(:is_debug) { false }
 
       it "doesn't log anything" do
-        Facter.debug(message)
+        expect(logger).not_to receive(:debug).with(message)
 
-        expect(logger).not_to have_received(:debug).with(message)
+        Facter.debug(message)
       end
     end
   end
@@ -530,17 +525,17 @@ describe Facter do
       it 'logs exception message' do
         exception.set_backtrace(backtrace)
 
-        Facter.log_exception(exception, message)
+        expect(logger).to receive(:error).with(expected_message)
 
-        expect(logger).to have_received(:error).with(expected_message)
+        Facter.log_exception(exception, message)
       end
     end
 
     shared_examples 'when exception param is not an exception' do
       it 'logs exception message' do
-        Facter.log_exception(exception, message)
+        expect(logger).to receive(:error).with(expected_message)
 
-        expect(logger).to have_received(:error).with(expected_message)
+        Facter.log_exception(exception, message)
       end
     end
 
@@ -578,9 +573,9 @@ describe Facter do
         it 'logs exception message' do
           exception.set_backtrace(backtrace)
 
-          Facter.log_exception(exception)
+          expect(logger).to receive(:error).with(expected_message)
 
-          expect(logger).to have_received(:error).with(expected_message)
+          Facter.log_exception(exception)
         end
       end
 
@@ -651,9 +646,9 @@ describe Facter do
         it 'logs exception message' do
           exception.set_backtrace(backtrace)
 
-          Facter.log_exception(exception)
+          expect(logger).to receive(:error).with(expected_message)
 
-          expect(logger).to have_received(:error).with(expected_message)
+          Facter.log_exception(exception)
         end
       end
 
@@ -662,9 +657,9 @@ describe Facter do
         let(:expected_message) { 'FlushFakeError' }
 
         it 'logs exception message' do
-          Facter.log_exception(exception)
+          expect(logger).to receive(:error).with(expected_message)
 
-          expect(logger).to have_received(:error).with(expected_message)
+          Facter.log_exception(exception)
         end
       end
 
@@ -710,21 +705,21 @@ describe Facter do
       it 'calls logger with the debug message' do
         message = 'Some error message'
 
-        Facter.debugonce(message)
+        expect(logger).to receive(:debugonce).with(message)
 
-        expect(logger).to have_received(:debugonce).with(message)
+        Facter.debugonce(message)
       end
 
       it 'writes empty message when message is nil' do
-        Facter.debugonce(nil)
+        expect(logger).to receive(:debugonce).with(nil)
 
-        expect(logger).to have_received(:debugonce).with(nil)
+        Facter.debugonce(nil)
       end
 
       it 'when message is a hash' do
-        Facter.debugonce({ warn: 'message' })
+        expect(logger).to receive(:debugonce).with({ warn: 'message' })
 
-        expect(logger).to have_received(:debugonce).with({ warn: 'message' })
+        Facter.debugonce({ warn: 'message' })
       end
 
       it 'returns nil' do
@@ -740,9 +735,9 @@ describe Facter do
       end
 
       it 'does not call the logger' do
-        Facter.debugonce('message')
+        expect(logger).not_to receive(:debug)
 
-        expect(logger).not_to have_received(:debug)
+        Facter.debugonce('message')
       end
     end
   end
@@ -767,21 +762,21 @@ describe Facter do
     it 'calls logger with the warning message' do
       message = 'Some error message'
 
-      Facter.warnonce(message)
+      expect(logger).to receive(:warnonce).with(message)
 
-      expect(logger).to have_received(:warnonce).with(message)
+      Facter.warnonce(message)
     end
 
     it 'writes empty message when message is nil' do
-      Facter.warnonce(nil)
+      expect(logger).to receive(:warnonce).with(nil)
 
-      expect(logger).to have_received(:warnonce).with(nil)
+      Facter.warnonce(nil)
     end
 
     it 'when message is a hash' do
-      Facter.warnonce({ warn: 'message' })
+      expect(logger).to receive(:warnonce).with({ warn: 'message' })
 
-      expect(logger).to have_received(:warnonce).with({ warn: 'message' })
+      Facter.warnonce({ warn: 'message' })
     end
 
     it 'returns nil' do
@@ -792,39 +787,36 @@ describe Facter do
   end
 
   describe '#warn' do
-    before do
-      allow(logger).to receive(:warn)
-    end
-
     it 'calls logger' do
       message = 'Some error message'
 
-      Facter.warn(message)
+      expect(logger).to receive(:warn).with(message)
 
-      expect(logger).to have_received(:warn).with(message)
+      Facter.warn(message)
     end
 
     it 'when message is nil' do
-      Facter.warn(nil)
+      expect(logger).to receive(:warn).with('')
 
-      expect(logger).to have_received(:warn).with('')
+      Facter.warn(nil)
     end
 
     it 'when message is empty string' do
+      expect(logger).to receive(:warn).with('')
+
       Facter.warn('')
-      expect(logger).to have_received(:warn).with('')
     end
 
     it 'when message is a hash' do
-      Facter.warn({ warn: 'message' })
+      expect(logger).to receive(:warn).with('{:warn=>"message"}')
 
-      expect(logger).to have_received(:warn).with('{:warn=>"message"}')
+      Facter.warn({ warn: 'message' })
     end
 
     it 'when message is an array' do
-      Facter.warn([1, 2, 3])
+      expect(logger).to receive(:warn).with('[1, 2, 3]')
 
-      expect(logger).to have_received(:warn).with('[1, 2, 3]')
+      Facter.warn([1, 2, 3])
     end
 
     it 'returns nil' do

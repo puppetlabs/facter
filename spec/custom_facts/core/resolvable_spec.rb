@@ -49,22 +49,13 @@ describe LegacyFacter::Core::Resolvable do
     end
 
     context 'with a fact whose value is invalid UTF-8 string' do
-      let(:logger) { instance_spy(Facter::Log) }
-
-      before do
-        allow(Facter::Log).to receive(:new).and_return(logger)
-      end
-
-      after do
-        Facter.instance_variable_set(:@logger, nil)
-      end
+      let(:logger) { Facter.send(:logger) }
 
       it 'cannot resolve and logs error with fact name' do
+        expect(logger).to receive(:error).with(/Fact resolution fact='stub fact', resolution='resolvable' resolved to an invalid value: String "\\xC3\(" doesn't match the reported encoding UTF-8/)
+
         resolvable.resolve_value = "\xc3\x28"
         resolvable.value
-        expect(logger).to have_received(:error).with("Fact resolution fact='stub fact', resolution='resolvable' "\
-                                                     "resolved to an invalid value: String \"\\xC3(\" doesn't match "\
-                                                     'the reported encoding UTF-8')
       end
     end
   end
