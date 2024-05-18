@@ -50,7 +50,6 @@ describe Facter::Core::Execution do
     before do
       allow(impl).to receive(:which).with('waffles').and_return('/under/the/honey/are/the/waffles')
       allow(impl).to receive(:execute_command)
-      allow(logger).to receive(:warn)
     end
 
     context 'with default parameters' do
@@ -75,11 +74,20 @@ describe Facter::Core::Execution do
         end
       end
 
-      it 'emits a warning' do
-        execution.execute('waffles', time_limit: 90, bad_opt: true)
-        expect(logger).to have_received(:warn)
+      it 'emits a warning to the default logger' do
+        expect(logger).to receive(:warn)
           .with('Unexpected key passed to Facter::Core::Execution.execute option: time_limit,bad_opt' \
-                ' - valid keys: on_fail,expand,logger,timeout')
+            ' - valid keys: on_fail,expand,logger,timeout')
+
+        execution.execute('waffles', time_limit: 90, bad_opt: true)
+      end
+
+      it 'ignores the passed in logger when logging the warning' do
+        expect(logger).to receive(:warn)
+          .with('Unexpected key passed to Facter::Core::Execution.execute option: time_limit,bad_opt' \
+            ' - valid keys: on_fail,expand,logger,timeout')
+
+        execution.execute('waffles', time_limit: 90, bad_opt: true, logger: Facter::Log.new('ignored'))
       end
     end
   end
