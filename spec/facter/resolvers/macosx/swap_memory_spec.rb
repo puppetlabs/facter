@@ -3,7 +3,6 @@
 describe Facter::Resolvers::Macosx::SwapMemory do
   subject(:swap_memory) { Facter::Resolvers::Macosx::SwapMemory }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
   let(:available_bytes) { 1_729_363_968 }
   let(:total_bytes) { 3_221_225_472 }
   let(:used_bytes) { 1_491_861_504 }
@@ -11,9 +10,8 @@ describe Facter::Resolvers::Macosx::SwapMemory do
   let(:encrypted) { true }
 
   before do
-    swap_memory.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('sysctl -n vm.swapusage', { logger: log_spy })
+      .with('sysctl -n vm.swapusage', logger: an_instance_of(Facter::Log))
       .and_return('total = 3072.00M  used = 1422.75M  free = 1649.25M  (encrypted)')
   end
 

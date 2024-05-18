@@ -3,7 +3,6 @@
 describe Facter::Resolvers::Bsd::Processors do
   subject(:resolver) { Facter::Resolvers::Bsd::Processors }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
   let(:logicalcount) { 2 }
   let(:models) do
     ['Intel(r) Xeon(r) Gold 6138 CPU @ 2.00GHz', 'Intel(r) Xeon(r) Gold 6138 CPU @ 2.00GHz']
@@ -23,8 +22,6 @@ describe Facter::Resolvers::Bsd::Processors do
       .to receive(:sysctl)
       .with(:uint32_t, [6, 12])
       .and_return(2592)
-
-    resolver.instance_variable_set(:@log, log_spy)
   end
 
   after do

@@ -3,14 +3,12 @@
 describe Facter::Resolvers::Freebsd::SystemMemory do
   subject(:system_memory) { Facter::Resolvers::Freebsd::SystemMemory }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
   let(:available_bytes) { 2_696_462_336 }
   let(:total_bytes) { 17_043_554_304 }
   let(:used_bytes) { 14_347_091_968 }
   let(:capacity) { '84.18%' }
 
   before do
-    system_memory.instance_variable_set(:@log, log_spy)
     allow(Facter::Freebsd::FfiHelper).to receive(:sysctl_by_name)
       .with(:long, 'vm.stats.vm.v_page_size')
       .and_return(4096)

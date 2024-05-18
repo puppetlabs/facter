@@ -4,11 +4,8 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
   subject(:detector) { Facter::Util::Facts::Posix::VirtualDetector }
 
   describe '#platform' do
-    let(:logger_mock) { instance_spy(Facter::Log) }
-
     before do
       Facter::Util::Facts::Posix::VirtualDetector.instance_variable_set(:@fact_value, nil)
-      allow(Facter::Log).to receive(:new).and_return(logger_mock)
     end
 
     context 'when in docker' do

@@ -3,14 +3,11 @@
 describe Facter::Resolvers::SwVers do
   subject(:sw_vers) { Facter::Resolvers::SwVers }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
-
   context 'with ProductVersionExtra' do
     before do
       Facter::Resolvers::SwVers.invalidate_cache
-      sw_vers.instance_variable_set(:@log, log_spy)
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('sw_vers', { logger: log_spy })
+        .with('sw_vers', logger: an_instance_of(Facter::Log))
         .and_return("ProductName:\tmacOS\nProductVersion:\t13.3.1\n"\
           "ProductVersionExtra:\t(a)\nBuildVersion:\t22E772610a\n")
     end
@@ -35,9 +32,8 @@ describe Facter::Resolvers::SwVers do
   context 'without ProductVersionExtra' do
     before do
       Facter::Resolvers::SwVers.invalidate_cache
-      sw_vers.instance_variable_set(:@log, log_spy)
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('sw_vers', { logger: log_spy })
+        .with('sw_vers', logger: an_instance_of(Facter::Log))
         .and_return("ProductName:\tMac OS X\nProductVersion:\t10.14.1\n"\
           "BuildVersion:\t18B75\n")
     end

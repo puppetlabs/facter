@@ -4,10 +4,8 @@ describe Facter::Util::Resolvers::Http do
   subject(:http) { Facter::Util::Resolvers::Http }
 
   let(:url) { 'http://169.254.169.254/meta-data/' }
-  let(:log_spy) { instance_spy(Facter::Log) }
 
   before do
-    http.instance_variable_set(:@log, log_spy)
     allow(Gem).to receive(:win_platform?).and_return(false)
   end
 
@@ -44,8 +42,10 @@ describe Facter::Util::Resolvers::Http do
       end
 
       it 'logs error code' do
+        allow(http.instance_variable_get(:@log)).to receive(:debug)
+        expect(http.instance_variable_get(:@log)).to receive(:debug).with("Request to #{url} failed with error code 500")
+
         http.send(client_method, url)
-        expect(log_spy).to have_received(:debug).with("Request to #{url} failed with error code 500")
       end
     end
 
@@ -59,9 +59,10 @@ describe Facter::Util::Resolvers::Http do
       end
 
       it 'logs error message' do
+        allow(http.instance_variable_get(:@log)).to receive(:debug)
+        expect(http.instance_variable_get(:@log)).to receive(:debug).with("Trying to connect to #{url} but got: execution expired")
+
         http.send(client_method, url)
-        expect(log_spy).to have_received(:debug)
-          .with("Trying to connect to #{url} but got: execution expired")
       end
     end
 
@@ -75,8 +76,10 @@ describe Facter::Util::Resolvers::Http do
       end
 
       it 'logs error message' do
+        allow(http.instance_variable_get(:@log)).to receive(:debug)
+        expect(http.instance_variable_get(:@log)).to receive(:debug).with("Trying to connect to #{url} but got: some error")
+
         http.send(client_method, url)
-        expect(log_spy).to have_received(:debug).with("Trying to connect to #{url} but got: some error")
       end
     end
 
@@ -112,9 +115,11 @@ describe Facter::Util::Resolvers::Http do
       end
 
       it 'logs error message' do
-        http.send(client_method, url)
-        expect(log_spy).to have_received(:debug)
+        allow(http.instance_variable_get(:@log)).to receive(:debug)
+        expect(http.instance_variable_get(:@log)).to receive(:debug)
           .with(/((Operation|Connection) timed out)|(A connection attempt.*)/)
+
+        http.send(client_method, url)
       end
     end
 

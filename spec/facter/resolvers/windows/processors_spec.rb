@@ -3,8 +3,6 @@
 describe Facter::Resolvers::Processors do
   subject(:resolver) { Facter::Resolvers::Processors }
 
-  let(:logger) { instance_spy(Facter::Log) }
-
   before do
     win = double('Facter::Util::Windows::Win32Ole')
     query_string = 'SELECT Name,'\
@@ -16,7 +14,6 @@ describe Facter::Resolvers::Processors do
     allow(win).to receive(:exec_query)
       .with(query_string)
       .and_return(proc)
-    resolver.instance_variable_set(:@log, logger)
   end
 
   after do
@@ -108,7 +105,7 @@ describe Facter::Resolvers::Processors do
     end
 
     it 'logs that is unknown architecture' do
-      allow(logger).to receive(:debug)
+      allow(resolver.log).to receive(:debug)
         .with('Unable to determine processor type: unknown architecture')
       expect(resolver.resolve(:isa)).to be(nil)
     end
@@ -118,7 +115,7 @@ describe Facter::Resolvers::Processors do
     let(:proc) { nil }
 
     it 'logs that query failed and isa nil' do
-      allow(logger).to receive(:debug)
+      allow(resolver.log).to receive(:debug)
         .with('WMI query returned no results'\
         'for Win32_Processor with values Name, Architecture and NumberOfLogicalProcessors.')
       expect(resolver.resolve(:isa)).to be(nil)
@@ -159,7 +156,7 @@ describe Facter::Resolvers::Processors do
     end
 
     it 'detects that isa is nil' do
-      allow(logger).to receive(:debug)
+      allow(resolver.log).to receive(:debug)
         .with('Unable to determine processor type: unknown architecture')
       expect(resolver.resolve(:isa)).to be(nil)
     end

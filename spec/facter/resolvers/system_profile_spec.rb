@@ -3,8 +3,6 @@
 describe Facter::Resolvers::Macosx::SystemProfiler do
   subject(:system_profiler) { Facter::Resolvers::Macosx::SystemProfiler }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
-
   let(:sp_hardware_data_type_hash) do
     {
       model_name: 'MacBook Pro',
@@ -53,10 +51,6 @@ describe Facter::Resolvers::Macosx::SystemProfiler do
       location: '/System/Library/Extensions/IONetworkingFamily.kext/Contents/PlugIns/AppleIntel8254XEthernet.kext',
       version: '3.1.5'
     }
-  end
-
-  before do
-    system_profiler.instance_variable_set(:@log, log_spy)
   end
 
   context 'when information is obtain from SPHardwareDataType' do

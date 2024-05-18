@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::Identity do
-  let(:logger) { instance_spy(Facter::Log) }
-
   before do
     size_ptr = double('FFI::MemoryPointer', read_uint32: 1)
     name_ptr = double('FFI::MemoryPointer', read_wide_string_with_length: user_name)
@@ -13,13 +11,10 @@ describe Facter::Resolvers::Identity do
     allow(FFI::MemoryPointer).to receive(:new).with(:wchar, size_ptr.read_uint32).and_return(name_ptr)
     allow(IdentityFFI).to receive(:GetUserNameExW).with(2, name_ptr, size_ptr).and_return(error_geting_user?)
     allow(IdentityFFI).to receive(:IsUserAnAdmin).and_return(admin?)
-
-    Facter::Resolvers::Identity.instance_variable_set(:@log, logger)
   end
 
   after do
     Facter::Resolvers::Identity.invalidate_cache
-    Facter::Resolvers::Identity.instance_variable_set(:@log, nil)
   end
 
   describe '#resolve when user is administrator' do
@@ -74,13 +69,13 @@ describe Facter::Resolvers::Identity do
     let(:admin?) { 0 }
 
     it 'logs debug message when trying to resolve user' do
-      allow(logger).to receive(:debug)
+      allow(Facter::Resolvers::Identity.log).to receive(:debug)
         .with("failure resolving identity facts: #{error_number}")
       expect(Facter::Resolvers::Identity.resolve(:user)).to be(nil)
     end
 
     it 'logs debug message when trying to find if user is privileged' do
-      allow(logger).to receive(:debug)
+      allow(Facter::Resolvers::Identity.log).to receive(:debug)
         .with("failure resolving identity facts: #{error_number}")
       expect(Facter::Resolvers::Identity.resolve(:privileged)).to be(nil)
     end
@@ -93,13 +88,13 @@ describe Facter::Resolvers::Identity do
     let(:admin?) { 0 }
 
     it 'logs debug message when trying to resolve user' do
-      allow(logger).to receive(:debug)
+      allow(Facter::Resolvers::Identity.log).to receive(:debug)
         .with("failure resolving identity facts: #{error_number}")
       expect(Facter::Resolvers::Identity.resolve(:user)).to be(nil)
     end
 
     it 'logs debug message when trying to find if user is privileged' do
-      allow(logger).to receive(:debug)
+      allow(Facter::Resolvers::Identity.log).to receive(:debug)
         .with("failure resolving identity facts: #{error_number}")
       expect(Facter::Resolvers::Identity.resolve(:privileged)).to be(nil)
     end

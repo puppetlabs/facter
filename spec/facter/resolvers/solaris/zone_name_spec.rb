@@ -4,15 +4,13 @@ describe Facter::Resolvers::Solaris::ZoneName do
   subject(:solaris_zone) { Facter::Resolvers::Solaris::ZoneName }
 
   let(:zone_name_output) { 'global' }
-  let(:log_spy) { instance_spy(Facter::Log) }
 
   before do
-    solaris_zone.instance_variable_set(:@log, log_spy)
     allow(File).to receive(:executable?)
       .with('/bin/zonename')
       .and_return(true)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('/bin/zonename', { logger: log_spy })
+      .with('/bin/zonename', logger: an_instance_of(Facter::Log))
       .and_return(zone_name_output)
   end
 

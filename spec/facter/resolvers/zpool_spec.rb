@@ -3,12 +3,9 @@
 describe Facter::Resolvers::Zpool do
   subject(:zpool_resolver) { Facter::Resolvers::Zpool }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
-
   before do
-    zpool_resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('zpool upgrade -v', { logger: log_spy })
+      .with('zpool upgrade -v', logger: an_instance_of(Facter::Log))
       .and_return(output)
   end
 

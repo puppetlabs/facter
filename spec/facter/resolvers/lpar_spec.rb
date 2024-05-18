@@ -3,12 +3,9 @@
 describe Facter::Resolvers::Lpar do
   subject(:lpar_resolver) { Facter::Resolvers::Lpar }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
-
   before do
-    lpar_resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('/usr/bin/lparstat -i', { logger: log_spy })
+      .with('/usr/bin/lparstat -i', logger: an_instance_of(Facter::Log))
       .and_return(load_fixture('lparstat_i').read)
     lpar_resolver.invalidate_cache
   end

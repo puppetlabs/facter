@@ -5,11 +5,6 @@ describe Facter::Util::Facts::UptimeParser do
     let(:uptime_proc_file_cmd) { '/bin/cat /proc/uptime' }
     let(:kern_boottime_cmd) { 'sysctl -n kern.boottime' }
     let(:uptime_cmd) { 'uptime' }
-    let(:log_spy) { instance_spy(Facter::Log) }
-
-    before do
-      Facter::Util::Facts::UptimeParser.instance_variable_set(:@log, log_spy)
-    end
 
     context 'when a /proc/uptime file exists' do
       let(:proc_uptime_value) { '2672.69 20109.75' }
@@ -17,7 +12,7 @@ describe Facter::Util::Facts::UptimeParser do
       it 'returns the correct result' do
         allow(Facter::Core::Execution)
           .to receive(:execute)
-          .with(uptime_proc_file_cmd, { logger: log_spy })
+          .with(uptime_proc_file_cmd, logger: an_instance_of(Facter::Log))
           .and_return(proc_uptime_value)
 
         expect(Facter::Util::Facts::UptimeParser.uptime_seconds_unix).to eq(2672)
@@ -36,12 +31,12 @@ describe Facter::Util::Facts::UptimeParser do
 
         allow(Facter::Core::Execution)
           .to receive(:execute)
-          .with(uptime_proc_file_cmd, { logger: log_spy })
+          .with(uptime_proc_file_cmd, logger: an_instance_of(Facter::Log))
           .and_return('')
 
         allow(Facter::Core::Execution)
           .to receive(:execute)
-          .with(kern_boottime_cmd, { logger: log_spy })
+          .with(kern_boottime_cmd, logger: an_instance_of(Facter::Log))
           .and_return(kern_boottime_value)
 
         expect(Facter::Util::Facts::UptimeParser.uptime_seconds_unix).to eq(60)
@@ -52,12 +47,12 @@ describe Facter::Util::Facts::UptimeParser do
       before do
         allow(Facter::Core::Execution)
           .to receive(:execute)
-          .with(uptime_proc_file_cmd, { logger: log_spy })
+          .with(uptime_proc_file_cmd, logger: an_instance_of(Facter::Log))
           .and_return('')
 
         allow(Facter::Core::Execution)
           .to receive(:execute)
-          .with(kern_boottime_cmd, { logger: log_spy })
+          .with(kern_boottime_cmd, logger: an_instance_of(Facter::Log))
           .and_return('')
       end
 
@@ -65,7 +60,7 @@ describe Facter::Util::Facts::UptimeParser do
         it 'returns the correct result' do
           allow(Facter::Core::Execution)
             .to receive(:execute)
-            .with(uptime_cmd, { logger: log_spy })
+            .with(uptime_cmd, logger: an_instance_of(Facter::Log))
             .and_return(cmd_output)
 
           expect(Facter::Util::Facts::UptimeParser.uptime_seconds_unix).to eq(result)

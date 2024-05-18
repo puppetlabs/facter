@@ -3,12 +3,9 @@
 describe Facter::Resolvers::Macosx::Filesystems do
   subject(:filesystems_resolver) { Facter::Resolvers::Macosx::Filesystems }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
-
   before do
-    filesystems_resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('mount', { logger: log_spy })
+      .with('mount', logger: an_instance_of(Facter::Log))
       .and_return(load_fixture('macosx_filesystems').read)
   end
 

@@ -3,12 +3,9 @@
 describe Facter::Resolvers::Solaris::Zone do
   subject(:solaris_zone) { Facter::Resolvers::Solaris::Zone }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
-
   before do
-    solaris_zone.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('/usr/sbin/zoneadm list -cp', { logger: log_spy })
+      .with('/usr/sbin/zoneadm list -cp', logger: an_instance_of(Facter::Log))
       .and_return(output)
   end
 
@@ -37,9 +34,10 @@ describe Facter::Resolvers::Solaris::Zone do
     let(:output) { '' }
 
     it 'prints debug message' do
-      solaris_zone.resolve(:zone)
-      expect(log_spy).to have_received(:debug)
+      expect(solaris_zone.log).to receive(:debug)
         .with('Command /usr/sbin/zoneadm list -cp returned an empty result')
+
+      solaris_zone.resolve(:zone)
     end
   end
 end

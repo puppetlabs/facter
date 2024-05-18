@@ -4,19 +4,16 @@ describe Facter::Resolvers::Solaris::Dmi do
   describe '#resolve' do
     subject(:resolver) { Facter::Resolvers::Solaris::Dmi }
 
-    let(:log_spy) { instance_spy(Facter::Log) }
-
     before do
-      resolver.instance_variable_set(:@log, log_spy)
       allow(File).to receive(:executable?).with('/usr/sbin/smbios').and_return(true)
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('/usr/sbin/smbios -t SMB_TYPE_BIOS', { logger: log_spy })
+        .with('/usr/sbin/smbios -t SMB_TYPE_BIOS', logger: an_instance_of(Facter::Log))
         .and_return(load_fixture('smbios_bios').read)
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('/usr/sbin/smbios -t SMB_TYPE_SYSTEM', { logger: log_spy })
+        .with('/usr/sbin/smbios -t SMB_TYPE_SYSTEM', logger: an_instance_of(Facter::Log))
         .and_return(load_fixture('smbios_system').read)
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('/usr/sbin/smbios -t SMB_TYPE_CHASSIS', { logger: log_spy })
+        .with('/usr/sbin/smbios -t SMB_TYPE_CHASSIS', logger: an_instance_of(Facter::Log))
         .and_return(load_fixture('smbios_chassis').read)
     end
 

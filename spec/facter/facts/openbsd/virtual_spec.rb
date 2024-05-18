@@ -5,10 +5,8 @@ describe Facts::Openbsd::Virtual do
     subject(:fact) { Facts::Openbsd::Virtual.new }
 
     let(:virtual_detector_double) { class_spy(Facter::Util::Facts::Posix::VirtualDetector) }
-    let(:log_spy) { instance_spy(Facter::Log) }
 
     before do
-      allow(Facter::Log).to receive(:new).and_return(log_spy)
       allow(Facter::Util::Facts::Posix::VirtualDetector).to receive(:platform).and_return(value)
     end
 

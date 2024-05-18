@@ -1,14 +1,11 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::DMIBios do
-  let(:logger) { instance_spy(Facter::Log) }
-
   before do
     win = double('Facter::Util::Windows::Win32Ole')
 
     allow(Facter::Util::Windows::Win32Ole).to receive(:new).and_return(win)
     allow(win).to receive(:return_first).with('SELECT Manufacturer,SerialNumber from Win32_BIOS').and_return(comp)
-    Facter::Resolvers::DMIBios.instance_variable_set(:@log, logger)
   end
 
   after do
@@ -35,7 +32,7 @@ describe Facter::Resolvers::DMIBios do
     let(:comp) {}
 
     it 'logs debug message and serial_number is nil' do
-      allow(logger).to receive(:debug)
+      allow(Facter::Resolvers::DMIBios.log).to receive(:debug)
         .with('WMI query returned no results for Win32_BIOS with values Manufacturer and SerialNumber.')
       expect(Facter::Resolvers::DMIBios.resolve(:serial_number)).to be(nil)
     end

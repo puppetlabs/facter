@@ -3,7 +3,6 @@
 describe Facter::Resolvers::Freebsd::Processors do
   subject(:resolver) { Facter::Resolvers::Freebsd::Processors }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
   let(:logicalcount) { 2 }
   let(:models) do
     ['Intel(r) Xeon(r) Gold 6138 CPU @ 2.00GHz', 'Intel(r) Xeon(r) Gold 6138 CPU @ 2.00GHz']
@@ -23,8 +22,6 @@ describe Facter::Resolvers::Freebsd::Processors do
       .to receive(:sysctl_by_name)
       .with(:uint32_t, 'hw.clockrate')
       .and_return(2592)
-
-    resolver.instance_variable_set(:@log, log_spy)
   end
 
   after do

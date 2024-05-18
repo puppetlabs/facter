@@ -3,21 +3,18 @@
 describe Facter::Resolvers::Solaris::Memory do
   subject(:resolver) { Facter::Resolvers::Solaris::Memory }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
-
   before do
-    resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution)
       .to receive(:execute)
-      .with('/usr/bin/kstat -m unix -n system_pages', { logger: log_spy })
+      .with('/usr/bin/kstat -m unix -n system_pages', logger: an_instance_of(Facter::Log))
       .and_return(kstat_output)
     allow(Facter::Core::Execution)
       .to receive(:execute)
-      .with('pagesize', { logger: log_spy })
+      .with('pagesize', logger: an_instance_of(Facter::Log))
       .and_return(pagesize)
     allow(Facter::Core::Execution)
       .to receive(:execute)
-      .with('/usr/sbin/swap -l', { logger: log_spy })
+      .with('/usr/sbin/swap -l', logger: an_instance_of(Facter::Log))
       .and_return(swap_output)
   end
 

@@ -3,13 +3,11 @@
 describe Facter::Resolvers::Macosx::DmiBios do
   subject(:dmi_resolver) { Facter::Resolvers::Macosx::DmiBios }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
   let(:macosx_model) { 'MacBookPro11,4' }
 
   before do
-    dmi_resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('sysctl -n hw.model', { logger: log_spy })
+      .with('sysctl -n hw.model', logger: an_instance_of(Facter::Log))
       .and_return(macosx_model)
   end
 

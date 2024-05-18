@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::Memory do
-  let(:logger) { instance_spy(Facter::Log) }
-
   before do
     state_ptr = double('FFI::MemoryPointer', size: nil)
     state = double('PerformanceInformation', size: nil)
@@ -15,8 +13,6 @@ describe Facter::Resolvers::Memory do
     allow(state).to receive(:[]).with(:PhysicalTotal).and_return(total)
     allow(state).to receive(:[]).with(:PageSize).and_return(page_size)
     allow(state).to receive(:[]).with(:PhysicalAvailable).and_return(available)
-
-    Facter::Resolvers::Memory.instance_variable_set(:@log, logger)
   end
 
   after do
@@ -53,7 +49,7 @@ describe Facter::Resolvers::Memory do
     let(:available) { 23 }
 
     it 'detects total_bytes as nil' do
-      allow(logger).to receive(:debug)
+      allow(Facter::Resolvers::Memory.log).to receive(:debug)
         .with('Available or Total bytes are zero could not proceed further')
       expect(Facter::Resolvers::Memory.resolve(:total_bytes)).to be(nil)
     end
@@ -78,7 +74,7 @@ describe Facter::Resolvers::Memory do
     let(:available) { 0 }
 
     it 'detects total bytes as nil' do
-      allow(logger).to receive(:debug)
+      allow(Facter::Resolvers::Memory.log).to receive(:debug)
         .with('Available or Total bytes are zero could not proceed further')
       expect(Facter::Resolvers::Memory.resolve(:total_bytes)).to be(nil)
     end
@@ -103,7 +99,7 @@ describe Facter::Resolvers::Memory do
     let(:available) { 4096 }
 
     it 'detects total bytes as nil' do
-      allow(logger).to receive(:debug)
+      allow(Facter::Resolvers::Memory.log).to receive(:debug)
         .with('Available or Total bytes are zero could not proceed further')
       expect(Facter::Resolvers::Memory.resolve(:total_bytes)).to be(nil)
     end
@@ -128,7 +124,7 @@ describe Facter::Resolvers::Memory do
     let(:available) { 824_031 }
 
     it 'logs debug message and detects total bytes as nil' do
-      allow(logger).to receive(:debug).with('Resolving memory facts failed')
+      allow(Facter::Resolvers::Memory.log).to receive(:debug).with('Resolving memory facts failed')
       expect(Facter::Resolvers::Memory.resolve(:total_bytes)).to be(nil)
     end
 

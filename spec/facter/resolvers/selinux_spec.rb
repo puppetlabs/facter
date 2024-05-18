@@ -3,16 +3,13 @@
 describe Facter::Resolvers::SELinux do
   subject(:selinux_resolver) { Facter::Resolvers::SELinux }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
-
   after do
     selinux_resolver.invalidate_cache
   end
 
   before do
-    selinux_resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('cat /proc/self/mounts', { logger: log_spy })
+      .with('cat /proc/self/mounts', logger: an_instance_of(Facter::Log))
       .and_return(load_fixture(file).read)
   end
 

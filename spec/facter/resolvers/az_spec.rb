@@ -4,12 +4,10 @@ describe Facter::Resolvers::Az do
   subject(:az) { Facter::Resolvers::Az }
 
   let(:uri) { 'http://169.254.169.254/metadata/instance?api-version=2020-09-01' }
-  let(:log_spy) { instance_spy(Facter::Log) }
 
   before do
     allow(Facter::Util::Resolvers::Http).to receive(:get_request)
       .with(uri, { Metadata: 'true' }, { session: 5 }, false).and_return(output)
-    az.instance_variable_set(:@log, log_spy)
   end
 
   after do

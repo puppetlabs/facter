@@ -3,13 +3,10 @@
 describe Facter::Resolvers::Solaris::Ldom do
   subject(:resolver) { Facter::Resolvers::Solaris::Ldom }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
-
   before do
-    resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution)
       .to receive(:execute)
-      .with('/usr/sbin/virtinfo  -a  -p', { logger: log_spy })
+      .with('/usr/sbin/virtinfo  -a  -p', logger: an_instance_of(Facter::Log))
       .and_return(output)
   end
 

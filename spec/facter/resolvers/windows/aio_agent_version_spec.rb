@@ -6,7 +6,6 @@ describe Facter::Resolvers::Windows::AioAgentVersion do
 
     let(:puppet_version) { '7.0.1' }
     let(:reg) { instance_spy(Win32::Registry::HKEY_LOCAL_MACHINE) }
-    let(:log) { instance_spy(Facter::Log) }
 
     before do
       allow(Win32::Registry::HKEY_LOCAL_MACHINE).to receive(:open).with('SOFTWARE\\Puppet Labs\\Puppet').and_yield(reg)
@@ -14,7 +13,6 @@ describe Facter::Resolvers::Windows::AioAgentVersion do
         .to receive(:safe_read)
         .with('path_to_puppet/VERSION', nil)
         .and_return(puppet_version)
-      allow(Facter::Resolvers::BaseResolver).to receive(:log).and_return(log)
     end
 
     after do
@@ -30,9 +28,9 @@ describe Facter::Resolvers::Windows::AioAgentVersion do
       end
 
       it 'logs debug message specific to none existent path' do
-        aio_agent_resolver.resolve(:aio_agent_version)
+        expect(aio_agent_resolver.log).to receive(:debug).with('The registry path SOFTWARE\Puppet Labs\Puppet does not exist')
 
-        expect(log).to have_received(:debug).with('The registry path SOFTWARE\Puppet Labs\Puppet does not exist')
+        aio_agent_resolver.resolve(:aio_agent_version)
       end
     end
 
@@ -76,9 +74,9 @@ describe Facter::Resolvers::Windows::AioAgentVersion do
       end
 
       it 'logs debug message for 64 bit register' do
-        aio_agent_resolver.resolve(:aio_agent_version)
+        expect(aio_agent_resolver.log).to receive(:debug).with('Could not read Puppet AIO path from 64 bit registry')
 
-        expect(log).to have_received(:debug).with('Could not read Puppet AIO path from 64 bit registry')
+        aio_agent_resolver.resolve(:aio_agent_version)
       end
 
       it 'returns path from registry specific to 32 bit windows' do
@@ -91,9 +89,10 @@ describe Facter::Resolvers::Windows::AioAgentVersion do
         end
 
         it 'logs debug error for 32 bit registry' do
-          aio_agent_resolver.resolve(:aio_agent_version)
+          allow(aio_agent_resolver.log).to receive(:debug)
+          expect(aio_agent_resolver.log).to receive(:debug).with('Could not read Puppet AIO path from 32 bit registry')
 
-          expect(log).to have_received(:debug).with('Could not read Puppet AIO path from 32 bit registry')
+          aio_agent_resolver.resolve(:aio_agent_version)
         end
       end
     end

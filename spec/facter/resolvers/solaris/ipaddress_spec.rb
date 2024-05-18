@@ -3,17 +3,14 @@
 describe Facter::Resolvers::Solaris::Ipaddress do
   subject(:ipaddress) { Facter::Resolvers::Solaris::Ipaddress }
 
-  let(:log) { instance_spy(Facter::Log) }
-
   describe '#resolve' do
     after do
       ipaddress.invalidate_cache
     end
 
     before do
-      ipaddress.instance_variable_set(:@log, log)
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('route -n get default | grep interface', { logger: log })
+        .with('route -n get default | grep interface', logger: an_instance_of(Facter::Log))
         .and_return(route)
     end
 
@@ -23,7 +20,7 @@ describe Facter::Resolvers::Solaris::Ipaddress do
 
       before do
         allow(Facter::Core::Execution).to receive(:execute)
-          .with('ifconfig net0', { logger: log })
+          .with('ifconfig net0', logger: an_instance_of(Facter::Log))
           .and_return(ifconfig)
       end
 
