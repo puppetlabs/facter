@@ -10,10 +10,9 @@ describe Facter::Util::FileHelper do
     "Facter::Util::FileHelper - #{Facter::CYAN}File at: /Users/admin/file.txt is not accessible.#{Facter::RESET}"
   end
   let(:array_content) { ['line 1', 'line 2', 'line 3'] }
-  let(:logger_double) { instance_spy(Facter::Log) }
+  let(:log) { Facter::Log.class_variable_get(:@@logger) }
 
   before do
-    Facter::Log.class_variable_set(:@@logger, logger_double)
     allow(Facter).to receive(:debugging?).and_return(true)
     allow(Facter::OptionStore).to receive(:color).and_return(true)
   end
@@ -59,9 +58,9 @@ describe Facter::Util::FileHelper do
       end
 
       it "doesn't log anything" do
-        file_helper.safe_read(path)
+        expect(log).not_to receive(:debug)
 
-        expect(logger_double).not_to have_received(:debug)
+        file_helper.safe_read(path)
       end
     end
 
@@ -89,10 +88,10 @@ describe Facter::Util::FileHelper do
       end
 
       it 'logs a debug message' do
-        file_helper.safe_read(path)
+        allow(log).to receive(:debug)
+        expect(log).to receive(:debug).with(error_message)
 
-        expect(logger_double).to have_received(:debug)
-          .with(error_message)
+        file_helper.safe_read(path)
       end
     end
   end
@@ -138,9 +137,9 @@ describe Facter::Util::FileHelper do
       end
 
       it "doesn't log anything" do
-        file_helper.safe_readlines(path)
+        expect(log).not_to receive(:debug)
 
-        expect(logger_double).not_to have_received(:debug)
+        file_helper.safe_readlines(path)
       end
     end
 
@@ -168,9 +167,9 @@ describe Facter::Util::FileHelper do
       end
 
       it 'logs a debug message' do
-        file_helper.safe_read(path)
+        expect(log).to receive(:debug).with(error_message)
 
-        expect(logger_double).to have_received(:debug).with(error_message)
+        file_helper.safe_read(path)
       end
     end
   end

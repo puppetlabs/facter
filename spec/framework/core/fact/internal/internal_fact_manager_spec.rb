@@ -82,7 +82,7 @@ describe Facter::InternalFactManager do
                      type: :core)
       end
 
-      let(:logger_double) { instance_spy(Logger) }
+      let(:logger) { Facter::Log.class_variable_get(:@@logger) }
 
       before do
         allow(os_name_class_spy).to receive(:new).and_return(os_name_instance_spy)
@@ -90,13 +90,6 @@ describe Facter::InternalFactManager do
         exception = StandardError.new('error_message')
         exception.set_backtrace(%w[backtrace])
         allow(os_name_instance_spy).to receive(:call_the_resolver).and_raise(exception)
-
-        allow(logger_double).to receive(:error)
-        Facter::Log.class_variable_set(:@@logger, logger_double)
-      end
-
-      after do
-        Facter::Log.class_variable_set(:@@logger, Logger.new(STDOUT))
       end
 
       it 'does not store the fact value' do
@@ -108,19 +101,20 @@ describe Facter::InternalFactManager do
       it 'logs backtrace as error with --trace option' do
         allow(Facter::Options).to receive(:[])
         allow(Facter::Options).to receive(:[]).with(:trace).and_return(true)
-        internal_fact_manager.resolve_facts([searched_fact])
 
-        expect(logger_double)
-          .to have_received(:error)
+        expect(logger)
+          .to receive(:error)
           .with("Facter::InternalFactManager - #{colorize("error_message\nbacktrace", Facter::RED)}")
+
+        internal_fact_manager.resolve_facts([searched_fact])
       end
 
       it 'logs error message as error without --trace option' do
-        internal_fact_manager.resolve_facts([searched_fact])
-
-        expect(logger_double)
-          .to have_received(:error)
+        expect(logger)
+          .to receive(:error)
           .with("Facter::InternalFactManager - #{colorize('error_message', Facter::RED)}")
+
+        internal_fact_manager.resolve_facts([searched_fact])
       end
     end
   end

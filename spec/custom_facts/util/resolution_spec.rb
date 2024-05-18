@@ -5,11 +5,7 @@ describe Facter::Util::Resolution do
   subject(:resolution) { Facter::Util::Resolution.new(:foo, stub_fact) }
 
   let(:stub_fact) { double('fact', name: :stubfact) }
-  let(:logger) { instance_spy(Facter::Log) }
-
-  before do
-    allow(Facter::Log).to receive(:new).and_return(logger)
-  end
+  let(:logger) { Facter::Log.class_variable_get(:@@logger) }
 
   it 'requires a name' do
     expect { Facter::Util::Resolution.new }.to raise_error(ArgumentError)

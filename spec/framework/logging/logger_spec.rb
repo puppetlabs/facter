@@ -3,15 +3,10 @@
 describe Logger do
   subject(:log) { Facter::Log.new(Class) }
 
-  let(:multi_logger_double) { instance_spy(Logger) }
+  let(:logger) { Facter::Log.class_variable_get(:@@logger) }
 
   before do
-    Facter::Log.class_variable_set(:@@logger, multi_logger_double)
     Facter::Options[:color] = false
-  end
-
-  after do
-    Facter::Log.class_variable_set(:@@logger, Logger.new(STDOUT))
   end
 
   describe '#debug' do
@@ -23,26 +18,26 @@ describe Logger do
       it 'no debug messages are sent' do
         allow(Facter).to receive(:debugging?).and_return(false)
 
-        log.debug('info_message')
+        expect(logger).not_to receive(:debug)
 
-        expect(multi_logger_double).not_to have_received(:debug)
+        log.debug('info_message')
       end
     end
 
     shared_examples 'writes debug message with no color' do
-      it 'calls debug on multi_logger' do
-        log.debug('debug_message')
+      it 'calls debug on logger' do
+        expect(logger).to receive(:debug).with('Class - debug_message')
 
-        expect(multi_logger_double).to have_received(:debug).with('Class - debug_message')
+        log.debug('debug_message')
       end
     end
 
     shared_examples 'writes debug message with color' do
-      it 'calls debug on multi_logger' do
-        log.debug('debug_message')
-
-        expect(multi_logger_double).to have_received(:debug)
+      it 'calls debug on logger' do
+        expect(logger).to receive(:debug)
           .with("Class - #{Facter::CYAN}debug_message#{Facter::RESET}")
+
+        log.debug('debug_message')
       end
     end
 
@@ -116,18 +111,18 @@ describe Logger do
     it 'writes the same debug message only once' do
       message = 'Some error message'
 
-      log.debugonce(message)
-      log.debugonce(message)
+      expect(logger).to receive(:debug).once.with("Class - #{message}")
 
-      expect(multi_logger_double).to have_received(:debug).once.with("Class - #{message}")
+      log.debugonce(message)
+      log.debugonce(message)
     end
   end
 
   describe '#info' do
     it 'writes info message' do
-      log.info('info_message')
+      expect(logger).to receive(:info).with('Class - info_message')
 
-      expect(multi_logger_double).to have_received(:info).with('Class - info_message')
+      log.info('info_message')
     end
 
     context 'when non Windows OS' do
@@ -141,11 +136,11 @@ describe Logger do
         end
 
         it 'print Green (32) info message' do
-          log.info('info_message')
-
-          expect(multi_logger_double)
-            .to have_received(:info)
+          expect(logger)
+            .to receive(:info)
             .with("Class - #{Facter::GREEN}info_message#{Facter::RESET}")
+
+          log.info('info_message')
         end
       end
     end
@@ -161,10 +156,10 @@ describe Logger do
         end
 
         it 'print info message' do
-          log.info('info_message')
-
-          expect(multi_logger_double).to have_received(:info)
+          expect(logger).to receive(:info)
             .with("Class - #{Facter::GREEN}info_message#{Facter::RESET}")
+
+          log.info('info_message')
         end
       end
     end
@@ -172,9 +167,9 @@ describe Logger do
 
   describe '#warn' do
     it 'writes warn message' do
-      log.warn('warn_message')
+      expect(logger).to receive(:warn).with('Class - warn_message')
 
-      expect(multi_logger_double).to have_received(:warn).with('Class - warn_message')
+      log.warn('warn_message')
     end
 
     context 'when non Windows OS' do
@@ -188,11 +183,11 @@ describe Logger do
         end
 
         it 'print Yellow (33) info message' do
-          log.warn('warn_message')
-
-          expect(multi_logger_double)
-            .to have_received(:warn)
+          expect(logger)
+            .to receive(:warn)
             .with("Class - #{Facter::YELLOW}warn_message#{Facter::RESET}")
+
+          log.warn('warn_message')
         end
       end
     end
@@ -208,10 +203,10 @@ describe Logger do
         end
 
         it 'print warn message' do
-          log.warn('warn_message')
-
-          expect(multi_logger_double).to have_received(:warn)
+          expect(logger).to receive(:warn)
             .with("Class - #{Facter::YELLOW}warn_message#{Facter::RESET}")
+
+          log.warn('warn_message')
         end
       end
     end
@@ -225,10 +220,10 @@ describe Logger do
     it 'writes the same debug message only once' do
       message = 'Some error message'
 
-      log.warnonce(message)
-      log.warnonce(message)
+      expect(logger).to receive(:warn).once.with("Class - #{message}")
 
-      expect(multi_logger_double).to have_received(:warn).once.with("Class - #{message}")
+      log.warnonce(message)
+      log.warnonce(message)
     end
   end
 
@@ -236,31 +231,31 @@ describe Logger do
     it 'writes error message with color on macosx' do
       allow(OsDetector.instance).to receive(:detect).and_return(:macosx)
 
-      log.error('error_message', true)
+      expect(logger).to receive(:error).with("Class - #{Facter::RED}error_message#{Facter::RESET}")
 
-      expect(multi_logger_double).to have_received(:error).with("Class - #{Facter::RED}error_message#{Facter::RESET}")
+      log.error('error_message', true)
     end
 
     it 'writes error message colorized on Windows' do
       allow(OsDetector.instance).to receive(:identifier).and_return(:windows)
 
-      log.error('error_message', true)
+      expect(logger).to receive(:error).with("Class - #{Facter::RED}error_message#{Facter::RESET}")
 
-      expect(multi_logger_double).to have_received(:error).with("Class - #{Facter::RED}error_message#{Facter::RESET}")
+      log.error('error_message', true)
     end
 
     it 'writes error message' do
-      log.error('error_message')
+      expect(logger).to receive(:error).with('Class - error_message')
 
-      expect(multi_logger_double).to have_received(:error).with('Class - error_message')
+      log.error('error_message')
     end
   end
 
   describe '#level=' do
     it 'sets the log level' do
-      Facter::Log.level = :error
+      expect(logger).to receive(:level=).with(:error)
 
-      expect(multi_logger_double).to have_received(:level=).with(:error)
+      Facter::Log.level = :error
     end
   end
 
@@ -268,20 +263,21 @@ describe Logger do
     let(:exception) { Exception.new('Test exception') }
 
     it 'writes exception message without --trace option' do
-      log.log_exception(exception)
+      expect(logger).to receive(:error).with("Class - #{colorize('Test exception', Facter::RED)}")
 
-      expect(multi_logger_double).to have_received(:error).with("Class - #{colorize('Test exception', Facter::RED)}")
+      log.log_exception(exception)
     end
 
     it 'writes exception message and backtrace with --trace option' do
       allow(Facter::Options).to receive(:[])
       allow(Facter::Options).to receive(:[]).with(:trace).and_return(true)
       allow(exception).to receive(:backtrace).and_return(['backtrace:1'])
-      log.log_exception(exception)
 
-      expect(multi_logger_double)
-        .to have_received(:error)
+      expect(logger)
+        .to receive(:error)
         .with("Class - #{colorize("Test exception\nbacktrace:1", Facter::RED)}")
+
+      log.log_exception(exception)
     end
   end
 
@@ -293,21 +289,21 @@ describe Logger do
     it 'clears debugonce messages' do
       message = 'Some error message'
 
+      expect(logger).to receive(:debug).twice.with("Class - #{message}")
+
       log.debugonce(message)
       Facter::Log.clear_messages
       log.debugonce(message)
-
-      expect(multi_logger_double).to have_received(:debug).twice.with("Class - #{message}")
     end
 
     it 'clears warnonce messages' do
       message = 'Some error message'
 
+      expect(logger).to receive(:warn).twice.with("Class - #{message}")
+
       log.warnonce(message)
       Facter::Log.clear_messages
       log.warnonce(message)
-
-      expect(multi_logger_double).to have_received(:warn).twice.with("Class - #{message}")
     end
   end
 

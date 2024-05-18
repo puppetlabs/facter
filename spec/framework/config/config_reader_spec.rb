@@ -143,18 +143,17 @@ describe Facter::ConfigReader do
 
     context 'with invalid config file' do
       let(:config) { 'some corrupt information' }
-      let(:log) { instance_spy(Facter::Log) }
+      let(:log) { Facter::Log.class_variable_get(:@@logger) }
 
       before do
-        allow(Facter::Log).to receive(:new).and_return(log)
         allow(Hocon).to receive(:load).and_raise(StandardError)
         allow(log).to receive(:warn)
       end
 
       it 'loggs a warning' do
-        config_reader.init
+        expect(log).to receive(:warn).with(/Facter failed to read config file/)
 
-        expect(log).to have_received(:warn).with(/Facter failed to read config file/)
+        config_reader.init
       end
     end
 
