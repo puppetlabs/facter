@@ -19,6 +19,11 @@ module Facter
         def retrieve_info(fact_name)
           require 'socket'
           output = Socket.gethostname
+          unless output
+            log.debug('Socket.gethostname failed to return hostname')
+            return
+          end
+
           hostname, domain = retrieve_from_fqdn(output)
 
           fqdn = retrieve_with_addrinfo(hostname) if hostname_and_no_domain?(hostname, domain)

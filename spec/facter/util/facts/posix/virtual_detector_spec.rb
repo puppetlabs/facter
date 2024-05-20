@@ -279,6 +279,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
       before do
         allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Openbsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return(nil)
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return('lxc')
