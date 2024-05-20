@@ -23,6 +23,7 @@ jobs:
           - '3.0'
           - '3.2'
           - 'jruby-9.3.14.0'
+          - 'jruby-9.4.7.0'
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout current PR
