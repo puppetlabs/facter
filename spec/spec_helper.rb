@@ -48,6 +48,10 @@ end
 require 'webmock/rspec'
 WebMock.disable_net_connect!
 
+# Configure test logger
+logdest = ENV['FACTER_TEST_LOG'] ? File.new(ENV['FACTER_TEST_LOG'], 'w') : StringIO.new
+logger = Logger.new(logdest)
+
 # Configure RSpec
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -77,10 +81,13 @@ RSpec.configure do |config|
   end
 
   config.before(:all) do
-    Facter::Log.class_variable_set(:@@logger, Logger.new(StringIO.new)) # rubocop:disable Style/ClassVars
+    Facter::Log.class_variable_set(:@@logger, logger) # rubocop:disable Style/ClassVars
   end
 
-  config.before do
+  config.before do |test|
+    m = test.metadata
+    logger.info("*** BEGIN TEST #{m[:file_path]}:#{m[:line_number]}")
+
     LegacyFacter.clear
     Facter.clear_messages
   end
