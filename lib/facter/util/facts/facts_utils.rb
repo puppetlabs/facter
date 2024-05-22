@@ -10,7 +10,7 @@ module Facter
 
       PHYSICAL_HYPERVISORS = %w[physical xen0 vmware_server vmware_workstation openvzhn vserver_host].freeze
       REDHAT_FAMILY = %w[redhat rhel fedora centos scientific ascendos cloudlinux psbm
-                         oraclelinux ovs oel amazon xenserver xcp-ng virtuozzo photon mariner].freeze
+                         oraclelinux ovs oel amazon xenserver xcp-ng virtuozzo photon mariner azurelinux].freeze
       DEBIAN_FAMILY = %w[debian ubuntu huaweios linuxmint devuan kde].freeze
       SUSE_FAMILY = %w[sles sled suse].freeze
       GENTOO_FAMILY = ['gentoo'].freeze

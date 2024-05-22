@@ -26,6 +26,8 @@ module Facter
                 Meego
                 Oel
                 Ovs
+                Mariner
+                Azurelinux
               ]
             },
             {
@@ -40,8 +42,7 @@ module Facter
             'Photon',
             'Slackware',
             'Mageia',
-            'Openwrt',
-            'Mariner'
+            'Openwrt'
           ]
         },
         {
