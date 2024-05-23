@@ -28,6 +28,7 @@ describe Facter::Util::Linux::IfInet6 do
   describe '#read_flags' do
     context 'when only ipv6 link-local and lo ipv6 present' do
       before do
+        allow(File).to receive(:exist?).and_call_original
         allow(File).to receive(:exist?).with('/proc/net/if_inet6').and_return(true)
         allow(Facter::Util::FileHelper).to receive(:safe_read)
           .with('/proc/net/if_inet6', nil).and_return(load_fixture('proc_net_if_inet6').read)
@@ -38,6 +39,7 @@ describe Facter::Util::Linux::IfInet6 do
 
     context 'when multiple IPv6 addresses present with different flags' do
       before do
+        allow(File).to receive(:exist?).and_call_original
         allow(File).to receive(:exist?).with('/proc/net/if_inet6').and_return(true)
         allow(Facter::Util::FileHelper).to receive(:safe_read)
           .with('/proc/net/if_inet6', nil).and_return(load_fixture('proc_net_if_inet6_complex').read)

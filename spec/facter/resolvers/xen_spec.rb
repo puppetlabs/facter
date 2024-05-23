@@ -10,6 +10,7 @@ describe Facter::Resolvers::Xen do
 
   before do
     xen_resolver.instance_variable_set(:@log, log_spy)
+    allow(File).to receive(:exist?).and_call_original
     allow(File).to receive(:exist?).with('/dev/xen/evtchn').and_return(evtchn_file)
     allow(File).to receive(:exist?).with('/proc/xen').and_return(proc_xen_file)
     allow(File).to receive(:exist?).with('/dev/xvda1').and_return(xvda1_file)
@@ -24,6 +25,18 @@ describe Facter::Resolvers::Xen do
 
   after do
     xen_resolver.invalidate_cache
+  end
+
+  context 'when not xen' do
+    let(:evtchn_file) { false }
+    let(:proc_xen_file) { false }
+    let(:xvda1_file) { false }
+
+    it 'returns' do
+      allow(File).to receive(:exist?).with('/usr/sbin/xm').and_return(false)
+
+      expect(xen_resolver.resolve(:vm)).to be_nil
+    end
   end
 
   context 'when xen is privileged' do

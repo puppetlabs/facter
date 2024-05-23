@@ -3,7 +3,7 @@
 describe Facter::Resolvers::Uname do
   subject(:uname_resolver) { Facter::Resolvers::Uname }
 
-  let(:log_spy) { Facter::Log }
+  let(:log_spy) { instance_spy(Facter::Log) }
 
   before do
     uname_resolver.instance_variable_set(:@log, log_spy)
@@ -20,6 +20,11 @@ describe Facter::Resolvers::Uname do
         18.2.0
         Darwin
         Darwin Kernel Version 18.2.0: Fri Oct  5 19:41:49 PDT 2018; root:xnu-4903.221.2~2/RELEASE_X86_64')
+  end
+
+  after do
+    uname_resolver.instance_variable_set(:@log, nil)
+    Facter::Resolvers::Uname.invalidate_cache
   end
 
   it 'returns machine' do

@@ -52,8 +52,10 @@ describe Facter::Resolvers::Linux::Processors do
         allow(Facter::Util::FileHelper).to receive(:safe_readlines)
           .with('/proc/cpuinfo')
           .and_return(load_fixture('cpuinfo_wo_physical_id').readlines)
+        allow(Dir).to receive(:entries).and_call_original
         allow(Dir).to receive(:entries).with('/sys/devices/system/cpu').and_return(%w[cpu0 cpu1 cpuindex])
 
+        allow(File).to receive(:exist?).and_call_original
         allow(File).to receive(:exist?)
           .with('/sys/devices/system/cpu/cpu0/topology/physical_package_id')
           .and_return(true)
@@ -117,9 +119,13 @@ describe Facter::Resolvers::Linux::Processors do
         .with('/proc/cpuinfo')
         .and_return(load_fixture('cpuinfo_powerpc').readlines)
 
+      allow(Dir).to receive(:entries).and_call_original
       allow(Dir).to receive(:entries).with('/sys/devices/system/cpu').and_return(%w[cpu0 cpu1 cpuindex])
+
+      allow(File).to receive(:exist?).and_call_original
       allow(File).to receive(:exist?).with('/sys/devices/system/cpu/cpu0/topology/physical_package_id').and_return(true)
       allow(File).to receive(:exist?).with('/sys/devices/system/cpu/cpu1/topology/physical_package_id').and_return(true)
+
       allow(Facter::Util::FileHelper).to receive(:safe_read)
         .with('/sys/devices/system/cpu/cpu0/topology/physical_package_id')
         .and_return('0')
@@ -164,9 +170,13 @@ describe Facter::Resolvers::Linux::Processors do
         .with('/proc/cpuinfo')
         .and_return(load_fixture('cpuinfo_arm64').readlines)
 
+      allow(Dir).to receive(:entries).and_call_original
       allow(Dir).to receive(:entries).with('/sys/devices/system/cpu').and_return(%w[cpu0 cpu1 cpuindex])
+
+      allow(File).to receive(:exist?).and_call_original
       allow(File).to receive(:exist?).with('/sys/devices/system/cpu/cpu0/topology/physical_package_id').and_return(true)
       allow(File).to receive(:exist?).with('/sys/devices/system/cpu/cpu1/topology/physical_package_id').and_return(true)
+
       allow(Facter::Util::FileHelper).to receive(:safe_read)
         .with('/sys/devices/system/cpu/cpu0/topology/physical_package_id')
         .and_return('0')

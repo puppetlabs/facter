@@ -66,6 +66,8 @@ module Facter
           return XEN_TOOLSTACK if num_stacks > 1 && File.exist?(XEN_TOOLSTACK)
 
           XEN_COMMANDS.each { |command| return command if File.exist?(command) }
+
+          nil
         end
       end
     end
