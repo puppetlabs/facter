@@ -25,6 +25,16 @@ namespace :pl_ci do
       puts stdout
     end
   end
+
+  desc 'build the nightly gem and place it at the directory root'
+  task :nightly_gem_build => :gem_build do
+    # this is taken from `rake package:nightly_gem`
+    describe = %x{git describe --tags --dirty --abbrev=7}.chomp
+    extended_dot_version = describe.tr('-', '.')
+    src = "facter-#{Facter::VERSION}.gem"
+    dst = src.gsub(Facter::VERSION, extended_dot_version)
+    sh "mv #{src} #{dst}"
+  end
 end
 
 if Rake.application.top_level_tasks.grep(/^(pl:|package:)/).any?
