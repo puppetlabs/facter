@@ -3,8 +3,6 @@
 module Facter
   module Resolvers
     class System32 < BaseResolver
-      @log = Facter::Log.new(self)
-
       init_resolver
 
       class << self

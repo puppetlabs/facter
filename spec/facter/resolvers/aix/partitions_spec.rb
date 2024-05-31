@@ -4,10 +4,8 @@ describe Facter::Resolvers::Aix::Partitions do
   subject(:resolver) { Facter::Resolvers::Aix::Partitions }
 
   let(:odm_query_spy) { instance_spy(Facter::Util::Aix::ODMQuery) }
-  let(:logger_spy) { instance_spy(Facter::Log) }
 
   before do
-    resolver.instance_variable_set(:@log, logger_spy)
     allow(Facter::Util::Aix::ODMQuery).to receive(:new).and_return(odm_query_spy)
     allow(odm_query_spy).to receive(:equals).with('PdDvLn', 'logical_volume/lvsubclass/lvtype')
     allow(odm_query_spy).to receive(:execute).and_return(result)
@@ -38,10 +36,10 @@ describe Facter::Resolvers::Aix::Partitions do
 
     before do
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('lslv -L hd5', { logger: logger_spy })
+        .with('lslv -L hd5', logger: an_instance_of(Facter::Log))
         .and_return(load_fixture('lslv_output').read)
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('lslv -L hd6', { logger: logger_spy })
+        .with('lslv -L hd6', logger: an_instance_of(Facter::Log))
         .and_return('')
     end
 

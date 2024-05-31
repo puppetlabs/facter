@@ -2,10 +2,9 @@
 
 describe Facter::Resolvers::Linux::Lscpu do
   before do
-    Facter::Resolvers::Linux::Lscpu.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution)
       .to receive(:execute)
-      .with("lscpu | grep -e 'Thread(s)' -e 'Core(s)'", { logger: log_spy })
+      .with("lscpu | grep -e 'Thread(s)' -e 'Core(s)'", logger: an_instance_of(Facter::Log))
       .and_return(lscpu_output)
   end
 
@@ -13,7 +12,6 @@ describe Facter::Resolvers::Linux::Lscpu do
     Facter::Resolvers::Linux::Lscpu.invalidate_cache
   end
 
-  let(:log_spy) { instance_spy(Facter::Log) }
   let(:cores_per_socket) { 1 }
   let(:threads_per_core) { 2 }
   let(:lscpu_output) do

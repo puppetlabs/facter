@@ -24,25 +24,30 @@ describe Facter do
 
     FileUtils.chmod('+x', ext_fact_path)
     it 'detects facter invocations recursively and stops external facts from recursing' do
+      # in-process entrypoints write to our in-memory logger, not stdout/err
       facter_entrypoints = [
-        proc { `bundle exec facter --external-dir #{ext_dir} os` },
-        proc { Facter.resolve("--external-dir #{ext_dir}") },
-        proc { Facter.resolve("os.family --external-dir #{ext_dir}") },
-        proc {
-          Facter::OptionStore.external_dir = [ext_dir]
-          Facter.to_hash
-        }
+        [proc { `bundle exec facter --external-dir #{ext_dir} os` }, false],
+        [proc { Facter.resolve("--external-dir #{ext_dir}") }, true],
+        [proc { Facter.resolve("os.family --external-dir #{ext_dir}") }, true],
+        [
+          proc do
+            Facter::OptionStore.external_dir = [ext_dir]
+            Facter.to_hash
+          end, true
+        ]
       ]
       time = Benchmark.measure do
         # This iterates over the supported entry points that would attempt to resolve
         # external facts; if any one of them descends into recursion, it will exceed
         # the DEFAULT_EXECUTION_TIMEOUT; otherwise, each of these calls should be only
         # be a few seconds.
-        facter_entrypoints.each_with_index do |entrypoint, index|
-          if index.zero?
-            expect { entrypoint.call }.to output(/Recursion detected/).to_stderr_from_any_process
+        logger = Facter::Log.class_variable_get(:@@logger)
+        facter_entrypoints.each do |entrypoint, inprocess|
+          if inprocess
+            expect(logger).to receive(:warn).with(/Recursion detected/)
+            entrypoint.call
           else
-            expect { entrypoint.call }.to output(/Recursion detected/).to_stdout_from_any_process
+            expect { entrypoint.call }.to output(/Recursion detected/).to_stderr_from_any_process
           end
           Facter.reset
           Facter.clear

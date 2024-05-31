@@ -4,11 +4,8 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
   subject(:detector) { Facter::Util::Facts::Posix::VirtualDetector }
 
   describe '#platform' do
-    let(:logger_mock) { instance_spy(Facter::Log) }
-
     before do
       Facter::Util::Facts::Posix::VirtualDetector.instance_variable_set(:@fact_value, nil)
-      allow(Facter::Log).to receive(:new).and_return(logger_mock)
     end
 
     context 'when in docker' do
@@ -282,6 +279,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
       before do
         allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Openbsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:product_name).and_return(nil)
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return('lxc')

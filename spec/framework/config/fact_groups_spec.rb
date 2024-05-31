@@ -130,19 +130,8 @@ describe Facter::FactGroups do
       end
     end
 
-    context 'when ttls has hour instead of hour' do
-      let(:ttls) { ['operating system' => '1 hour', 'memory' => '1 day', 'hostname' => '30 invalid_unit'] }
-      let(:logger) { instance_spy(Facter::Log) }
-
-      before do
-        allow(Facter::Log).to receive(:new).and_return(logger)
-      end
-
-      it 'logs an error message' do
-        fg.get_group_ttls('hostname')
-        expect(logger).to have_received(:error).with('Could not parse time unit invalid_units '\
-                                "(try #{Facter::FactGroups::STRING_TO_SECONDS.keys.reject(&:empty?).join(', ')})").twice
-      end
+    context 'when ttls has singular hour instead of plural hours' do
+      let(:ttls) { ['operating system' => '1 hour', 'memory' => '1 day'] }
 
       it 'returns os ttl in seconds' do
         expect(fg.get_group_ttls('operating system')).to eq(3600)
@@ -150,6 +139,24 @@ describe Facter::FactGroups do
 
       it 'returns memory ttl in seconds' do
         expect(fg.get_group_ttls('memory')).to eq(86_400)
+      end
+    end
+
+    context 'when ttls are invalid' do
+      let(:ttls) { ['hostname' => '30 invalid_unit'] }
+
+      let(:logger) { Facter::Log.class_variable_get(:@@logger) }
+
+      before do
+        allow(Facter::Log).to receive(:new).and_return(logger)
+      end
+
+      it 'logs an error message' do
+        allow(logger).to receive(:error)
+        expect(logger).to receive(:error).with('Could not parse time unit invalid_units '\
+          "(try #{Facter::FactGroups::STRING_TO_SECONDS.keys.reject(&:empty?).join(', ')})").twice
+
+        fg.get_group_ttls('hostname')
       end
     end
   end

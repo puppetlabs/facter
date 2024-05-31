@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::System32 do
-  let(:logger) { instance_spy(Facter::Log) }
-
   before do
     allow(ENV).to receive(:[]).with('SystemRoot').and_return(win_path)
 
@@ -10,8 +8,6 @@ describe Facter::Resolvers::System32 do
     allow(FFI::MemoryPointer).to receive(:new).with(:win32_bool, 1).and_return(bool_ptr)
     allow(System32FFI).to receive(:GetCurrentProcess).and_return(2)
     allow(System32FFI).to receive(:IsWow64Process).with(2, bool_ptr).and_return(bool)
-
-    Facter::Resolvers::System32.instance_variable_set(:@log, logger)
   end
 
   after do
@@ -44,8 +40,8 @@ describe Facter::Resolvers::System32 do
     let(:is_wow) { false }
 
     it 'detects system32 dir is nil and prints debug message' do
-      allow(logger).to receive(:debug).with('Unable to find correct value for SystemRoot'\
-                                                                                            ' enviroment variable')
+      allow(Facter::Resolvers::System32.log).to receive(:debug)
+        .with('Unable to find correct value for SystemRoot enviroment variable')
       expect(Facter::Resolvers::System32.resolve(:system32)).to be(nil)
     end
   end
@@ -56,7 +52,7 @@ describe Facter::Resolvers::System32 do
     let(:is_wow) { false }
 
     it 'detects system32 dir is nil and prints debug message' do
-      allow(logger).to receive(:debug).with('Unable to find correct value for SystemRoot'\
+      allow(Facter::Resolvers::System32.log).to receive(:debug).with('Unable to find correct value for SystemRoot'\
                                                                                             ' enviroment variable')
       expect(Facter::Resolvers::System32.resolve(:system32)).to be(nil)
     end
@@ -68,7 +64,7 @@ describe Facter::Resolvers::System32 do
     let(:is_wow) { false }
 
     it 'detects system32 dir is nil and prints debug message' do
-      allow(logger).to receive(:debug).with('IsWow64Process failed')
+      allow(Facter::Resolvers::System32.log).to receive(:debug).with('IsWow64Process failed')
       expect(Facter::Resolvers::System32.resolve(:system32)).to be(nil)
     end
   end

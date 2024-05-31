@@ -3,8 +3,8 @@
 Ps = Struct.new(:PhysicalAddress, :PhysicalAddressLength)
 
 describe NetworkUtils do
-  describe '#address_to_strig' do
-    let(:logger) { instance_spy(Facter::Log) }
+  describe '#address_to_string' do
+    let(:logger) { NetworkUtils.instance_variable_get(:@log) }
     let(:addr) { instance_spy('SocketAddress') }
     let(:size) { instance_spy(FFI::MemoryPointer) }
     let(:buffer) { instance_spy(FFI::MemoryPointer) }
@@ -19,8 +19,6 @@ describe NetworkUtils do
       allow(NetworkingFFI).to receive(:WSAAddressToStringW)
         .with(address, length, FFI::Pointer::NULL, buffer, size).and_return(error)
       allow(NetworkUtils).to receive(:extract_address).with(buffer).and_return('10.123.0.2')
-
-      NetworkUtils.instance_variable_set(:@log, logger)
     end
 
     context 'when lpSockaddr is null' do

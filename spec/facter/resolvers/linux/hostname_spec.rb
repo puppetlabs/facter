@@ -3,8 +3,6 @@
 describe Facter::Resolvers::Linux::Hostname do
   subject(:hostname_resolver) { Facter::Resolvers::Linux::Hostname }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
-
   shared_examples 'detects values' do
     it 'detects hostname' do
       expect(hostname_resolver.resolve(:hostname)).to eq(hostname)
@@ -21,7 +19,6 @@ describe Facter::Resolvers::Linux::Hostname do
 
   describe '#resolve' do
     before do
-      hostname_resolver.instance_variable_set(:@log, log_spy)
       allow(Socket).to receive(:gethostname).and_return(host)
       allow(Facter::Util::FileHelper).to receive(:safe_read)
         .with('/etc/resolv.conf')
@@ -94,8 +91,10 @@ describe Facter::Resolvers::Linux::Hostname do
           end
 
           it 'logs that ffi canot be loaded' do
+            allow(hostname_resolver.log).to receive(:debug)
+            expect(hostname_resolver.log).to receive(:debug).with('cannot load ffi')
+
             hostname_resolver.resolve(:hostname)
-            expect(log_spy).to have_received(:debug).with('cannot load ffi')
           end
 
           it 'does not resolve hostname' do
@@ -185,8 +184,10 @@ describe Facter::Resolvers::Linux::Hostname do
           end
 
           it 'logs that ffi canot be loaded' do
+            allow(hostname_resolver.log).to receive(:debug)
+            expect(hostname_resolver.log).to receive(:debug).with('cannot load ffi')
+
             hostname_resolver.resolve(:domain)
-            expect(log_spy).to have_received(:debug).with('cannot load ffi')
           end
 
           it_behaves_like 'detects values'
@@ -229,8 +230,10 @@ describe Facter::Resolvers::Linux::Hostname do
       end
 
       it 'logs that ffi canot be loaded' do
+        allow(hostname_resolver.log).to receive(:debug)
+        expect(hostname_resolver.log).to receive(:debug).with('cannot load ffi')
+
         hostname_resolver.resolve(:hostname)
-        expect(log_spy).to have_received(:debug).with('cannot load ffi')
       end
 
       it_behaves_like 'detects values'

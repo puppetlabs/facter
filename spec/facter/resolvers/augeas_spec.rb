@@ -3,11 +3,9 @@
 describe Facter::Resolvers::Augeas do
   subject(:augeas) { Facter::Resolvers::Augeas }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
   let(:readable) { false }
 
   before do
-    augeas.instance_variable_set(:@log, log_spy)
     allow(File).to receive(:readable?).with('/opt/puppetlabs/puppet/bin/augparse').and_return(readable)
   end
 
@@ -18,7 +16,7 @@ describe Facter::Resolvers::Augeas do
   context 'when augparse is installed' do
     before do
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('augparse --version 2>&1', { logger: log_spy })
+        .with('augparse --version 2>&1', logger: an_instance_of(Facter::Log))
         .and_return('augparse 1.12.0 <http://augeas.net/>')
     end
 
@@ -32,7 +30,7 @@ describe Facter::Resolvers::Augeas do
 
     before do
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('/opt/puppetlabs/puppet/bin/augparse --version 2>&1', { logger: log_spy })
+        .with('/opt/puppetlabs/puppet/bin/augparse --version 2>&1', logger: an_instance_of(Facter::Log))
         .and_return('augparse 1.12.0 <http://augeas.net/>')
     end
 
@@ -44,7 +42,7 @@ describe Facter::Resolvers::Augeas do
   context 'when augparse is not installed' do
     before do
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('augparse --version 2>&1', { logger: log_spy })
+        .with('augparse --version 2>&1', logger: an_instance_of(Facter::Log))
         .and_return('sh: augparse: command not found')
     end
 
@@ -78,9 +76,10 @@ describe Facter::Resolvers::Augeas do
       end
 
       it 'rescues LoadError error and logs at debug level' do
-        augeas.resolve(:augeas_version)
+        allow(augeas.log).to receive(:debug)
+        expect(augeas.log).to receive(:debug).with(/Resolving fact augeas_version, but got load_error_message/)
 
-        expect(log_spy).to have_received(:debug).with(/Resolving fact augeas_version, but got load_error_message/)
+        augeas.resolve(:augeas_version)
       end
     end
   end

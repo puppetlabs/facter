@@ -109,7 +109,7 @@ module Facter
       # @api private
       def evaluate(&block)
         if @last_evaluated
-          msg = "Already evaluated #{@name}"
+          msg = +"Already evaluated #{@name}"
           msg << " at #{@last_evaluated}" if msg.is_a? String
           msg << ', reevaluating anyways'
           log.warn msg
@@ -196,6 +196,10 @@ module Facter
       end
 
       private
+
+      def log
+        @log ||= Facter::Log.new(self)
+      end
 
       def evaluate_params(name)
         raise ArgumentError, "#{self.class.name}#chunk requires a block" unless block_given?

@@ -3,7 +3,6 @@
 describe Facter::Resolvers::Freebsd::SwapMemory do
   subject(:swap_memory) { Facter::Resolvers::Freebsd::SwapMemory }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
   let(:available_bytes) { 4_294_967_296 }
   let(:total_bytes) { 4_294_967_296 }
   let(:used_bytes) { 0 }
@@ -11,9 +10,8 @@ describe Facter::Resolvers::Freebsd::SwapMemory do
   let(:encrypted) { true }
 
   before do
-    swap_memory.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('swapinfo -k', { logger: log_spy })
+      .with('swapinfo -k', logger: an_instance_of(Facter::Log))
       .and_return(load_fixture('freebsd_swapinfo').read)
   end
 

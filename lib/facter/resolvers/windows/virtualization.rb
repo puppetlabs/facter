@@ -4,8 +4,6 @@ module Facter
   module Resolvers
     module Windows
       class Virtualization < BaseResolver
-        @log = Facter::Log.new(self)
-
         init_resolver
 
         class << self

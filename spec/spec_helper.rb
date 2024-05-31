@@ -76,6 +76,10 @@ RSpec.configure do |config|
     mocks.verify_partial_doubles = true
   end
 
+  config.before(:all) do
+    Facter::Log.class_variable_set(:@@logger, Logger.new(StringIO.new)) # rubocop:disable Style/ClassVars
+  end
+
   config.before do
     LegacyFacter.clear
     Facter.clear_messages

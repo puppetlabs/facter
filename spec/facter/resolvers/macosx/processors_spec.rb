@@ -3,7 +3,6 @@
 describe Facter::Resolvers::Macosx::Processors do
   subject(:processors_resolver) { Facter::Resolvers::Macosx::Processors }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
   let(:logicalcount) { 4 }
   let(:models) do
     ['Intel(R) Xeon(R) CPU E5-2697 v4 @ 2.30GHz', 'Intel(R) Xeon(R) CPU E5-2697 v4 @ 2.30GHz',
@@ -15,11 +14,9 @@ describe Facter::Resolvers::Macosx::Processors do
   let(:threads_per_core) { 1 }
 
   before do
-    processors_resolver.instance_variable_set(:@log, log_spy)
-
     allow(Facter::Core::Execution)
       .to receive(:execute)
-      .with(query_string, { logger: log_spy })
+      .with(query_string, logger: an_instance_of(Facter::Log))
       .and_return(output)
   end
 

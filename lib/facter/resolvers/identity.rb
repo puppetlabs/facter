@@ -3,8 +3,6 @@
 module Facter
   module Resolvers
     class PosxIdentity < BaseResolver
-      @log = Facter::Log.new(self)
-
       init_resolver
 
       class << self

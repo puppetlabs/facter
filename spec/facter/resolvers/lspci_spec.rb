@@ -3,12 +3,9 @@
 describe Facter::Resolvers::Lspci do
   subject(:lspci_resolver) { Facter::Resolvers::Lspci }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
-
   before do
-    lspci_resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('lspci', { logger: log_spy }).and_return(output)
+      .with('lspci', logger: an_instance_of(Facter::Log)).and_return(output)
   end
 
   after do

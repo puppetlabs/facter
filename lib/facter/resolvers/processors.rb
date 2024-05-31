@@ -4,8 +4,6 @@ module Facter
   module Resolvers
     module Linux
       class Processors < BaseResolver
-        @log = Facter::Log.new(self)
-
         init_resolver
 
         MHZ_TO_HZ = 1_000_000

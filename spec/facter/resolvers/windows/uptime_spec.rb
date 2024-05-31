@@ -1,16 +1,12 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::Windows::Uptime do
-  let(:logger) { instance_spy(Facter::Log) }
-
   before do
     win = double('Facter::Util::Windows::Win32Ole')
 
     allow(Facter::Util::Windows::Win32Ole).to receive(:new).and_return(win)
     allow(win).to receive(:return_first).with('SELECT LocalDateTime,LastBootUpTime FROM Win32_OperatingSystem')
                                         .and_return(comp)
-
-    Facter::Resolvers::Windows::Uptime.instance_variable_set(:@log, logger)
   end
 
   after do
@@ -134,13 +130,13 @@ describe Facter::Resolvers::Windows::Uptime do
       let(:last_bootup_time) { '20010201120506+0700' }
 
       before do
-        allow(logger).to receive(:debug).with('Unable to determine system uptime!')
+        allow(Facter::Resolvers::Windows::Uptime.log).to receive(:debug).with('Unable to determine system uptime!')
       end
 
       it 'logs that is unable to determine system uptime and all facts are nil' do
         Facter::Resolvers::Windows::Uptime.resolve(:days)
 
-        expect(logger).to have_received(:debug).with('Unable to determine system uptime!')
+        expect(Facter::Resolvers::Windows::Uptime.log).to have_received(:debug).with('Unable to determine system uptime!')
       end
 
       it 'uptime fact is nil' do
@@ -152,10 +148,10 @@ describe Facter::Resolvers::Windows::Uptime do
       let(:comp) { nil }
 
       it 'logs that query failed and days nil' do
-        allow(logger).to receive(:debug)
+        allow(Facter::Resolvers::Windows::Uptime.log).to receive(:debug)
           .with('WMI query returned no results'\
                 'for Win32_OperatingSystem with values LocalDateTime and LastBootUpTime.')
-        allow(logger).to receive(:debug)
+        allow(Facter::Resolvers::Windows::Uptime.log).to receive(:debug)
           .with('Unable to determine system uptime!')
         expect(Facter::Resolvers::Windows::Uptime.resolve(:days)).to be(nil)
       end
@@ -177,7 +173,7 @@ describe Facter::Resolvers::Windows::Uptime do
       let(:comp) { double('WIN32OLE', LocalDateTime: nil, LastBootUpTime: nil) }
 
       it 'logs that is unable to determine system uptime and days fact is nil' do
-        allow(logger).to receive(:debug)
+        allow(Facter::Resolvers::Windows::Uptime.log).to receive(:debug)
           .with('Unable to determine system uptime!')
         expect(Facter::Resolvers::Windows::Uptime.resolve(:days)).to be(nil)
       end

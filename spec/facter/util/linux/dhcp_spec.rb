@@ -71,7 +71,7 @@ describe Facter::Util::Linux::Dhcp do
         allow(Facter::Core::Execution).to receive(:which)
           .with('dhcpcd').and_return('/usr/bin/dhcpcd')
         allow(Facter::Core::Execution).to receive(:execute)
-          .with('/usr/bin/dhcpcd -U ens160', { logger: log_spy }).and_return(load_fixture('dhcpcd').read)
+          .with('/usr/bin/dhcpcd -U ens160', logger: log_spy).and_return(load_fixture('dhcpcd').read)
 
         dhcp_search.instance_eval { @dhcpcd_command = nil }
       end

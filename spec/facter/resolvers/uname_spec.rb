@@ -3,17 +3,14 @@
 describe Facter::Resolvers::Uname do
   subject(:uname_resolver) { Facter::Resolvers::Uname }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
-
   before do
-    uname_resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
       .with('uname -m &&
             uname -n &&
             uname -p &&
             uname -r &&
             uname -s &&
-            uname -v', { logger: log_spy })
+            uname -v', logger: an_instance_of(Facter::Log))
       .and_return('x86_64
         wifi.tsr.corp.puppet.net
         i386
@@ -23,7 +20,6 @@ describe Facter::Resolvers::Uname do
   end
 
   after do
-    uname_resolver.instance_variable_set(:@log, nil)
     Facter::Resolvers::Uname.invalidate_cache
   end
 

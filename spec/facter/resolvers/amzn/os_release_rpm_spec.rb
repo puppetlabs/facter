@@ -3,12 +3,9 @@
 describe Facter::Resolvers::Amzn::OsReleaseRpm do
   subject(:os_release_resolver) { Facter::Resolvers::Amzn::OsReleaseRpm }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
-
   before do
-    os_release_resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with("rpm -q --qf '%<NAME>s\\n%<VERSION>s\\n%<RELEASE>s\\n%<VENDOR>s' -f /etc/os-release", { logger: log_spy })
+      .with("rpm -q --qf '%<NAME>s\\n%<VERSION>s\\n%<RELEASE>s\\n%<VENDOR>s' -f /etc/os-release", logger: an_instance_of(Facter::Log))
       .and_return(os_release_content)
   end
 

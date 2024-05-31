@@ -7,17 +7,14 @@ describe Facter::Resolvers::Ec2 do
   let(:userdata_uri) { "#{base_uri}/user-data/" }
   let(:metadata_uri) { "#{base_uri}/meta-data/" }
   let(:token_uri) { "#{base_uri}/api/token" }
-  let(:log_spy) { instance_spy(Facter::Log) }
 
   before do
-    Facter::Util::Resolvers::Http.instance_variable_set(:@log, log_spy)
     allow(Socket).to receive(:tcp) if Gem.win_platform?
   end
 
   after do
     ec2.invalidate_cache
     Facter::Util::Resolvers::AwsToken.reset
-    Facter::Util::Resolvers::Http.instance_variable_set(:@log, nil)
   end
 
   shared_examples_for 'ec2' do

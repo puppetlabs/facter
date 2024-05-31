@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
+require 'ostruct'
+
 describe Facter::Resolvers::Windows::Networking do
   subject(:resolver) { Facter::Resolvers::Windows::Networking }
 
   describe '#resolve' do
-    let(:logger) { instance_spy(Facter::Log) }
     let(:size_ptr) { instance_spy(FFI::MemoryPointer) }
     let(:adapter_address) { instance_spy(FFI::MemoryPointer) }
     let(:reg) { instance_spy('Win32::Registry::HKEY_LOCAL_MACHINE') }
@@ -26,8 +27,6 @@ describe Facter::Resolvers::Windows::Networking do
         .and_yield(reg)
       allow(reg).to receive(:[]).with('Domain').and_return(domain)
       allow(reg).to receive(:close)
-
-      resolver.instance_variable_set(:@log, logger)
     end
 
     after do
@@ -38,7 +37,7 @@ describe Facter::Resolvers::Windows::Networking do
       let(:error_code) { NetworkingFFI::ERROR_NO_DATA }
 
       before do
-        allow(logger).to receive(:debug).with('Unable to retrieve networking facts!')
+        allow(resolver.log).to receive(:debug).with('Unable to retrieve networking facts!')
       end
 
       it 'returns interfaces fact as nil' do
@@ -48,7 +47,7 @@ describe Facter::Resolvers::Windows::Networking do
       it 'logs debug message' do
         resolver.resolve(:interfaces)
 
-        expect(logger).to have_received(:debug).with('Unable to retrieve networking facts!')
+        expect(resolver.log).to have_received(:debug).with('Unable to retrieve networking facts!')
       end
 
       it 'returns nil for domain' do

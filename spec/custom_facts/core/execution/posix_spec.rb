@@ -107,7 +107,7 @@ describe Facter::Core::Execution::Posix, unless: LegacyFacter::Util::Config.wind
   end
 
   context 'when calling execute_command' do
-    let(:logger) { instance_spy(Logger) }
+    let(:logger) { instance_spy(Facter::Log) }
 
     it 'executes a command' do
       expect(posix_executor.execute_command('/usr/bin/true', nil, logger)).to eq(['', ''])

@@ -3,19 +3,13 @@
 describe Facter::Resolvers::Linux::DockerUptime do
   subject(:resolver) { Facter::Resolvers::Linux::DockerUptime }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
-
   after { Facter::Resolvers::Linux::DockerUptime.invalidate_cache }
-
-  before do
-    resolver.instance_variable_set(:@log, log_spy)
-  end
 
   context 'when the uptime is less than 1 minutes' do
     before do
       allow(Facter::Core::Execution)
         .to receive(:execute)
-        .with('ps -o etime= -p "1"', { logger: log_spy })
+        .with('ps -o etime= -p "1"', logger: an_instance_of(Facter::Log))
         .and_return('20')
 
       allow(Facter::Util::Resolvers::UptimeHelper)
@@ -45,7 +39,7 @@ describe Facter::Resolvers::Linux::DockerUptime do
     before do
       allow(Facter::Core::Execution)
         .to receive(:execute)
-        .with('ps -o etime= -p "1"', { logger: log_spy })
+        .with('ps -o etime= -p "1"', logger: an_instance_of(Facter::Log))
         .and_return('10:20')
 
       allow(Facter::Util::Resolvers::UptimeHelper)
@@ -75,7 +69,7 @@ describe Facter::Resolvers::Linux::DockerUptime do
     before do
       allow(Facter::Core::Execution)
         .to receive(:execute)
-        .with('ps -o etime= -p "1"', { logger: log_spy })
+        .with('ps -o etime= -p "1"', logger: an_instance_of(Facter::Log))
         .and_return('3:10:20')
 
       allow(Facter::Util::Resolvers::UptimeHelper)
@@ -105,7 +99,7 @@ describe Facter::Resolvers::Linux::DockerUptime do
     before do
       allow(Facter::Core::Execution)
         .to receive(:execute)
-        .with('ps -o etime= -p "1"', { logger: log_spy })
+        .with('ps -o etime= -p "1"', logger: an_instance_of(Facter::Log))
         .and_return('1-3:10:20')
 
       allow(Facter::Util::Resolvers::UptimeHelper)
@@ -135,7 +129,7 @@ describe Facter::Resolvers::Linux::DockerUptime do
     before do
       allow(Facter::Core::Execution)
         .to receive(:execute)
-        .with('ps -o etime= -p "1"', { logger: log_spy })
+        .with('ps -o etime= -p "1"', logger: an_instance_of(Facter::Log))
         .and_return('2-3:10:20')
 
       allow(Facter::Util::Resolvers::UptimeHelper)

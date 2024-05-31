@@ -5,7 +5,6 @@ module Facter
     module Bsd
       class Processors < BaseResolver
         init_resolver
-        @log = Facter::Log.new(self)
 
         class << self
           private

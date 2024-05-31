@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 describe Facter::Resolvers::Windows::Virtualization do
-  let(:logger) { instance_spy(Facter::Log) }
   let(:win32ole) { instance_spy('WIN32OLE') }
   let(:win32ole2) { instance_spy('WIN32OLE') }
   let(:win) { instance_spy('Facter::Util::Windows::Win32Ole') }
@@ -10,7 +9,6 @@ describe Facter::Resolvers::Windows::Virtualization do
     allow(Facter::Util::Windows::Win32Ole).to receive(:new).and_return(win)
     allow(win).to receive(:exec_query).with('SELECT Manufacturer,Model,OEMStringArray FROM Win32_ComputerSystem')
                                       .and_return(query_result)
-    Facter::Resolvers::Windows::Virtualization.instance_variable_set(:@log, logger)
     Facter::Resolvers::Windows::Virtualization.invalidate_cache
   end
 
@@ -223,7 +221,7 @@ describe Facter::Resolvers::Windows::Virtualization do
     let(:query_result) { nil }
 
     it 'logs that query failed and virtual nil' do
-      allow(logger).to receive(:debug)
+      allow(Facter::Resolvers::Windows::Virtualization.log).to receive(:debug)
         .with('WMI query returned no results'\
                                       ' for Win32_ComputerSystem with values Manufacturer, Model and OEMStringArray.')
       expect(Facter::Resolvers::Windows::Virtualization.resolve(:virtual)).to be(nil)

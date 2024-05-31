@@ -3,15 +3,12 @@
 describe Facter::Resolvers::VirtWhat do
   subject(:virt_what_resolver) { Facter::Resolvers::VirtWhat }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
-
   after do
     virt_what_resolver.invalidate_cache
   end
 
   before do
-    virt_what_resolver.instance_variable_set(:@log, log_spy)
-    allow(Facter::Core::Execution).to receive(:execute).with('virt-what', { logger: log_spy }).and_return(content)
+    allow(Facter::Core::Execution).to receive(:execute).with('virt-what', logger: an_instance_of(Facter::Log)).and_return(content)
   end
 
   context 'when virt-what fails' do

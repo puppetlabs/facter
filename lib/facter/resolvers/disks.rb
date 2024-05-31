@@ -4,8 +4,6 @@ module Facter
   module Resolvers
     module Linux
       class Disks < BaseResolver
-        @log = Facter::Log.new(self)
-
         init_resolver
 
         DIR = '/sys/block'

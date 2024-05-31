@@ -27,7 +27,7 @@ describe Facter::Util::Linux::SocketParser do
       allow(Socket).to receive(:getifaddrs).and_return(ifaddrs)
       allow(Socket).to receive(:const_defined?).with(:PF_LINK).and_return(true)
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('ip -o link show', { logger: log_spy }).and_return(load_fixture('ip_link_show_all').read)
+        .with('ip -o link show', logger: log_spy).and_return(load_fixture('ip_link_show_all').read)
     end
 
     let(:result) do
@@ -77,9 +77,11 @@ describe Facter::Util::Linux::SocketParser do
 
       before do
         allow(Facter::Core::Execution).to receive(:execute)
-          .with('ip -o link show', logger: log_spy).and_return(load_fixture('ip_link_show_all').read)
+          .with('ip -o link show', logger: log_spy)
+          .and_return(load_fixture('ip_link_show_all').read)
         allow(Facter::Util::FileHelper).to receive(:safe_read)
-          .with('/proc/net/bonding/bond0', nil).and_return(load_fixture('bond_interface_data').read)
+          .with('/proc/net/bonding/bond0', nil)
+          .and_return(load_fixture('bond_interface_data').read)
       end
 
       it 'retrieves eth2 interface' do

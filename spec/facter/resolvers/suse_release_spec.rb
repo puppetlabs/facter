@@ -3,8 +3,6 @@
 describe Facter::Resolvers::SuseRelease do
   subject(:suse_release) { Facter::Resolvers::SuseRelease }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
-
   before do
     allow(Facter::Util::FileHelper).to receive(:safe_read)
       .with('/etc/SuSE-release', nil)

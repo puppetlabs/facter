@@ -4,8 +4,6 @@ module Facter
   module Resolvers
     module Linux
       class DmiBios < BaseResolver
-        @log = Facter::Log.new(self)
-
         init_resolver
 
         class << self

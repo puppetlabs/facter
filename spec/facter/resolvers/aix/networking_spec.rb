@@ -3,7 +3,6 @@
 describe Facter::Resolvers::Aix::Networking do
   subject(:networking_resolver) { Facter::Resolvers::Aix::Networking }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
   let(:ffi_interfaces) do
     {
       'en0' => { bindings: [{ address: '10.32.77.1', netmask: '255.255.255.0', network: '10.32.77.0' }] },
@@ -13,13 +12,12 @@ describe Facter::Resolvers::Aix::Networking do
   end
 
   before do
-    networking_resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('netstat -rn', { logger: log_spy })
+      .with('netstat -rn', logger: an_instance_of(Facter::Log))
       .and_return(netstat_rn)
 
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('netstat -in', { logger: log_spy })
+      .with('netstat -in', logger: an_instance_of(Facter::Log))
       .and_return(netstat_in)
 
     allow(Facter::Resolvers::Aix::FfiHelper).to receive(:read_interfaces).and_return(ffi_interfaces)
@@ -93,8 +91,9 @@ describe Facter::Resolvers::Aix::Networking do
     end
 
     it 'returns a nil MTU' do
+      expect(networking_resolver.log).not_to receive(:error).with(/undefined method/)
+
       expect(networking_resolver.resolve(:mtu)).to be_nil
-      expect(log_spy).not_to have_received(:debug).with(/undefined method/)
     end
   end
 end

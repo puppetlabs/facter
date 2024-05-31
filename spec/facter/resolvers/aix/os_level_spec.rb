@@ -3,12 +3,9 @@
 describe Facter::Resolvers::Aix::OsLevel do
   subject(:os_level) { Facter::Resolvers::Aix::OsLevel }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
-
   before do
-    os_level.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('/usr/bin/oslevel -s', { logger: log_spy })
+      .with('/usr/bin/oslevel -s', logger: an_instance_of(Facter::Log))
       .and_return(output)
   end
 

@@ -5,11 +5,9 @@ describe Facter::Resolvers::Partitions do
 
   let(:sys_block_path) { '/sys/block' }
   let(:sys_block_subdirs) { ['.', '..', 'sda'] }
-  let(:logger) { instance_spy(Facter::Log) }
 
   before do
     Facter::Resolvers::Partitions.invalidate_cache
-    Facter::Resolvers::Partitions.instance_variable_set(:@log, logger)
   end
 
   context 'when /sys/block is not readable' do
@@ -40,11 +38,11 @@ describe Facter::Resolvers::Partitions do
       allow(Facter::Core::Execution).to receive(:which)
         .with('blkid').and_return('/usr/bin/blkid')
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('blkid', { logger: logger }).and_return(load_fixture('blkid_output').read)
+        .with('blkid', logger: an_instance_of(Facter::Log)).and_return(load_fixture('blkid_output').read)
       allow(Facter::Core::Execution).to receive(:which)
         .with('lsblk').and_return('/usr/bin/lsblk')
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('lsblk -fp', { logger: logger }).and_return(load_fixture('lsblk_output').read)
+        .with('lsblk -fp', logger: an_instance_of(Facter::Log)).and_return(load_fixture('lsblk_output').read)
     end
 
     context 'when block has a device subdir' do

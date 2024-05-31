@@ -3,15 +3,12 @@
 describe Facter::Resolvers::Aix::Memory do
   subject(:resolver) { Facter::Resolvers::Aix::Memory }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
-
   before do
-    resolver.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('svmon', { logger: log_spy })
+      .with('svmon', logger: an_instance_of(Facter::Log))
       .and_return(svmon_content)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('pagesize', { logger: log_spy })
+      .with('pagesize', logger: an_instance_of(Facter::Log))
       .and_return(pagesize_content)
   end
 

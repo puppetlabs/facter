@@ -3,19 +3,20 @@
 describe Facter::Resolvers::Linux::Networking do
   subject(:networking_linux) { Facter::Resolvers::Linux::Networking }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
-
   describe '#resolve' do
     before do
-      networking_linux.instance_variable_set(:@log, log_spy)
       allow(Facter::Core::Execution).to receive(:execute)
-        .with('ip link show', { logger: log_spy }).and_return(load_fixture('ip_link_show').read)
+        .with('ip link show', logger: an_instance_of(Facter::Log)).and_return(load_fixture('ip_link_show').read)
       allow(Facter::Util::Linux::SocketParser).to receive(:retrieve_interfaces)
-        .with(log_spy).and_return(socket_interfaces)
-      allow(Facter::Util::Linux::Dhcp).to receive(:dhcp).with('lo', '1', log_spy).and_return('10.32.22.9')
-      allow(Facter::Util::Linux::Dhcp).to receive(:dhcp).with('ens160', '2', log_spy).and_return('10.32.22.10')
+        .and_return(socket_interfaces)
+      allow(Facter::Util::Linux::Dhcp).to receive(:dhcp)
+        .with('lo', '1', an_instance_of(Facter::Log))
+        .and_return('10.32.22.9')
+      allow(Facter::Util::Linux::Dhcp).to receive(:dhcp)
+        .with('ens160', '2', an_instance_of(Facter::Log))
+        .and_return('10.32.22.10')
       allow(Facter::Util::Linux::RoutingTable).to receive(:read_routing_table)
-        .with(log_spy).and_return([[{ interface: 'ens192', ip: '10.16.125.217' }], []])
+        .and_return([[{ interface: 'ens192', ip: '10.16.125.217' }], []])
       allow(Facter::Util::Resolvers::Networking::PrimaryInterface).to receive(:read_from_proc_route)
         .and_return('ens160')
       allow(File).to receive(:exist?).and_call_original
@@ -123,8 +124,7 @@ describe Facter::Resolvers::Linux::Networking do
         networking_linux.resolve(:interfaces)
         networking_linux.resolve(:interfaces)
 
-        expect(Facter::Util::Linux::SocketParser).to have_received(:retrieve_interfaces)
-          .with(log_spy).once
+        expect(Facter::Util::Linux::SocketParser).to have_received(:retrieve_interfaces).once
       end
     end
 
@@ -134,8 +134,7 @@ describe Facter::Resolvers::Linux::Networking do
         networking_linux.invalidate_cache
         networking_linux.resolve(:interfaces)
 
-        expect(Facter::Util::Linux::SocketParser).to have_received(:retrieve_interfaces)
-          .with(log_spy).twice
+        expect(Facter::Util::Linux::SocketParser).to have_received(:retrieve_interfaces).twice
       end
     end
 
@@ -190,7 +189,7 @@ describe Facter::Resolvers::Linux::Networking do
 
     context 'when dhcp is not available on the os' do
       before do
-        allow(Facter::Util::Linux::Dhcp).to receive(:dhcp).with('lo', '1', log_spy).and_return(nil)
+        allow(Facter::Util::Linux::Dhcp).to receive(:dhcp).with('lo', '1', an_instance_of(Facter::Log)).and_return(nil)
       end
 
       it 'does not add dhcp to lo interface' do
@@ -203,7 +202,7 @@ describe Facter::Resolvers::Linux::Networking do
     context 'when ip route show finds an IP, Socket lib did not retrieve' do
       before do
         allow(Facter::Util::Linux::RoutingTable).to receive(:read_routing_table)
-          .with(log_spy).and_return([[{ interface: 'ens160', ip: '10.16.125.217' }], []])
+          .and_return([[{ interface: 'ens160', ip: '10.16.125.217' }], []])
       end
 
       let(:socket_interfaces) do
@@ -241,7 +240,6 @@ describe Facter::Resolvers::Linux::Networking do
 
     context 'when asking for primary interface' do
       before do
-        Facter::Util::Resolvers::Networking::PrimaryInterface.instance_variable_set(:@log, log_spy)
         allow(Facter::Util::Resolvers::Networking::PrimaryInterface).to receive(:read_from_proc_route).and_return(nil)
       end
 
@@ -321,8 +319,8 @@ describe Facter::Resolvers::Linux::Networking do
       before do
         allow(Facter::Util::Resolvers::Networking::PrimaryInterface).to receive(:read_from_proc_route).and_return(nil)
         allow(Facter::Util::Resolvers::Networking::PrimaryInterface).to receive(:read_from_ip_route).and_return(nil)
-        allow(Facter::Util::Linux::Dhcp).to receive(:dhcp).with('lo', '1', log_spy).and_return(nil)
-        allow(Facter::Util::Linux::Dhcp).to receive(:dhcp).with('ens160', '2', log_spy).and_return(nil)
+        allow(Facter::Util::Linux::Dhcp).to receive(:dhcp).with('lo', '1', an_instance_of(Facter::Log)).and_return(nil)
+        allow(Facter::Util::Linux::Dhcp).to receive(:dhcp).with('ens160', '2', an_instance_of(Facter::Log)).and_return(nil)
         allow(File).to receive(:exist?).with('/proc/net/if_inet6').and_return(true)
         allow(Facter::Util::FileHelper).to receive(:safe_read)
           .with('/proc/net/if_inet6', nil).and_return(load_fixture('proc_net_if_inet6').read)

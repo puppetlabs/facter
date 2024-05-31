@@ -80,25 +80,18 @@ describe Facter::Resolvers::Mountpoints do
          used: '0 bytes',
          used_bytes: 0 }]
     end
-    let(:logger) { instance_spy(Facter::Log) }
 
     before do
       stub_const('Sys::Filesystem::Error', StandardError)
       allow(Facter::Util::Resolvers::FilesystemHelper).to \
         receive(:read_mountpoint_stats).with(mount.mount_point).and_raise(Sys::Filesystem::Error)
-
-      mountpoints.instance_variable_set(:@log, logger)
-    end
-
-    after do
-      Facter.instance_variable_set(:@logger, nil)
     end
 
     it 'logs into debug if it cannot receive mountpoints stats' do
-      Facter::Resolvers::Mountpoints.resolve(:mountpoints)
-
-      expect(logger).to have_received(:debug)
+      expect(Facter::Resolvers::Mountpoints.log).to receive(:debug)
         .with("Could not get stats for mountpoint #{mount.mount_point}, got StandardError")
+
+      Facter::Resolvers::Mountpoints.resolve(:mountpoints)
     end
 
     it 'fallbacks to default values' do
@@ -133,16 +126,13 @@ describe Facter::Resolvers::Mountpoints do
     end
 
     context 'when root device has partuuid' do
-      let(:log) { instance_spy(Facter::Log) }
-
       before do
         allow(Facter::Util::FileHelper).to receive(:safe_read)
           .with('/proc/cmdline')
           .and_return(load_fixture('cmdline_root_device_partuuid').read)
         allow(Facter::Core::Execution).to receive(:execute)
-          .with('blkid', { logger: log })
+          .with('blkid', logger: an_instance_of(Facter::Log))
           .and_return(load_fixture('blkid_output_root_has_partuuid').read)
-        Facter::Resolvers::Mountpoints.instance_variable_set(:@log, log)
       end
 
       it 'returns the path instead of the PARTUUID' do
@@ -154,9 +144,8 @@ describe Facter::Resolvers::Mountpoints do
       context 'when blkid command is not available' do
         before do
           allow(Facter::Core::Execution).to receive(:execute)
-            .with('blkid', { logger: log })
+            .with('blkid', logger: an_instance_of(Facter::Log))
             .and_return('blkid: command not found')
-          Facter::Resolvers::Mountpoints.instance_variable_set(:@log, log)
         end
 
         it 'returns the partition path as PARTUUID' do

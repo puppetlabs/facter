@@ -14,21 +14,12 @@ describe Facter::Resolvers::BaseResolver do
   end
 
   describe '#log' do
-    before do
-      allow(Facter::Log).to receive(:new).with(resolver).and_return('logger')
+    it 'returns the log' do
+      expect(resolver.log).to be_an_instance_of(Facter::Log)
     end
 
-    it 'initializes the log' do
-      resolver.log
-
-      expect(Facter::Log).to have_received(:new).with(resolver)
-    end
-
-    it 'initializes the log only once' do
-      resolver.log
-      resolver.log
-
-      expect(Facter::Log).to have_received(:new).with(resolver).once
+    it 'returns the same log instance each time' do
+      expect(resolver.log).to be_equal(resolver.log)
     end
   end
 
@@ -77,13 +68,12 @@ describe Facter::Resolvers::BaseResolver do
     context 'when Load Error is raised' do
       before do
         allow(resolver).to receive(:post_resolve).and_raise(LoadError)
-        allow(Facter::Log).to receive(:new).with(resolver).and_return(instance_double(Facter::Log, error: nil))
       end
 
       it 'logs the Load Error exception at the error level' do
-        resolver.resolve(fact)
+        expect(resolver.log).to receive(:error).with(/Resolving fact #{fact}, but got LoadError/)
 
-        expect(resolver.log).to have_received(:error).with(/Resolving fact #{fact}, but got LoadError/)
+        resolver.resolve(fact)
       end
 
       it 'sets the fact to nil' do

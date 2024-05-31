@@ -13,15 +13,13 @@ describe Facter::Resolvers::Openbsd::Mountpoints do
                         size: '2.90 GiB', size_bytes: 3_114_448_896, used: '1.66 GiB',
                         used_bytes: 1_780_609_024 } }
   end
-  let(:log_spy) { instance_spy(Facter::Log) }
 
   before do
-    Facter::Resolvers::Openbsd::Mountpoints.instance_variable_set(:@log, log_spy)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('mount', { logger: log_spy })
+      .with('mount', logger: an_instance_of(Facter::Log))
       .and_return(load_fixture('openbsd_filesystems').read)
     allow(Facter::Core::Execution).to receive(:execute)
-      .with('df -P', { logger: log_spy })
+      .with('df -P', logger: an_instance_of(Facter::Log))
       .and_return(load_fixture('openbsd_df').read)
   end
 

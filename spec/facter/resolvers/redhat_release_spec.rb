@@ -3,8 +3,6 @@
 describe Facter::Resolvers::RedHatRelease do
   subject(:redhat_release) { Facter::Resolvers::RedHatRelease }
 
-  let(:log_spy) { instance_spy(Facter::Log) }
-
   after do
     Facter::Resolvers::RedHatRelease.invalidate_cache
   end
