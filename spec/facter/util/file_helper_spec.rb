@@ -6,6 +6,9 @@ describe Facter::Util::FileHelper do
   let(:path) { '/Users/admin/file.txt' }
   let(:entries) { ['file.txt', 'a'] }
   let(:content) { 'file content' }
+  # rubocop:disable Style/SpecialGlobalVars
+  let(:sep) { $/ }
+  # rubocop:enable Style/SpecialGlobalVars
   let(:error_message) do
     "Facter::Util::FileHelper - #{Facter::CYAN}File at: /Users/admin/file.txt is not accessible.#{Facter::RESET}"
   end
@@ -114,7 +117,7 @@ describe Facter::Util::FileHelper do
 
   describe '#safe_read_lines' do
     before do
-      allow(File).to receive(:readlines).with(path, anything).and_return(array_content)
+      allow(File).to receive(:readlines).with(path, sep, anything).and_return(array_content)
     end
 
     context 'when successfully read the file lines' do
@@ -133,7 +136,7 @@ describe Facter::Util::FileHelper do
       it 'File.readlines is called with the correct path' do
         file_helper.safe_readlines(path)
 
-        expect(File).to have_received(:readlines).with(path, anything)
+        expect(File).to have_received(:readlines).with(path, sep, anything)
       end
 
       it "doesn't log anything" do
