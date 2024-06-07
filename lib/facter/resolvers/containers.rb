@@ -14,44 +14,64 @@ module Facter
         private
 
         def post_resolve(fact_name, _options)
-          @fact_list.fetch(fact_name) { read_cgroup(fact_name) }
+          @fact_list.fetch(fact_name) do
+            read_environ(fact_name) || read_cgroup(fact_name)
+          end
         end
 
         def read_cgroup(fact_name)
           output_cgroup = Facter::Util::FileHelper.safe_read('/proc/1/cgroup', nil)
-          output_environ = Facter::Util::FileHelper.safe_read('/proc/1/environ', nil)
-          return unless output_cgroup && output_environ
+          return unless output_cgroup
 
           output_docker = %r{docker/(.+)}.match(output_cgroup)
           output_lxc = %r{^/lxc/([^/]+)}.match(output_cgroup)
-          lxc_from_environ = /container=lxc/ =~ output_environ
 
-          info, vm = extract_vm_and_info(output_docker, output_lxc, lxc_from_environ)
-          info, vm = extract_for_nspawn(output_environ) unless vm
+          info, vm = extract_vm_and_info(output_docker, output_lxc)
           @fact_list[:vm] = vm
           @fact_list[:hypervisor] = { vm.to_sym => info } if vm
           @fact_list[fact_name]
         end
 
-        def extract_vm_and_info(output_docker, output_lxc, lxc_from_environ)
+        def read_environ(fact_name)
+          begin
+            container = Facter::Util::Linux::Proc.getenv_for_pid(1, 'container')
+          rescue StandardError => e
+            log.warn("Unable to getenv for pid 1, '#{e}'")
+            return nil
+          end
+          return if container.nil? || container.empty?
+
+          info = {}
+          case container
+          when 'lxcroot'
+            vm = 'lxc'
+          when 'podman'
+            vm = 'podman'
+          when 'crio'
+            vm = 'crio'
+          when 'systemd-nspawn'
+            vm = 'systemd_nspawn'
+            info = { 'id' => Facter::Util::FileHelper.safe_read('/etc/machine-id', nil).strip }
+          else
+            vm = 'container_other'
+            log.warn("Container runtime, '#{container}', is unsupported, setting to, '#{vm}'")
+          end
+          @fact_list[:vm] = vm
+          @fact_list[:hypervisor] = { vm.to_sym => info } if vm
+          @fact_list[fact_name]
+        end
+
+        def extract_vm_and_info(output_docker, output_lxc)
           vm = nil
           if output_docker
             vm = 'docker'
             info = output_docker[1]
+          elsif output_lxc
+            vm = 'lxc'
+            info = output_lxc[1]
           end
-          vm = 'lxc' if output_lxc || lxc_from_environ
-          info = output_lxc[1] if output_lxc
 
           [info ? { INFO[vm] => info } : {}, vm]
-        end
-
-        def extract_for_nspawn(output_environ)
-          nspawn = /container=systemd-nspawn/ =~ output_environ
-          if nspawn
-            vm = 'systemd_nspawn'
-            info = Facter::Util::FileHelper.safe_read('/etc/machine-id', nil)
-          end
-          [info ? { 'id' => info.strip } : {}, vm]
         end
       end
     end
