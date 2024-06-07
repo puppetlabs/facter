@@ -482,6 +482,7 @@ os_hierarchy.each do |os|
     require_relative '../../facts/linux/processor'
     require_relative '../../facts/linux/processors/cores'
     require_relative '../../facts/linux/processors/count'
+    require_relative '../../facts/linux/processors/extensions'
     require_relative '../../facts/linux/processors/isa'
     require_relative '../../facts/linux/processors/models'
     require_relative '../../facts/linux/processors/physicalcount'
