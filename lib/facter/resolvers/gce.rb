@@ -22,7 +22,7 @@ module Facter
         end
 
         def query_for_metadata
-          gce_data = extract_to_hash(Facter::Util::Resolvers::Http.get_request(METADATA_URL, HEADERS, false))
+          gce_data = extract_to_hash(Facter::Util::Resolvers::Http.get_request(METADATA_URL, HEADERS, {}, false))
           parse_instance(gce_data)
 
           gce_data.empty? ? nil : gce_data
