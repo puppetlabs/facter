@@ -6,7 +6,7 @@ describe Facter::Resolvers::Gce do
 
   before do
     allow(Facter::Util::Resolvers::Http).to receive(:get_request)
-      .with(gce_metadata_url, gce_url_headers, false)
+      .with(gce_metadata_url, gce_url_headers, {}, false)
       .and_return(http_response_body)
   end
 
