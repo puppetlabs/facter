@@ -27,7 +27,7 @@ module PuppetlabsSpec
         begin
           FileUtils.rm_r path, secure: true
         rescue Errno::ENOENT
-          puts 'failed to recursively delete files'
+          # nothing to do
         end
       end
     end
