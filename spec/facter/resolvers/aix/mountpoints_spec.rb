@@ -13,7 +13,7 @@ describe Facter::Resolvers::Aix::Mountpoints do
                   filesystem: 'x', options: ['rw', 'nodev', 'log=/dev/hd3'], size: '206.64 MiB',
                   size_bytes: 216_678_912, used: '1.58 MiB', used_bytes: 1_655_296 },
       '/tmp/salam' => { available: '63.57 GiB', available_bytes: 68_253_413_376, capacity: '7.20%',
-                        device: '/var/share', filesystem: 'nfs3', options: [], size: '68.50 GiB',
+                        device: 'joe:/var/share', filesystem: 'nfs3', options: [], size: '68.50 GiB',
                         size_bytes: 73_549_217_792, used: '4.93 GiB', used_bytes: 5_295_804_416 } }
   end
 
