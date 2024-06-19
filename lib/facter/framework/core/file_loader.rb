@@ -246,6 +246,9 @@ os_hierarchy.each do |os|
 
     require_relative '../../resolvers/amzn/os_release_rpm'
 
+  when 'azurelinux'
+    require_relative '../../facts/azurelinux/os/release'
+
   when 'bsd'
     require_relative '../../facts/bsd/kernelmajversion'
     require_relative '../../facts/bsd/kernelversion'

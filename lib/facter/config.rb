@@ -40,7 +40,8 @@ module Facter
             'Slackware',
             'Mageia',
             'Openwrt',
-            'Mariner'
+            'Mariner',
+            'Azurelinux'
           ]
         },
         {
