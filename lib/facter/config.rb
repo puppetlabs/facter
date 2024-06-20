@@ -34,6 +34,7 @@ module Facter
                 Sled
               ]
             },
+            'Archlinux',
             'Gentoo',
             'Alpine',
             'Photon',

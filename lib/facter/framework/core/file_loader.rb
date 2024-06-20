@@ -246,6 +246,9 @@ os_hierarchy.each do |os|
 
     require_relative '../../resolvers/amzn/os_release_rpm'
 
+  when 'archlinux'
+    require_relative '../../facts/archlinux/os/release'
+
   when 'bsd'
     require_relative '../../facts/bsd/kernelmajversion'
     require_relative '../../facts/bsd/kernelversion'
