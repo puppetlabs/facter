@@ -9,7 +9,8 @@ module Facts
 
         def call_the_resolver
           value = Facter::Resolvers::Uname.resolve(:kernelname)
-          fact_value = value == 'SunOS' ? 'Solaris' : value
+          version = Facter::Resolvers::Uname.resolve(:kernelversion)
+          fact_value = value == 'SunOS' ? (version =~ /^omnios-/ ? 'OmniOS' : 'Solaris') : value
 
           [Facter::ResolvedFact.new(FACT_NAME, fact_value), Facter::ResolvedFact.new(ALIASES, fact_value, :legacy)]
         end
