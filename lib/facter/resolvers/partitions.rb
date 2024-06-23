@@ -121,7 +121,13 @@ module Facter
         def populate_from_lsblk(partition_name, blkid_and_lsblk)
           return {} unless available?('lsblk', blkid_and_lsblk)
 
-          blkid_and_lsblk[:lsblk] ||= Facter::Core::Execution.execute('lsblk -fp', logger: log)
+          lsblk_version_raw = Facter::Core::Execution.execute('lsblk --version 2>&1', logger: log)
+          lsblk_version = lsblk_version_raw.match(/ \d\.\d+/)[0].to_f
+          blkid_and_lsblk[:lsblk] ||= if lsblk_version >= 2.25
+                                        Facter::Core::Execution.execute('lsblk -p -P -o NAME,FSTYPE,LABEL,UUID,PARTTYPE', logger: log)
+                                      else
+                                        Facter::Core::Execution.execute('lsblk -p -P -o NAME,FSTYPE,LABEL,UUID', logger: log)
+                                      end
 
           part_info = blkid_and_lsblk[:lsblk].match(/#{partition_name}.*/).to_s.split(' ')
           return {} if part_info.empty?
@@ -130,13 +136,21 @@ module Facter
         end
 
         def parse_part_info(part_info)
-          result = { filesystem: part_info[1] }
+          result = {}
 
-          if part_info.count.eql?(5)
-            result[:label] = part_info[2]
-            result[:uuid] = part_info[3]
-          else
-            result[:uuid] = part_info[2]
+          part_info.each do |setting|
+            simple_string = setting.delete('"')
+            key, value = simple_string.split('=')
+            case key
+            when 'FSTYPE'
+              result['filesystem'] = value
+            when 'LABEL'
+              result['label'] = value
+            when 'UUID'
+              result['uuid'] = value
+            when 'PARTTYPE'
+              result['type_uuid'] = value
+            end
           end
 
           result
