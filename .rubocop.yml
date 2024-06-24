@@ -53,24 +53,6 @@ Naming/VariableNumber:
     - 'lib/facter/resolvers/windows/ffi/networking_ffi.rb'
     - 'lib/facter/util/facts/windows_release_finder.rb'
 
-RSpec/StubbedMock:
-  Enabled: false
-
-Style/IfUnlessModifier:
-  Enabled: false
-
-# $stdout is preferred because it refers to the *current* stdout stream, while
-# STDOUT refers to the original stream. However, we can't just switch to using
-# $stdout, because it may have been assigned to a different object than STDOUT,
-# such as a IO to a file.
-Style/GlobalStdStream:
-  Exclude:
-    - 'lib/facter.rb'
-    - 'lib/facter/framework/cli/cli_launcher.rb'
-    - 'lib/facter/framework/logging/logger.rb'
-    - 'spec/framework/core/fact/internal/internal_fact_manager_spec.rb'
-    - 'spec/framework/logging/logger_spec.rb'
-
 RSpec/DescribedClass:
   EnforcedStyle: explicit
 
@@ -91,6 +73,9 @@ RSpec/MultipleMemoizedHelpers:
 RSpec/NestedGroups:
   Enabled: 6
 
+RSpec/StubbedMock:
+  Enabled: false
+
 RSpec/SubjectStub:
   Exclude:
     - 'spec/custom_facts/core/aggregate_spec.rb'
@@ -110,3 +95,18 @@ RSpec/VerifiedDoubles:
     - 'spec/facter/resolvers/windows/*'
     - 'spec/facter/util/windows/network_utils_spec.rb'
     - 'spec/facter/util/windows/win32ole_spec.rb'
+
+# $stdout is preferred because it refers to the *current* stdout stream, while
+# STDOUT refers to the original stream. However, we can't just switch to using
+# $stdout, because it may have been assigned to a different object than STDOUT,
+# such as a IO to a file.
+Style/GlobalStdStream:
+  Exclude:
+    - 'lib/facter.rb'
+    - 'lib/facter/framework/cli/cli_launcher.rb'
+    - 'lib/facter/framework/logging/logger.rb'
+    - 'spec/framework/core/fact/internal/internal_fact_manager_spec.rb'
+    - 'spec/framework/logging/logger_spec.rb'
+
+Style/IfUnlessModifier:
+  Enabled: false
