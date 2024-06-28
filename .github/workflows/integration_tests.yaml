@@ -24,6 +24,8 @@ jobs:
           - {os: windows-2019, ruby: '2.7'}
           - {os: windows-2019, ruby: '3.2'} # with openssl 3
     runs-on: ${{ matrix.cfg.os }}
+    env:
+      BUNDLE_SET: 'with integration'
     steps:
       - name: Checkout current PR
         uses: actions/checkout@v4
@@ -32,7 +34,5 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.cfg.ruby }}
-      - run: gem update bundler
-      - run: bundle config set --local with integration
-      - run: bundle install --jobs 3 --retry 3
+          bundler-cache: true
       - run: bundle exec rake spec_integration
