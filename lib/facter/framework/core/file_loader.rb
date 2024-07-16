@@ -249,6 +249,9 @@ os_hierarchy.each do |os|
   when 'archlinux'
     require_relative '../../facts/archlinux/os/release'
 
+  when 'azurelinux'
+    require_relative '../../facts/azurelinux/os/release'
+
   when 'bsd'
     require_relative '../../facts/bsd/kernelmajversion'
     require_relative '../../facts/bsd/kernelversion'
