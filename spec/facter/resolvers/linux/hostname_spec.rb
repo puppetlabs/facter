@@ -79,6 +79,14 @@ describe Facter::Resolvers::Linux::Hostname do
 
             it_behaves_like 'detects values'
           end
+
+          context 'when /etc/resolv.conf has "search ."' do
+            let(:resolv_conf) { "search .\n" }
+            let(:domain) { nil }
+            let(:fqdn) { hostname }
+
+            it_behaves_like 'detects values'
+          end
         end
 
         context 'when FFI is not installed' do
