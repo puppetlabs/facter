@@ -13,7 +13,12 @@ module Facter
         end
 
         def retrieve_from_virt_what(fact_name)
-          output = Facter::Core::Execution.execute('virt-what', logger: log)
+          command = if File.readable?('/opt/puppetlabs/puppet/bin/virt-what')
+                      '/opt/puppetlabs/puppet/bin/virt-what'
+                    else
+                      'virt-what'
+                    end
+          output = Facter::Core::Execution.execute(command, logger: log)
 
           @fact_list[:vm] = determine_xen(output)
           @fact_list[:vm] ||= determine_other(output)
