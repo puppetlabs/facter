@@ -66,7 +66,7 @@ describe Facter::Resolvers::Containers do
 
   context 'when hypervisor is lxc and it is discovered by environ' do
     let(:cgroup_output) { load_fixture('cgroup_file').read }
-    let(:environ_output) { ['container=lxcroot'] }
+    let(:environ_output) { ['container=lxc'] }
     let(:result) { { lxc: {} } }
 
     it 'return lxc for vm' do

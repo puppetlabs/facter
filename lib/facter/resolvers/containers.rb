@@ -43,7 +43,7 @@ module Facter
 
           info = {}
           case container
-          when 'lxcroot'
+          when 'lxc'
             vm = 'lxc'
           when 'podman'
             vm = 'podman'
