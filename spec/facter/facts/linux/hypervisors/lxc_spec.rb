@@ -5,7 +5,7 @@ describe Facts::Linux::Hypervisors::Lxc do
     subject(:fact) { Facts::Linux::Hypervisors::Lxc.new }
 
     before do
-      allow(Facter::Resolvers::Containers).to \
+      allow(Facter::Resolvers::Linux::Containers).to \
         receive(:resolve).with(:hypervisor).and_return(hv)
     end
 

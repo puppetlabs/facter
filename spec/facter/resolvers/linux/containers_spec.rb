@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-describe Facter::Resolvers::Containers do
-  subject(:containers_resolver) { Facter::Resolvers::Containers }
+describe Facter::Resolvers::Linux::Containers do
+  subject(:containers_resolver) { Facter::Resolvers::Linux::Containers }
 
   before do
     allow(Facter::Util::FileHelper).to receive(:safe_read)
