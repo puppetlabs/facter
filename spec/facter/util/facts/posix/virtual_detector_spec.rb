@@ -12,12 +12,12 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
       let(:vm) { 'docker' }
 
       before do
-        allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(vm)
+        allow(Facter::Resolvers::Linux::Containers).to receive(:resolve).with(:vm).and_return(vm)
       end
 
-      it 'calls Facter::Resolvers::Containers' do
+      it 'calls Facter::Resolvers::Linux::Containers' do
         detector.platform
-        expect(Facter::Resolvers::Containers).to have_received(:resolve).with(:vm)
+        expect(Facter::Resolvers::Linux::Containers).to have_received(:resolve).with(:vm)
       end
 
       it 'returns container type' do
@@ -29,7 +29,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
       let(:value) { 'jail' }
 
       before do
-        allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Linux::Containers).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return('jail')
       end
 
@@ -48,7 +48,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
       let(:value) { 'vmm' }
 
       before do
-        allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Linux::Containers).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Openbsd::Virtual).to receive(:resolve).with(:vm).and_return('vmm')
       end
@@ -68,7 +68,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
       let(:value) { 'gce' }
 
       before do
-        allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Linux::Containers).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Openbsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return('Google Engine')
@@ -89,7 +89,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
       let(:value) { 'xenhvm' }
 
       before do
-        allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Linux::Containers).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Openbsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
@@ -112,7 +112,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
       let(:value) { 'vmware_fusion' }
 
       before do
-        allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Linux::Containers).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Openbsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
@@ -136,7 +136,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
       let(:value) { 'openvzve' }
 
       before do
-        allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Linux::Containers).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Openbsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
@@ -161,7 +161,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
       let(:value) { 'vserver_host' }
 
       before do
-        allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Linux::Containers).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Openbsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
@@ -187,7 +187,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
       let(:value) { 'xen0' }
 
       before do
-        allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Linux::Containers).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Openbsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
@@ -214,7 +214,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
       let(:value) { 'bochs' }
 
       before do
-        allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Linux::Containers).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Openbsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return(nil)
@@ -248,7 +248,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
       let(:value) { 'hyperv' }
 
       before do
-        allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Linux::Containers).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Openbsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return(nil)
@@ -277,7 +277,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
       let(:value) { 'illumos-lx' }
 
       before do
-        allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Linux::Containers).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Openbsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Linux::DmiBios).to receive(:resolve).with(:bios_vendor).and_return(nil)
@@ -295,7 +295,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
       let(:vm) { 'physical' }
 
       before do
-        allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Linux::Containers).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Openbsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return(nil)
@@ -318,7 +318,7 @@ describe Facter::Util::Facts::Posix::VirtualDetector do
       let(:vm) { 'physical' }
 
       before do
-        allow(Facter::Resolvers::Containers).to receive(:resolve).with(:vm).and_return(nil)
+        allow(Facter::Resolvers::Linux::Containers).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Freebsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::Openbsd::Virtual).to receive(:resolve).with(:vm).and_return(nil)
         allow(Facter::Resolvers::VirtWhat).to receive(:resolve).with(:vm).and_return(nil)
