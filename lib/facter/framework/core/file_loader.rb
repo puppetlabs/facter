@@ -212,7 +212,7 @@ os_hierarchy.each do |os|
 
     require_relative '../../resolvers/aix/architecture'
     require_relative '../../resolvers/aix/disks'
-    require_relative '../../resolvers/aix/filesystem'
+    require_relative '../../resolvers/aix/filesystems'
     require_relative '../../resolvers/aix/hardware'
     require_relative '../../resolvers/aix/load_averages'
     require_relative '../../resolvers/aix/memory'
