@@ -8,7 +8,7 @@ module Facts
         ALIASES = 'uptime'
 
         def call_the_resolver
-          hypervisors = Facter::Resolvers::Containers.resolve(:hypervisor)
+          hypervisors = Facter::Resolvers::Linux::Containers.resolve(:hypervisor)
 
           fact_value = if hypervisors && hypervisors[:docker]
                          Facter::Resolvers::Linux::DockerUptime.resolve(:uptime)

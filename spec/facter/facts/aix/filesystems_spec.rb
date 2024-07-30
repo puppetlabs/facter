@@ -7,7 +7,7 @@ describe Facts::Aix::Filesystems do
     let(:files) { 'apfs,autofs,devfs' }
 
     before do
-      allow(Facter::Resolvers::Aix::Filesystem).to \
+      allow(Facter::Resolvers::Aix::Filesystems).to \
         receive(:resolve).with(:file_systems).and_return(files)
     end
 
