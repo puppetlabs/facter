@@ -69,7 +69,7 @@ module Facter
                         size: Facter::Util::Facts::UnitConverter.bytes_to_human_readable(size_bytes),
                         backing_file: backing_file }
           info_hash.merge!(populate_from_syscalls(partition_name, blkid_and_lsblk))
-          @fact_list[:partitions][partition_name] = info_hash.reject { |_key, value| value.nil? }
+          @fact_list[:partitions][partition_name] = info_hash.compact
         end
 
         def populate_from_syscalls(partition_name, blkid_and_lsblk)
