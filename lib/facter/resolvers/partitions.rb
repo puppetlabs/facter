@@ -73,9 +73,10 @@ module Facter
         end
 
         def populate_from_syscalls(partition_name, blkid_and_lsblk)
-          part_info = populate_from_blkid(partition_name, blkid_and_lsblk)
+          # Prefer lsblk over blkid since lsblk does not require root, returns more information, and is recommended by blkid
+          part_info = populate_from_lsblk(partition_name, blkid_and_lsblk)
 
-          return populate_from_lsblk(partition_name, blkid_and_lsblk) if part_info.empty?
+          return populate_from_blkid(partition_name, blkid_and_lsblk) if part_info.empty?
 
           part_info
         end
