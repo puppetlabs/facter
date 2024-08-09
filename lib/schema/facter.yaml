@@ -246,6 +246,9 @@ disks:
                 serial_number:
                     type: string
                     description: The serial number of the disk or block device.
+                serial:
+                    type: string
+                    description: The serial number of the disk or block device on Linux based systems.
                 size:
                     type: string
                     description: The display size of the disk or block device, such as "1 GiB".
@@ -258,7 +261,9 @@ disks:
                 type:
                     type: string
                     description: The type of disk or block device (sshd or hdd). This fact is available only on Linux.
-
+                wwn:
+                    type: string
+                    description: The identifier for the disk.
 dmi:
     type: map
     description: Return the system management information.
@@ -325,6 +330,9 @@ dmi:
                 uuid:
                     type: string
                     description: The product unique identifier of the system.
+                version:
+                    type: string
+                    description: The product model information of the system.
 
 domain:
     type: string
@@ -1031,6 +1039,9 @@ networking:
                         dhcp:
                             type: ip
                             description: The DHCP server for the network interface.
+                        duplex:
+                            type: string
+                            description: The duplex settings for physical network interfaces on Linux using /sys/class/net.
                         ip:
                             type: ip
                             description: The IPv4 address for the network interface.
@@ -1055,9 +1066,18 @@ networking:
                         network6:
                             type: ip6
                             description: The IPv6 network for the network interface.
+                        operational_state:
+                            type: string
+                            description: The operational state for Linux based systems.
+                        physical:
+                            type: boolean
+                            description: Return whether network interface is a physical device on Linux based systems.
                         scope6:
                             type: string
                             description: The IPv6 scope for the network interface.
+                        speed:
+                            type: integer
+                            description: The speed of physical network interfaces on Linux using /sys/class/net.
         ip:
             type: ip
             description: The IPv4 address of the default network interface.
@@ -1182,6 +1202,9 @@ os:
                     type: map
                     description: Represents information about the Mac OSX version.
                     elements:
+                        extra:
+                            type: string
+                            description: The ProductVersionExtra value. Only supported on macOS 13 and later.
                         full:
                             type: string
                             description: The full Mac OSX version number.
@@ -1366,6 +1389,9 @@ processors:
         count:
             type: integer
             description: The count of logical processors.
+        extensions:
+            type: array
+            description: The CPU extensions the processor supports.
         isa:
             type: string
             description: The processor instruction set architecture.
