@@ -98,7 +98,7 @@ describe Facter::Resolvers::Containers do
     let(:logger) { Facter::Log.class_variable_get(:@@logger) }
 
     it 'return container_other for vm' do
-      expect(logger).to receive(:warn).with(/Container runtime, 'UNKNOWN', is unsupported, setting to, 'container_other'/)
+      expect(logger).to receive(:warn).with(/Container runtime, 'UNKNOWN', is unsupported, setting to 'container_other'/)
       expect(containers_resolver.resolve(:vm)).to eq('container_other')
     end
   end
