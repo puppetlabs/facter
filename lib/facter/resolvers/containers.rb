@@ -54,7 +54,7 @@ module Facter
             info = { 'id' => Facter::Util::FileHelper.safe_read('/etc/machine-id', nil).strip }
           else
             vm = 'container_other'
-            log.warn("Container runtime, '#{container}', is unsupported, setting to, '#{vm}'")
+            log.warn("Container runtime, '#{container}', is unsupported, setting to '#{vm}'")
           end
           @fact_list[:vm] = vm
           @fact_list[:hypervisor] = { vm.to_sym => info } if vm
