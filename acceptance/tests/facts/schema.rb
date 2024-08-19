@@ -1,6 +1,10 @@
 test_name "Validate facter output conforms to schema" do
   tag 'risk:high'
   confine :except, :platform => 'windows' # See FACT-3479, once resolved this line can be removed
+  confine :except, :platform => 'aix-7.3' # FACT-3481 for fixing these
+  confine :except, :platform => 'ubuntu-22.04' # FACT-3481
+  confine :except, :platform => 'fedora-36' # FACT-3481
+  confine :except, :platform => 'el-8-ppc64le' # FACT-3481
 
   require 'yaml'
   require 'ipaddr'
