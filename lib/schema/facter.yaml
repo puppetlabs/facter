@@ -1335,6 +1335,9 @@ partitions:
                 backing_file:
                     type: string
                     description: The path to the file backing the partition.
+                parttype:
+                    type: string
+                    description: The partition type GUID.
 
 path:
     type: string
