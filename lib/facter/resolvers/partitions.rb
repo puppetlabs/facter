@@ -123,7 +123,8 @@ module Facter
           return {} unless available?('lsblk', blkid_and_lsblk)
 
           lsblk_version_raw = Facter::Core::Execution.execute('lsblk --version 2>&1', logger: log)
-          lsblk_version = lsblk_version_raw.match(/ \d\.\d+/)[0].to_f
+          # Return if the version of lsblk is too old (< 2.22) to support the --version flag
+          lsblk_version_raw.match?(/ \d\.\d+/) ? lsblk_version = lsblk_version_raw.match(/ \d\.\d+/)[0].to_f : (return {})
 
           # The -p/--paths option was added in lsblk 2.23, return early and fall back to blkid with earlier versions
           return {} if lsblk_version < 2.23
