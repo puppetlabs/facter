@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
 module Facter
-  VERSION = '4.9.0' unless defined?(VERSION)
+  VERSION = '4.10.0' unless defined?(VERSION)
 end
