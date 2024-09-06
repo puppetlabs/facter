@@ -117,6 +117,10 @@ describe OsDetector do
       before do
         RbConfig::CONFIG['host_os'] = 'linux'
 
+        # OS detected for Devuan and Arch Linux is special, so we need to explicitly stub it
+        # See https://github.com/puppetlabs/facter/issues/2752
+        allow(File).to receive(:readable?).with('/etc/devuan_version').and_return(false)
+        allow(File).to receive(:readable?).with('/etc/arch-release').and_return(false)
         allow(Facter::Resolvers::OsRelease).to receive(:resolve).with(:id)
         allow(Facter::Resolvers::RedHatRelease).to receive(:resolve).with(:id).and_return(:redhat)
         allow(Facter::Resolvers::SuseRelease).to receive(:resolve).with(:id)
