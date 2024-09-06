@@ -25,8 +25,8 @@ module Facter
             # set the new (temporary) value for the environment variable
             ENV[var] = value
           end
-          # execute the caller's block, capture the return value
-          rv = yield
+          # execute the caller's block, returning its value
+          yield
         # use an ensure block to make absolutely sure we restore the variables
         ensure
           # restore the old values
@@ -38,8 +38,6 @@ module Facter
               ENV.delete(var)
             end
           end
-          # return the captured return value
-          rv
         end
 
         def execute(command, options = {})
