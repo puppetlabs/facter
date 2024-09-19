@@ -11,7 +11,7 @@ module Facts
                      when 'hyperv'
                        metadata = Facter::Resolvers::Az.resolve(:metadata)
                        'azure' unless metadata.nil? || metadata.empty?
-                     when 'kvm', 'xen'
+                     when 'kvm', 'xen', 'xenhvm'
                        metadata = Facter::Resolvers::Ec2.resolve(:metadata)
                        'aws' unless metadata.nil? || metadata.empty?
                      when 'gce'
