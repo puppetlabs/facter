@@ -5,7 +5,7 @@ test_name 'networking facts with vlans' do
   confine :except, :platform => 'aix'
   confine :except, :platform => 'osx'
   confine :except, :platform => 'solaris'
-  # skip_test "FACT-3204 skip test due to issue with ubuntu 2204 image"  if hosts.any? { |host| host['platform'] =~ /ubuntu-22\.04/ }
+  skip_test "FACT-3482 skip test due to issue with ubuntu 2204 image" if hosts.any? { |host| host['platform'] =~ /ubuntu-22\.04/ }
 
   #
   # This test is intended to ensure that networking facts resolve vlans
