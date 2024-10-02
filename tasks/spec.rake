@@ -14,7 +14,7 @@ begin
   desc 'Run rspec integration test in random order'
   RSpec::Core::RakeTask.new(:spec_integration) do |t|
     t.rspec_opts = '--pattern spec_integration/**/*_spec.rb '\
-                   '--default-path spec_integration --order random'
+                   '--default-path spec_integration --bisect=verbose --order random:30840'
   end
 rescue LoadError
   puts 'Could not load rspec'
