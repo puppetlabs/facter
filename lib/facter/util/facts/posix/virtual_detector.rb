@@ -16,7 +16,7 @@ module Facter
             private
 
             def check_docker_lxc
-              Facter::Resolvers::Containers.resolve(:vm)
+              Facter::Resolvers::Linux::Containers.resolve(:vm)
             end
 
             def check_gce
