@@ -21,7 +21,7 @@ def format_facts(fact_hash)
   erb = if ERB.instance_method(:initialize).parameters.assoc(:key) # Ruby 2.6+
           ERB.new(File.read(PATH_TO_TEMPLATE), trim_mode: '-')
         else
-          ERB.new(File.read(PATH_TO_TEMPLATE), nil, '-')
+          ERB.new(File.read(PATH_TO_TEMPLATE), trim_mode: '-')
         end
   erb.result(scope.instance_eval { binding })
 end
