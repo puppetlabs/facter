@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-describe Facter::Resolvers::Aix::Filesystem do
+describe Facter::Resolvers::Aix::Filesystems do
   let(:filesystems) { 'ahafs,cdrfs,namefs,procfs,sfs' }
 
   after do
-    Facter::Resolvers::Aix::Filesystem.invalidate_cache
+    Facter::Resolvers::Aix::Filesystems.invalidate_cache
   end
 
   context 'when vfs file is readable' do
@@ -15,7 +15,7 @@ describe Facter::Resolvers::Aix::Filesystem do
     end
 
     it 'returns filesystems' do
-      result = Facter::Resolvers::Aix::Filesystem.resolve(:file_systems)
+      result = Facter::Resolvers::Aix::Filesystems.resolve(:file_systems)
 
       expect(result).to eq(filesystems)
     end
@@ -29,7 +29,7 @@ describe Facter::Resolvers::Aix::Filesystem do
     end
 
     it 'returns nil' do
-      result = Facter::Resolvers::Aix::Filesystem.resolve(:file_systems)
+      result = Facter::Resolvers::Aix::Filesystems.resolve(:file_systems)
 
       expect(result).to be(nil)
     end

@@ -12,7 +12,7 @@ module Facts
         end
 
         def check_lxc
-          info = Facter::Resolvers::Containers.resolve(:hypervisor)
+          info = Facter::Resolvers::Linux::Containers.resolve(:hypervisor)
           info[:lxc] if info
         end
       end
