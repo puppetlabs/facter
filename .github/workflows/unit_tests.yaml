@@ -22,6 +22,7 @@ jobs:
           - '2.7'
           - '3.0'
           - '3.2'
+          - '3.3'
           - 'jruby-9.3.14.0'
           - 'jruby-9.4.8.0'
     runs-on: ubuntu-20.04
@@ -43,6 +44,7 @@ jobs:
         ruby:
           - '2.7'
           - '3.2'
+          - '3.3'
     runs-on: windows-2019
     steps:
       - name: Checkout current PR
