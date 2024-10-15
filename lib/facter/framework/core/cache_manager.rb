@@ -95,8 +95,9 @@ module Facter
       unless searched_fact.file
         return unless valid_format_version?(searched_fact, data, fact_group)
 
-        delete_cache(fact_group) unless data.keys.grep(/#{searched_fact.name}/).any?
-        # data.fetch(searched_fact.name) { delete_cache(fact_group) }
+        unless data.keys.grep(/#{searched_fact.name}/).any?
+          @log.debug("Fact '#{searched_fact.name}' missing from group '#{fact_group}', skipping cache removal.")
+        end
       end
 
       @log.debug("loading cached values for #{searched_fact.name} facts")
