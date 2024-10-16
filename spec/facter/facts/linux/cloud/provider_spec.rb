@@ -90,6 +90,31 @@ describe Facts::Linux::Cloud::Provider do
       end
     end
 
+    describe 'when on xenhvm' do
+      before do
+        allow(Facter::Resolvers::Ec2).to receive(:resolve).with(:metadata).and_return(value)
+        allow(Facter::Util::Facts::Posix::VirtualDetector).to receive(:platform).and_return('xenhvm')
+      end
+
+      describe 'Ec2 data exists and aws fact is set' do
+        let(:value) { { 'some' => 'fact' } }
+
+        it 'Testing things' do
+          expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+            have_attributes(name: 'cloud.provider', value: 'aws')
+        end
+      end
+
+      context 'when Ec2 data does not exist nil is returned' do
+        let(:value) { {} }
+
+        it 'returns nil' do
+          expect(fact.call_the_resolver).to be_an_instance_of(Facter::ResolvedFact).and \
+            have_attributes(name: 'cloud.provider', value: nil)
+        end
+      end
+    end
+
     describe 'when on gce' do
       before do
         allow(Facter::Resolvers::Gce).to receive(:resolve).with(:metadata).and_return(value)
