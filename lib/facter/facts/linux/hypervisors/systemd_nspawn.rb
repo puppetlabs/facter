@@ -12,7 +12,7 @@ module Facts
         end
 
         def check_nspawn
-          info = Facter::Resolvers::Containers.resolve(:hypervisor)
+          info = Facter::Resolvers::Linux::Containers.resolve(:hypervisor)
           info[:systemd_nspawn] if info
         end
       end
