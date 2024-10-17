@@ -23,7 +23,7 @@ module Facter
               'X-aws-ec2-metadata-token-ttl-seconds' => lifetime.to_s
             }
 
-            @token = Facter::Util::Resolvers::Http.put_request(AWS_API_TOKEN_URL, headers)
+            @token = Facter::Util::Resolvers::Http.put_request(AWS_API_TOKEN_URL, headers, {}, false)
           end
 
           def reset
