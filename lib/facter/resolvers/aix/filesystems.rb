@@ -3,7 +3,7 @@
 module Facter
   module Resolvers
     module Aix
-      class Filesystem < BaseResolver
+      class Filesystems < BaseResolver
         init_resolver
 
         class << self
