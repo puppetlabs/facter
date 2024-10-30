@@ -45,6 +45,8 @@ module Facter
           case container
           when 'lxc'
             vm = 'lxc'
+          when 'lxc-virtwhat'
+            vm = 'lxc-virtwhat'
           when 'podman'
             vm = 'podman'
           when 'crio'

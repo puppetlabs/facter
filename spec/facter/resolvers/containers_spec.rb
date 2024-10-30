@@ -78,6 +78,20 @@ describe Facter::Resolvers::Containers do
     end
   end
 
+  context 'when hypervisor is lxc-virtwhat and it is discovered by environ' do
+    let(:cgroup_output) { load_fixture('cgroup_file').read }
+    let(:environ_output) { ['container=lxc-virtwhat'] }
+    let(:result) { { 'lxc-virtwhat': {} } }
+
+    it 'return lxc-virtwhat for vm' do
+      expect(containers_resolver.resolve(:vm)).to eq('lxc-virtwhat')
+    end
+
+    it 'return lxc-virtwhat info for hypervisor' do
+      expect(containers_resolver.resolve(:hypervisor)).to eq(result)
+    end
+  end
+
   context 'when hypervisor is neighter lxc nor docker' do
     let(:cgroup_output) { load_fixture('cgroup_file').read }
     let(:environ_output) { ['PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin'] }
