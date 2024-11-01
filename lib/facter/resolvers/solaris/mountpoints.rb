@@ -33,7 +33,6 @@ module Facter
 
                 next if fs.mount_type == 'autofs'
 
-                mounts = {}
                 device = fs.name
                 filesystem = fs.mount_type
                 path = fs.mount_point
