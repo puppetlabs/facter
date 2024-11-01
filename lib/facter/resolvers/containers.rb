@@ -51,6 +51,8 @@ module Facter
             vm = 'podman'
           when 'crio'
             vm = 'crio'
+          when 'zone'
+            return nil
           when 'systemd-nspawn'
             vm = 'systemd_nspawn'
             info = { 'id' => Facter::Util::FileHelper.safe_read('/etc/machine-id', nil).strip }

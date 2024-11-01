@@ -92,6 +92,16 @@ describe Facter::Resolvers::Containers do
     end
   end
 
+  context 'when hypervisor is illumos' do
+    let(:cgroup_output) { nil }
+    let(:environ_output) { ['container=zone'] }
+
+    it 'return nil' do
+      expect(containers_resolver.resolve(:vm)).to eq(nil)
+      expect(containers_resolver.resolve(:hypervisor)).to eq(nil)
+    end
+  end
+
   context 'when hypervisor is neighter lxc nor docker' do
     let(:cgroup_output) { load_fixture('cgroup_file').read }
     let(:environ_output) { ['PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin'] }
