@@ -3,6 +3,8 @@
 describe Facter::Resolvers::Networking do
   subject(:networking) { Facter::Resolvers::Networking }
 
+  let(:log_spy) { instance_spy(Facter::Log) }
+
   describe '#resolve' do
     before do
       allow(Facter::Util::Resolvers::Networking::PrimaryInterface)
@@ -37,7 +39,7 @@ describe Facter::Resolvers::Networking do
     end
 
     it 'detects all interfaces' do
-      expected = %w[lo0 gif0 stf0 en0 en0.1 en1 en2 bridge0 p2p0 awdl0 llw0 utun0 utun1 utun2 utun3 ib0 ib1]
+      expected = %w[lo0 gif0 stf0 en0 en0.1 en1 en2 bridge0 p2p0 awdl0 llw0 utun0 utun1 utun2 utun3 utun4 utun5 ib0 ib1]
       expect(networking.resolve(:interfaces).keys).to match_array(expected)
     end
 
@@ -133,6 +135,19 @@ describe Facter::Resolvers::Networking do
           network: '2001:db8:cafe::132:213', scope6: 'global' }
       ] }
       expect(networking.resolve(:interfaces)['utun3']).to include(expected)
+    end
+
+    it 'checks interface utun4' do
+      expected = { bindings: [{ address: '192.0.2.100', netmask: '255.255.255.255', network: '192.0.2.100' }] }
+      expect(networking.resolve(:interfaces)['utun4']).to include(expected)
+    end
+
+    it 'checks interface utun5' do
+      expected = { bindings6: [
+        { address: '2001:db8::1', netmask: 'ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff',
+          network: '2001:db8::1', scope6: 'global' }
+      ] }
+      expect(networking.resolve(:interfaces)['utun5']).to include(expected)
     end
 
     it 'checks interface ib0 has the expected mac' do
