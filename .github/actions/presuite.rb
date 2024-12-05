@@ -134,7 +134,7 @@ end
 
 def verify_facter_standalone_exits_0
   Dir.chdir(ENV['FACTER_ROOT']) do
-    run('bundle install --without development')
+    run('bundle install --without documentation')
     run('bundle exec facter')
   end
 end
