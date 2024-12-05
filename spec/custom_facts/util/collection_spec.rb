@@ -287,7 +287,7 @@ describe LegacyFacter::Util::Collection do
     end
 
     it 'converts the fact name to a string' do
-      collection.each do |fact, _value| # rubocop:disable Style/HashEachMethods
+      collection.each do |fact, _value|
         expect(fact).to be_instance_of(String)
       end
     end
