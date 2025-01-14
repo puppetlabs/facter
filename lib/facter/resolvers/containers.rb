@@ -15,7 +15,17 @@ module Facter
 
         def post_resolve(fact_name, _options)
           @fact_list.fetch(fact_name) do
-            read_environ(fact_name) || read_cgroup(fact_name)
+            environ_result = read_environ(fact_name)
+            cgroup_result = read_cgroup(fact_name)
+
+            if environ_result.nil? && cgroup_result.nil?
+              @fact_list[:vm] = 'container_other'
+              @fact_list[:hypervisor] = ''
+              log.warn("Container runtime is unsupported, setting to 'container_other'")
+              @fact_list[fact_name]
+            else
+              environ_result || cgroup_result
+            end
           end
         end
 
@@ -24,7 +34,8 @@ module Facter
           return unless output_cgroup
 
           output_docker = %r{docker/(.+)}.match(output_cgroup)
-          output_lxc = %r{^/lxc/([^/]+)}.match(output_cgroup)
+          output_lxc    = %r{^/lxc/([^/]+)}.match(output_cgroup)
+          return if output_docker.nil? && output_lxc.nil?
 
           info, vm = extract_vm_and_info(output_docker, output_lxc)
           @fact_list[:vm] = vm
@@ -57,8 +68,7 @@ module Facter
             vm = 'systemd_nspawn'
             info = { 'id' => Facter::Util::FileHelper.safe_read('/etc/machine-id', nil).strip }
           else
-            vm = 'container_other'
-            log.warn("Container runtime, '#{container}', is unsupported, setting to '#{vm}'")
+            return nil
           end
           @fact_list[:vm] = vm
           @fact_list[:hypervisor] = { vm.to_sym => info } if vm
