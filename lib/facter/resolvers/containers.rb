@@ -55,7 +55,12 @@ module Facter
             return nil
           when 'systemd-nspawn'
             vm = 'systemd_nspawn'
-            info = { 'id' => Facter::Util::FileHelper.safe_read('/etc/machine-id', nil).strip }
+            machine_id = Facter::Util::FileHelper.safe_read('/etc/machine-id', nil)
+            info = if machine_id
+                     { 'id' => machine_id.strip }
+                   else
+                     {}
+                   end
           else
             vm = 'container_other'
             log.warn("Container runtime, '#{container}', is unsupported, setting to '#{vm}'")

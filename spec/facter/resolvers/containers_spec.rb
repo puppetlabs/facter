@@ -48,6 +48,14 @@ describe Facter::Resolvers::Containers do
     it 'return nspawn info for hypervisor' do
       expect(containers_resolver.resolve(:hypervisor)).to eq(result)
     end
+
+    it 'omits hypervisor info if it fails to read /etc/machine-id' do
+      allow(Facter::Util::FileHelper).to receive(:safe_read)
+        .with('/etc/machine-id', nil)
+        .and_return(nil)
+
+      expect(containers_resolver.resolve(:hypervisor)).to eq(systemd_nspawn: {})
+    end
   end
 
   context 'when hypervisor is lxc and it is discovered by cgroup' do
