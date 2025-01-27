@@ -146,11 +146,11 @@ describe Facter::Resolvers::Containers do
   context 'when hypervisor is an unknown container runtime discovered by environ' do
     let(:cgroup_output) { load_fixture('cgroup_file').read }
     let(:environ_output) { ['container=UNKNOWN'] }
-    let(:logger) { Facter::Log.class_variable_get(:@@logger) }
+    let(:logger) { containers_resolver.log }
 
     it 'return container_other for vm' do
-      expect(logger).to receive(:warn).with(/Container runtime, 'UNKNOWN', is unsupported, setting to 'container_other'/)
-      expect(containers_resolver.resolve(:vm)).to eq('container_other')
+      expect(logger).to receive(:debug).with(/Container runtime 'UNKNOWN' is not recognized, ignoring/)
+      expect(containers_resolver.resolve(:vm)).to eq(nil)
     end
   end
 end

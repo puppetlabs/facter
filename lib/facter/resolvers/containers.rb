@@ -3,23 +3,29 @@
 module Facter
   module Resolvers
     class Containers < BaseResolver
-      # :virtual
+      # :vm
       # :hypervisor
 
       init_resolver
-
-      INFO = { 'docker' => 'id', 'lxc' => 'name' }.freeze
 
       class << self
         private
 
         def post_resolve(fact_name, _options)
           @fact_list.fetch(fact_name) do
-            read_environ(fact_name) || read_cgroup(fact_name)
+            vm, hypervisor = read_cgroup || read_environ
+
+            @fact_list[:vm] = vm
+            @fact_list[:hypervisor] = hypervisor
+            @fact_list[fact_name]
           end
         end
 
-        def read_cgroup(fact_name)
+        # Read /proc/1/cgroup to determine if we're running in docker or lxc
+        # returning the vm and hypervisor info. If none found, return nil.
+        #
+        # @return Array[<String, Hash>], nil
+        def read_cgroup
           output_cgroup = Facter::Util::FileHelper.safe_read('/proc/1/cgroup', nil)
           return unless output_cgroup
 
@@ -41,12 +47,15 @@ module Facter
             # fallback to read_environ
             return nil
           end
-          @fact_list[:vm] = vm
-          @fact_list[:hypervisor] = { vm.to_sym => info } if vm
-          @fact_list[fact_name]
+
+          [vm, { vm.to_sym => info }]
         end
 
-        def read_environ(fact_name)
+        # Read the `container` environment variable from /proc/1/environ to
+        # determine the vm and hypervisor info. If none found, return nil.
+        #
+        # @return Array[<String, Hash>], nil
+        def read_environ
           begin
             container = Facter::Util::Linux::Proc.getenv_for_pid(1, 'container')
           rescue StandardError => e
@@ -76,25 +85,11 @@ module Facter
                      {}
                    end
           else
-            vm = 'container_other'
-            log.warn("Container runtime, '#{container}', is unsupported, setting to '#{vm}'")
-          end
-          @fact_list[:vm] = vm
-          @fact_list[:hypervisor] = { vm.to_sym => info } if vm
-          @fact_list[fact_name]
-        end
-
-        def extract_vm_and_info(output_docker, output_lxc)
-          vm = nil
-          if output_docker
-            vm = 'docker'
-            info = output_docker[1]
-          elsif output_lxc
-            vm = 'lxc'
-            info = output_lxc[1]
+            log.debug("Container runtime '#{container}' is not recognized, ignoring")
+            return nil
           end
 
-          [info ? { INFO[vm] => info } : {}, vm]
+          [vm, { vm.to_sym => info }]
         end
       end
     end
