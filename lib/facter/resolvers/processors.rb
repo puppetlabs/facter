@@ -56,7 +56,7 @@ module Facter
           end
 
           def construct_models_list(tokens)
-            return unless tokens.first.strip == 'model name' || tokens.first.strip == 'cpu'
+            return unless ['model name', 'cpu'].include?(tokens.first.strip)
 
             @fact_list[:models] << tokens.last.strip
           end

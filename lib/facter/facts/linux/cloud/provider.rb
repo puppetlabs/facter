@@ -11,9 +11,18 @@ module Facts
                      when 'hyperv'
                        metadata = Facter::Resolvers::Az.resolve(:metadata)
                        'azure' unless metadata.nil? || metadata.empty?
-                     when 'kvm', 'xen', 'xenhvm'
+                     when 'kvm', 'xen', 'xenhvm', 'xenu'
                        metadata = Facter::Resolvers::Ec2.resolve(:metadata)
-                       'aws' unless metadata.nil? || metadata.empty?
+                       if metadata && !metadata.empty?
+                         if Process.uid.zero? && File.executable?('/opt/puppetlabs/puppet/bin/virt-what') # virt-what needs to be run as root
+                           output = Facter::Core::Execution.execute('/opt/puppetlabs/puppet/bin/virt-what')
+                           # rubocop:disable Metrics/BlockNesting
+                           output.lines(chomp: true).any?('aws') ? 'aws' : nil
+                           # rubocop:enable Metrics/BlockNesting
+                         else
+                           'aws'
+                         end
+                       end
                      when 'gce'
                        metadata = Facter::Resolvers::Gce.resolve(:metadata)
                        'gce' unless metadata.nil? || metadata.empty?
