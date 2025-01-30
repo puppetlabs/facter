@@ -23,10 +23,24 @@ module Facter
           output_cgroup = Facter::Util::FileHelper.safe_read('/proc/1/cgroup', nil)
           return unless output_cgroup
 
-          output_docker = %r{docker/(.+)}.match(output_cgroup)
-          output_lxc = %r{^/lxc/([^/]+)}.match(output_cgroup)
+          # '+' matches one or more characters, so if there's a match, the
+          # capture group must be non-empty
+          output_docker = %r{docker/(?<id>.+)}.match(output_cgroup)
+          output_lxc = %r{^/lxc/(?<name>[^/]+)}.match(output_cgroup)
 
-          info, vm = extract_vm_and_info(output_docker, output_lxc)
+          if File.exist?('/.dockerenv')
+            vm = 'docker'
+            info = output_docker && output_docker[:id] ? { 'id' => output_docker[:id] } : {}
+          elsif output_docker
+            vm = 'docker'
+            info = { 'id' => output_docker[:id] }
+          elsif output_lxc
+            vm = 'lxc'
+            info = { 'name' => output_lxc[:name] }
+          else
+            # fallback to read_environ
+            return nil
+          end
           @fact_list[:vm] = vm
           @fact_list[:hypervisor] = { vm.to_sym => info } if vm
           @fact_list[fact_name]

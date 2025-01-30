@@ -10,10 +10,29 @@ describe Facter::Resolvers::Containers do
     allow(Facter::Util::FileHelper).to receive(:safe_readlines)
       .with('/proc/1/environ', [], "\0", chomp: true)
       .and_return(environ_output)
+    allow(File).to receive(:exist?).and_call_original
+    allow(File).to receive(:exist?).with('/.dockerenv').and_return(false)
   end
 
   after do
     containers_resolver.invalidate_cache
+  end
+
+  context 'when hypervisor is docker desktop' do
+    let(:cgroup_output) { '0::/' }
+    let(:environ_output) { ['PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'] }
+
+    before do
+      allow(File).to receive(:exist?).with('/.dockerenv').and_return(true)
+    end
+
+    it 'returns docker for vm' do
+      expect(containers_resolver.resolve(:vm)).to eq('docker')
+    end
+
+    it 'returns empty hypervisor info' do
+      expect(containers_resolver.resolve(:hypervisor)).to eq(docker: {})
+    end
   end
 
   context 'when hypervisor is docker' do
