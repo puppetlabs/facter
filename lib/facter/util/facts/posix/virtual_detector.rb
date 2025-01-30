@@ -16,7 +16,7 @@ module Facter
             private
 
             def check_docker_lxc
-              Facter::Resolvers::Containers.resolve(:vm)
+              resolve(Facter::Resolvers::Containers, :vm)
             end
 
             def check_gce
@@ -29,35 +29,35 @@ module Facter
             end
 
             def check_vmware
-              Facter::Resolvers::Vmware.resolve(:vm)
+              resolve(Facter::Resolvers::Vmware, :vm)
             end
 
             def retrieve_from_virt_what
-              Facter::Resolvers::VirtWhat.resolve(:vm)
+              resolve(Facter::Resolvers::VirtWhat, :vm)
             end
 
             def check_open_vz
-              Facter::Resolvers::OpenVz.resolve(:vm)
+              resolve(Facter::Resolvers::OpenVz, :vm)
             end
 
             def check_vserver
-              Facter::Resolvers::VirtWhat.resolve(:vserver)
+              resolve(Facter::Resolvers::VirtWhat, :vserver)
             end
 
             def check_xen
-              Facter::Resolvers::Xen.resolve(:vm)
+              resolve(Facter::Resolvers::Xen, :vm)
             end
 
             def check_freebsd
               return unless Object.const_defined?('Facter::Resolvers::Freebsd::Virtual')
 
-              Facter::Resolvers::Freebsd::Virtual.resolve(:vm)
+              resolve(Facter::Resolvers::Freebsd::Virtual, :vm)
             end
 
             def check_openbsd
               return unless Object.const_defined?('Facter::Resolvers::Openbsd::Virtual')
 
-              Facter::Resolvers::Openbsd::Virtual.resolve(:vm)
+              resolve(Facter::Resolvers::Openbsd::Virtual, :vm)
             end
 
             def check_other_facts
@@ -73,7 +73,13 @@ module Facter
             end
 
             def check_lspci
-              Facter::Resolvers::Lspci.resolve(:vm)
+              resolve(Facter::Resolvers::Lspci, :vm)
+            end
+
+            def resolve(resolver, fact_name)
+              value = resolver.resolve(fact_name)
+              resolver.log.debug("Resolved '#{fact_name}' to '#{value}'")
+              value
             end
           end
         end
