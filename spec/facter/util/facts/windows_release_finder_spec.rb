@@ -17,7 +17,7 @@ describe Facter::Util::Facts::WindowsReleaseFinder do
   describe '#find windows release when version is 10' do
     let(:cons) { true }
     let(:desc) {}
-    let(:k_version) { '10.0.123' }
+    let(:k_version) { '10.0.10240' }
     let(:version) { '10.0' }
 
     it 'returns 10' do
