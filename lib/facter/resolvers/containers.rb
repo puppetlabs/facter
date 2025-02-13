@@ -1,5 +1,10 @@
 # frozen_string_literal: true
 
+# The Facter::Resolvers::Containers.resolve method must return either a valid container identifier (e.g., "docker", "lxc", etc.)
+# or nil if no container is detected. It should not return a dummy value such as "container_other". This is critical because
+# Facter::Util::Facts::Posix::VirtualDetector relies on a nil return value to continue checking other virtualization methods.
+# Returning a non-nil dummy value would prematurely short-circuit these checks, leading to inaccurate detection results.
+
 module Facter
   module Resolvers
     class Containers < BaseResolver
@@ -15,17 +20,7 @@ module Facter
 
         def post_resolve(fact_name, _options)
           @fact_list.fetch(fact_name) do
-            environ_result = read_environ(fact_name)
-            cgroup_result = read_cgroup(fact_name)
-
-            if environ_result.nil? && cgroup_result.nil?
-              @fact_list[:vm] = 'container_other'
-              @fact_list[:hypervisor] = ''
-              log.warn("Container runtime is unsupported, setting to 'container_other'")
-              @fact_list[fact_name]
-            else
-              environ_result || cgroup_result
-            end
+            read_environ(fact_name) || read_cgroup(fact_name)
           end
         end
 
