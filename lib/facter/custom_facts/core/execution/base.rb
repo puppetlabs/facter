@@ -139,7 +139,7 @@ module Facter
 
         def builtin_command?(command)
           output, _status = Open3.capture2("type #{command}")
-          /builtin/.match?(output.chomp) ? true : false
+          /builtin/.match?(output.chomp)
         end
       end
     end
