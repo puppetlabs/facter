@@ -61,7 +61,7 @@ describe Facter::Util::Facts::WindowsReleaseFinder do
   describe '#find windows release when version is 2019' do
     let(:cons) { false }
     let(:desc) {}
-    let(:k_version) { '10.0.17623' }
+    let(:k_version) { '10.0.17763' }
     let(:version) { '10.0' }
 
     it 'returns 2019' do
