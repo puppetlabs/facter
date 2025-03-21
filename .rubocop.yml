@@ -11,6 +11,10 @@ require:
   - rubocop-performance
   - rubocop-rspec
 
+plugins:
+  - rubocop-factory_bot
+  - rubocop-capybara
+
 Layout/LineLength:
   Enabled: false
 
