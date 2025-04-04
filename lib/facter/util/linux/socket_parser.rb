@@ -19,7 +19,7 @@ module Facter
           private
 
           def populate_interface_info(ifaddr)
-            interface_name = ifaddr.name
+            interface_name = ifaddr.name.dup.force_encoding(Encoding::UTF_8)
             @interfaces[interface_name] = {} if @interfaces[interface_name].nil?
 
             mac(ifaddr)
@@ -80,7 +80,7 @@ module Facter
 
           def mac_from(ifaddr)
             if Socket.const_defined? :PF_LINK
-              ifaddr.addr&.getnameinfo&.first # sometimes it returns localhost or ip
+              ifaddr.addr&.getnameinfo&.first&.dup&.force_encoding(Encoding::UTF_8) # sometimes it returns localhost or ip
             elsif Socket.const_defined? :PF_PACKET
               return if ifaddr.addr.nil?
 
@@ -93,7 +93,7 @@ module Facter
 
           def mac_from_sockaddr_of(ifaddr)
             result = ifaddr.addr.inspect_sockaddr
-            result&.match(/hwaddr=([\h:]+)/)&.captures&.first
+            result&.match(/hwaddr=([\h:]+)/)&.captures&.first&.force_encoding(Encoding::UTF_8)
           end
 
           def ip_info_of(ifaddr)
@@ -117,8 +117,8 @@ module Facter
 
           def binding_data(ifaddr)
             # ipv6 ips are retrieved as <ip>%<interface_name>
-            ip = ifaddr.addr.ip_address.split('%').first
-            netmask = ifaddr.netmask.ip_address
+            ip = ifaddr.addr.ip_address.split('%').first.force_encoding(Encoding::UTF_8)
+            netmask = ifaddr.netmask.ip_address.dup.force_encoding(Encoding::UTF_8)
             binding_key = ifaddr.addr.ipv4? ? :bindings : :bindings6
 
             [ip, netmask, binding_key]
