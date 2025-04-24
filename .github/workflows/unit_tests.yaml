@@ -24,7 +24,9 @@ jobs:
           - '3.2'
           - 'jruby-9.3.14.0'
           - 'jruby-9.4.8.0'
-    runs-on: ubuntu-20.04
+    # 24.04 doesn't support older jruby versions, so use 22.04 as middle ground
+    # When we drop testing against puppet7, then we can use newer ubuntu.
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout current PR
         uses: actions/checkout@v4
