@@ -131,8 +131,8 @@ module Facter
 
           def find_primary_interface(sock_addr, name, addr)
             if !@fact_list[:primary_interface] &&
-               ([NetworkingFFI::AF_INET, NetworkingFFI::AF_INET6].include?(sock_addr[:sa_family]) &&
-               !::Facter::Util::Resolvers::Networking.ignored_ip_address(addr))
+               [NetworkingFFI::AF_INET, NetworkingFFI::AF_INET6].include?(sock_addr[:sa_family]) &&
+               !::Facter::Util::Resolvers::Networking.ignored_ip_address(addr)
               @fact_list[:primary_interface] = name.to_s
             end
           end

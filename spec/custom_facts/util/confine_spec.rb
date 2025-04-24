@@ -97,7 +97,7 @@ describe LegacyFacter::Util::Confine do
     end
 
     it "returns true if any of the provided ranges matches the fact's value" do
-      expect(confined(6, (5..7))).to be true
+      expect(confined(6, 5..7)).to be true
     end
 
     it "returns false if none of the provided values matches the fact's value" do
@@ -105,7 +105,7 @@ describe LegacyFacter::Util::Confine do
     end
 
     it "returns false if none of the provided integer values matches the fact's value" do
-      expect(confined(2, 1, [3, 4], (5..7))).to be false
+      expect(confined(2, 1, [3, 4], 5..7)).to be false
     end
 
     it "returns false if none of the provided boolan values matches the fact's value" do
@@ -117,7 +117,7 @@ describe LegacyFacter::Util::Confine do
     end
 
     it "returns false if none of the provided ranges matches the fact's value" do
-      expect(confined(8, (5..7))).to be false
+      expect(confined(8, 5..7)).to be false
     end
 
     it 'accepts and evaluate a block argument against the fact' do
