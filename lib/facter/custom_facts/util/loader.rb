@@ -115,6 +115,18 @@ module LegacyFacter
         Kernel.load(file)
       end
 
+      # Ruby < 3 returned env key/values based on the active code page
+      # Ruby 3+ use UTF-8, see ruby/ruby@ca76337a00244635faa331afd04f4b75161ce6fb
+      if RUBY_VERSION.to_f < 3.0
+        def env_string(str)
+          str.force_encoding(Encoding.default_external)
+        end
+      else
+        def env_string(str)
+          str
+        end
+      end
+
       # Load facts from the environment.  If no name is provided,
       # all will be loaded.
       def load_env(fact = nil)
@@ -123,7 +135,8 @@ module LegacyFacter
           # Skip anything that doesn't match our regex.
           next unless name =~ /^facter_?(\w+)$/i
 
-          env_name = Regexp.last_match(1).downcase
+          env_name = env_string(Regexp.last_match(1).downcase)
+          env_value = env_string(value.dup)
 
           # If a fact name was specified, skip anything that doesn't
           # match it.
@@ -131,7 +144,7 @@ module LegacyFacter
 
           LegacyFacter.add(env_name, fact_type: :external, is_env: true) do
             has_weight 1_000_000
-            setcode { value }
+            setcode { env_value }
           end
 
           # Short-cut, if we are only looking for one value.
