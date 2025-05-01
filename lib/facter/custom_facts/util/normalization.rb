@@ -48,6 +48,10 @@ module LegacyFacter
       # @return [void]
 
       def normalize_string(value)
+        if value.encoding == Encoding::ASCII_8BIT
+          raise NormalizationError, "String #{value.inspect} contains binary data"
+        end
+
         value = value.encode(Encoding::UTF_8)
 
         unless value.valid_encoding?
