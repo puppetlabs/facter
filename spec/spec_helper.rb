@@ -102,7 +102,7 @@ else
   require 'integration_helper'
 
   # prevent facter from loading its spec files as facts
-  $LOAD_PATH.delete_if { |entry| entry =~ %r{facter/spec} }
+  $LOAD_PATH.delete_if { |entry| entry == SPEC_DIR }
 
   # Integration specific config
   RSpec.configure do |config|
