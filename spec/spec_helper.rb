@@ -89,6 +89,9 @@ if unit_tests
       Facter::OptionStore.reset
       Facter::ConfigReader.clear
       Facter::ConfigFileOptions.clear
+      Facter.instance_variable_set(:@logger, nil)
+      Facter::FactLoader.instance.instance_variable_set(:@logger, nil)
+      Facter::FactManager.instance.instance_variable_set(:@logger, nil)
     end
   end
 
