@@ -59,7 +59,7 @@ module Facter
             when FFI::RTM_IFINFO
               link_addr = FFI::SockaddrDl.new(hdr.to_ptr + hdr.size)
 
-              interface_name = link_addr[:sdl_data].to_s[0, link_addr[:sdl_nlen]]
+              interface_name = link_addr[:sdl_data].to_s[0, link_addr[:sdl_nlen]].dup.force_encoding(Encoding::UTF_8)
               interfaces[interface_name] ||= {}
 
             when FFI::RTM_NEWADDR
@@ -101,9 +101,9 @@ module Facter
               bindings = family == FFI::AF_INET ? :bindings : :bindings6
               interfaces[interface_name][bindings] ||= []
               interfaces[interface_name][bindings] << {
-                netmask: netmask.read_string,
-                address: address.read_string,
-                network: network.read_string
+                netmask: netmask,
+                address: address,
+                network: network
               }
             else
               log.debug("got an unknown RT_IFLIST message: #{hdr[:ifm_type]}")
@@ -135,7 +135,7 @@ module Facter
             buffer = ::FFI::MemoryPointer.new(:char, FFI::INET_ADDRSTRLEN)
             Libc.inet_ntop(FFI::AF_INET, in_addr_ip[:sin_addr].to_ptr, buffer, 16)
 
-            buffer
+            buffer.read_string.dup.force_encoding(Encoding::UTF_8)
           elsif sockaddr[:sa_family] == FFI::AF_INET6
             in_addr_ip = FFI::SockaddrIn6.new(sockaddr.to_ptr)
             if mask && sockaddr[:sa_family] == mask[:sa_family]
@@ -148,7 +148,7 @@ module Facter
             buffer = ::FFI::MemoryPointer.new(:char, FFI::INET6_ADDRSTRLEN)
             Libc.inet_ntop(FFI::AF_INET6, in_addr_ip[:sin6_addr].to_ptr, buffer, 16)
 
-            buffer
+            buffer.read_string.dup.force_encoding(Encoding::UTF_8)
           end
         end
 
