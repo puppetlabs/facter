@@ -110,7 +110,8 @@ module Facter
 
             buffer = ::FFI::MemoryPointer.new(:char, buffer_size)
 
-            FFI::Ioctl.inet_ntop(ss_family, ip.to_ptr, buffer.to_ptr, buffer.size)
+            str = FFI::Ioctl.inet_ntop(ss_family, ip.to_ptr, buffer.to_ptr, buffer.size)
+            str.dup.force_encoding(Encoding::UTF_8)
           end
 
           def get_ipv4(lifreq)
