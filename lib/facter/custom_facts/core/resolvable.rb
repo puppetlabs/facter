@@ -79,7 +79,7 @@ module LegacyFacter
           end
         end
 
-        LegacyFacter::Util::Normalization.normalize(result)
+        LegacyFacter::Util::Normalization.normalize(@fact.name, result)
       rescue Timeout::Error => e
         Facter.log_exception(e, "Timed out after #{limit} seconds while resolving #{qualified_name}")
 

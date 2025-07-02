@@ -80,7 +80,7 @@ module Facter
 
     def validate_resolved_facts(resolved_facts)
       resolved_facts.each do |fact|
-        normalize(fact.value)
+        normalize(fact.name, fact.value)
       rescue LegacyFacter::Util::Normalization::NormalizationError => e
         detail = e.message
         detail += "\n#{e.backtrace.join("\n")}" if @options[:trace]
