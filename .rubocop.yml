@@ -47,6 +47,7 @@ Naming/MethodName:
   Exclude:
     - 'spec/mocks/win32ole.rb'
     - 'spec/mocks/ffi.rb'
+    - 'spec/facter/util/windows/network_utils_spec.rb'
 
 Naming/PredicateName:
   Exclude:

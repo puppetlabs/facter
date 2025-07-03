@@ -167,9 +167,9 @@ module Facter
     end
 
     desc '--help, -h', 'Help for all arguments'
-    def help(*args)
+    def help(*_args)
       help_string = +''
-      help_string << help_header(args)
+      help_string << help_header
       help_string << add_class_options_to_help
       help_string << add_commands_to_help
 
@@ -177,10 +177,16 @@ module Facter
     end
 
     no_commands do
-      def help_header(_args)
-        path = File.join(File.dirname(__FILE__), '../../')
+      def help_header
+        <<~HELP
+          Usage
+          =====
 
-        Facter::Util::FileHelper.safe_read("#{path}fixtures/facter_help_header")
+          facter [options] [query] [query] [...]
+
+          Options
+          =======
+        HELP
       end
 
       def add_class_options_to_help
