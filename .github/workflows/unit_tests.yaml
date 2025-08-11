@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-20.04
     steps:
       - name: Checkout current PR
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Rspec checks
         uses: ruby/setup-ruby@v1
@@ -46,7 +46,7 @@ jobs:
     runs-on: windows-2019
     steps:
       - name: Checkout current PR
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Rspec checks
         uses: ruby/setup-ruby@v1
