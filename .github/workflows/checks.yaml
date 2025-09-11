@@ -15,7 +15,7 @@ jobs:
     name: RuboCop
     steps:
       - name: Checkout current PR
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Rubocop checks
         uses: ruby/setup-ruby@v1
