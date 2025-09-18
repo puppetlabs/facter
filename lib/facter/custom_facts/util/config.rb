@@ -37,24 +37,23 @@ module LegacyFacter
       end
 
       def self.setup_default_ext_facts_dirs
-        if LegacyFacter::Util::Root.root?
-          windows_dir = windows_data_dir
-          Facter::Options[:default_external_dir] = if windows_dir
-                                                     [File.join(windows_dir, 'PuppetLabs', 'facter', 'facts.d')]
-                                                   else
-                                                     [
-                                                       '/etc/puppetlabs/facter/facts.d',
-                                                       '/etc/facter/facts.d/',
-                                                       '/opt/puppetlabs/facter/facts.d'
-                                                     ]
-                                                   end
-        elsif ENV['HOME']
-          Facter::Options[:default_external_dir] =
-            [File.join(ENV['HOME'], '.facter', 'facts.d'),
-             File.join(ENV['HOME'], '.puppetlabs', 'opt', 'facter', 'facts.d')]
-        else
-          Facter::Options[:default_external_dir] = []
-        end
+        windows_dir = windows_data_dir
+        Facter::Options[:default_external_dir] = if windows_dir
+                                                   [File.join(windows_dir, 'PuppetLabs', 'facter', 'facts.d')]
+                                                 else
+                                                   [
+                                                     '/etc/puppetlabs/facter/facts.d',
+                                                     '/etc/facter/facts.d/',
+                                                     '/opt/puppetlabs/facter/facts.d'
+                                                   ]
+                                                 end
+
+        return unless !LegacyFacter::Util::Root.root? && ENV['HOME']
+
+        Facter::Options[:default_external_dir] = [
+          File.join(ENV['HOME'], '.facter', 'facts.d'),
+          File.join(ENV['HOME'], '.puppetlabs', 'opt', 'facter', 'facts.d')
+        ] + Facter::Options[:default_external_dir]
       end
 
       if LegacyFacter::Util::Config.windows?
