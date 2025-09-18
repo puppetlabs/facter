@@ -113,7 +113,7 @@ module Facter
       negate_options = %w[block cache custom_facts external_facts]
 
       template = File.join(File.dirname(__FILE__), '..', '..', 'templates', 'man.erb')
-      erb = ERB.new(File.read(template), nil, '-')
+      erb = ERB.new(File.read(template), trim_mode: '-')
       erb.filename = template
       puts erb.result(binding)
     end
