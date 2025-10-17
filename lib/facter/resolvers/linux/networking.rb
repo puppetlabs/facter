@@ -57,11 +57,7 @@ module Facter
           end
 
           def physical(ifname, iface)
-            iface[:physical] = if File.exist?("/sys/class/net/#{ifname}/device")
-                                 true
-                               else
-                                 false
-                               end
+            iface[:physical] = File.exist?("/sys/class/net/#{ifname}/device")
           end
 
           def duplex(interface_name, iface)

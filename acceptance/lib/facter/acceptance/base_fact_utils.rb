@@ -118,7 +118,7 @@ module Facter
 
       # el (RedHat, Centos)
       def el_expected_facts(agent)
-        version = agent['platform'].match(/(el|centos)-(\d)/)
+        version = agent['platform'].match(/(el|centos)-(\d+)/)
         os_version = if version.nil?
                        /\d+/
                      else
@@ -143,6 +143,11 @@ module Facter
           os_distro_description = /Rocky Linux release #{os_version}\.\d+ \(.+\)/
           os_distro_id = 'Rocky'
           os_distro_release_full = /#{os_version}\.\d+/
+        when /rhel/
+          os_name = 'RedHat'
+          os_distro_description = /Red Hat Enterprise Linux( Server)? release #{os_version}\.\d+( Beta)? \(\w+\)/
+          os_distro_id = /^RedHatEnterprise(Server)?$/
+          os_distro_release_full = /#{os_version}\.\d+/
         when /centos/
           os_name = 'CentOS'
           os_distro_description = /CentOS( Linux)? release #{os_version}\.\d+(\.\d+)? \(\w+\)/
@@ -154,6 +159,7 @@ module Facter
           os_distro_id = /^RedHatEnterprise(Server)?$/
           os_distro_release_full = /#{os_version}\.\d+/
         end
+
         if agent['platform'] =~ /x86_64/
           os_arch                 = 'x86_64'
           os_hardware             = 'x86_64'
@@ -190,7 +196,7 @@ module Facter
           expected_facts['os.release.minor'] = /(\d+)?/
           expected_facts['processors.count'] = /[1-9]/
           expected_facts['processors.physicalcount'] = /[1-9]/
-          expected_facts['processors.isa'] = os_hardware
+          expected_facts['processors.isa'] = /unknown|#{os_hardware}/
           expected_facts['processors.models'] = processor_model_pattern
           expected_facts['kernel'] = 'Linux'
           expected_facts['kernelrelease'] = /\d+\.\d+\.\d+/
@@ -437,6 +443,8 @@ module Facter
           os_version = '2019'
         elsif agent['platform'] =~ /2022/
           os_version = '2022'
+        elsif agent['platform'] =~ /2025/
+          os_version = '2025'
         else
           fail_test "Unknown Windows version #{agent['platform']}"
         end

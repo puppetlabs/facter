@@ -50,7 +50,7 @@ module Facter
                      'Space-Saving', 'Lunch Box', 'Main System Chassis', 'Expansion Chassis', 'SubChassis',
                      'Bus Expansion Chassis', 'Peripheral Chassis', 'Storage Chassis', 'Rack Mount Chassis',
                      'Sealed-Case PC', 'Multi-system', 'CompactPCI', 'AdvancedTCA', 'Blade', 'Blade Enclosure',
-                     'Tablet', 'Convertible', 'Detachable']
+                     'Tablet', 'Convertible', 'Detachable', 'IoT Gateway', 'Embedded PC', 'Mini PC', 'Stick PC']
             @fact_list[:chassis_type] = types[chassis_type.to_i - 1]
           end
         end

@@ -17,18 +17,18 @@ module LegacyFacter
       # @api public
       # @raise [NormalizationError] If the data structure contained an invalid element.
       # @return [void]
-      def normalize(value)
+      def normalize(fact_name, value)
         case value
         when Integer, Float, TrueClass, FalseClass, NilClass, Symbol
           value
         when Date, Time
           value.iso8601
         when String
-          normalize_string(value)
+          normalize_string(fact_name, value)
         when Array
-          normalize_array(value)
+          normalize_array(fact_name, value)
         when Hash
-          normalize_hash(value)
+          normalize_hash(fact_name, value)
         else
           raise NormalizationError, "Expected #{value} to be one of #{VALID_TYPES.inspect}, but was #{value.class}"
         end
@@ -47,8 +47,17 @@ module LegacyFacter
       # @param value [String]
       # @return [void]
 
-      def normalize_string(value)
-        value = value.encode(Encoding::UTF_8)
+      def normalize_string(fact_name, value)
+        if value.encoding == Encoding::ASCII_8BIT
+          value_copy_encoding = value.dup.force_encoding(Encoding::UTF_8)
+          raise NormalizationError, "custom fact \"#{fact_name}\" with value: #{value_copy_encoding} contains binary data and could not be force encoded to UTF-8" unless value_copy_encoding.valid_encoding?
+
+          log.debug("custom fact \"#{fact_name}\" with value: #{value} contained binary data and was force encoded to UTF-8 and now has the value: #{value_copy_encoding}")
+          value = value_copy_encoding
+
+        else
+          value = value.encode(Encoding::UTF_8)
+        end
 
         unless value.valid_encoding?
           raise NormalizationError, "String #{value.inspect} doesn't match the reported encoding #{value.encoding}"
@@ -69,9 +78,9 @@ module LegacyFacter
       # @raise [NormalizationError] If one of the elements failed validation
       # @param value [Array]
       # @return [void]
-      def normalize_array(value)
+      def normalize_array(fact_name, value)
         value.collect do |elem|
-          normalize(elem)
+          normalize(fact_name, elem)
         end
       end
 
@@ -81,8 +90,12 @@ module LegacyFacter
       # @raise [NormalizationError] If one of the keys or values failed normalization
       # @param value [Hash]
       # @return [void]
-      def normalize_hash(value)
-        Hash[value.collect { |k, v| [normalize(k), normalize(v)] }]
+      def normalize_hash(fact_name, value)
+        Hash[value.collect { |k, v| [normalize(fact_name, k), normalize(fact_name, v)] }]
+      end
+
+      def log
+        Facter::Log.new(self)
       end
     end
   end

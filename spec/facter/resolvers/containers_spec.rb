@@ -10,10 +10,29 @@ describe Facter::Resolvers::Containers do
     allow(Facter::Util::FileHelper).to receive(:safe_readlines)
       .with('/proc/1/environ', [], "\0", chomp: true)
       .and_return(environ_output)
+    allow(File).to receive(:exist?).and_call_original
+    allow(File).to receive(:exist?).with('/.dockerenv').and_return(false)
   end
 
   after do
     containers_resolver.invalidate_cache
+  end
+
+  context 'when hypervisor is docker desktop' do
+    let(:cgroup_output) { '0::/' }
+    let(:environ_output) { ['PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'] }
+
+    before do
+      allow(File).to receive(:exist?).with('/.dockerenv').and_return(true)
+    end
+
+    it 'returns docker for vm' do
+      expect(containers_resolver.resolve(:vm)).to eq('docker')
+    end
+
+    it 'returns empty hypervisor info' do
+      expect(containers_resolver.resolve(:hypervisor)).to eq(docker: {})
+    end
   end
 
   context 'when hypervisor is docker' do
@@ -47,6 +66,14 @@ describe Facter::Resolvers::Containers do
 
     it 'return nspawn info for hypervisor' do
       expect(containers_resolver.resolve(:hypervisor)).to eq(result)
+    end
+
+    it 'omits hypervisor info if it fails to read /etc/machine-id' do
+      allow(Facter::Util::FileHelper).to receive(:safe_read)
+        .with('/etc/machine-id', nil)
+        .and_return(nil)
+
+      expect(containers_resolver.resolve(:hypervisor)).to eq(systemd_nspawn: {})
     end
   end
 
@@ -119,11 +146,11 @@ describe Facter::Resolvers::Containers do
   context 'when hypervisor is an unknown container runtime discovered by environ' do
     let(:cgroup_output) { load_fixture('cgroup_file').read }
     let(:environ_output) { ['container=UNKNOWN'] }
-    let(:logger) { Facter::Log.class_variable_get(:@@logger) }
+    let(:logger) { containers_resolver.log }
 
     it 'return container_other for vm' do
-      expect(logger).to receive(:warn).with(/Container runtime, 'UNKNOWN', is unsupported, setting to 'container_other'/)
-      expect(containers_resolver.resolve(:vm)).to eq('container_other')
+      expect(logger).to receive(:debug).with(/Container runtime 'UNKNOWN' is not recognized, ignoring/)
+      expect(containers_resolver.resolve(:vm)).to eq(nil)
     end
   end
 end

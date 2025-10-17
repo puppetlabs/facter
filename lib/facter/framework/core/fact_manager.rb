@@ -1,8 +1,11 @@
 # frozen_string_literal: true
 
+require_relative '../../custom_facts/util/normalization'
+
 module Facter
   class FactManager
     include Singleton
+    include LegacyFacter::Util::Normalization
 
     def initialize
       @internal_fact_mgr = InternalFactManager.new
@@ -29,6 +32,8 @@ module Facter
       cache_manager.cache_facts(resolved_facts)
 
       FactFilter.new.filter_facts!(resolved_facts, user_query)
+
+      validate_resolved_facts(resolved_facts)
 
       log_resolved_facts(resolved_facts)
       resolved_facts
@@ -57,6 +62,8 @@ module Facter
 
       @cache_manager.cache_facts(resolved_facts)
 
+      validate_resolved_facts(resolved_facts)
+
       log_resolved_facts(resolved_facts)
       resolved_facts
     end
@@ -64,10 +71,22 @@ module Facter
     def resolve_core(user_query = [], options = {})
       log_resolving_method
       @cache_manager = CacheManager.new
-      core_fact(user_query, options)
+      resolved_facts = core_fact(user_query, options)
+      validate_resolved_facts(resolved_facts)
+      resolved_facts
     end
 
     private
+
+    def validate_resolved_facts(resolved_facts)
+      resolved_facts.each do |fact|
+        normalize(fact.name, fact.value)
+      rescue LegacyFacter::Util::Normalization::NormalizationError => e
+        detail = e.message
+        detail += "\n#{e.backtrace.join("\n")}" if @options[:trace]
+        @log.warn("Fact '#{fact.name}' contains an invalid value: #{detail}")
+      end
+    end
 
     def log_resolving_method
       if Options[:sequential]

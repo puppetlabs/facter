@@ -14,15 +14,9 @@ Gem::Specification.new do |spec|
   spec.description   = 'You can prove anything with facts!'
   spec.license       = 'Apache-2.0'
 
-  dirs =
-    Dir[File.join(__dir__, 'bin/facter')] +
-    Dir[File.join(__dir__, 'LICENSE')] +
-    Dir[File.join(__dir__, 'lib/**/*.rb')] +
-    Dir[File.join(__dir__, 'lib/**/*.json')] +
-    Dir[File.join(__dir__, 'lib/**/*.conf')] +
-    Dir[File.join(__dir__, 'lib/**/*.erb')]
-  base = "#{__dir__}#{File::SEPARATOR}"
-  spec.files = dirs.map { |path| path.sub(base, '') }
+  spec.files =
+    %w[LICENSE README.md Gemfile facter.gemspec] +
+    Dir['{bin,lib}/**/*'].reject { |f| File.directory?(f) || f.end_with?('.dox') || f.end_with?('.yaml') }
 
   spec.required_ruby_version = '>= 2.5', '< 4.0'
   spec.bindir = 'bin'

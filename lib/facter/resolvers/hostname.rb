@@ -18,7 +18,7 @@ module Facter
 
         def retrieve_info(fact_name)
           require 'socket'
-          output = Socket.gethostname
+          output = Socket.gethostname&.dup&.force_encoding(Encoding::UTF_8) || nil
           unless output
             log.debug('Socket.gethostname failed to return hostname')
             return
@@ -55,7 +55,7 @@ module Facter
           end
           return if name.nil? || name.empty? || host == name[2] || name[2] == name[3]
 
-          name[2]
+          name[2]&.dup&.force_encoding(Encoding::UTF_8)
         end
 
         def exists_and_valid_fqdn?(fqdn, hostname)

@@ -5,8 +5,6 @@ require 'open3'
 require 'rspec/core/rake_task'
 require 'facter/version'
 
-Dir.glob(File.join('tasks/**/*.rake')).each { |file| load file }
-
 task default: :spec
 
 desc 'Generate changelog'

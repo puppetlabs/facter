@@ -53,6 +53,7 @@ build-iPhoneSimulator/
 .rvmrc
 
 .rspec_status
+.rspec_integration_status
 Gemfile.lock
 Gemfile.local
 acceptance/vendor

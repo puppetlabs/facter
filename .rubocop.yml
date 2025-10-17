@@ -11,6 +11,10 @@ require:
   - rubocop-performance
   - rubocop-rspec
 
+plugins:
+  - rubocop-factory_bot
+  - rubocop-capybara
+
 Layout/LineLength:
   Enabled: false
 
@@ -43,6 +47,7 @@ Naming/MethodName:
   Exclude:
     - 'spec/mocks/win32ole.rb'
     - 'spec/mocks/ffi.rb'
+    - 'spec/facter/util/windows/network_utils_spec.rb'
 
 Naming/PredicateName:
   Exclude:

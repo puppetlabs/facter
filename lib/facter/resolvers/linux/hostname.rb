@@ -37,7 +37,7 @@ module Facter
           end
 
           def retrieving_hostname
-            output = Socket.gethostname || ''
+            output = Socket.gethostname&.dup&.force_encoding(Encoding::UTF_8) || ''
             if output.empty? || output['0.0.0.0']
               begin
                 require_relative '../../../facter/util/resolvers/ffi/hostname'
@@ -70,7 +70,7 @@ module Facter
               log.debug("Socket.getaddrinfo failed to retrieve fqdn for hostname #{host} with: #{e}")
             end
 
-            return name[2] if !name.nil? && !name.empty? && host != name[2] && name[2] != name[3]
+            return name[2].dup.force_encoding(Encoding::UTF_8) if !name.nil? && !name.empty? && host != name[2] && name[2] != name[3]
 
             retrieve_fqdn_for_host_with_ffi(host)
           end

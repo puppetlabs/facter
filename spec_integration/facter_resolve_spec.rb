@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative 'spec_helper'
+require 'tmpdir'
 
 describe Facter do
   context 'when recursively calling facter in an external/custom fact' do

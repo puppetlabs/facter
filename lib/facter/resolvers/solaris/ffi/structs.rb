@@ -64,7 +64,7 @@ module Facter
                   :pad, [:char, 80]
 
           def name
-            self[:lifr_name].to_s
+            self[:lifr_name].to_s.dup.force_encoding(Encoding::UTF_8)
           end
 
           def ss_family

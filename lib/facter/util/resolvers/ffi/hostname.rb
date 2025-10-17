@@ -33,7 +33,7 @@ module Facter
             res = Hostname.gethostname(raw_hostname, HOST_NAME_MAX)
             return unless res.zero?
 
-            raw_hostname.read_string
+            raw_hostname.read_string&.force_encoding(Encoding::UTF_8)
           end
 
           def self.getffiaddrinfo(hostname)
@@ -54,7 +54,7 @@ module Facter
 
             begin
               addr = Facter::Util::Resolvers::Ffi::AddrInfo.new(ret.read_pointer)
-              name = addr[:ai_canonname]
+              name = addr[:ai_canonname]&.dup&.force_encoding(Encoding::UTF_8)
               log.debug("FFI AddrInfo struct has the fqdn: #{name}")
               return if !name || hostname == name
 
