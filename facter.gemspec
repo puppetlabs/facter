@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
     %w[LICENSE README.md Gemfile facter.gemspec] +
     Dir['{bin,lib}/**/*'].reject { |f| File.directory?(f) || f.end_with?('.dox') || f.end_with?('.yaml') }
 
-  spec.required_ruby_version = '>= 2.5', '< 4.0'
+  spec.required_ruby_version = '>= 2.6', '< 4.0'
   spec.bindir = 'bin'
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
   spec.require_paths = ['lib']
@@ -32,14 +32,14 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'ffi', '>= 1.15.5', '< 1.17.0', '!= 1.16.0', '!= 1.16.1', '!= 1.16.2'
   spec.add_development_dependency 'rake', '~> 13.0', '>= 13.0.6'
   spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_development_dependency 'rubocop', '~> 1.28' # last version to support 2.5
+  spec.add_development_dependency 'rubocop', '~> 1.50.0' # last version to support 2.6
   spec.add_development_dependency 'rubocop-performance', '~> 1.5.2'
-  spec.add_development_dependency 'rubocop-rspec', '~> 2.10' # last version to support 2.5
+  spec.add_development_dependency 'rubocop-rspec', '~> 2.20.0' # last version to support 2.6
   spec.add_development_dependency 'simplecov', '~> 0.17.1'
   spec.add_development_dependency 'sys-filesystem', '~> 1.4'
   spec.add_development_dependency 'webmock', '~> 3.12'
   spec.add_development_dependency 'yard', '~> 0.9'
 
   spec.add_runtime_dependency 'hocon', '~> 1.3'
-  spec.add_runtime_dependency 'thor', ['>= 1.0.1', '< 1.3'] # Thor 1.3.0 drops support for Ruby 2.5
+  spec.add_runtime_dependency 'thor', '~> 1.0'
 end
