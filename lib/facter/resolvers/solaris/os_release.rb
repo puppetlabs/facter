@@ -7,7 +7,8 @@ module Facter
         init_resolver
 
         OS_VERSION_REGEX_PATTERNS = ['Solaris \d+ \d+/\d+ s(\d+)[sx]?_u(\d+)wos_',
-                                     'Solaris (\d+)[.](\d+)', 'Solaris (\d+)'].freeze
+                                     'Solaris (\d+)[.](\d+)', 'Solaris (\d+)',
+                                     'OmniOS v(\d+) (r\d+)'].freeze
 
         class << self
           private
