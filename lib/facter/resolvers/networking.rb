@@ -80,28 +80,35 @@ module Facter
         end
 
         def extract_ip_data(raw_data, parsed_interface_data)
-          ip = extract_values(raw_data, /inet (\S+)/)
-          mask = extract_values(raw_data, /netmask (\S+)/).map { |val| val.hex.to_s(2).count('1') }
+          inets = extract_values(raw_data, /inet (\S+).+netmask (\S+)/, :extract_ip4_data)
+          bindings = create_bindings(inets)
+          parsed_interface_data[:bindings] = bindings unless bindings.empty?
 
-          ip6 = extract_values(raw_data, /inet6 (\S+)/).map { |val| val.gsub(/%.+/, '') }
-          mask6 = extract_values(raw_data, /prefixlen (\S+)/)
-
-          parsed_interface_data[:bindings] = create_bindings(ip, mask) unless ip.empty?
-          parsed_interface_data[:bindings6] = create_bindings(ip6, mask6) unless ip6.empty?
+          inets = extract_values(raw_data, /inet6 (\S+).+prefixlen (\S+)/, :extract_ip6_data)
+          bindings = create_bindings(inets)
+          parsed_interface_data[:bindings6] = bindings unless bindings.empty?
         end
 
-        def extract_values(data, regex)
+        def extract_values(data, regex, ip_func)
           results = []
-          data.scan(regex).flatten.each do |val|
-            results << val
+          data.scan(regex).flatten.each_slice(2) do |val|
+            results << method(ip_func).call(val)
           end
           results
         end
 
-        def create_bindings(ips, masks)
+        def extract_ip4_data(inet)
+          [inet[0], inet[1].hex.to_s(2).count('1')]
+        end
+
+        def extract_ip6_data(inet)
+          [inet[0].gsub(/%.+/, ''), inet[1]]
+        end
+
+        def create_bindings(inets)
           bindings = []
-          ips.zip(masks).each do |ip, mask|
-            bindings << Facter::Util::Resolvers::Networking.build_binding(ip, mask)
+          inets.each do |inet|
+            bindings << Facter::Util::Resolvers::Networking.build_binding(inet[0], inet[1])
           end
           bindings
         end
