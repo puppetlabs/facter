@@ -18,7 +18,7 @@ used to inform conditional expressions in Puppet.
 ## Documentation
 
 Documentation for the Facter project can be found on the [Puppet Docs
-site](https://puppet.com/docs/puppet/latest/facter.html).
+site](https://help.puppet.com/osp/current/Content/PuppetCore/facter.htm).
 
 ## Supported platforms
 * Linux
