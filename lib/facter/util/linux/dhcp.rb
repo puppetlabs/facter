@@ -78,6 +78,13 @@ module Facter
             @dhcpcd_command ||= Facter::Core::Execution.which('dhcpcd')
             return unless @dhcpcd_command
 
+            unless @dhcpcd_running_checked
+              @dhcpcd_running_checked = true
+              @dhcpcd_running = File.exist?('/run/dhcpcd.pid') || File.exist?('/var/run/dhcpcd.pid') ||
+                                File.exist?('/run/dhcpcd/pid') || File.exist?('/var/run/dhcpcd/pid')
+            end
+            return unless @dhcpcd_running
+
             output = Facter::Core::Execution.execute("#{@dhcpcd_command} -U #{interface_name}", logger: @log)
             dhcp = output.match(/dhcp_server_identifier='(.*)'/)
             dhcp[1] if dhcp
