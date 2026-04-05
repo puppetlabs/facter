@@ -76,6 +76,8 @@ module Facter
             vm = 'crio'
           when 'zone'
             return nil
+          when 'openvzve'
+            vm = 'openvz'
           when 'systemd-nspawn'
             vm = 'systemd_nspawn'
             machine_id = Facter::Util::FileHelper.safe_read('/etc/machine-id', nil)
