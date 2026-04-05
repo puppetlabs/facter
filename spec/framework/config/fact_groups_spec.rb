@@ -68,6 +68,30 @@ describe Facter::FactGroups do
       end
     end
 
+    context 'with blocked EC2 group' do
+      before do
+        allow(config_reader).to receive(:block_list).and_return(%w[EC2])
+      end
+
+      it 'includes cloud.provider in blocked facts' do
+        blk_list = fact_groups.new
+
+        expect(blk_list.blocked_facts).to include('cloud.provider')
+      end
+    end
+
+    context 'with blocked GCE group' do
+      before do
+        allow(config_reader).to receive(:block_list).and_return(%w[GCE])
+      end
+
+      it 'includes cloud.provider in blocked facts' do
+        blk_list = fact_groups.new
+
+        expect(blk_list.blocked_facts).to include('cloud.provider')
+      end
+    end
+
     context 'without block_list' do
       before do
         allow(config_reader).to receive(:block_list).and_return([])
