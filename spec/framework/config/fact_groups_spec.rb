@@ -70,6 +70,7 @@ describe Facter::FactGroups do
 
     context 'with blocked EC2 group' do
       before do
+        stub_const('Facter::Config::FACT_GROUPS', 'EC2' => %w[ec2_metadata ec2_userdata cloud.provider])
         allow(config_reader).to receive(:block_list).and_return(%w[EC2])
       end
 
@@ -82,6 +83,7 @@ describe Facter::FactGroups do
 
     context 'with blocked GCE group' do
       before do
+        stub_const('Facter::Config::FACT_GROUPS', 'GCE' => %w[gce cloud.provider])
         allow(config_reader).to receive(:block_list).and_return(%w[GCE])
       end
 
