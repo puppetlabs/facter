@@ -65,9 +65,11 @@ module Facter
         'EC2' => %w[
           ec2_metadata
           ec2_userdata
+          cloud.provider
         ],
-        'GCE' => [
-          'gce'
+        'GCE' => %w[
+          gce
+          cloud.provider
         ],
         'Xen' => %w[
           xen
